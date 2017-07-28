@@ -1,0 +1,15 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+
+# production
+publish
+.idea
+
+# misc
+.DS_Store
+npm-debug.log
+.vscode
+_site
+mock/test.json
