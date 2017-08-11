@@ -10,6 +10,7 @@ gulp.task('copy', () => {
 		.src([
 			'../!(node_modules|publish)/**/*',
 			'../!(node_modules|publish)',
+			'../.*',
 			'!../!(node_modules|publish)/**/*.js',
 			'!../*.js'
 		])
