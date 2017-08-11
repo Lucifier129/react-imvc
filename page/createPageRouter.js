@@ -16,29 +16,20 @@ const getAssets = status => {
 
 export default function createPageRouter(options) {
   let config = Object.assign({}, options)
-  let {
-    webpackDevMiddleware,
-    statsPath,
-    SSR,
-    context = {},
-    renderMode = 'renderToString',
-    routes,
-    layout,
-  } = config
-
+  let routes = require(path.join(config.root, config.src))
   let router = Router()
   let serverAppSettings = {
     loader: commonjsLoader,
     routes: routes,
     viewEngine: {
-      render: ReactDOMServer[renderMode]
+      render: ReactDOMServer[config.renderMode]
     }
   }
 
   let app = createApp(serverAppSettings)
   let assets = null
 
-  if (webpackDevMiddleware) {
+  if (config.webpackDevMiddleware) {
     // 开发模式用 webpack-dev-middleware 获取 assets
     router.use((req, res, next) => {
       assets = getAssets(res.locals.webpackStats.toJson().assetsByChunkName)
@@ -46,14 +37,25 @@ export default function createPageRouter(options) {
     })
   } else {
     // 生产模式直接用编译好的资源表
-    try {
+    let assetsPathList = [
       // 在 publish 目录下启动
-      assets = require(path.join(config.cwd, config.static, config.statsPath))
-    } catch (error) {
+      path.join(config.cwd, config.static, config.statsPath),
       // 在项目根目录下启动
-      assets = require(path.join(config.cwd, config.publish, config.static, config.statsPath))
+      path.join(config.cwd, config.publish, config.static, config.statsPath)
+    ]
+
+    while (assetsPathList.length) {
+      try {
+        assets = require(assetsPathList.shift())
+      } catch (error) {
+        // ignore error
+      }
     }
 
+    if (!assets) {
+      throw new Error('找不到 webpack 资源表 stats.json')
+    }
+    
     assets = getAssets(assets)
   }
 
@@ -61,43 +63,37 @@ export default function createPageRouter(options) {
 
   // 添加浏览器端 app 配置
   let attachClientAppSettings = (req, res, next) => {
-    let locationOrigin = config.locationOrigin
     let host = req.headers.host
-    let basename = req.basename || ''
-
-    if (!host.includes('localhost') && !host.includes('127.0')) {
-      locationOrigin = host
+    let basename = req.basename
+    let context = {
+      basename: basename,
+      preload: {},
+      ...config.context,
     }
 
     req.clientAppSettings = {
-      basename: basename,
       type: 'createHistory',
-      context: {
-        basename: basename,
-        publicPath: config.publicPath,
-        restfulApi: config.restfulApi,
-        locationOrigin: locationOrigin,
-        env: config.env,
-      }
+      basename,
+      context,
     }
 
     next()
   }
 
-  router.all('*', attachClientAppSettings)
+  router.use(attachClientAppSettings)
 
   // 纯浏览器端渲染模式，用前置中间件拦截所有请求
-  if (process.env.CLIENT_RENDER === '1') {
+  if (config.SSR === false) {
     router.all('*', (req, res) => {
       res.render(layoutView, {
         assets: assets,
         appSettings: req.clientAppSettings
       })
     })
-  } else if (process.env.NODE_ENV === 'development') {
+  } else if (config.NODE_ENV === 'development') {
     // 带服务端渲染模式的开发环境，需要动态编译 src/routes
     var setupDevEnv = require('../build/setup-dev-env')
-    setupDevEnv.setupServer({
+    setupDevEnv.setupServer(config, {
       handleHotModule: routes => {
         app = createApp({
           ...serverAppSettings,
@@ -109,33 +105,27 @@ export default function createPageRouter(options) {
 
   // handle page
   router.all('*', async(req, res, next) => {
-    let serverContext = {
+    let context = {
+      basename: req.basename,
+      preload: {},
+      ...config.context,
       req,
       res,
       isServer: true,
       isClient: false,
-      basename: req.basename || '',
       publicPath: config.publicPath,
-      // 服务端用 http 协议，浏览器端让浏览器自动补全协议
-      restfulApi: 'http:' + config.serverRestfulApi,
-      /**
-       * serverLocationOrigin 是为了防止因为不能访问外网而导致的错误
-       * 它是 localhost:${port} 的形式
-       */
-      locationOrigin: 'http:' + config.serverLocationOrigin,
-      env: config.env,
-      preload: {}
     }
 
     try {
       let {
         content,
         controller
-      } = await app.render(req.url, serverContext)
-        /**
-         * 如果没有返回 content
-         * 不渲染内容，controller 可能通过 context.res 对象做了重定向或者渲染
-         */
+      } = await app.render(req.url, context)
+
+      /**
+       * 如果没有返回 content
+       * 不渲染内容，controller 可能通过 context.res 对象做了重定向或者渲染
+       */
       if (!content) {
         return
       }
@@ -155,6 +145,4 @@ export default function createPageRouter(options) {
       next(error)
     }
   })
-
-
 }

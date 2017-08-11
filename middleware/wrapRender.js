@@ -5,7 +5,7 @@
 module.exports = function wrapRender ({ defaults }) {
   return (req, res, next) => {
     let _render = res.render
-
+    req.defaultProps = {...defaults}
     res.render = function (viewName, options, callback) {
       let finalOptions = Object.assign({}, defaults, options)
       return _render.call(this, viewName, finalOptions, callback)

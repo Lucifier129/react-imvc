@@ -1,7 +1,6 @@
 var webpack = require('webpack')
 var path = require('path')
 var pkg = require('../package')
-var defaults = require('./defaults')
 
 module.exports = function createWebpackServerConfig(options) {
   var config = Object.assign({}, options)

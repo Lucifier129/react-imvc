@@ -3,10 +3,13 @@ var vm = require('vm')
 var webpack = require('webpack')
 var webpackDevMiddleware = require('webpack-dev-middleware')
 var MFS = require('memory-fs')
+var createWebpackClientConfig = require('./createWebpackClientConfig')
+var createWebpackServerConfig = require('./createWebpackServerConfig')
 
-exports.setupClient = function setupClient (clientConfig, publicPath) {
+exports.setupClient = function setupClient (config) {
+  var clientConfig = createWebpackClientConfig(config)
   var clientDevMiddleware = webpackDevMiddleware(webpack(clientConfig), {
-    publicPath: publicPath,
+    publicPath: config.publicPath,
     stats: {
       colors: true,
       chunks: false
@@ -16,8 +19,8 @@ exports.setupClient = function setupClient (clientConfig, publicPath) {
   return clientDevMiddleware
 }
 
-exports.setupServer = function setupServer (serverConfig, options) {
-  var serverCompiler = webpack(serverConfig)
+exports.setupServer = function setupServer (config, options) {
+  var serverCompiler = createWebpackServerConfig(config)
   var mfs = new MFS()
   var outputPath = path.join(
     serverConfig.output.path,
