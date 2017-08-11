@@ -9,7 +9,7 @@ import util from '../util'
 const { getFlatList } = util
 
 const commonjsLoader = module => module.default || module
-const getAssets = status => {
+const getAssets = stats => {
   return Object.keys(stats).reduce((result, assetName) => {
     let value = stats[assetName]
     result[assetName] = Array.isArray(value) ? value[0] : value
@@ -21,12 +21,11 @@ export default function createPageRouter(options) {
   let config = Object.assign({}, options)
   let routes = require(path.join(config.root, config.src))
 
+  routes = routes.default || routes
   if (!Array.isArray(routes)) {
     routes = Object.values(routes)
   }
   routes = getFlatList(routes)
-
-  console.log('routes1', routes)
 
   let router = Router()
   let serverAppSettings = {
@@ -76,16 +75,20 @@ export default function createPageRouter(options) {
   let attachClientAppSettings = (req, res, next) => {
     let host = req.headers.host
     let basename = req.basename
+    let publicPath = basename + config.staticPath
     let context = {
-      basename: basename,
-      preload: {},
+      basename,
+      publicPath,
+      restapi: config.restapi,
       ...config.context,
+      preload: {},
     }
 
     req.clientAppSettings = {
       type: 'createHistory',
       basename,
       context,
+      publicPath,
     }
 
     next()
@@ -105,7 +108,10 @@ export default function createPageRouter(options) {
     // 带服务端渲染模式的开发环境，需要动态编译 src/routes
     var setupDevEnv = require('../build/setup-dev-env')
     setupDevEnv.setupServer(config, {
-      handleHotModule: routes => {
+      handleHotModule: $routes => {
+        const routes = util.getFlatList(
+          Array.isArray($routes) ? $routes : Object.values($routes)
+        )
         app = createApp({
           ...serverAppSettings,
           routes
@@ -116,15 +122,19 @@ export default function createPageRouter(options) {
 
   // handle page
   router.all('*', async(req, res, next) => {
+    let basename = req.basename
+    let publicPath = basename + config.staticPath
     let context = {
-      basename: req.basename,
-      preload: {},
+      basename,
+      publicPath,
+      restapi: config.restapi,
       ...config.context,
-      req,
-      res,
+      serverPublicPath: publicPath,
+      preload: {},
       isServer: true,
       isClient: false,
-      publicPath: config.publicPath,
+      req,
+      res,
     }
 
     try {
@@ -148,7 +158,8 @@ export default function createPageRouter(options) {
         assets,
         content,
         initialState,
-        appSettings: req.clientAppSettings
+        publicPath,
+        appSettings: req.clientAppSettings,
       }
 
       res.render(layoutView, data)
@@ -156,4 +167,6 @@ export default function createPageRouter(options) {
       next(error)
     }
   })
+
+  return router
 }

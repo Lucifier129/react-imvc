@@ -51,7 +51,7 @@ export default class Controller {
   }
 
   // 处理 url 的相对路径或 mock 地址问题
-  prependRestfulBasename(url) {
+  prependRestapi(url) {
     let { context } = this
 
     /**
@@ -72,7 +72,7 @@ export default class Controller {
       return this.prependBasename(url)
     }
 
-    return context.restfulApi + url
+    return context.restapi + url
   }
 
   /**
@@ -151,7 +151,7 @@ export default class Controller {
     
     // 补全 url
     if (!options.raw) {
-      url = this.prependRestfulBasename(url)
+      url = this.prependRestapi(url)
     }
 
     let finalOptions = {
@@ -220,14 +220,22 @@ export default class Controller {
         return
       }
       let url = preload[name]
-      url = this.prependPublicPath(url)
+
+      if (!_.isAbsoluteUrl(url)) {
+        if (context.isServer) {
+          // 在服务端应请求本地的资源
+          url = context.serverPublicPath + url
+        } else if (context.isClient) {
+          url = context.publicPath + url
+        }
+      }
 
       return fetch(url).then(_.toText).then(content => {
         if (url.split('?')[0].indexOf('.css') !== -1) {
           /**
-						 * 如果是 CSS ，清空回车符
-						 * 否则同构渲染时 react 计算 checksum 值会不一致
-						 */
+					 * 如果是 CSS ，清空回车符
+					 * 否则同构渲染时 react 计算 checksum 值会不一致
+					 */
           content = content.replace(/\r+/g, '')
         }
         context.preload[name] = content
@@ -289,7 +297,7 @@ export default class Controller {
       isClient: context.isClient,
       isServer: context.isServer,
       publicPath: context.publicPath,
-      restfulApi: context.restfulApi
+      restapi: context.restapi
     }
 
     /**

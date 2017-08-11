@@ -9,7 +9,7 @@ var createWebpackServerConfig = require('./createWebpackServerConfig')
 exports.setupClient = function setupClient (config) {
   var clientConfig = createWebpackClientConfig(config)
   var clientDevMiddleware = webpackDevMiddleware(webpack(clientConfig), {
-    publicPath: config.publicPath,
+    publicPath: config.staticPath,
     stats: {
       colors: true,
       chunks: false
@@ -20,7 +20,8 @@ exports.setupClient = function setupClient (config) {
 }
 
 exports.setupServer = function setupServer (config, options) {
-  var serverCompiler = createWebpackServerConfig(config)
+  var serverConfig = createWebpackServerConfig(config)
+  var serverCompiler = webpack(serverConfig)
   var mfs = new MFS()
   var outputPath = path.join(
     serverConfig.output.path,

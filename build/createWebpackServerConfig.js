@@ -18,10 +18,16 @@ module.exports = function createWebpackServerConfig(options) {
     var item = list.shift()
     try {
       var pkg = require(item)
-      dependencies = dependencies.concat(
-        Object.keys(pkg.dependencies),
+      if (pkg.dependencies) {
+        dependencies = dependencies.concat(
+        Object.keys(pkg.dependencies)
+        )
+      }
+      if (pkg.devDependencies) {
+        dependencies = dependencies.concat(
         Object.keys(pkg.devDependencies)
-      )
+        )
+      }
     } catch(error) {
       // ignore error
     }
@@ -39,7 +45,7 @@ module.exports = function createWebpackServerConfig(options) {
   return {
     target: 'node',
     entry: {
-      routes: config.entry
+      routes: path.join(config.root, config.src),
     },
     output: {
       path: path.join(__dirname, '../server'),

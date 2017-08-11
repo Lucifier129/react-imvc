@@ -1,10 +1,10 @@
 /**
  * 获取配置
  */
-var path = require('path')
-var defaultConfig = require('./config.defaults')
+ import path from 'path'
+ import defaultConfig from './config.defaults'
 
-module.exports = function getConfig(options) {
+ export default function getConfig(options) {
 	var config = Object.assign({}, defaultConfig)
 
 	options = options || {}

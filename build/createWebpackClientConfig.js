@@ -22,7 +22,9 @@ var OptimizeJsPlugin = require('optimize-js-plugin')
  */
 module.exports = function createWebpackClientConfig(options) {
   var config = Object.assign({}, options)
-  var alias = Object.assign({}, config.alias)
+  var alias = Object.assign({}, config.alias, {
+    '@routes': path.join(config.root, config.src),
+  })
   var indexEntry = path.join(__dirname, '../entry/client')
 
   var root = path.join(config.root, config.src)
@@ -84,11 +86,11 @@ module.exports = function createWebpackClientConfig(options) {
 
   if (config.codeSpliting) {
     postLoaders.push({
-      test: /[cC]ontroller\.jsx?$/,
+      test: /\/[cC]ontroller\.jsx?$/,
       loader: 'bundle-loader',
       query: {
         lazy: true,
-        name: '[1]/js/mvc',
+        name: '[1]/js/imvc',
         regExp: `${root}/(.+)/[cC]ontroller`
       },
       exclude: /node_modules/

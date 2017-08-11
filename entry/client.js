@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom'
 import createApp from 'create-app/lib/client'
-import routes from '../../src'
+import util from '../util'
+import $routes from '@routes'
 
 __webpack_public_path__ = window.__PUBLIC_PATH__ + '/'
 const __APP_SETTINGS__ = window.__APP_SETTINGS__ || {}
@@ -29,6 +30,10 @@ const viewEngine = {
     return result
   }
 }
+
+const routes = util.getFlatList(
+  Array.isArray($routes) ? $routes : Object.values($routes)
+)
 
 const appSettings = {
   ...__APP_SETTINGS__,

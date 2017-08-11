@@ -6,6 +6,7 @@ var plumber = require('gulp-plumber')
 var babel = require('gulp-babel')
 
 var dest = '../react-imvc-template/node_modules/react-imvc'
+// var dest = './publish'
 
 gulp.task('copy', () => {
 	return gulp
@@ -13,7 +14,6 @@ gulp.task('copy', () => {
 			'./!(node_modules|publish)/**/*',
 			'./!(node_modules|publish)',
 			'./.!(git)*',
-			'./!!(node_modules|publish)/**/*.js',
 			'./!*.js'
 		])
 		.pipe(plumber())
@@ -40,6 +40,10 @@ gulp.task('watch', () => {
 		.on('change', function(event) {
 			console.log('File ' + event.path + ' was ' + event.type + ', running tasks...')
 		})
+		.on('error', function(error) {
+			console.error(error)
+		})
+
 })
 
 gulp.task('default', ['babel'])

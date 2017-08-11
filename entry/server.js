@@ -15,12 +15,10 @@ export default function createExpressApp(config) {
   const app = express()
 
   // handle basename
-  if (config.basename) {
-    let list = Array.isArray(config.basename) ? config.basename : [config.basename]
-    list.forEach(basename => {
-      app.use(shareRoot(basename))
-    })
-  }
+  let list = Array.isArray(config.basename) ? config.basename : [config.basename || '']
+  list.forEach(basename => {
+    app.use(shareRoot(basename))
+  })
 
   // handle helmet
   if (config.helmet) {
@@ -44,7 +42,7 @@ export default function createExpressApp(config) {
   )
 
   // view engine setup
-  app.set('views', path.join(config.routesPath))
+  app.set('views', path.join(config.root, config.routesPath))
   app.set('view engine', 'js')
 
   // handle default props
@@ -87,26 +85,24 @@ export default function createExpressApp(config) {
     app.use(setupDevEnv.setupClient(config))
 
     // 开发模式里，用 src 里的静态资源
-    app.use(config.publicPath, express.static(path.join(config.root, config.src)))
+    app.use(config.staticPath, express.static(path.join(config.root, config.src)))
   } else {
     // publish 目录启动
-    app.use(config.publicPath, express.static(path.join(config.root, config.static)))
-    // 在根目录启动
-    app.use(config.publicPath, express.static(path.join(config.root, config.publish, config.static)))
+    app.use(config.staticPath, express.static(path.join(config.root, config.static)))
+      // 在根目录启动
+    app.use(config.staticPath, express.static(path.join(config.root, config.publish, config.static)))
   }
 
-  app.use('/mock', (req, res, next) => {
-    let {
-      url: target
-    } = req
-    let filePath = path.join(config.root, config.src, `${target}.json`)
-    try {
+  if (config.NODE_ENV === 'development') {
+    app.use('/mock', (req, res, next) => {   
+      req.on('error', next)
+      res.on('error', next)
       res.type('application/json')
+
+      let filePath = path.join(config.root, config.src, `${req.url}.json`)
       fs.createReadStream(filePath).pipe(res)
-    } catch (error) {
-      next(error)
-    }
-  })
+    })
+  }
 
   return app
 }

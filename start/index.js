@@ -56,7 +56,7 @@ module.exports = function start(options) {
       }
     })
   }
-  
+
   app.use(createPageRouter(config))
 
   // catch 404 and forward to error handler
@@ -94,6 +94,17 @@ module.exports = function start(options) {
   server.listen(port)
   server.on('error', onError)
   server.on('listening', onListening)
+
+  /**
+   * Event listener for HTTP server "listening" event.
+   */
+
+  function onListening() {
+    var addr = server.address();
+    var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+    debug('Listening on ' + bind);
+    console.log('Listening on ' + bind)
+  }
 }
 
 
@@ -141,15 +152,4 @@ function onError(error) {
     default:
       throw error;
   }
-}
-
-/**
- * Event listener for HTTP server "listening" event.
- */
-
-function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-  debug('Listening on ' + bind);
-  console.log('Listening on ' + bind)
 }
