@@ -7,7 +7,7 @@
         "react-imvc": "./bin/scripts.js"
     },
     "scripts": {
-        "build": "gulp --gulpfile ./build/gulpfile.js",
+        "build": "gulp",
         "prebuild": "rimraf ./publish"
     },
     "dependencies": {

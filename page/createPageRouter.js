@@ -4,6 +4,9 @@ import {
 import path from 'path'
 import ReactDOMServer from 'react-dom/server'
 import createApp from 'create-app/lib/server'
+import util from '../util'
+
+const { getFlatList } = util
 
 const commonjsLoader = module => module.default || module
 const getAssets = status => {
@@ -17,6 +20,14 @@ const getAssets = status => {
 export default function createPageRouter(options) {
   let config = Object.assign({}, options)
   let routes = require(path.join(config.root, config.src))
+
+  if (!Array.isArray(routes)) {
+    routes = Object.values(routes)
+  }
+  routes = getFlatList(routes)
+
+  console.log('routes1', routes)
+
   let router = Router()
   let serverAppSettings = {
     loader: commonjsLoader,

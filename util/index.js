@@ -6,6 +6,22 @@ export default {
   isThenable,
   setValueByPath,
   getValueByPath,
+  getFlatList,
+}
+
+function getFlatList(list) {
+  let result = []
+
+  for (let i = 0; i < list.length; i++) {
+    let item = list[i]
+    if (Array.isArray(item)) {
+      result = result.concat(getFlatList(item))
+    } else {
+      result.push(item)
+    }
+  }
+
+  return result
 }
 
 function toJson (res) {
