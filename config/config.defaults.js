@@ -46,6 +46,8 @@ export default {
 	productionOutput: {},
 	// webpack alias 配置
 	alias: {},
+	// webpack devtool
+	devtool: isDev ? '#source-map' : '',
 	// 是否开启代码切割
 	codeSpliting: isProd,
 	// 是否对 webpack 的构建产物进行可视化分析

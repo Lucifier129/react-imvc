@@ -20,6 +20,16 @@ export default function createExpressApp(config) {
     app.use(shareRoot(basename))
   })
 
+  // handle publicPath
+  app.use((req, res, next) => {
+    let basename = req.basename // from shareRoot
+    let serverPublicPath = basename + config.staticPath
+    let publicPath = config.publicPath || serverPublicPath
+    req.serverPublicPath = serverPublicPath
+    req.publicPath = publicPath
+    next()
+  })
+
   // handle helmet
   if (config.helmet) {
     app.use(helmet(config.helmet))

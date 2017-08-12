@@ -81,17 +81,16 @@ module.exports = function createWebpackClientConfig(options) {
     })
   ]
   var watch = true
-  var devtool = '#source-map'
   var postLoaders = []
 
   if (config.codeSpliting) {
     postLoaders.push({
-      test: /\/[cC]ontroller\.jsx?$/,
+      test: /[\\/][cC]ontroller\.jsx?$/,
       loader: 'bundle-loader',
       query: {
         lazy: true,
-        name: '[1]/js/imvc',
-        regExp: `${root}/(.+)/[cC]ontroller`
+        name: '[1]/[folder]',
+        regExp: `${config.src}/(.+)/[cC]ontroller`.replace(/\//g, '[\\\\/]')
       },
       exclude: /node_modules/
     })
@@ -132,7 +131,6 @@ module.exports = function createWebpackClientConfig(options) {
     ], config.webpackPlugins)
 
     watch = false
-    devtool = ''
   }
 
   if (config.bundleAnalyzer) {
@@ -148,7 +146,7 @@ module.exports = function createWebpackClientConfig(options) {
 
   return {
     watch: watch,
-    devtool: devtool,
+    devtool: config.devtool,
     entry: entry,
     output: output,
     module: {
@@ -163,7 +161,7 @@ module.exports = function createWebpackClientConfig(options) {
     resolve: {
       modulesDirectories: [
         path.resolve('node_modules'),
-        path.join(root, 'node_modules'),
+        path.join(config.root, 'node_modules'),
         path.join(__dirname, '../node_modules')
       ],
       extensions: ['', '.js', '.jsx'],

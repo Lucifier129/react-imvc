@@ -1,5 +1,4 @@
 --require babel-register
 --require babel-polyfill
---require isomorphic-fetch
 --recursive
-**/*---test.js
+**/*-test.js

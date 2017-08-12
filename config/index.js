@@ -5,13 +5,17 @@
  import defaultConfig from './config.defaults'
 
  export default function getConfig(options) {
-	var config = Object.assign({}, defaultConfig)
+	let config = Object.assign({}, defaultConfig)
 
 	options = options || {}
-
-	if (options.config) {
-		var customConfig = require(path.resolve(options.config))
+	
+	try {
+		let configFile = options.config || 'imvc.config.js'
+		let customConfig = require(path.resolve(configFile))
+		customConfig = customConfig.default || customConfig
 		config = Object.assign(config, customConfig)
+	} catch(error) {
+		// ignore error
 	}
 
 	return config

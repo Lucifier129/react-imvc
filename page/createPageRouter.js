@@ -73,9 +73,7 @@ export default function createPageRouter(options) {
 
   // 添加浏览器端 app 配置
   let attachClientAppSettings = (req, res, next) => {
-    let host = req.headers.host
-    let basename = req.basename
-    let publicPath = basename + config.staticPath
+    let { basename, publicPath } = req
     let context = {
       basename,
       publicPath,
@@ -88,7 +86,6 @@ export default function createPageRouter(options) {
       type: 'createHistory',
       basename,
       context,
-      publicPath,
     }
 
     next()
@@ -99,7 +96,10 @@ export default function createPageRouter(options) {
   // 纯浏览器端渲染模式，用前置中间件拦截所有请求
   if (config.SSR === false) {
     router.all('*', (req, res) => {
+      let { basename, publicPath } = req
       res.render(layoutView, {
+        basename,
+        publicPath,
         assets: assets,
         appSettings: req.clientAppSettings
       })
@@ -122,14 +122,13 @@ export default function createPageRouter(options) {
 
   // handle page
   router.all('*', async(req, res, next) => {
-    let basename = req.basename
-    let publicPath = basename + config.staticPath
+    let { basename, serverPublicPath, publicPath } = req
     let context = {
       basename,
+      serverPublicPath,
       publicPath,
       restapi: config.restapi,
       ...config.context,
-      serverPublicPath: publicPath,
       preload: {},
       isServer: true,
       isClient: false,
@@ -155,10 +154,11 @@ export default function createPageRouter(options) {
       let htmlConfigs = initialState ? initialState.html : undefined
       let data = {
         ...htmlConfigs,
+        basename,
+        publicPath,
         assets,
         content,
         initialState,
-        publicPath,
         appSettings: req.clientAppSettings,
       }
 

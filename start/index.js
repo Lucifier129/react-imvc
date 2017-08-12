@@ -6,25 +6,33 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 require('babel-polyfill')
-var fetch = require('node-fetch')
-var debug = require('debug')('app:server')
-var http = require('http')
-var createExpressApp = require('../entry/server')
-var getConfig = require('../config')
-var createPageRouter = require('../page/createPageRouter')
+let fetch = require('node-fetch')
+let debug = require('debug')('app:server')
+let http = require('http')
+let createExpressApp = require('../entry/server')
+let getConfig = require('../config')
+let createPageRouter = require('../page/createPageRouter')
 
 createExpressApp = createExpressApp.default || createExpressApp
 getConfig = getConfig.default || getConfig
 createPageRouter = createPageRouter.default || createPageRouter
 
 module.exports = function start(options) {
-  var config = getConfig(options)
-  var app = createExpressApp(config)
-  var port = config.port
+  let config = getConfig(options)
+  console.log('config', config, options)
+  let app = createExpressApp(config)
+  let port = config.port
 
-  // let fetch work like in browser, if url start with '/', then fill location.origin
+  /**
+   * make fetch works like in browser
+   * when url starts with //, prepend protocol
+   * when url starts with /, prepend protocol, host and port
+  */
   global.fetch = (url, options) => {
-    if (url.indexOf('/') === 0) {
+    if (url.startsWith('//')) {
+      url = 'http:' + url
+    }
+    if (url.startsWith('/')) {
       url = `http://localhost:${port}` + url
     }
     return fetch(url, options)
@@ -39,7 +47,7 @@ module.exports = function start(options) {
    * Create HTTP server.
    */
 
-  var server = http.createServer(app)
+  let server = http.createServer(app)
   let routes = null
 
   try {
@@ -73,7 +81,7 @@ module.exports = function start(options) {
   if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
       res.status(err.status || 500)
-      var message = (err.message + '\n' + err.stack)
+      let message = (err.message + '\n' + err.stack)
         .split('\n')
         .map(item => `<p style="margin:0;padding:0">${item}</p>`)
         .join('')
@@ -100,8 +108,8 @@ module.exports = function start(options) {
    */
 
   function onListening() {
-    var addr = server.address();
-    var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+    let addr = server.address();
+    let bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
     debug('Listening on ' + bind);
     console.log('Listening on ' + bind)
   }
@@ -113,7 +121,7 @@ module.exports = function start(options) {
  */
 
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+  let port = parseInt(val, 10);
 
   if (isNaN(port)) {
     // named pipe
@@ -137,7 +145,7 @@ function onError(error) {
     throw error;
   }
 
-  var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+  let bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
