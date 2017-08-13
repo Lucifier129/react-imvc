@@ -32,7 +32,7 @@ function travelDirectoryToAddTestFiles(dir) {
 				return travelDirectoryToAddTestFiles(filename)
 			}
 			// add *test.js file to the mocha instance
-			if (filename.substr(-7) === 'test.js') {
+			if (filename.substr(-8) === '-test.js') {
 				return mocha.addFile(filename)
 			}
 		})

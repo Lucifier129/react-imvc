@@ -296,8 +296,9 @@ export default class Controller {
       location,
       isClient: context.isClient,
       isServer: context.isServer,
+      basename: context.basename,
       publicPath: context.publicPath,
-      restapi: context.restapi
+      restapi: context.restapi,
     }
 
     /**

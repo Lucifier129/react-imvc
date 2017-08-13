@@ -49,9 +49,9 @@ export default function createPageRouter(options) {
     // 生产模式直接用编译好的资源表
     let assetsPathList = [
       // 在 publish 目录下启动
-      path.join(config.cwd, config.static, config.statsPath),
+      path.join(config.root, config.static, config.statsPath),
       // 在项目根目录下启动
-      path.join(config.cwd, config.publish, config.static, config.statsPath)
+      path.join(config.root, config.publish, config.static, config.statsPath)
     ]
 
     while (assetsPathList.length) {

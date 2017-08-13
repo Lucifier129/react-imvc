@@ -103,16 +103,14 @@ export default function createExpressApp(config) {
     app.use(config.staticPath, express.static(path.join(config.root, config.publish, config.static)))
   }
 
-  if (config.NODE_ENV === 'development') {
-    app.use('/mock', (req, res, next) => {   
-      req.on('error', next)
-      res.on('error', next)
-      res.type('application/json')
+  app.use('/mock', (req, res, next) => {   
+    req.on('error', next)
+    res.on('error', next)
+    res.type('application/json')
 
-      let filePath = path.join(config.root, config.src, `${req.url}.json`)
-      fs.createReadStream(filePath).pipe(res)
-    })
-  }
+    let filePath = path.join(config.root, config.src, `${req.url}.json`)
+    fs.createReadStream(filePath).pipe(res)
+  })
 
   return app
 }
