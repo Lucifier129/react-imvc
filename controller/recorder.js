@@ -7,7 +7,7 @@ export default function setRecorder (store) {
   let index = 0
 
   function add (state) {
-    states.push(state)
+    states = states.slice(0, index + 1).concat(state)
     index = states.length - 1
   }
 

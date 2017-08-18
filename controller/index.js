@@ -3,9 +3,9 @@ import React, { Component } from 'react'
 import { createStore, createLogger } from 'relite'
 import Cookie from 'js-cookie'
 import _ from '../util'
-import createViewWrapper from './createViewWrapper'
 import setRecorder from './recorder'
-import BaseView from '../component/BaseView'
+import Provider from '../component/Provider'
+import ViewProxy from '../component/ViewProxy'
 import * as shareActions from './actions'
 
 const EmptyView = () => false
@@ -33,7 +33,7 @@ export default class Controller {
       }
     })
   }
-
+  // 补 basename 前缀
   prependBasename (pathname) {
     if (_.isAbsoluteUrl(pathname)) {
       return pathname
@@ -41,7 +41,7 @@ export default class Controller {
     let { basename } = this.context
     return basename + pathname
   }
-
+  // 补 publicPath 前缀
   prependPublicPath (pathname) {
     if (_.isAbsoluteUrl(pathname)) {
       return pathname
@@ -147,7 +147,11 @@ export default class Controller {
    * options.raw 不补全 restfulBasename 
 	 */
   fetch(url, options = {}) {
-    let { context } = this
+    let { context, API } = this
+
+    if (API && Object.prototype.hasOwnProperty.call(API, url)) {
+      return this.fetch(API[url], options)
+    }
     
     // 补全 url
     if (!options.raw) {
@@ -256,6 +260,7 @@ export default class Controller {
   }
   async init () {
     let {
+      Model,
       initialState,
       getInitialState,
       actions,
@@ -265,10 +270,18 @@ export default class Controller {
       Loading
     } = this
 
+    // 如果 Model 存在，且 initialState 和 actions 不存在，从 Model 里解构出来
+    if (Model && initialState === undefined && actions === undefined) {
+      let { initialState, ...actions } = Model
+      this.initialState = initialState
+      this.actions = actions
+      return this.init()
+    }
+
+    // 关闭 SSR 后，不执行 componentWillCreate 和 shouldComponentCreate，直接返回 Loading 界面
     if (SSR === false) {
       if (context.isServer) {
-        let View = Loading || EmptyView
-        return <View state={initialState} handlers={{}} />
+        return this.renderLoading()
       } else if (context.isClient) {
         window.__INITIAL_STATE__ = undefined
       }
@@ -326,7 +339,8 @@ export default class Controller {
 		 * 不需要再调用 shouldComponentCreate 和 componentWillCreate
 		 */
     if (globalInitialState) {
-      return this.bindStoreToView()
+      this.bindStoreToView()
+      return this.render()
     }
 
     let promiseList = []
@@ -355,46 +369,57 @@ export default class Controller {
     }
 
     if (promiseList.length) {
-      await Promise.all(promiseList)
+      try {
+        await Promise.all(promiseList)
+      } catch(error) {
+        return this.renderLoading()
+      }
     }
 
-    return this.bindStoreToView()
+    this.bindStoreToView()
+
+    return this.render()
   }
-  bindStoreToView () {
-    let { context, store, location, View, history } = this
+  bindStoreToView() {
+    let {
+      context,
+      store,
+      location,
+      history
+    } = this
 
     // bind store to view in client
-    if (context.isClient) {
+    if (!context.isClient) {
+      return
+    }
+
+    let unsubscribeList = []
+
+    if (store) {
       this.logger = createLogger({
         name: this.name || location.pattern
       })
-      let unsubscribeList = []
       let unsubscribe = store.subscribe(this.subscriber.bind(this))
       unsubscribeList.push(unsubscribe)
-
-      // 监听路由跳转
-      if (this.pageWillLeave) {
-        let unlisten = history.listenBefore(this.pageWillLeave.bind(this))
-        unsubscribeList.push(unlisten)
-      }
-
-      // 监听浏览器窗口关闭
-      if (this.windowWillUnload) {
-        let unlisten = history.listenBeforeUnload(
-          this.windowWillUnload.bind(this)
-        )
-        unsubscribeList.push(unlisten)
-      }
-
-      this.unsubscribeList = unsubscribeList
-
       setRecorder(store)
-      window.scrollTo(0, 0)
     }
 
-    this.ViewWrapper = createViewWrapper(this)
+    // 监听路由跳转
+    if (this.pageWillLeave) {
+      let unlisten = history.listenBefore(this.pageWillLeave.bind(this))
+      unsubscribeList.push(unlisten)
+    }
 
-    return this.render()
+    // 监听浏览器窗口关闭
+    if (this.windowWillUnload) {
+      let unlisten = history.listenBeforeUnload(
+        this.windowWillUnload.bind(this)
+      )
+      unsubscribeList.push(unlisten)
+    }
+
+    this.unsubscribeList = unsubscribeList
+    window.scrollTo(0, 0)
   }
   destroy () {
     if (this.unsubscribeList) {
@@ -402,9 +427,15 @@ export default class Controller {
       this.unsubscribeList = null
     }
   }
+  renderLoading() {
+    let { Loading, store, handlers } = this
+    let View = Loading || EmptyView
+    let state = store ? store.getState() : null
+    return <View state={state} handlers={handlers || {}} />
+  }
   render () {
     let {
-      ViewWrapper,
+      View,
       store,
       handlers,
       location,
@@ -423,9 +454,10 @@ export default class Controller {
       handlers,
     }
     return (
-      <BaseView context={componentContext}>
-        <ViewWrapper state={state} handlers={handlers} />
-      </BaseView>
+      <Provider context={componentContext}>
+        <View state={state} handlers={handlers} actions={store.actions} />
+        <ViewProxy key={location.raw} controller={this} />
+      </Provider>
     )
   }
 }

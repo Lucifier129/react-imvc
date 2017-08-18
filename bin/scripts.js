@@ -9,7 +9,7 @@ switch (script) {
   case 'build':
   case 'start':
   case 'test':
-    result = spawn.sync('node', [require.resolve('../scripts/' + script)].concat(args), {
+    result = spawn.sync('node', args.concat(require.resolve('../scripts/' + script)), {
       stdio: 'inherit'
     })
     break

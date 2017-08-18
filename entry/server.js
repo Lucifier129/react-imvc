@@ -52,7 +52,7 @@ export default function createExpressApp(config) {
   )
 
   // view engine setup
-  app.set('views', path.join(config.root, config.routesPath))
+  app.set('views', path.join(config.root, config.routes))
   app.set('view engine', 'js')
 
   // handle default props
@@ -96,14 +96,39 @@ export default function createExpressApp(config) {
 
     // 开发模式里，用 src 里的静态资源
     app.use(config.staticPath, express.static(path.join(config.root, config.src)))
+
+    // 开发模式用 webpack-dev-middleware 获取 assets
+    app.use((req, res, next) => {
+      req.assets = getAssets(res.locals.webpackStats.toJson().assetsByChunkName)
+      next()
+    })
+
+    // 开发模式下，代理一个静态入口文件
+    let createStaticEntry = require('../build/createStaticEntry')
+    createStaticEntry = createStaticEntry.default || createStaticEntry
+    app.use(`${config.staticPath}/${config.staticEntry}`, (req, res, next) => {
+      try {
+        let html = createStaticEntry(config, req.assets)
+        res.send(html)
+      } catch (error) {
+        next(error)
+      }
+    })
   } else {
     // publish 目录启动
     app.use(config.staticPath, express.static(path.join(config.root, config.static)))
-      // 在根目录启动
+    
+    // 在根目录启动
     app.use(config.staticPath, express.static(path.join(config.root, config.publish, config.static)))
+
+    let assets = readAssets(config)
+    app.use((req, res, next) => {
+      req.assets = assets
+      next()
+    })
   }
 
-  app.use('/mock', (req, res, next) => {   
+  app.use('/mock', (req, res, next) => {
     req.on('error', next)
     res.on('error', next)
     res.type('application/json')
@@ -113,4 +138,37 @@ export default function createExpressApp(config) {
   })
 
   return app
+}
+
+function getAssets(stats) {
+  return Object.keys(stats).reduce((result, assetName) => {
+    let value = stats[assetName]
+    result[assetName] = Array.isArray(value) ? value[0] : value
+    return result
+  }, {})
+}
+
+function readAssets(config) {
+  let result
+    // 生产模式直接用编译好的资源表
+  let assetsPathList = [
+    // 在 publish 目录下启动
+    path.join(config.root, config.static, config.statsPath),
+    // 在项目根目录下启动
+    path.join(config.root, config.publish, config.static, config.statsPath)
+  ]
+
+  while (assetsPathList.length) {
+    try {
+      result = require(assetsPathList.shift())
+    } catch (error) {
+      // ignore error
+    }
+  }
+
+  if (!result) {
+    throw new Error('找不到 webpack 资源表 stats.json')
+  }
+
+  return getAssets(result)
 }

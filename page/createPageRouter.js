@@ -6,16 +6,10 @@ import ReactDOMServer from 'react-dom/server'
 import createApp from 'create-app/lib/server'
 import util from '../util'
 
-const { getFlatList } = util
-
+const {
+  getFlatList
+} = util
 const commonjsLoader = module => module.default || module
-const getAssets = stats => {
-  return Object.keys(stats).reduce((result, assetName) => {
-    let value = stats[assetName]
-    result[assetName] = Array.isArray(value) ? value[0] : value
-    return result
-  }, {})
-}
 
 export default function createPageRouter(options) {
   let config = Object.assign({}, options)
@@ -37,43 +31,14 @@ export default function createPageRouter(options) {
   }
 
   let app = createApp(serverAppSettings)
-  let assets = null
-
-  if (config.webpackDevMiddleware) {
-    // 开发模式用 webpack-dev-middleware 获取 assets
-    router.use((req, res, next) => {
-      assets = getAssets(res.locals.webpackStats.toJson().assetsByChunkName)
-      next()
-    })
-  } else {
-    // 生产模式直接用编译好的资源表
-    let assetsPathList = [
-      // 在 publish 目录下启动
-      path.join(config.root, config.static, config.statsPath),
-      // 在项目根目录下启动
-      path.join(config.root, config.publish, config.static, config.statsPath)
-    ]
-
-    while (assetsPathList.length) {
-      try {
-        assets = require(assetsPathList.shift())
-      } catch (error) {
-        // ignore error
-      }
-    }
-
-    if (!assets) {
-      throw new Error('找不到 webpack 资源表 stats.json')
-    }
-    
-    assets = getAssets(assets)
-  }
-
   let layoutView = config.layout || path.join(__dirname, 'view')
 
   // 添加浏览器端 app 配置
   let attachClientAppSettings = (req, res, next) => {
-    let { basename, publicPath } = req
+    let {
+      basename,
+      publicPath
+    } = req
     let context = {
       basename,
       publicPath,
@@ -86,6 +51,7 @@ export default function createPageRouter(options) {
       type: 'createHistory',
       basename,
       context,
+      ...config.appSettings,
     }
 
     next()
@@ -96,11 +62,14 @@ export default function createPageRouter(options) {
   // 纯浏览器端渲染模式，用前置中间件拦截所有请求
   if (config.SSR === false) {
     router.all('*', (req, res) => {
-      let { basename, publicPath } = req
+      let {
+        basename,
+        publicPath
+      } = req
       res.render(layoutView, {
         basename,
         publicPath,
-        assets: assets,
+        assets: req.assets,
         appSettings: req.clientAppSettings
       })
     })
@@ -122,7 +91,11 @@ export default function createPageRouter(options) {
 
   // handle page
   router.all('*', async(req, res, next) => {
-    let { basename, serverPublicPath, publicPath } = req
+    let {
+      basename,
+      serverPublicPath,
+      publicPath
+    } = req
     let context = {
       basename,
       serverPublicPath,
@@ -156,9 +129,9 @@ export default function createPageRouter(options) {
         ...htmlConfigs,
         basename,
         publicPath,
-        assets,
         content,
         initialState,
+        assets: req.assets,
         appSettings: req.clientAppSettings,
       }
 

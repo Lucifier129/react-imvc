@@ -140,7 +140,7 @@ module.exports = function createWebpackClientConfig(options) {
         openAnalyzer: true,
         // Analyzer HTTP-server port
         analyzerPort: 8090
-      }, bundleAnalyzer))
+      }, config.bundleAnalyzer))
     ])
   }
 

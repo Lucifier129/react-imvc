@@ -6,9 +6,10 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 require('babel-polyfill')
+let path = require('path')
+let http = require('http')
 let fetch = require('node-fetch')
 let debug = require('debug')('app:server')
-let http = require('http')
 let createExpressApp = require('../entry/server')
 let getConfig = require('../config')
 let createPageRouter = require('../page/createPageRouter')
@@ -51,8 +52,9 @@ module.exports = function start(options) {
   let routes = null
 
   try {
-    routes = require(path.join(config.root, config.routesPath))
+    routes = require(path.join(config.root, config.routes))
   } catch (error) {
+    console.log('error', error)
     // ignore error
   }
 

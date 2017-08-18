@@ -13,7 +13,7 @@ export default class Input extends Component {
     as: 'input',
     type: 'text',
     name: '',
-    actionType: 'UPDATE_INPUT_VALUE'
+    actionType: 'UPDATE_STATE_BY_PATH'
   };
   render () {
     let { state } = this.context
@@ -39,9 +39,8 @@ export default class Input extends Component {
   getAction () {
     return this.context.actions[this.props.actionType]
   }
-  setGlobalState (newState) {
-    let CALL_ACTION = this.getAction()
-    CALL_ACTION(newState)
+  callAction (actionPayload) {
+    this.getAction()(actionPayload)
   }
   handleChange = event => {
     let { state, handleInputChange } = this.context
@@ -53,13 +52,15 @@ export default class Input extends Component {
     if (typeof transformer === 'function') {
       currentValue = transformer(currentValue, oldValue)
     }
+
     if (handleInputChange) {
       currentValue = handleInputChange(path, currentValue, oldValue)
     }
     
-    let newState = setValueByPath(state, path, currentValue)
-
-    this.setGlobalState(newState)
+    this.callAction({
+      [path]: currentValue,
+    })
+    
     onChange && onChange(event)
   };
   handleFocus = event => {
@@ -70,9 +71,9 @@ export default class Input extends Component {
     if (!isWarn) {
       return
     }
-    let newState = setValueByPath(state, path, false)
-
-    this.setGlobalState(newState)
+    this.callAction({
+      [path]: false,
+    })
     onFocus && onFocus(event)
   };
   handleBlur = event => {
@@ -80,14 +81,11 @@ export default class Input extends Component {
     let { name, onBlur, check } = this.props
     let pathOfValidState = `${name}.isValid`
     let pathOfWranState = `${name}.isWarn`
-
     let isValidValue = check(event.currentTarget.value)
-    let newState = state
-
-    newState = setValueByPath(newState, pathOfValidState, isValidValue)
-    newState = setValueByPath(newState, pathOfWranState, !isValidValue)
-
-    this.setGlobalState(newState)
+    this.callAction({
+      [pathOfValidState]: isValidValue,
+      [pathOfWranState]: !isValidValue,
+    })
     onBlur && onBlur(event)
   };
 }
