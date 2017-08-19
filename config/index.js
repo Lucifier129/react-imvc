@@ -10,14 +10,19 @@
 	options = options || {}
 	
 	try {
-		if (typeof options.config === 'object') {
-			config = Object.assign(config, options.config)
-		} else {
-			let configFile = options.config || 'imvc.config.js'
-			let customConfig = require(path.resolve(configFile))
-			customConfig = customConfig.default || customConfig
-			config = Object.assign(config, customConfig)
+		let customConfig
+		switch (typeof options.config) {
+			case 'object':
+				customConfig = options.config
+				break
+			case 'string':
+				customConfig = require(path.resolve(options.config))
+				customConfig = customConfig.default || customConfig
+				break
+			default:
+				customConfig = require(path.resolve('package.json')).config
 		}
+		Object.assign(config, customConfig)
 	} catch(error) {
 		console.log('error', error)
 		// ignore error

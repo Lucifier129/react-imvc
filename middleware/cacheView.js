@@ -1,7 +1,6 @@
 /**
  * 缓存视图-中间件
  */
-var _ = require('lodash')
 var createCache = require('./createCache')
 
 var defaults = {
@@ -20,7 +19,7 @@ module.exports = function cacheView (settings) {
   if (process.env.NODE_ENV !== 'production') {
     return callNext
   }
-  settings = _.extend({}, defaults, settings)
+  settings = Object.assign({}, defaults, settings)
 
   var cache = createCache()
   var addCache = (cacheKey, res) => (error, cacheContent) => {

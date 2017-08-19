@@ -40,10 +40,11 @@ module.exports = function createWebpackClientConfig(options) {
       'create-app',
       'classnames',
       'querystring',
-      'fetch-ie8',
+      config.fetchIE8 ? 'fetch-ie8' : 'whatwg-fetch',
       'js-cookie',
       path.join(__dirname, '../polyfill'),
       path.join(__dirname, '../component'),
+      path.join(__dirname, '../connect'),
       path.join(__dirname, '../controller'),
       path.join(__dirname, '../util'),
     ]

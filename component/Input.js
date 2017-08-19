@@ -13,7 +13,7 @@ export default class Input extends Component {
     as: 'input',
     type: 'text',
     name: '',
-    actionType: 'UPDATE_STATE_BY_PATH'
+    actionType: 'UPDATE_INPUT_VALUE'
   };
   render () {
     let { state } = this.context

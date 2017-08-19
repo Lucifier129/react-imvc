@@ -96,6 +96,9 @@ export default {
 	// node.js 的环境变量
 	NODE_ENV: NODE_ENV,
 
+	// 是否用 fetch-ie8
+	fetchIE8: true,
+
 	// IMVC 的 layout 组件所在的路径
 	layout: '',
 	// React SSR 时采用的渲染模式：renderToString || renderToStaticMarkup

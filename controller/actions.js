@@ -20,3 +20,5 @@ export let UPDATE_STATE_BY_PATH = (state, payload) => {
 		state
 	)
 }
+
+export let UPDATE_INPUT_VALUE = UPDATE_STATE_BY_PATH

@@ -17,8 +17,12 @@ const EmptyView = () => false
  * 提供 fetch 方法
  */
 export default class Controller {
-  View = View;
+  View = EmptyView;
   constructor (location, context) {
+    this.meta = {
+      isDestroyed: false,
+      unsubscribeList: null,
+    }
     this.location = location
     this.context = context
     this.handlers = {}
@@ -247,17 +251,6 @@ export default class Controller {
     })
     return Promise.all(list)
   }
-  subscriber(data) {
-    let { context, logger } = this
-    if (context.isServer) {
-      return
-    }
-    logger(data)
-    this.refreshView()
-    if (this.stateDidChange) {
-      this.stateDidChange(data)
-    }
-  }
   async init () {
     let {
       Model,
@@ -339,7 +332,7 @@ export default class Controller {
 		 * 不需要再调用 shouldComponentCreate 和 componentWillCreate
 		 */
     if (globalInitialState) {
-      this.bindStoreToView()
+      this.bindStoreWithView()
       return this.render()
     }
 
@@ -376,30 +369,37 @@ export default class Controller {
       }
     }
 
-    this.bindStoreToView()
+    this.bindStoreWithView()
 
     return this.render()
   }
-  bindStoreToView() {
+  bindStoreWithView() {
     let {
       context,
       store,
       location,
-      history
+      history,
+      meta
     } = this
 
-    // bind store to view in client
-    if (!context.isClient) {
+    // bind store with view in client
+    if (!context.isClient || meta.isDestroyed) {
       return
     }
 
     let unsubscribeList = []
 
     if (store) {
-      this.logger = createLogger({
+      let logger = createLogger({
         name: this.name || location.pattern
       })
-      let unsubscribe = store.subscribe(this.subscriber.bind(this))
+      let unsubscribe = store.subscribe(data => {
+        logger(data)
+        this.refreshView()
+        if (this.stateDidChange) {
+          this.stateDidChange(data)
+        }
+      })
       unsubscribeList.push(unsubscribe)
       setRecorder(store)
     }
@@ -417,21 +417,21 @@ export default class Controller {
       )
       unsubscribeList.push(unlisten)
     }
-
-    this.unsubscribeList = unsubscribeList
+    meta.unsubscribeList = unsubscribeList
     window.scrollTo(0, 0)
   }
   destroy () {
-    if (this.unsubscribeList) {
-      this.unsubscribeList.forEach(unsubscribe => unsubscribe())
-      this.unsubscribeList = null
+    let { meta } = this
+    if (meta.unsubscribeList) {
+      meta.unsubscribeList.forEach(unsubscribe => unsubscribe())
+      meta.unsubscribeList = null
     }
+    meta.isDestroyed = true
   }
   renderLoading() {
-    let { Loading, store, handlers } = this
+    let { Loading } = this
     let View = Loading || EmptyView
-    let state = store ? store.getState() : null
-    return <View state={state} handlers={handlers || {}} />
+    return <View />
   }
   render () {
     let {
@@ -460,8 +460,4 @@ export default class Controller {
       </Provider>
     )
   }
-}
-
-function View () {
-  return false
 }
