@@ -13,7 +13,7 @@ export default class ViewProxy extends React.Component {
 			html
 		} = controller.store.getState()
 
-		if (html && html.title && html.title !== document.title) {
+		if (html && html.title !== document.title) {
 			document.title = html.title
 		}
 	}

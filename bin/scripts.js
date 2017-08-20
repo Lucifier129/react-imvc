@@ -1,15 +1,19 @@
 #!/usr/bin/env node
 
+var querystring = require('query-string')
 var spawn = require('cross-spawn')
-var script = process.argv[2]
+var command = process.argv[2]
 var args = process.argv.slice(3)
+var [script, params=''] = command.split('?')
+var query = querystring.parse(params)
+var params = Object.keys(query).map(key => query[key] ? `--${key}=${query[key]}` : `--${key}`)
 var result
 
 switch (script) {
   case 'build':
   case 'start':
   case 'test':
-    result = spawn.sync('node', args.concat(require.resolve('../scripts/' + script)), {
+    result = spawn.sync('node', params.concat(require.resolve('../scripts/' + script), args), {
       stdio: 'inherit'
     })
     break

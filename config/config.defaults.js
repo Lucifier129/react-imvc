@@ -39,7 +39,7 @@ export default {
 	// 默认的 restapi basename
 	restapi: '',
 	// webpack 资源表所在的路径，相对于 webpack 的 output.path
-	statsPath: '../stats.json',
+	assetsPath: '../assets.json',
 	// webpack output 配置
 	output: {},
 	// webpack entry 配置
@@ -62,6 +62,9 @@ export default {
 	},
 	// webpack 插件配置
 	webpackPlugins: [],
+
+	// cookie-parser options
+	cookieParser: {},
 
 	// express 中间件 helmet 配置
 	helmet: {

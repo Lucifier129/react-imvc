@@ -24,7 +24,6 @@
 		}
 		Object.assign(config, customConfig)
 	} catch(error) {
-		console.log('error', error)
 		// ignore error
 	}
 

@@ -69,7 +69,7 @@ module.exports = function createWebpackClientConfig(options) {
   var output = Object.assign(defaultOutput, config.output)
 
   var plugins = [
-    new StatsPlugin(config.statsPath),
+    new StatsPlugin(config.assetsPath),
     // new webpack.optimize.OccurrenceOrderPlugin(false),
     // extract vendor chunks for better caching
     new webpack.optimize.CommonsChunkPlugin({

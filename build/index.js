@@ -1,3 +1,4 @@
+var fs = require('fs')
 var path = require('path')
 var gulp = require('gulp')
 var webpack = require('webpack')
