@@ -47,31 +47,29 @@ function isThenable(obj) {
   return obj != null && typeof obj.then === "function";
 }
 
+const path_separator_regexp = /\.|\/|:/
+const updateItem = (list, key, index, path) => {
+  if (index === path.length - 1) {
+    list[index][key] = value;
+  } else {
+    let target = list[index][key];
+    if (Array.isArray(target)) {
+      target = target.concat();
+    } else {
+      target = { ...target };
+    }
+    list[index][key] = target;
+    list.push(target);
+  }
+  return list;
+}
 function setValueByPath(obj, path, value) {
-  path = !Array.isArray(path) ? path.split(/\.|\//) : path;
-  let list = path.reduce(
-    (list, key, index) => {
-      if (index === path.length - 1) {
-        list[index][key] = value;
-      } else {
-        let target = list[index][key];
-        if (Array.isArray(target)) {
-          target = target.concat();
-        } else {
-          target = { ...target };
-        }
-        list[index][key] = target;
-        list.push(target);
-      }
-      return list;
-    },
-    [{ ...obj }]
-  );
-
+  path = !Array.isArray(path) ? path.split(path_separator_regexp) : path;
+  let list = path.reduce(updateItem, [{ ...obj }]);
   return list[0];
 }
 
 function getValueByPath(obj, path) {
-  path = !Array.isArray(path) ? path.split(/\.|\//) : path;
+  path = !Array.isArray(path) ? path.split(path_separator_regexp) : path;
   return path.reduce((ret, key) => ret[key], obj);
 }

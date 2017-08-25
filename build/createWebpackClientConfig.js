@@ -44,7 +44,6 @@ module.exports = function createWebpackClientConfig(options) {
       'js-cookie',
       path.join(__dirname, '../polyfill'),
       path.join(__dirname, '../component'),
-      path.join(__dirname, '../connect'),
       path.join(__dirname, '../controller'),
       path.join(__dirname, '../util'),
     ]

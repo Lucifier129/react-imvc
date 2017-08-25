@@ -8,7 +8,6 @@ export default class OuterClickWrapper extends Component {
     } else if (document.attachEvent) {
       document.attachEvent('onclick', this.handleOutterClick)
     }
-    
   }
   componentWillUnmount () {
     if (document.removeEventListener) {
@@ -17,7 +16,6 @@ export default class OuterClickWrapper extends Component {
       document.detachEvent('onclick', this.handleOutterClick)
     }
   }
-
   // 结点是否包含结点
   contains (rootNode, node) {
     if (typeof rootNode.contains === 'function') {
@@ -29,7 +27,6 @@ export default class OuterClickWrapper extends Component {
       }
       node = node.parentNode
     }
-
     return false
   }
   handleOutterClick = event => {

@@ -14,13 +14,3 @@ function PreloadStyle (props) {
     <div dangerouslySetInnerHTML={html} />
   )
 }
-
-// function PreloadStyle (props) {
-//   return (
-//     <style
-//       type='text/css'
-//       data-preload={props['data-preload']}
-//       dangerouslySetInnerHTML={{ __html: props.children }}
-//     />
-//   )
-// }

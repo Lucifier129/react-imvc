@@ -1,7 +1,7 @@
 import React from 'react'
 
-const identity = x => x
-const connect = (selector=identity) => InputComponent => {
+const returnNull = () => null
+const connect = (selector=returnNull) => InputComponent => {
 	return class Connector extends React.PureComponent {
 		static contextTypes = {
 			state: React.PropTypes.object,
@@ -10,10 +10,10 @@ const connect = (selector=identity) => InputComponent => {
 		}
 		constructor(props, context) {
 			super(props, context)
-			this.state = {...selector(context)}
+			this.state = {...selector({...context, props})}
 		}
 		componentWillReceiveProps(nextProps, nextContext) {
-			this.setState({...selector(nextContext)})
+			this.setState({...selector({...nextContext, props: nextProps })})
 		}
 		render() {
 			return <InputComponent {...this.state} {...this.props} />

@@ -65,14 +65,14 @@ export default class Controller {
 		 * 让浏览器自动匹配协议，支持 Https
 		 */
     if (_.isAbsoluteUrl(url)) {
-      if (context.isClient && url.indexOf('http:') === 0) {
+      if (context.isClient && url.startsWith('http:')) {
         url = url.replace('http:', '')
       }
       return url
     }
 
     // 对 mock 的请求进行另一种拼接，转到 node.js 服务去
-    if (url.indexOf('/mock/') === 0) {
+    if (url.startsWith('/mock/')) {
       return this.prependBasename(url)
     }
 
@@ -153,6 +153,9 @@ export default class Controller {
   fetch(url, options = {}) {
     let { context, API } = this
 
+    /**
+     * API shortcut，方便 fetch(name, options) 代替 url
+     */
     if (API && Object.prototype.hasOwnProperty.call(API, url)) {
       return this.fetch(API[url], options)
     }
@@ -274,7 +277,8 @@ export default class Controller {
     // 关闭 SSR 后，不执行 componentWillCreate 和 shouldComponentCreate，直接返回 Loading 界面
     if (SSR === false) {
       if (context.isServer) {
-        return this.renderLoading()
+        let View = Loading || EmptyView
+        return <View />
       } else if (context.isClient) {
         window.__INITIAL_STATE__ = undefined
       }
@@ -362,11 +366,7 @@ export default class Controller {
     }
 
     if (promiseList.length) {
-      try {
-        await Promise.all(promiseList)
-      } catch(error) {
-        return this.renderLoading()
-      }
+      await Promise.all(promiseList)
     }
 
     this.bindStoreWithView()
@@ -427,11 +427,6 @@ export default class Controller {
       meta.unsubscribeList = null
     }
     meta.isDestroyed = true
-  }
-  renderLoading() {
-    let { Loading } = this
-    let View = Loading || EmptyView
-    return <View />
   }
   render () {
     let {

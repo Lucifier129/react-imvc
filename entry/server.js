@@ -129,11 +129,8 @@ export default function createExpressApp(config) {
   }
 
   app.use('/mock', (req, res, next) => {
-    req.on('error', next)
-    res.on('error', next)
-    res.type('application/json')
-
     let filePath = path.join(config.root, config.src, `${req.url}.json`)
+    res.type('application/json')
     fs.createReadStream(filePath).pipe(res)
   })
 
