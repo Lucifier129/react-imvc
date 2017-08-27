@@ -1,19 +1,20 @@
+process.env.NODE_ENV = process.env.NODE_ENV || 'production'
+
 var fs = require('fs')
+var del = require('del')
 var path = require('path')
 var gulp = require('gulp')
 var webpack = require('webpack')
+var start = require('../start')
 var getConfig = require('../config')
 var createGulpTask = require('./createGulpTask')
 var createWebpackClientConfg = require('./createWebpackClientConfig')
-var createStaticEntry = require('./createStaticEntry')
-var del = require('del')
 
-createStaticEntry = createStaticEntry.default || createStaticEntry
 getConfig = getConfig.default || getConfig
 
 module.exports = function build(options) {
 	var config = getConfig(options)
-	Promise.resolve()
+	return Promise.resolve()
 		.then(() => delPublish(path.join(config.root, config.publish)))
 		.then(() => startGulp(config))
 		.then(() => startWebpack(config))
@@ -57,12 +58,36 @@ function startGulp(config) {
 	})
 }
 
-function startStaticEntry(config) {
+async function startStaticEntry(config) {
+	if (!config.staticEntry) {
+		return
+	}
 	console.log(`start generating static entry file`)
-	let staticEntry = createStaticEntry(config)
+
+	var staticEntryConfig = {
+		...config,
+		root: path.join(config.root, config.publish),
+		publicPath: config.publicPath || '.',
+		appSettings: {
+			...config.appSettings,
+			type: 'createHashHistory',
+		},
+		SSR: false,
+	}
+
+	var {server} = await start({
+		config: staticEntryConfig
+	})
+
+	var url = `http://localhost:${config.port}`
+	var response = await fetch(url)
+	var html = await response.text()
 	let staticEntryPath = path.join(config.root, config.publish, config.static, config.staticEntry)
+
+	server.close()
+
 	return new Promise((resolve, reject) => {
-		fs.writeFile(staticEntryPath, staticEntry, error => {
+		fs.writeFile(staticEntryPath, html, error => {
 			error ? reject(error) : resolve()
 		})
 	})

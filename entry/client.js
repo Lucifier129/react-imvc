@@ -19,15 +19,17 @@ const logRenderStart = () => {
 }
 
 const logRenderEnd = () => {
-  window.console && console.timeEnd && console.timeEnd('React#render')
+  // ReactDOM.render 未必立即更新，故异步 log End
+  setTimeout(() => {
+    window.console && console.timeEnd && console.timeEnd('React#render')
+  }, 0)
 }
 
 const viewEngine = {
-  render (component, container) {
+  render (virtualDOM, container) {
     logRenderStart()
-    let result = ReactDOM.render(component, container)
-    setTimeout(logRenderEnd, 0) // ReactDOM.render 未必立即更新，故异步 log End
-    return result
+    ReactDOM.render(virtualDOM, container)
+    logRenderEnd()
   }
 }
 
@@ -36,9 +38,9 @@ const routes = util.getFlatList(
 )
 
 const appSettings = {
-  ...__APP_SETTINGS__,
   hashType: 'hashbang',
   container: '#root',
+  ...__APP_SETTINGS__,
   context: {
     preload: {},
     ...__APP_SETTINGS__.context,

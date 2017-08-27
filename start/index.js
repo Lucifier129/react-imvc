@@ -1,28 +1,29 @@
 /**
  * node server start file
  */
-if (process.env.NODE_ENV !== 'development') {
-  process.env.NODE_ENV = 'production'
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = "production";
 }
 
-require('babel-polyfill')
-let path = require('path')
-let http = require('http')
-let fetch = require('node-fetch')
-let debug = require('debug')('app:server')
-let createExpressApp = require('../entry/server')
-let getConfig = require('../config')
-let createPageRouter = require('../page/createPageRouter')
+require("babel-polyfill");
 
-createExpressApp = createExpressApp.default || createExpressApp
-getConfig = getConfig.default || getConfig
-createPageRouter = createPageRouter.default || createPageRouter
+let path = require("path");
+let http = require("http");
+let fetch = require("node-fetch");
+let debug = require("debug")("app:server");
+let createExpressApp = require("../entry/server");
+let getConfig = require("../config");
+let createPageRouter = require("../page/createPageRouter");
+
+createExpressApp = createExpressApp.default || createExpressApp;
+getConfig = getConfig.default || getConfig;
+createPageRouter = createPageRouter.default || createPageRouter;
 
 module.exports = function start(options) {
-  let config = getConfig(options)
-  console.log('config', config, options)
-  let app = createExpressApp(config)
-  let port = config.port
+  let config = getConfig(options);
+  console.log("config", config, options);
+  let app = createExpressApp(config);
+  let port = config.port;
 
   /**
    * make fetch works like in browser
@@ -30,80 +31,65 @@ module.exports = function start(options) {
    * when url starts with /, prepend protocol, host and port
   */
   global.fetch = (url, options) => {
-    if (url.startsWith('//')) {
-      url = 'http:' + url
+    if (url.startsWith("//")) {
+      url = "http:" + url;
     }
-    if (url.startsWith('/')) {
-      url = `http://localhost:${port}` + url
+    if (url.startsWith("/")) {
+      url = `http://localhost:${port}${url}`;
     }
-    return fetch(url, options)
-  }
+    return fetch(url, options);
+  };
 
   /**
    * set port from environment and store in Express.
    */
-  app.set('port', port)
+  app.set("port", port);
 
   /**
    * Create HTTP server.
    */
 
-  let server = http.createServer(app)
-  let routes = null
+  let server = http.createServer(app);
 
+  // get server routes
   try {
-    routes = require(path.join(config.root, config.routes))
+    let routes = require(path.join(config.root, config.routes));
+    Object.keys(routes).forEach(key => {
+      let route = routes[key];
+      if (typeof route === "function") {
+        route(app, server);
+      }
+    });
   } catch (error) {
-    console.log('error', error)
     // ignore error
   }
 
-  if (routes) {
-    Object.keys(routes).forEach(key => {
-      let route = routes[key]
-      if (typeof route === 'function') {
-        route(app, server)
-      }
-    })
-  }
-
-  app.use(createPageRouter(config))
+  app.use(createPageRouter(config));
 
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
-    const err = new Error('Not Found')
-    err.status = 404
-    next(err)
-  })
+    const err = new Error("Not Found");
+    err.status = 404;
+    res.render("404", err);
+  });
 
   // error handlers
 
   // development error handler
   // will print stacktrace
-  if (app.get('env') === 'development') {
+  if (app.get("env") === "development") {
     app.use(function(err, req, res, next) {
-      res.status(err.status || 500)
-      let message = (err.message + '\n' + err.stack)
-        .split('\n')
-        .map(item => `<p style="margin:0;padding:0">${item}</p>`)
-        .join('')
-      res.send(message)
-    })
+      res.status(err.status || 500);
+      res.send(err.stack);
+    });
   }
 
   // production error handler
   // no stacktraces leaked to user
   app.use(function(err, req, res, next) {
-    res.status(err.status || 500)
-    res.json(err.message)
-  })
-
-  /**
-   * Listen on provided port, on all network interfaces.
-   */
-  server.listen(port)
-  server.on('error', onError)
-  server.on('listening', onListening)
+    res.status(err.status || 500);
+    res.json(err.message);
+  });
 
   /**
    * Event listener for HTTP server "listening" event.
@@ -111,12 +97,22 @@ module.exports = function start(options) {
 
   function onListening() {
     let addr = server.address();
-    let bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-    debug('Listening on ' + bind);
-    console.log('Listening on ' + bind)
+    let bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
+    debug("Listening on " + bind);
+    console.log("Listening on " + bind);
   }
-}
 
+  return new Promise((resolve, reject) => {
+    /**
+   * Listen on provided port, on all network interfaces.
+   */
+    server.listen(port);
+    server.on("error", onError);
+    server.on("listening", onListening);
+    server.on("error", reject);
+    server.on("listening", () => resolve({ server, app }));
+  });
+};
 
 /**
  * Normalize a port into a number, string, or false.
@@ -143,20 +139,20 @@ function normalizePort(val) {
  */
 
 function onError(error) {
-  if (error.syscall !== 'listen') {
+  if (error.syscall !== "listen") {
     throw error;
   }
 
-  let bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+  let bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+    case "EACCES":
+      console.error(bind + " requires elevated privileges");
       process.exit(1);
       break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+    case "EADDRINUSE":
+      console.error(bind + " is already in use");
       process.exit(1);
       break;
     default:

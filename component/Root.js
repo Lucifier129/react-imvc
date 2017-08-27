@@ -1,11 +1,10 @@
 import React from 'react'
 
 /**
- * BaesView 组件
- * 映射 React Component 的生命周期方法
+ * Root 组件
  * 传递 React Component 的 context 对象
  */
-export default class Provider extends React.Component {
+export default class Root extends React.Component {
   static childContextTypes = {
     location: React.PropTypes.object,
     history: React.PropTypes.object,

@@ -10,11 +10,14 @@ export default class Link extends Component {
   };
   render () {
     let { basename = '' } = this.context.location
-    let { to, children, replace, as, ...others } = this.props
+    let { to, href, children, replace, back, forward, go, as, ...others } = this.props
     let Tag = as
 
     if (Tag === 'a') {
       let targetPath = to ? `${basename}${to}` : null
+      if (!targetPath && href) {
+        targetPath = href
+      }
       return (
         <a {...others} href={targetPath} onClick={this.handleClick}>
           {children}
@@ -29,17 +32,23 @@ export default class Link extends Component {
     )
   }
   handleClick = event => {
-    let { onClick, replace, to } = this.props
+    let { onClick, replace, back, forward, go, to } = this.props
     let { history, location } = this.context
     onClick && onClick(event)
-    if (!to) {
-      return
-    }
-    event.preventDefault()
-    if (replace === true) {
-      history.replace(to)
-    } else {
-      history.push(to)
+
+    if (back) {
+      history.goBack()
+    } else if (forward) {
+      history.goForward()
+    } else if (go) {
+      history.go(go)
+    } else if (to) {
+      event.preventDefault()
+      if (replace === true) {
+        history.replace(to)
+      } else {
+        history.push(to)
+      }
     }
   };
 }

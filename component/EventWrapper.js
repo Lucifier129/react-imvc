@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 
+const isHandler = key => /^on[A-Z]+/.test(key)
+
 export default class EventWrapper extends Component {
   static defaultProps = {
     as: 'div',
@@ -15,7 +17,7 @@ export default class EventWrapper extends Component {
     } = this.props
     const { handlers } = this.context
     for (let key in props) {
-      if (/^on[A-Z]+/.test(key)) {
+      if (isHandler(key)) {
         const handler = handlers[props[key]]
         if ('function' === typeof handler) {
           props[key] = handler
