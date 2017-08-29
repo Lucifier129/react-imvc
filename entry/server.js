@@ -102,18 +102,6 @@ export default function createExpressApp(config) {
       req.assets = getAssets(res.locals.webpackStats.toJson().assetsByChunkName)
       next()
     })
-
-    // 开发模式下，代理一个静态入口文件
-    let createStaticEntry = require('../build/createStaticEntry')
-    createStaticEntry = createStaticEntry.default || createStaticEntry
-    app.use(`${config.staticPath}/${config.staticEntry}`, (req, res, next) => {
-      try {
-        let html = createStaticEntry(config, req.assets)
-        res.send(html)
-      } catch (error) {
-        next(error)
-      }
-    })
   } else {
     // publish 目录启动
     app.use(config.staticPath, express.static(path.join(config.root, config.static)))

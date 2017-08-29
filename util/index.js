@@ -62,29 +62,19 @@ function isThenable(obj) {
 }
 
 const path_separator_regexp = /\.|\/|:/;
+const getPath = path =>
+  !Array.isArray(path) ? path.split(path_separator_regexp) : path;
+
+const setValue = (obj, [key, ...rest], value) => {
+  obj = Array.isArray(obj) ? obj.concat() : Object.assign({}, obj);
+  obj[key] = rest.length > 0 ? setValue(obj[key], rest, value) : value;
+  return obj;
+};
 function setValueByPath(obj, path, value) {
-  path = !Array.isArray(path) ? path.split(path_separator_regexp) : path;
-  let setValue = (list, key, index) => {
-    if (index === path.length - 1) {
-      list[index][key] = value;
-    } else {
-      let target = list[index][key];
-      if (Array.isArray(target)) {
-        target = target.concat();
-      } else {
-        target = { ...target };
-      }
-      list[index][key] = target;
-      list.push(target);
-    }
-    return list;
-  };
-  let list = path.reduce(setValue, [{ ...obj }]);
-  return list[0];
+  return setValue(obj, getPath(path), value);
 }
 
 const getValue = (ret, key) => ret[key];
 function getValueByPath(obj, path) {
-  path = !Array.isArray(path) ? path.split(path_separator_regexp) : path;
-  return path.reduce(getValue, obj);
+  return getPath(path).reduce(getValue, obj);
 }
