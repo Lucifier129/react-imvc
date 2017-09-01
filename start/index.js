@@ -21,7 +21,6 @@ createPageRouter = createPageRouter.default || createPageRouter;
 
 module.exports = function start(options) {
   let config = getConfig(options);
-  console.log("config", config, options);
   let app = createExpressApp(config);
   let port = config.port;
 
