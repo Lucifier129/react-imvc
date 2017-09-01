@@ -61,6 +61,14 @@ export default [
 ]
 ```
 
+在 package.json 平级目录下添加 .babelrc 文件
+
+```json
+{
+	"presets": ["latest", "stage-0", "react"]
+}
+```
+
 ### 第三步：编写每个页面的 MVC 结构
 
 每个页面必须是一个包含 controller.js 的文件夹，其中 controller.js 是页面的入口文件
@@ -68,6 +76,7 @@ export default [
 ```javascript
 // src/home/Controller
 import Controller from 'react-imvc/controller' // 加载 react-imvc controller 控制器
+import React from 'react'
 
 export default class Home extends Controller { // 继承它，编写你的控制器逻辑
     View = View // 将 react 组件赋值给控制器的 View 属性
