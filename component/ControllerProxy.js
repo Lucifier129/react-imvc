@@ -26,7 +26,12 @@ export default class ViewProxy extends React.Component {
 		}
 	}
 	componentDidMount() {
+		let { controller } = this.props
 		this.updateDocumentTitle()
+		if (!controller.meta.hadMounted) {
+			controller.meta.hadMounted = true
+			this.emit('componentDidFirstMount')
+		}
 		this.emit('componentDidMount')
 	}
 	componentWillUnmount() {

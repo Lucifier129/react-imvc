@@ -21,6 +21,7 @@ export default class Controller {
   constructor(location, context) {
     this.meta = {
       isDestroyed: false,
+      hadMounted: false,
       unsubscribeList: null
     };
     this.location = location;
@@ -230,16 +231,18 @@ export default class Controller {
         }
       }
 
-      return fetch(url).then(_.toText).then(content => {
-        if (url.split("?")[0].indexOf(".css") !== -1) {
-          /**
+      return fetch(url)
+        .then(_.toText)
+        .then(content => {
+          if (url.split("?")[0].indexOf(".css") !== -1) {
+            /**
 					 * 如果是 CSS ，清空回车符
 					 * 否则同构渲染时 react 计算 checksum 值会不一致
 					 */
-          content = content.replace(/\r+/g, "");
-        }
-        context.preload[name] = content;
-      });
+            content = content.replace(/\r+/g, "");
+          }
+          context.preload[name] = content;
+        });
     });
     return Promise.all(list);
   }
@@ -358,7 +361,6 @@ export default class Controller {
     }
 
     this.bindStoreWithView();
-
     return this.render();
   }
   bindStoreWithView() {
@@ -409,6 +411,20 @@ export default class Controller {
     }
     meta.isDestroyed = true;
   }
+  restore(location, context) {
+    let { meta, store } = this;
+    let { PAGE_DID_BACK } = store.actions;
+
+    meta.isDestroyed = false;
+    PAGE_DID_BACK(location);
+
+    if (this.pageDidBack) {
+      this.pageDidBack(location, context);
+    }
+
+    this.bindStoreWithView();
+    return this.render();
+  }
   render() {
     let {
       BaseView,
@@ -431,17 +447,19 @@ export default class Controller {
       handlers
     };
 
-    let view = <View state={state} handlers={handlers} actions={store.actions} />
+    let view = (
+      <View state={state} handlers={handlers} actions={store.actions} />
+    );
 
-      /**
-       * 如果有 BaseView，wrap 一层，方便做动画等效果
+    /**
+       * 如果有 BaseView，wrap 一层，方便做 Layout 共享或动画等效果
        */
     if (BaseView) {
       view = (
         <BaseView state={state} handlers={handlers} actions={store.actions}>
           {view}
         </BaseView>
-      )
+      );
     }
 
     return (

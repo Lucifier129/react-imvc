@@ -14,6 +14,13 @@ export let UPDATE_STATE = (state, newState) => {
   }
 }
 
+export let PAGE_DID_BACK = (state, location) => {
+  return {
+    ...state,
+    location,
+  }
+}
+
 export let UPDATE_STATE_BY_PATH = (state, payload) => {
 	return Object.keys(payload).reduce(
 		(state, path) => setValueByPath(state, path, payload[path]),
