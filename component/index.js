@@ -1,5 +1,3 @@
-export BaseView from './BaseView'
-
 export Link from './Link'
 
 export Input from './Input'
