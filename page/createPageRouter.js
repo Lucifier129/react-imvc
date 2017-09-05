@@ -100,7 +100,7 @@ export default function createPageRouter(options) {
       basename,
       serverPublicPath,
       publicPath,
-      restapi: config.restapi,
+      restapi: config.serverRestapi || config.restapi || '',
       ...config.context,
       preload: {},
       isServer: true,

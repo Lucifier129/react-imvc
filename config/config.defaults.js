@@ -33,7 +33,7 @@ export default {
 	// node.js 静态资源服务的路径
 	staticPath: '/static',
 	// hash history 的 spa 入口文件
-	staticEntry: 'index.html',
+	staticEntry: false && 'index.html',
 	// 静态资源的发布路径，默认为空，为空时运行时修改为 basename + staticPath
 	publicPath: '',
 	// 默认的 restapi basename
@@ -87,7 +87,7 @@ export default {
 		}
 	},
 	// express routes 所在的路径
-	routes: 'routes',
+	routes: false && 'routes',
 	// express logger 的命名空间
 	logger: isDev ? 'dev' : null,
 	// express favicon 中间件的配置

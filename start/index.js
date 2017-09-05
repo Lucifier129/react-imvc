@@ -50,17 +50,16 @@ module.exports = function start(options) {
 
   let server = http.createServer(app);
 
-  // get server routes
-  try {
+  if (config.routes) {
+    // get server routes
     let routes = require(path.join(config.root, config.routes));
+    routes = routes.default || routes
     Object.keys(routes).forEach(key => {
       let route = routes[key];
       if (typeof route === "function") {
         route(app, server);
       }
     });
-  } catch (error) {
-    // ignore error
   }
 
   app.use(createPageRouter(config));
