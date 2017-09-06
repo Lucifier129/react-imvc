@@ -6,6 +6,7 @@ var plumber = require('gulp-plumber')
 var babel = require('gulp-babel')
 
 var dest = './publish'
+// dest = '../react-imvc-template/node_modules/react-imvc'
 
 gulp.task('copy', () => {
 	return gulp

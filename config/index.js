@@ -9,23 +9,17 @@
 
 	options = options || {}
 	
-	try {
-		let customConfig
-		switch (typeof options.config) {
-			case 'object':
-				customConfig = options.config
-				break
-			case 'string':
-				customConfig = require(path.resolve(options.config))
-				customConfig = customConfig.default || customConfig
-				break
-			default:
-				customConfig = require(path.resolve('package.json')).config
-		}
-		Object.assign(config, customConfig)
-	} catch(error) {
-		// ignore error
+	let customConfig
+	switch (typeof options.config) {
+		case 'object':
+			customConfig = options.config
+			break
+		case 'string':
+			customConfig = require(path.resolve(options.config))
+			customConfig = customConfig.default || customConfig
+			break
 	}
+	Object.assign(config, customConfig)
 
 	return config
 }

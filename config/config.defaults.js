@@ -87,7 +87,7 @@ export default {
 		}
 	},
 	// express routes 所在的路径
-	routes: false && 'routes',
+	routes: '',
 	// express logger 的命名空间
 	logger: isDev ? 'dev' : null,
 	// express favicon 中间件的配置
@@ -102,7 +102,7 @@ export default {
 	// 是否用 fetch-ie8
 	fetchIE8: true,
 
-	// IMVC 的 layout 组件所在的路径
+	// IMVC 的 layout 组件所在的路径，相对路径时，基于 routes 配置的 path
 	layout: '',
 	// React SSR 时采用的渲染模式：renderToString || renderToStaticMarkup
 	renderMode: 'renderToString',
