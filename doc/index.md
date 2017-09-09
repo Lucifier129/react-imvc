@@ -2,14 +2,14 @@
 
 ## 目录索引
 
-- [IMVC的概念解释](#IMVC的概念解释)
-- [为什么要有Controller](#为什么要有Controller)
-- [Controller的属性](#Controller的属性)
-- [Controller的API](#Controller的API)
-- [Controller的生命周期方法](#Controller的生命周期方法)
-- [react-imvc里的组件](#react-imvc里的组件)
+- [What is IMVC](#what-is-imvc)
+- [Why Controller](#why-controller)
+- [Controller Property](#controller-property)
+- [Controller API](#controller-api)
+- [Controller Life Cycle Method](#controller-life-cycle-mehotd)
+- [Userful Components](#useful-components)
 
-## IMVC的概念解释
+## What is IMVC
 
 IMVC 的 I 是`Isomorphic`的缩写，意思是同构，在这里是指，一份 `JavaScript` 代码，既可以在 `Node.js` 里运行，也可以在 `Browser` 里运行。
 
@@ -21,7 +21,7 @@ IMVC 的 C 是指 `Controller` 的缩写，意思是控制器，在这里是指�
 
 react-imvc 里的 MVC 三个部分都是 `Isomorphic` 的，所以它可以做到：只编写一份代码，在 `Node.js` 里做 `Server-Side-Rendering` 服务端渲染，在 `Browser` 里做 `Client-Side-Rendering` 客户端渲染。
 
-## 为什么要有Controller
+## Why Controller
 
 在 react-imvc 的 `Model` 里， `state` 是 `immutable data`，`action` 是 `pure function`，不建议包含 `side effect` 副作用。
 
@@ -44,7 +44,7 @@ export default class extends Controller {
 } 
 ```
 
-## Controller的属性
+## Controller Property
 
 ### controller.name -> string
 
@@ -178,7 +178,7 @@ controller.handlers 是在初始化时，从 controller 的实例里收集的以
 
 当 controller.SSR = false 时，如果 controller.Loading 有值，将渲染 controller.Loading 组件
 
-## Controller的API
+## Controller API
 
 ### controller.fetch(url=string, options=object)
 
