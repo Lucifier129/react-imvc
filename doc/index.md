@@ -1,14 +1,282 @@
-# React-IMVC 文档目录
+# React-IMVC 文档
 
-## 相关技术栈的文档链接
+## 目录索引
 
-- [express](http://expressjs.com/)
-- [react](https://facebook.github.io/react/)
-- [fetch](https://github.github.io/fetch/)
-- [relite](https://github.com/Lucifier129/relite)
-- [webpack](http://webpack.github.io/docs)
-- [path-to-regexp](https://github.com/pillarjs/path-to-regexp)
-- [querystring](https://github.com/Gozala/querystring)
-- [express-react-views](https://github.com/reactjs/express-react-views)
+- [IMVC 的概念解释](#IMVC 的概念解释)
+- [为什么要有 Controller](#为什么要有 Controller)
+- [Controller 的属性](#Controller 的属性)
+- [Controller 的 API](#Controller 的 API)
+- [Controller 的生命周期方法](#Controller 的 API)
+- [react-imvc 里的组件](#react-imvc 里的组件)
 
-## Controller API
+## IMVC 的概念解释
+
+IMVC 的 I 是`Isomorphic`的缩写，意思是同构，在这里是指，一份 `JavaScript` 代码，既可以在 `Node.js` 里运行，也可以在 `Browser` 里运行。
+
+IMVC 的 M 是 `Model` 的缩写，意思是模型，在这里是指，状态及其状态变化函数的集合，由 `initialState` 状态和 `actions` 函数组成。
+
+IMVC 的 V 是 `View` 的缩写，意思是视图，在这里是指，`React` 组件。
+
+IMVC 的 C 是指 `Controller` 的缩写，意思是控制器，在这里是指，包含生命周期方法、事件处理器、同构工具方法以及负责同步 `View` 和 `Model` 的中间媒介。
+
+react-imvc 里的 MVC 三个部分都是 `Isomorphic` 的，所以它可以做到：只编写一份代码，在 `Node.js` 里做 `Server-Side-Rendering` 服务端渲染，在 `Browser` 里做 `Client-Side-Rendering` 客户端渲染。
+
+## 为什么要有 Controller
+
+在 react-imvc 的 `Model` 里， `state` 是 `immutable data`，`action` 是 `pure function`，不建议包含 `side effect` 副作用。
+
+react-imvc 的 `View` 是 React.js，建议尽可能使用 `functional stateless component` 写法，不建议包含 `side effect` 副作用。
+
+然而，`side effect` 副作用是跟外界交互的必然产物，只可能被隔离，不可能被消灭。所以，我们需要一个承担 `side effect` 的对象，它就是 `Controller`。
+
+`Life-Cycle method` 是副作用来源，`Ajax/Fetch` 也是副作用来源，`Event Handler` 事件处理器也是副作用来源，`localStorage` 也是副作用来源，它们都应该在 `Controller` 这个 `ES2015 classes` 里，用面向对象的方式来处理。
+
+一个 `web app` 包含多个 `page` 页面，每个 `page` 都由 MVC 三个部分组成。
+
+每个 `page` 都是一个文件夹，里面至少包含一个 `Controller.js` 文件，作为该页面的入口文件。
+
+```javascript
+// /my_page/Controller.js
+import Controller from 'react-imvc/controller'
+
+export default class extends Controller {
+    // your code
+} 
+```
+
+## Controller 的属性
+
+### Controller#name -> string
+
+controller 的 name 属性，用以显示在 logger 里，方便区分不同 controller 的 action logger。
+
+如果没有这个 name 属性，action logger 里将显示跟 controller 匹配的 router path pattern。
+
+### Controller#location -> object
+
+controller.location 是 react-imvc 里自动根据 url 和 router path pattern 生成的类 window.location 对象。
+
+其文档为：https://github.com/Lucifier129/history/blob/master/docs/Location.md
+
+除了上述文档介绍的 { pathname ,search, hash, action, state } 以外，还有下面几个拓展属性
+
+- location.query 为当前 url 的查询字符串反序列化之后的对象
+    - 当 url 为 `/list?search=test&type=1` 时
+    - location.query 为 { search: 'test', type: '1' }
+
+- location.pattern 跟当前 controller 对应的 router path pattearn，写法来自 [path-to-regexp](https://github.com/pillarjs/path-to-regexp)
+
+- location.params 是用 path-to-regexp 解析出来的路径参数
+    - 当 pattern 为 `/user/:id`，url 为 `/user/123` 时
+    - location.params 为 { id: '123' }
+
+- location.raw 是 pathname + search 的拼接结果
+
+### Controller#history -> object
+
+controller.history 是一个类 window.history 的对象，可查看其[文档](https://github.com/Lucifier129/history)
+
+controller.history 包含的 push/replace/goBack/goForward 等方法，可以用在 Event Handler 事件处理器里手动进行页面跳转。
+
+### Controller#context -> object
+
+controller.context 是一个特殊对象，所有 controller 实例都共享同一个 context 对象，可以利用 context 对象储存一些跨页面共享的数据。
+
+不过，不建议滥用 context 对象。
+
+react-imvc 默认把一些基本信息填充在 context 对象里，比如
+
+- context.isClinet 是否在客户端
+
+- context.isServer 是否在服务端
+
+- context.basename 当前 web app 的 basename
+
+- context.publicPath 当前 web app 的静态资源的发布路径，默认是 basename + '/static'
+
+- context.restapi 当前 web app 的 restfull api 的 url 前缀
+
+- context.preload 缓存预加载资源的对象
+
+- context.prevLocation 上一个页面的 location 对象，方便当前页面判断来源
+
+### Controller#View -> React Component
+
+controller.View 属性，应该是一个 React Component 组件。该组件的 props 结构如下
+
+- props.state 是 controller.store.getState() 里的 global state 状态树
+- props.handlers 是 controller 实例里，以 handleXXX 形式定义的事件处理器的集合对象
+- props.actions 是 controller.store.actions 里的 actions 集合对象
+
+React 的用法可以查阅其[官方文档](https://facebook.github.io/react/)
+
+### Controller#BaseView -> React Component
+
+controller.BaseView 属性，会在渲染时作为 controller.View 组件的父组件。
+
+当两个 page 共享同一个 BaseView 组件时，可以在 BaseView 组件内通过 `props.children` 和 `nextProps.children` 拿到两个 view，做一些转场动画。
+
+### Controller#Model -> object -> { initialState, ...actions }
+
+controller.Model 属性，是一个对象，除了 initialState 属性之外，其余属性都是 pure function。
+
+Model 属性将被用来创建 controller.store。
+
+创建 store 使用的是 redux-like 的库 relite。可以查阅其[文档](https://github.com/Lucifier129/relite)
+
+### Controller#initialState -> object
+
+如果不使用 controller.Model 属性，可以把 intialState 直接赋值给 controller
+
+### Controller#actions -> object
+
+如果不使用 controller.Model 属性，可以把 actions 直接赋值给 controller
+
+### Controller#store -> object
+
+由 controller.Model 创建出来的 store，内部用的是 relite，可以查阅其[文档](https://github.com/Lucifier129/relite)
+
+store 里的 global state，默认数据有来个来源
+
+- controller.initialState 或 controller.Model.initialState
+
+- react-imvc 会把 context 里的 { basename, publicPath, restapi, isClient, isServer } 对象填充进 state
+
+- react-imvc 会把 controller.location 对象填充至 state.location 里。
+
+### Controller#preload -> object
+
+controller.preload 对象用来在页面显示前，预加载 css, json 等数据。
+
+```javascript
+class extends Controller {
+    preload = {
+        'main': '/path/to/css'
+    }
+}
+```
+
+### Controller#SSR -> boolean
+
+当 controller.SSR = true 时，开启服务端渲染的特性。默认为 true。
+
+如果全局配置 config.SSR === false，则全局关闭服务端渲染，controller.SSR 不会起作用。
+
+### Controller#KeepAlive -> boolean
+
+当 controller.KeepAlive = true 时，开启缓存模式。默认为 false|undefined
+
+KeepAlive 不会缓存 view，而是缓存 controller 及其 store。
+
+当页面前进或后退时，不再实例化一个新的 controller，而是从缓存里取出上次的 controller，用它的 store 重新渲染 view。并触发 `pageDidBack` 生命周期。
+
+### Controller#handlers -> object
+
+controller.handlers 是在初始化时，从 controller 的实例里收集的以 handle 开头，以箭头函数形式定义的方法的集合对象。用来传递给 controller.View 组件。
+
+### Controller#Loading -> React Component
+
+当 controller.SSR = false 时，如果 controller.Loading 有值，将渲染 controller.Loading 组件
+
+## Controller 的 API
+
+### Controller#fetch(url=string, options=object)
+
+fetch 方法用来跟服务端进行 http 或 https 通讯，它的用法和参数跟浏览器里自带的 fetch 函数一样。全局 fetch 函数的[使用文档](https://github.github.io/fetch/)
+
+- controller.fetch 默认为 headers 设置 Content-Type 为 application/json
+
+- controller.fetch 默认设置 credentials 为 include，即默认发送 cookie
+
+- controller.fetch 默认内部执行 response.json()，最终返回的是 json 数据
+    - 当 options.json === false 时，取消上述行为，最终返回的是 response 对象
+
+- controller.API 属性存在时，controller.fetch(url, options) 会有以下行为
+    - 内部会对 url 进行转换 `url = controller.API[url] || url` 
+    - 该特性可以将 url 简化为 this.fetch(api_name)
+
+- 当全局配置 config.restapi 存在，且 url 为非绝对路径时，controller.fetch(url, options) 会有以下行为
+    - 内部会对 url 进行转换 `url = config.restapi + url`
+    - 当 options.raw === true 时，不做上述转换，直接使用 url
+
+ - 当 options.timeout 为数字时，controller.fetch 将有以下行为
+    - options.timeout 时间内，服务端没有响应，则 reject 一个 timeout error
+    - 超时 reject 不会 abort 请求，内部用 `Promise.race` 忽略服务端请求的结果
+
+- 当 url 以 /mock/ 开头时
+     - 内部会对 url 进行转换 `url = config.basename + url`
+     - 该特性提供在本地简单地用 json 文件 mock 数据的功能
+     - 当 options.raw === true 时，不做上述转换，直接使用 url
+
+### Controller#post(url=string, data=object)
+
+controller.post 方法是基于 controller.fetch 封装的方法，更简便地发送 post 请求。
+
+url 参数的处理，跟 controller.fetch 方法一致。
+
+data 参数将在内部被 JSON.stringify ，然后作为 request payload 发送给服务端
+
+### Controller#prependBasename(url=string)
+
+controller.prependBasename 方法，在 url 不是绝对路径时，把全局 config.basename 拼接在 url 的前头。
+
+url = config.basename + url
+
+### Controller#prependPublicPath(url=string)
+
+controller.prependPublicPath 方法，在 url 不是绝对路径时，把全局配置 config.publicPath 拼接在 url 的前头。
+
+url = config.publicPath + url
+
+
+### Controller#prependRestapi(url=string)
+
+controller.prependRestapi 方法，在 url 不是绝对路径时，把全局配置 config.restapi 拼接在 url 的前头。
+
+url = config.restapi + url
+
+如果 url 是以 /mock/ 开头，将使用 controller.prependBasename 方法。
+
+注：controller.fetch 方法内部对 url 的处理，即是用到了 controller.prependRestapi 方法
+
+### Controller#redirect(url=string, isRaw=boolean)
+
+controller.redirect 方法可实现重定向功能。
+
+- 如果 url 是绝对路径，直接使用 url
+- 如果 url 不是绝对路径，对 url 调用 controller.prependBasename 补前缀
+- 如果 isRaw 为 true，则不进行不前缀
+
+注意，重定向功能不是修改 location 的唯一途径，只有在需要的时候使用，其它情况下，考虑用 controller.history 里的跳转方法。
+
+### Controller#getCookie(key=string)
+
+controller.getCookie 用以获取 cookie 里跟 key 参数对应的 value 值。
+
+### Controller#setCookie(key=string, value=string, options=object)
+
+controller.setCookie 用以设置 cookie 里跟 key 参数对应的 value 值。第三个参数 options 为对象，可查看[使用文档](https://github.com/js-cookie/js-cookie#cookie-attributes)
+
+### Controller#removeCookie(key=string, options=object)
+
+controller.removeCookie 用以删除 cookie 里跟 key 参数对应的 value 值。第三个参数 options 为对象，可查看[使用文档](https://github.com/js-cookie/js-cookie#cookie-attributes)
+
+### Controller#cookie(key=string, [value=string], [options=object])
+
+controller.cookie 方法是上述 `getCookie`、`setCookie` 方法的封装。
+
+- 当只有一个 key 参数时，内部调用 `getCookie` 方法。
+
+- 当有两个或两个以上的参数时，内部调用 `setCookie` 方法。
+
+### Controller#saveToCache()
+
+controller.saveToCache 方法只在客户端存在，用以手动将 controller 加入 KeepAlive 缓存里。
+
+### Controller#removeFromCache()
+
+controller.removeFromCache 方法只在客户端存在，用以手动将 controller 从 KeepAlive 缓存里清除。
+
+### Controller#refreshView()
+
+controller.refreshView 方法只在客户端存在，用当前的 state 刷新视图。

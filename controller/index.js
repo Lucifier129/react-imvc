@@ -205,6 +205,17 @@ export default class Controller {
     return fetchData;
   }
   /**
+   * 
+   * 封装 post 请求，方便使用
+   */
+  post(url, data) {
+    let options = {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }
+    return this.fetch(url, options)
+  }
+  /**
 	 * 预加载 css 样式等资源
 	*/
   fetchPreload(preload) {
