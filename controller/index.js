@@ -316,7 +316,7 @@ export default class Controller {
     /**
 		 * 获取动态初始化的 initialState
 		 */
-    if (this.getInitialState) {
+    if (!globalInitialState && this.getInitialState) {
       finalInitialState = await this.getInitialState(finalInitialState);
     }
 
