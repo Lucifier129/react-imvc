@@ -14,8 +14,7 @@ var createConfig = options => {
 	var src = path.join(root, options.src)
 	var publish = path.join(root, options.publish)
 	var staticPath = path.join(publish, options.static)
-
-	return {
+	var config =  {
 		css: {
 			src: [src + '/**/*.css'],
 			dest: staticPath
@@ -51,10 +50,18 @@ var createConfig = options => {
 			dest: publish
 		}
 	}
+
+	for (let key in options.gulp) {
+		if (config.hasOwnProperty(key) && options.gulp[key]) {
+			config[key].src = config[key].src.concat(options.gulp[key])
+		}
+	}
+
+	return config
 }
 
-module.exports = function createGulpTask(options, customConfig) {
-	var config = Object.assign(createConfig(options), customConfig)
+module.exports = function createGulpTask(options) {
+	var config = Object.assign(createConfig(options))
 
 	gulp.task('minify-css', () => {
 		if (!config.css) {

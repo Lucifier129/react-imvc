@@ -79,7 +79,8 @@ async function startStaticEntry(config) {
 		config: staticEntryConfig
 	})
 
-	var url = `http://localhost:${config.port}`
+	var url = `http://localhost:${config.port}/__CREATE_STATIC_ENTRY__`
+	console.log(`fetching url:${url}`)
 	var response = await fetch(url)
 	var html = await response.text()
 	let staticEntryPath = path.join(config.root, config.publish, config.static, config.staticEntry)
