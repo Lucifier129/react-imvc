@@ -305,7 +305,7 @@ windowWillUnload
 
 controller.getInitialState 方法会在 createStore 之前执行，它应该返回一个对象，作为 createStore 的 initialState 参数。
 
-该方法的作用时，提供在运行时确定 initialState 的能力。比如从 cookie、storage、或者 server 里获取数据。
+该方法的作用是，提供在运行时确定 initialState 的能力。比如从 cookie、storage、或者 server 里获取数据。
 
 该方法内，不可以使用 `this.store.acitons`，因为 store 还未创建。
 
@@ -375,7 +375,7 @@ controller.pageDidBack 方法在 controller.KeepAlive 为 true 时，才会生�
 
 pageDidBack 里同步的执行 action 将不会引起 view 渲染，此时 view 还未渲染，异步执行 action 则会引起 view 渲染。
 
-该方法比 `componentDidMount` 更早执行。
+该方法比（第二次或第二次以上的） `componentDidMount` 生命周期更早执行。
 
 
 ### Controller.windowWillUnload()
@@ -389,3 +389,9 @@ controller.windowWillUnload() 方法跟 `pageWillLeave` 方法性质类似，只
 controller.stateDidChange 是一个特殊的生命周期，当 store 里的 state 发生变化，并且 view 也根据 state 重新渲染后，该方法将被触发。
 
 该方法会接收到一个 data 参数，记录了 action 的 type、payload、currentState、previousState 等信息，可查阅[文档](https://github.com/Lucifier129/relite#create-store-by-actions-and-initialstate)
+
+该方法并不常用。设计目的为，当某个 action 触发时，固定执行某些操作。
+
+比如，当某个 `SHOW_POP` 触发时，1 秒后触发 `HIDE_POP`。
+
+比如，当 `UPDATE_USER` 触发时，调用 fetch 方法，更新数据到 server 端等等。
