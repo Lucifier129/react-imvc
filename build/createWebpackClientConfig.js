@@ -122,9 +122,9 @@ module.exports = function createWebpackClientConfig(options) {
     }, config.uglify)
 
     plugins = plugins.concat([
-      new webpack.optimize.DedupePlugin(uglify),
+      new webpack.optimize.DedupePlugin(),
       // minify JS
-      new webpack.optimize.UglifyJsPlugin(),
+      new webpack.optimize.UglifyJsPlugin(uglify),
       new OptimizeJsPlugin({
         sourceMap: false
       })
