@@ -6,7 +6,7 @@
 - [Why Controller](#why-controller)
 - [Controller Property](#controller-property)
 - [Controller API](#controller-api)
-- [Controller Life Cycle Method](#controller-life-cycle-mehotd)
+- [Controller Life Cycle Method](#controller-life-cycle-method)
 - [Userful Components](#useful-components)
 
 ## What is IMVC
