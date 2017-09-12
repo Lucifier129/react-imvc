@@ -37,7 +37,7 @@ react-imvc 的 `View` 是 React.js，建议尽可能使用 `functional stateless
 
 ```javascript
 // /my_page/Controller.js
-import Controller from 'react-imvc/controller'
+import Controller from 'react-imvc/controller' // Controller 基类里实现了许多方法，子类 Controller 要避免使用同名方法
 
 export default class extends Controller {
     // your code
@@ -120,7 +120,7 @@ controller.BaseView 属性，会在渲染时作为 controller.View 组件的父�
 
 controller.Model 属性，是一个对象，除了 initialState 属性之外，其余属性都是 pure function。
 
-Model 属性将被用来创建 controller.store。
+Model 属性将被用来创建 controller.store, `store = createStore(actions, initialState)`
 
 创建 store 使用的是 redux-like 的库 relite。可以查阅其[文档](https://github.com/Lucifier129/relite)
 
@@ -280,3 +280,112 @@ controller.removeFromCache 方法只在客户端存在，用以手动将 control
 ### controller.refreshView()
 
 controller.refreshView 方法只在客户端存在，用当前的 state 刷新视图。
+
+
+## Controller Life Cycle Method
+
+Controller 具有以下生命周期方法，执行顺序为：
+
+```shell
+getInitialState
+shouldComponentCreate
+componentWillCreate
+componentDidFirstMount
+componentDidMount
+pageWillLeave
+componentWillUnmount
+pageDidBack
+componentDidMount
+pageWillLeave
+componentWillUnmount
+windowWillUnload
+```
+
+### Controller.getInitialState(initialState)
+
+controller.getInitialState 方法会在 createStore 之前执行，它应该返回一个对象，作为 createStore 的 initialState 参数。
+
+该方法的作用时，提供在运行时确定 initialState 的能力。比如从 cookie、storage、或者 server 里获取数据。
+
+该方法内，不可以使用 `this.store.acitons`，因为 store 还未创建。
+
+该方法支持 promise，如果使用了 async/await 语法，或者 return promise，后面的生命周期方法将会等待它们 resolve。
+
+### Controller.shouldComponentCreate()
+
+controller.shouldComponentCreate 方法触发时，view 还未被创建和渲染，如果该方法返回 false，将终止后续的生命周期活动。
+
+该方法的设计目的，是鉴定权限，如果用户没有权限访问该页面，可以通过 `this.redirect` 方法，重定向到其他页面。
+
+该方法内，可以使用 `this.store.actions`，调用 action 函数只会更新 store 里的 state，不会引起 view 的渲染。
+
+该方法支持 promise，如果使用了 async/await 语法，或者 return promise，后面的生命周期方法将会等待它们 resolve。
+
+### Controller.componentWillCreate()
+
+controller.componentWillCreate 方法触发时，view 还未被创建和渲染，可以在该方法内调用接口，获取首屏数据。
+
+该方法内，可以使用 `this.store.actions`，调用 action 函数只会更新 store 里的 state，不会引起 view 的渲染。
+
+该方法支持 promise，如果使用了 async/await 语法，或者 return promise，后面的生命周期方法将会等待它们 resolve。
+
+### Controller.componentDidFirstMount()
+
+controller.componentDidFirstMount 方法触发时，用户已经看到了首屏，可以在该方法内，调用接口，获取非首屏数据。
+
+该方法内，可以使用 `this.store.actions`，调用 action 函数除了更新 store 里的 state，还会引起 view 的渲染。
+
+该方法以及之后的所有生命周期方法里，返回 promise 不再会影响后续生命周期的执行。
+
+### Controller.componentDidMount()
+
+controller.componentDidMount 方法触发时，react component 已经 mount 到页面上。
+
+可以在该方法内，进行 DOM 操作，绑定定时器等浏览器里相关的活动。
+
+需要注意的是，该方法在 controller 的生命周期内，可能不止运行一次。
+
+### Controller.componentWillUnmount()
+
+controller.componentWillUnmount 方法触发时，react component 即将从页面里 unmount。
+
+可以在该方法内，完成解绑定时器等跟 `componentDidMount` 相关的逆操作。
+
+需要注意的是
+
+    - 该方法在 controller 的生命周期内，可能不止运行一次。
+    - pageWillLeave 比 componentWillUnmount 更早执行
+    - 当 next page 的 view/component 要渲染时，才会触发 prev page 的 componentWillUnmount
+    - 可以在 pageWillLeave 里 showLoading，知道它被 next page 替换。
+
+### Controller.pageWillLeave()
+
+controller.pageWillLeave 方法在页面即将跳转到其他 page 前触发，如果该方法返回一个 string 类型，将作为提示给用户的话术出现。
+
+如果用户点击「取消」，页面不会跳转，继续停留在当前页面。
+
+该方法的设计目的是
+
+    - 提示用户有表单未填写
+    - 将用户信息缓存在 localStorage 或者 server 端
+
+### Controller.pageDidBack()
+
+controller.pageDidBack 方法在 controller.KeepAlive 为 true 时，才会生效，在用户通过 history 回退/前进时触发。
+
+pageDidBack 里同步的执行 action 将不会引起 view 渲染，此时 view 还未渲染，异步执行 action 则会引起 view 渲染。
+
+该方法比 `componentDidMount` 更早执行。
+
+
+### Controller.windowWillUnload()
+
+controller.windowWillUnload() 方法跟 `pageWillLeave` 方法性质类似，只是触发时机为用户关闭窗口。
+
+在该方法内返回一个 string 类型，将作为提示给用户的话术出现。不同的浏览器可能有不同的限制，用户看到的话术有可能是浏览器默认的，而非自定义的。
+
+### Controller.stateDidChange(data)
+
+controller.stateDidChange 是一个特殊的生命周期，当 store 里的 state 发生变化，并且 view 也根据 state 重新渲染后，该方法将被触发。
+
+该方法会接收到一个 data 参数，记录了 action 的 type、payload、currentState、previousState 等信息，可查阅[文档](https://github.com/Lucifier129/relite#create-store-by-actions-and-initialstate)
