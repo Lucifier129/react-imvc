@@ -1,111 +1,236 @@
-import path from 'path'
+import path from "path";
 
-
-let cwd = process.cwd()
-let port = process.env.PORT || 3000
-let NODE_ENV = process.env.NODE_ENV || 'development'
-let isDev = NODE_ENV === 'development'
-let isProd = NODE_ENV === 'production'
+let cwd = process.cwd();
+let port = process.env.PORT || 3000;
+let NODE_ENV = process.env.NODE_ENV || "development";
+let isDev = NODE_ENV === "development";
+let isProd = NODE_ENV === "production";
 
 export default {
-	// node.js 应用部署的 basename
-	basename: '',
-	// html title
-	title: 'react-imvc',
-	// html description
-	description: 'An Isomorphic-MVC Framework',
-	// html keywords
-	keywords: 'react mvc isomorphic server-side-rendering',
-	// ssr content
-	content: '',
-	// initialState
-	initialState: undefined,
-	// client app settings
-	appSettings: undefined,
-	// 根目录
-	root: cwd,
-	// 源码目录
-	src: 'src',
-	// 源码构建后的目录名
-	publish: 'publish',
-	// 源码里的静态资源构建后的目录名，该目录会出现在 publish 字段配置的目录下
-	static: 'static',
-	// node.js 静态资源服务的路径
-	staticPath: '/static',
-	// hash history 的 spa 入口文件
-	staticEntry: false && 'index.html',
-	// 静态资源的发布路径，默认为空，为空时运行时修改为 basename + staticPath
-	publicPath: '',
-	// 默认的 restapi basename
-	restapi: '',
-	// webpack 资源表所在的路径，相对于 webpack 的 output.path
-	assetsPath: '../assets.json',
-	// webpack output 配置
-	output: {},
-	// webpack entry 配置
-	entry: {},
-	// webpack 生产环境构建时的 output 配置
-	productionOutput: {},
-	// webpack alias 配置
-	alias: {},
-	// webpack devtool
-	devtool: isDev ? '#source-map' : '',
-	// 是否开启代码切割
-	codeSpliting: isProd,
-	// 是否对 webpack 的构建产物进行可视化分析
-	bundleAnalyzer: false,
-	// 是否使用 webpack-dev-middleware
-	webpackDevMiddleware: isDev,
-	// webpack commentsChunkPlugin 的 chilren 配置
-	CommonsChunkChildren: {
-		children: true,
-	},
-	// webpack 插件配置
-	webpackPlugins: [],
+  /**
+	 * node.js 应用部署的 basename，默认是空字符串
+	 * 支持传入字符串 如，'/my/basenmae'
+	 * 支持传入数组，当传入为数组时，在运行时动态确定所匹配的 basename
+	 */
+  basename: "",
+  /**
+	 * html 文档的 title
+	 */
+  title: "react-imvc",
+  /**
+	 * html 文档的 description
+	 */
+  description: "An Isomorphic-MVC Framework",
+  /**
+	 * html 文档的 keywords
+	*/
+  keywords: "react mvc isomorphic server-side-rendering",
+  /**
+	 * 服务端渲染的 content，默认为空
+	 */
+  content: "",
+  /**
+	 * 全局生效的初始化 state，如果配置了，每个页面都会带上它
+	 */
+  initialState: undefined,
+  /**
+	 * client app settings
+	 * {
+	 *   hashType: 'hashbang', hash history 显示的起点缀，默认是 !
+	 *   container: '#root' // react 组件渲染的容器
+	 * }
+	 */
+  appSettings: undefined,
+  /**
+	 * react-imvc app 所在的根目录
+	 * 默认是 cwd
+	 */
+  root: cwd,
+  /**
+	 * page 源代码的目录
+	 * 默认是 src
+	 */
+  src: "src",
+  /**
+	 * server 源代码的目录
+	 * 默认为空
+	 * 注意：express view path 也将被设置成 config.routes
+	 */
+  routes: "",
+  /**
+	 * 源码构建后的目录名（生产环境跑的代码目录）
+	 * 默认是 publish
+	 */
+  publish: "publish",
+  /**
+	 * 源码里的静态资源构建后的目录名，该目录会出现在 publish 字段配置的目录下
+	 * 默认是 static，即静态资源会出现在 /publish/static 目录下 
+	 */
+  static: "static",
+  /**
+	 * node.js 静态资源服务的路径
+	 * 默认是 /static
+	 */
+  staticPath: "/static",
+  /**
+	 * hash history 的 spa 入口文件名，它将出现在 /static 目录下
+	 * 如果设置了 staticEntry，react-imvc 在 build 阶段，使用关闭 SSR 的模式启动一次 react-imvc app
+	 * 并访问 /__CREATE_STATIC_ENTRY__ 路径，将它的 html 响应内容作为静态入口 html 文件内容生成。
+	 */
+  staticEntry: false && "index.html",
+  /**
+	 * 静态资源的发布路径，默认为空，为空时运行时修改为 basename + staticPath
+	 * 可以将 /publish/static 目录发布到 CDN，并将 CDN 地址配置成 publicPath
+	 */
+  publicPath: "",
+  /**
+	 * restapi basename
+	 * 默认为空
+	 * 如果配置了这个属性，controller.fetch 方法将为非绝对路径 url 参数，补上 restapi 作为前缀。
+	 */
+  restapi: "",
+  /**
+	 * webpack 资源表所在的路径，相对于 webpack 的 output.path
+	 * react-imvc 默认使用 hash 作为静态资源 js 的文件名
+	 * 所以它需要生成一份 assets.json 表，匹配 vendor, index 等文件的 mapping 关系
+	 */
+  assetsPath: "../assets.json",
+  /**
+	 * webpack output 自定义配置
+	 * 默认为空
+	 */
+  output: {},
+  /**
+	 * webpack entry 自定义配置
+	 * 默认为空
+	 */
+  entry: {},
+  /**
+	 * webpack 生产环境构建时的自定义 output 配置
+	 * 默认为空
+	 */
+  productionOutput: {},
+  /**
+	 * webpack alias 自定义配置
+	 */
+  alias: {},
+  /**
+	 * webpack devtool 配置
+	 */
+  devtool: isDev ? "#source-map" : "",
+  /**
+	 * 是否开启基于 page 路由的代码切割
+	 * 默认只在生产环境编译时开启
+	 */
+  codeSpliting: isProd,
+  /**
+	 * 是否开启 webpack 的构建产物进行可视化分析
+	 * 默认不开启
+	 */
+  bundleAnalyzer: false,
+  /**
+	 * 是否使用 webpack-dev-middleware 代理静态资源
+	 * 默认在开发模式时开启
+	 */
+  webpackDevMiddleware: isDev,
+  /**
+	 * webpack commentsChunkPlugin 的 chilren 配置
+	 * 默认为 true
+	 */
+  CommonsChunkChildren: {
+    children: true
+  },
+  /**
+	 * webpack plugins 自定义配置
+	 * 默认为空
+	 */
+  webpackPlugins: [],
 
-	// cookie-parser options
-	cookieParser: {},
+  /**
+	 * express 中间件 cookie-parser 的自定义配置
+	 * 默认为空
+	 */
+  cookieParser: {},
 
-	// express 中间件 helmet 配置
-	helmet: {
-		frameguard: false,
-	},
-	// express 中间件 compression 配置
-	compression: {},
-	// express-react-views 配置
-	ReactViews: {
-		beautify: isDev,
-		transformViews: false
-	},
-	// express 中间件 bodyParse 配置
-	bodyParser: {
-		json: {
-			limit: '10MB'
-		},
-		urlencoded: {
-			extended: false
-		}
-	},
-	// express routes 所在的路径
-	routes: '',
-	// express logger 的命名空间
-	logger: isDev ? 'dev' : null,
-	// express favicon 中间件的配置
-	favicon: '',
-	// 是否开启 IMVC SSR 功能，默认开启
-	SSR: true,
-	// node.js server 监听的端口号
-	port: port,
-	// node.js 的环境变量
-	NODE_ENV: NODE_ENV,
+  /**
+	 * express 中间件 helmet 的自定义配置
+	 * 默认为空 frameguard = true
+	 */
+  helmet: {
+    frameguard: false
+  },
 
-	// 是否用 fetch-ie8
-	fetchIE8: true,
+  /**
+	 * express 中间件 compression 的自定义配置
+	 * 默认为空
+	 */
+  compression: {},
 
-	// IMVC 的 layout 组件所在的路径，相对路径时，基于 routes 配置的 path
-	layout: '',
-	// React SSR 时采用的渲染模式：renderToString || renderToStaticMarkup
-	renderMode: 'renderToString',
-	// IMVC APP 里的 context 参数
-	context: {},
-}
+  /**
+	 * express view engine 的自定义配置
+	 */
+  ReactViews: {
+    beautify: isDev, // 默认在开发阶段美化 html 响应内容
+    transformViews: false // 默认不转换 view，已经有 babel 做处理
+  },
+  /**
+	 * express 中间件 bodyParse 配置
+	 */
+  bodyParser: {
+    json: {
+      limit: "10MB"
+    },
+    urlencoded: {
+      extended: false
+    }
+  },
+  /**
+   * express logger 配置
+   * 默认在开发阶段使用 dev，生产阶段不使用
+   */
+  logger: isDev ? "dev" : null,
+  /**
+   * express favicon 中间件的配置
+   * 默认没有 favicon
+   */
+  favicon: "",
+  /**
+   * 是否开启 IMVC SSR 功能
+   * 默认开启
+   */
+  SSR: true,
+  /**
+   * node.js server 监听的端口号
+   * 默认跟着 ENV 环境变量走，或者 3000
+   */
+  port: port,
+  /**
+   * node.js 的环境变量备份
+   */
+  NODE_ENV: NODE_ENV,
+
+  /**
+   * 是否用 fetch-ie8 作为 fetch polyfill
+   * 默认是。
+   * 如果设置为 false，则使用 whatwg-fetch
+   */
+  fetchIE8: true,
+
+  /**
+   * IMVC 的 layout 组件所在的路径
+   * 默认为空
+   * 当设置为相对路径时，基于 routes 配置的 path
+   */
+  layout: "",
+  /**
+   * React SSR 时采用的渲染模式：renderToString || renderToStaticMarkup
+   * 
+   */
+  renderMode: "renderToString",
+  /**
+   * IMVC APP 里的 context 参数
+   * server 端和 client 端都会接收到 config.context 里的配置
+   * 默认为空
+   */
+  context: {}
+};

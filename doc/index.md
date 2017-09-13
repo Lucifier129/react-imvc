@@ -7,7 +7,14 @@
 - [Controller Property](#controller-property)
 - [Controller API](#controller-api)
 - [Controller Life Cycle Method](#controller-life-cycle-method)
+- [Event Handler](#event-handler)
 - [Userful Components](#useful-components)
+- [Npm Scripts](#npm-scripts)
+- [Nodejs API](#nodejs-api)
+- [IMVC Configuration](#imvc-configuration)
+- [Title Keywords Description](#title-keywords-description)
+- [Server Development](#server-development)
+- [Custom Layout](#custom-layout)
 
 ## What is IMVC
 
@@ -126,11 +133,15 @@ Model 属性将被用来创建 controller.store, `store = createStore(actions, i
 
 ### controller.initialState -> object
 
-如果不使用 controller.Model 属性，可以把 intialState 直接赋值给 controller
+如果不使用 controller.Model 属性，可以把 intialState 直接赋值给 controller。
+
+当同时使用 Model 和 initialState 属性时，以 Model 的 initialState 为准。
 
 ### controller.actions -> object
 
 如果不使用 controller.Model 属性，可以把 actions 直接赋值给 controller
+
+当同时使用 Model 和 actions 属性时，以 Model 里的 actions 为准。
 
 ### controller.store -> object
 
@@ -395,3 +406,350 @@ controller.stateDidChange 是一个特殊的生命周期，当 store 里的 stat
 比如，当某个 `SHOW_POP` 触发时，1 秒后触发 `HIDE_POP`。
 
 比如，当 `UPDATE_USER` 触发时，调用 fetch 方法，更新数据到 server 端等等。
+
+## Event handler
+
+react-imvc 建议除了把 state 从 component 里抽离出来，组成 global state 以外，也应该把 event handler 从 component 里抽离出来，写在 controller 里面，组成 global handlers 传入 View 组件内。
+
+event handler 必须是 arrow function 箭头函数的语法，这样可以做到内部的 this 值永远指向 controller 实例，不需要 bind this，在 view 组件里直接使用即可。
+
+```javascript
+import React from 'react'
+import Controller from 'react-imvc/controller'
+
+export default class extends Controller {
+    View = View
+    initialState = {
+        count: 0,
+    }
+    actions = {
+        INCREMENT: state => ({ ...state, count: state.count + 1 }),
+        DECREMENT: state => ({ ...state, count: state.count - 1 }),
+        CHANGE_BY_NUM: (state, num) => ({ ...state, count: state.count + Number(num) })
+    }
+    // 事件处理器必须使用 arrow function 箭头函数的语法
+    handleIncre = () => {
+        let { INCREMENT } = this.store.actions
+        INCREMENT()
+    }
+    // 事件处理器里使用 action 更新 global state
+    handleDecre = () => {
+        let { DECREMENT } = this.store.actions
+        DECREMENT()
+    }
+    // 将特殊的索引如 index, id 或者其他信息，缓存在 DOM attribute 里
+    // 在事件处理器里，从 DOM attribute 里取回
+    handleCustomNum = event => {
+        let { CHANGE_BY_NUM } = this.store.actions
+        let num = event.currentTarget.getAttribute('data-num')
+        CHANGE_BY_NUM(num)
+    }
+}
+
+/**
+* 在 view 组件里，可以从 props 里拿到 global state 和 global event handlers
+*/
+function View({ state, handlers }) {
+    let { handleIncre, handleDecre, handleCustomNum } = handlers
+    return (
+        <div>
+            <h1>Count: {state.count}</h1>
+            <button onClick={handleIncre}>+1</button>
+            <button onClick={handleDecre}>-1</button>
+            <button onClick={handleCustomNum} data-num={10}>+10</button>
+        </div>
+    )
+}
+```
+
+
+## Userful Components
+
+react-imvc 有一些内置的 React Component，可以便利地实现某些特定需求，使用方法如下：
+
+```javascript
+import { Link, Style } from 'react-imvc/component'
+// your code here
+```
+
+### Link
+
+Link 组件，可以用来实现页面的单页路由跳转效果。
+
+```javascript
+<Link to="/list">去列表页</Link>
+<Link to="/list" replace>以替换历史记录的方式去列表页</Link>
+<Link as='span' to="/list">默认展示为 a 标签，as 属性可以替换为 span 或其他标签或组件</Link>
+<Link back>回退</Link>
+<Link forward>前进</Link>
+<Link go={-2}>回退到上上个页面</Link>
+<a href="/path/to/tradition">传统风格的链接，直接用 a 标签即可</a>
+```
+
+### Style
+
+Style 组件，用来将 controller.preload 里配置的 css，展示在页面上。
+
+```javascript
+import React from 'react'
+import Controller from 'react-imvc/controller'
+import { Style } from 'react-imvc/component' // 加载 Style 组件
+
+export default class extends Controller {
+    preload = {
+        'main': 'path/to/css' // 配置 css 文件路径
+    }
+    View = View
+}
+
+// 当组件渲染时，Style 标签会将 preload 里的同名 css 内容，展示为 style 标签。
+function View() {
+    return (
+        <div>
+          <Style name="main" />
+        </div>
+    )
+}
+
+```
+
+### Input
+
+Input 组件，用来将表单跟 store 联系起来。
+
+```javascript
+import React from 'react'
+import Controller from 'react-imvc/controller'
+import { Input } from 'react-imvc/component' // 加载 Input 组件
+
+export default class extends Controller {
+    View = View
+    // 可以在 Controller 里直接写 initialState
+    initialState = {
+        // 多层次对象
+        user: {
+            name: {
+                first: '',
+                last: '',
+            },
+            email: '',
+            age: 0
+        },
+        // 数组对象
+        friends: [{
+            name: 'friendA',
+        }, {
+            name: 'friendB',
+        }],
+        // 复合对象
+        phone: {
+            value: '',
+            isValid: false,
+            isWarn: false,
+        },
+        content: ''
+    }
+}
+
+/**
+* Input 组件支持 path 写法，支持数组
+* 可以用 .:/ 三种分隔符书写 path
+* 不需要写 value，Input 组件会
+* 使用 transformer 属性，可以在更新 store 之前做数据处理
+* 使用 check 属性，可以验证字段
+* 使用 as 属性，可以自定义渲染标签
+*/
+function View({ state }) {
+    return (
+        <div>
+            firstname: <Input name="user.name.first" />
+            lastname: <Input name="user:name:last" />
+            email: <Input name="user/email" />
+            age: <Input name="user.age" transformer={Number} >
+            friends: {
+                state.friends.map((friend, index) => {
+                    return (
+                        <div>
+                            name: <Input name={`friends/${index}/name`} />
+                        </div>
+                    )
+                })
+            }
+            phone: <Input name="phone" check={isValidPhone} />
+            content: <Input as="textarea" name="content" />
+        </div>
+    )
+}
+```
+
+Input 组件的 transformer 属性接受两个参数 `transformer(newValue, oldValue)`，其返回值将作为最后更新到 store 的 value。
+
+当 Input 组件传入了 check 属性时，它将被视为复合对象 { value, isValid, isWarn } 三个属性，它有以下行为：
+
+    - 当用户 blur 脱离表单焦点时，使用 check 函数检查 value 值，如果 check 函数返回 true，则 isValid = true，isWarn = false。
+    - 当用户 focus 聚焦表单时，取消 isWarn = false 的状态。
+    - 在将 input.value 更新到 store 时，会自动补全 `${name}.value` 更新 state。
+
+Input 组件默认渲染为 input 标签，可以使用 `as` 属性将它渲染成 `textarea` 标签或其他可以触发 `onChange` 方法的组件。
+
+
+### OuterClickWrapper
+
+OuterClickWrapper 组件，提供特殊的 onClick 功能，只有当用户点击了该组件包裹的内容之外的区域时，onClick 事件才会触发。
+
+```javascript
+<OuterClickWrapper onClick={() => console.log('点击了外层区域')} >
+    <div>我是内层区域，点击我不会触发 outer click 事件</div>
+</OuterClickWrapper>
+```
+
+### EventWrapper
+
+EventWrapper 组件，提供传递事件 handler 的快捷通道。
+
+所有以 `handle{EventName}` 为形式的 props，如果在 controller[`handle{EventName}`] 里也存在，将被替换为 controller 的事件处理方法。
+
+```javascript
+<EventWrapper onClick="handleClick" onTouchMove="handleToutchMove">
+    我是一些内容
+</EventWrapper>
+```
+
+## Npm Scripts
+
+react-imvc 可以作为 npm scripts 里的命令来使用，总共有三个
+
+```javascript
+{
+    // 最简用法
+    "start": "react-imvc start",
+    // 使用 querystring 将 start?{search} 的参数传递给 node 启动命令里
+    "start:inspect": "react-imvc start?inspect",
+    // 使用 chrome dev tool 来 inspect 你的应用，并且在执行你的代码之前就自动断点
+    "start:inspect-brk": "react-imvc start?inspect-brk",
+    // 使用 --config 参数，为你的应用指定一个配置文件
+    "start-with-config": "react-imvc --config ./imvc.config.js",
+    // build 命令用法跟 start 类似，也可以用 --config 指定配置文件
+    "build": "react-imvc build --config ./imvc.config.js",
+    // test 命令使用 mocha 来运行以 -test.js 结尾的单元测试文件
+    "test": "react-imvc test"
+}
+```
+
+## Nodejs API
+
+react-imvc 也提供了 node.js 里可用的 api。
+
+通常用在部署时，用 `pm2 start ./start.js -i 4` 来启动 react-imvc 应用。 
+
+```javascript
+// 设置环境变量为生产模式
+process.env.NODE_ENV = 'production'
+// 引入 react-imvc
+var ReactIMVC = require('react-imvc')
+// 引入配置
+var config = require('./imvc.config')
+// 将配置部分修改为生产模式
+var productionConfig = {
+    ...config,
+    root: __dirname,
+    logger: 'dev',
+}
+// 启动 react-imvc 应用
+ReactIMVC.start({
+	config: productionConfig
+})
+
+// 除了 start 方法以外，还有 build 方法，可以对 react-imvc 项目进行构建
+ReactIMVC.build({
+	config: productionConfig
+})
+```
+
+### ReactIMVC.start(options)
+
+start 方法接受一个对象参数 options
+
+    - 如果 options.config 是一个字符串，将用 `require(options.config)` 的方式引入 config 模块
+    - 如果 options.config 是一个对象，将直接使用它作为 react-imvc 的配置
+
+### ReactIMVC.build(options)
+
+build 方法接受一个对象参数 options
+
+    - 如果 options.config 是一个字符串，将用 `require(options.config)` 的方式引入 config 模块
+    - 如果 options.config 是一个对象，将直接使用它作为 react-imvc 的配置
+
+## IMVC Configuration
+
+IMVC 支持开发者自定义配置，实现灵活的功能。
+
+默认配置及其说明，[请点击这里访问](../config/config.default.js)
+
+## Title Keywords Description
+
+有两个途径可以设置 html 文档的 Title Keywords Description 三个属性。
+
+    - 在 imvc.config.js 文件里配置 title keywords description 的值，对所有页面生效。
+    - 在 controller.store.getState() 里，存在特殊字段 `html`，其中
+        * state.html.title 将作为 html 的 title 出现
+        * state.html.keywords 将作为 html 的 keywords 出现
+        * state.html.description 将作为 html 的 description 出现
+
+
+## Server Development
+
+如果需要为 react-imvc 开发一些 server 端的中间件，可以先在 imvc.config.js 里配置 `routes: 'routes'`。
+
+然后在根目录下新建文件夹 `routes`，新增 `routes/index.js` 文件
+
+```javascript
+// routes/index.js
+export test from './test'
+```
+
+react-imvc 将会 `require(routes)` 并把它们 apply 到 express app 里。
+
+每个路由应该是一个文件夹，然后输出到 `routes/index.js` 文件里。
+
+一个典型的中间件写法如下：
+
+```javascript
+// routes/test/index.js
+
+// 引入 express router
+import { Router } from 'express'
+// 创建 router
+const router = Router()
+
+// 输出一个函数，该函数可以拿到 expres app 和 http server 两个参数
+export default function (app, server) {
+	app.use('/restapi', router) // 将 router 挂载到 express app 里
+	server.on('error', (error) => { // 对 server 进行一些处理
+		console.log('error', error)
+	})
+}
+
+// 编写 router 中间件
+router.get('/admin', (req, res) => {
+	res.render('test/view', { // view path 在 routes 目录下，所以 test/view 就是 routes/test/view.js 文件
+		name: 'Jade Gu'
+	})
+})
+```
+
+react-imvc 里采用 `express` 作为服务端框架，采用 `express-react-views` 作为 view engine，并将 view path 设置成 `config.routes` 目录。
+
+view 文件可以采用 react 组件的写法。
+
+查阅 [express doc](expressjs.com) 和 [express-react-views](https://github.com/reactjs/express-react-views) 了解更多内容。
+
+## Custom Layout
+
+react-imvc 内置一个默认的 layout，可以满足最简单的需求，但对于部分应用来说，自定义 layout 是非常重要的。
+
+可以在 `imvc.config.js` 里配置 layout 字段，促使 react-imvc 渲染页面时，使用自定义的 Layout。
+
+Layout 的计算规则是：`path.join(config.root, config.routes, config.layout)`
+
+[点击查看默认的 layout，可以参考它进行修改](../page/view.js)。
