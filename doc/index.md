@@ -684,7 +684,7 @@ build 方法接受一个对象参数 options
 
 IMVC 支持开发者自定义配置，实现灵活的功能。
 
-默认配置及其说明，[请点击这里访问](../config/config.default.js)
+默认配置及其说明，[请点击这里访问](../config/config.defaults.js)
 
 ## Title Keywords Description
 
