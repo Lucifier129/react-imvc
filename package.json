@@ -8,7 +8,8 @@
   },
   "scripts": {
     "build": "gulp",
-    "prebuild": "rimraf ./publish"
+    "prebuild": "rimraf ./publish",
+    "test": "mocha --opts mocha.opts"
   },
   "dependencies": {
     "babel-cli": "^6.14.0",
@@ -62,6 +63,7 @@
     "yargs": "^8.0.2"
   },
   "devDependencies": {
+    "puppeteer": "^0.10.2",
     "rimraf": "^2.6.1"
   }
 }

@@ -152,7 +152,7 @@ function readAssets(config) {
   }
 
   if (!result) {
-    throw new Error('找不到 webpack 资源表 stats.json')
+    throw new Error('找不到 webpack 资源表 assets.json')
   }
 
   return getAssets(result)
