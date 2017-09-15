@@ -8,6 +8,6 @@ export default class extends Controller {
 
 function View() {
     return (
-        <div id="csr_target">static view content by client side rendering</div>
+        <div id="static_view_csr">static view content by client side rendering</div>
     )
 }

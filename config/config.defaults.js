@@ -124,6 +124,13 @@ export default {
 	 */
   codeSpliting: isProd,
   /**
+   * 是否输出 webpack log 日志
+   */
+  webpackLogger: {
+    chunks: false, // Makes the build much quieter
+    colors: true
+  },
+  /**
 	 * 是否开启 webpack 的构建产物进行可视化分析
 	 * 默认不开启
 	 */

@@ -8,6 +8,6 @@ export default class extends Controller {
 
 function View() {
     return (
-        <div id="ssr_target">static view content</div>
+        <div id="static_view">static view content</div>
     )
 }

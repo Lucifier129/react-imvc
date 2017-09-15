@@ -34,10 +34,9 @@ function startWebpack(config) {
 			if (error) {
 				reject(error)
 			} else {
-				console.log('[webpack:build]', stats.toString({
-					chunks: false, // Makes the build much quieter
-					colors: true
-				}))
+				if (config.webpackLogger) {
+					console.log('[webpack:build]', stats.toString(config.webpackLogger))
+				}
 				resolve()
 			}
 		})

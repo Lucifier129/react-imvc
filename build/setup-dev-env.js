@@ -10,10 +10,7 @@ exports.setupClient = function setupClient (config) {
   var clientConfig = createWebpackClientConfig(config)
   var clientDevMiddleware = webpackDevMiddleware(webpack(clientConfig), {
     publicPath: config.staticPath,
-    stats: {
-      colors: true,
-      chunks: false
-    },
+    stats: config.webpackLogger,
     serverSideRender: true
   })
   return clientDevMiddleware
