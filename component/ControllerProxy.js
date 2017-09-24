@@ -4,7 +4,7 @@ import React from 'react'
  * ViewProxy 把 react 组件生命周期同步到 controller 里
  * 根据 state 更新 document.title
  */
-export default class ViewProxy extends React.Component {
+export default class ControllerProxy extends React.Component {
 	updateDocumentTitle() {
 		let {
 			controller

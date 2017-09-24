@@ -6,6 +6,7 @@ import _ from "../util";
 import setRecorder from "./recorder";
 import Root from "../component/Root";
 import ControllerProxy from "../component/ControllerProxy";
+import ViewManager from "../component/ViewManager";
 import * as shareActions from "./actions";
 
 const EmptyView = () => false;
@@ -206,14 +207,35 @@ export default class Controller {
   }
   /**
    * 
+   * 封装 get 请求，方便使用
+   */
+  get(url, params, options) {
+    /**
+     * API shortcut，方便 fetch(name, options) 代替 url
+     */
+    if (API && Object.prototype.hasOwnProperty.call(API, url)) {
+      url = API[url];
+    }
+    if (params) {
+      url += "?" + querystring.stringify(params);
+    }
+    options = {
+      ...options,
+      method: "GET"
+    };
+    return this.fetch(url, options);
+  }
+  /**
+   * 
    * 封装 post 请求，方便使用
    */
-  post(url, data) {
-    let options = {
-      method: 'POST',
+  post(url, data, options) {
+    options = {
+      ...options,
+      method: "POST",
       body: JSON.stringify(data)
-    }
-    return this.fetch(url, options)
+    };
+    return this.fetch(url, options);
   }
   /**
 	 * 预加载 css 样式等资源
@@ -438,7 +460,6 @@ export default class Controller {
   }
   render() {
     let {
-      BaseView,
       View,
       store,
       handlers,
@@ -458,24 +479,15 @@ export default class Controller {
       handlers
     };
 
-    let view = (
-      <View state={state} handlers={handlers} actions={store.actions} />
-    );
-
-    /**
-       * 如果有 BaseView，wrap 一层，方便做 Layout 共享或动画等效果
-       */
-    if (BaseView) {
-      view = (
-        <BaseView state={state} handlers={handlers} actions={store.actions}>
-          {view}
-        </BaseView>
-      );
-    }
-
     return (
       <Root context={componentContext}>
-        {view}
+        <ViewManager
+          controller={this}
+          View={View}
+          state={state}
+          handlers={handlers}
+          actions={store.actions}
+        />
         <ControllerProxy key={location.raw} controller={this} />
       </Root>
     );
