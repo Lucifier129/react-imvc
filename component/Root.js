@@ -19,7 +19,7 @@ export default class Root extends React.Component {
   }
   render () {
     return (
-      <div>
+      <div className="imvc-root">
         {this.props.children}
       </div>
     )

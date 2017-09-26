@@ -13,11 +13,31 @@ export default class ViewManager extends React.Component {
       this.views[path] = null
     }
   }
+  clearItemIfNeed() {
+    let { views, scrollMap } = this
+    let { controller } = this.props
+    let cache = controller.getAllCache()
+
+    for (let key in views) {
+      if (!cache.hasOwnProperty(key)) {
+        delete views[key]
+      }
+    }
+
+    for (let key in scrollMap) {
+      if (!cache.hasOwnProperty(key)) {
+        delete scrollMap[key]
+      }
+    }
+  }
   componentWillReceiveProps(nextProps) {
     if (this.props.state.location !== nextProps.state.location) {
       this.scrollMap[this.props.state.location.raw] = window.scrollY
     }
     this.addItemIfNeed(nextProps)
+  }
+  componentDidUpdate() {
+    this.clearItemIfNeed()
   }
   renderView(path) {
     let { View, state, handlers, actions, controller } = this.props;
@@ -38,7 +58,7 @@ export default class ViewManager extends React.Component {
   render() {
     let { state } = this.props;
     return (
-      <div>
+      <div className="imvc-view-manager">
         {Object.keys(this.views).map(path => {
           return (
             <ViewItem
@@ -75,7 +95,7 @@ class ViewItem extends React.Component {
   }
   render() {
     return (
-      <div ref={this.getContainer} data-path={this.props.path}>
+      <div className="imvc-view-item" ref={this.getContainer} data-path={this.props.path}>
         {this.props.view}
       </div>
     );

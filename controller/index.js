@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { createStore, createLogger } from "relite";
 import Cookie from "js-cookie";
+import querystring from "querystring";
 import _ from "../util";
 import setRecorder from "./recorder";
 import Root from "../component/Root";
@@ -22,8 +23,8 @@ export default class Controller {
   constructor(location, context) {
     this.meta = {
       isDestroyed: false,
-      hadMounted: false,
-      unsubscribeList: null
+      hadMounted: false, // change by ControllerProxy
+      unsubscribeList: []
     };
     this.location = location;
     this.context = context;
@@ -210,6 +211,7 @@ export default class Controller {
    * 封装 get 请求，方便使用
    */
   get(url, params, options) {
+    let { API } = this;
     /**
      * API shortcut，方便 fetch(name, options) 代替 url
      */
@@ -217,7 +219,8 @@ export default class Controller {
       url = API[url];
     }
     if (params) {
-      url += "?" + querystring.stringify(params);
+      let prefix = url.includes("?") ? "&" : "?";
+      url += prefix + querystring.stringify(params);
     }
     options = {
       ...options,
@@ -349,6 +352,17 @@ export default class Controller {
     let store = (this.store = createStore(finalActions, finalInitialState));
 
     /**
+     * 在 client 端添加 logger
+     */
+    if (context.isClient) {
+      let logger = createLogger({
+        name: this.name || location.pattern
+      });
+      let unsubscribe = store.subscribe(logger);
+      this.meta.unsubscribeList.push(unsubscribe);
+    }
+
+    /**
 		 * 将 handle 开头的方法，合并到 this.handlers 中
 		 */
     this.combineHandlers(this);
@@ -404,27 +418,21 @@ export default class Controller {
       return;
     }
 
-    let unsubscribeList = [];
-
     if (store) {
-      let logger = createLogger({
-        name: this.name || location.pattern
-      });
       let unsubscribe = store.subscribe(data => {
-        logger(data);
         this.refreshView();
         if (this.stateDidChange) {
           this.stateDidChange(data);
         }
       });
-      unsubscribeList.push(unsubscribe);
+      meta.unsubscribeList.push(unsubscribe);
       setRecorder(store);
     }
 
     // 监听路由跳转
     if (this.pageWillLeave) {
       let unlisten = history.listenBefore(this.pageWillLeave.bind(this));
-      unsubscribeList.push(unlisten);
+      meta.unsubscribeList.push(unlisten);
     }
 
     // 监听浏览器窗口关闭
@@ -432,15 +440,14 @@ export default class Controller {
       let unlisten = history.listenBeforeUnload(
         this.windowWillUnload.bind(this)
       );
-      unsubscribeList.push(unlisten);
+      meta.unsubscribeList.push(unlisten);
     }
-    meta.unsubscribeList = unsubscribeList;
   }
   destroy() {
     let { meta } = this;
-    if (meta.unsubscribeList) {
+    if (meta.unsubscribeList.length > 0) {
       meta.unsubscribeList.forEach(unsubscribe => unsubscribe());
-      meta.unsubscribeList = null;
+      meta.unsubscribeList.length = 0;
     }
     meta.isDestroyed = true;
   }

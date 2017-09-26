@@ -103,9 +103,18 @@ react-imvc 默认把一些基本信息填充在 context 对象里，比如
 
 - context.restapi 当前 web app 的 restfull api 的 url 前缀
 
-- context.preload 缓存预加载资源的对象
+- context.preload 缓存预加载资源的对象（server 的 preload 不会传递给 client，而是由 client 端使用 DOM 收集 [data-preload] 节点的内容，比如 css。）
 
-- context.prevLocation 上一个页面的 location 对象，方便当前页面判断来源
+- context.prevLocation 上一个页面的 location 对象，方便当前页面判断来源（只在 client 端存在）
+
+`publicPath` 在开发模式下指向 `src` 目录，在生产环境默认指向编译后的目录 `static`，可以使用 `publicPath` 引入本地静态资源。
+
+```javascript
+<img src={`${state.publicPath}/page/home/image/logo.png`} />
+<script src={`${state.publicPath}/lib/jquery.min.js`} />
+```
+
+注意：除了上述列举的几个字段外，在 context 里的其余字段不会从 server 端被传递到 client 端，这样可以保证 client 端不依赖服务端的 context，可以独立工作。
 
 ### controller.View -> React Component
 
@@ -116,12 +125,6 @@ controller.View 属性，应该是一个 React Component 组件。该组件的 p
 - props.actions 是 controller.store.actions 里的 actions 集合对象
 
 React 的用法可以查阅其[官方文档](https://facebook.github.io/react/)
-
-### controller.BaseView -> React Component
-
-controller.BaseView 属性，会在渲染时作为 controller.View 组件的父组件。
-
-当两个 page 共享同一个 BaseView 组件时，可以在 BaseView 组件内通过 `props.children` 和 `nextProps.children` 拿到两个 view，做一些转场动画。
 
 ### controller.Model -> object -> { initialState, ...actions }
 
@@ -219,13 +222,25 @@ fetch 方法用来跟服务端进行 http 或 https 通讯，它的用法和参�
      - 该特性提供在本地简单地用 json 文件 mock 数据的功能
      - 当 options.raw === true 时，不做上述转换，直接使用 url
 
-### controller.post(url=string, data=object)
+### controller.get(url=string, params=object, options=object)
+
+controller.post 方法是基于 controller.fetch 封装的方法，更简便地发送 post 请求。
+
+url 参数的处理，跟 controller.fetch 方法一致。
+
+params 参数将在内部被 querystring.stringify ，拼接在 url 后面。
+
+options 参数将作为 fetch 的 options 传递。
+
+### controller.post(url=string, data=object, options=object)
 
 controller.post 方法是基于 controller.fetch 封装的方法，更简便地发送 post 请求。
 
 url 参数的处理，跟 controller.fetch 方法一致。
 
 data 参数将在内部被 JSON.stringify ，然后作为 request payload 发送给服务端
+
+options 参数将作为 fetch 的 options 传递。
 
 ### controller.prependBasename(url=string)
 
