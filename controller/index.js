@@ -351,16 +351,7 @@ export default class Controller {
     let finalActions = { ...shareActions, ...actions };
     let store = (this.store = createStore(finalActions, finalInitialState));
 
-    /**
-     * 在 client 端添加 logger
-     */
-    if (context.isClient) {
-      let logger = createLogger({
-        name: this.name || location.pattern
-      });
-      let unsubscribe = store.subscribe(logger);
-      this.meta.unsubscribeList.push(unsubscribe);
-    }
+    this.attachLogger();
 
     /**
 		 * 将 handle 开头的方法，合并到 this.handlers 中
@@ -410,6 +401,19 @@ export default class Controller {
     this.bindStoreWithView();
     return this.render();
   }
+  attachLogger() {
+    let { context, location, store } = this;
+    /**
+     * 在 client 端添加 logger
+     */
+    if (context.isClient) {
+      let logger = createLogger({
+        name: this.name || location.pattern
+      });
+      let unsubscribe = store.subscribe(logger);
+      this.meta.unsubscribeList.push(unsubscribe);
+    }
+  }
   bindStoreWithView() {
     let { context, store, location, history, meta } = this;
 
@@ -453,10 +457,11 @@ export default class Controller {
   }
   restore(location, context) {
     let { meta, store } = this;
-    let { PAGE_DID_BACK } = store.actions;
+    let { __PAGE_DID_BACK__ } = store.actions;
 
     meta.isDestroyed = false;
-    PAGE_DID_BACK(location);
+    this.attachLogger();
+    __PAGE_DID_BACK__(location);
 
     if (this.pageDidBack) {
       this.pageDidBack(location, context);

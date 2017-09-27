@@ -14,7 +14,7 @@ export let UPDATE_STATE = (state, newState) => {
   }
 }
 
-export let PAGE_DID_BACK = (state, location) => {
+export let __PAGE_DID_BACK__ = (state, location) => {
   return {
     ...state,
     location,
