@@ -339,17 +339,31 @@ export default class Controller {
     };
 
     /**
-		 * 获取动态初始化的 initialState
+		 * 动态获取初始化的 initialState
 		 */
     if (!globalInitialState && this.getInitialState) {
       finalInitialState = await this.getInitialState(finalInitialState);
     }
 
     /**
+     * 复用了 server side 的 state 数据之后执行
+     */
+    if (globalInitialState && this.stateDidReuse) {
+      this.stateDidReuse(finalInitialState)
+    }
+
+    /**
+       * 动态获取最终的 actions
+       */
+    if (this.getFinalActions) {
+      actions = this.getFinalActions(actions);
+    }
+
+    /**
 		 * 创建 store
 		 */
-    let finalActions = { ...shareActions, ...actions };
-    let store = (this.store = createStore(finalActions, finalInitialState));
+    let finalActions = { ...actions, ...shareActions };
+    this.store = createStore(finalActions, finalInitialState);
 
     this.attachLogger();
 
