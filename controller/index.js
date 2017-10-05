@@ -19,6 +19,7 @@ const EmptyView = () => false;
  * 提供 fetch 方法
  */
 export default class Controller {
+  logger = true
   View = EmptyView;
   constructor(location, context) {
     this.meta = {
@@ -420,10 +421,9 @@ export default class Controller {
     /**
      * 在 client 端添加 logger
      */
-    if (context.isClient) {
-      let logger = createLogger({
-        name: this.name || location.pattern
-      });
+    if (this.logger && context.isClient) {
+      let name = typeof this.logger === 'string' ? this.logger : location.pattern
+      let logger = createLogger({ name });
       let unsubscribe = store.subscribe(logger);
       this.meta.unsubscribeList.push(unsubscribe);
     }
