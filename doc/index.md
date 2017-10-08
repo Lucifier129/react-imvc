@@ -15,6 +15,7 @@
 - [Title Keywords Description](#title-keywords-description)
 - [Server Development](#server-development)
 - [Custom Layout](#custom-layout)
+- [High Order Component](#high-order-component)
 
 ## What is IMVC
 
@@ -331,11 +332,25 @@ windowWillUnload
 
 controller.getInitialState 方法会在 createStore 之前执行，它应该返回一个对象，作为 createStore 的 initialState 参数。
 
+该方法将得到一个 initialState 参数，为当前 Controller 的 initialState。
+
 该方法的作用是，提供在运行时确定 initialState 的能力。比如从 cookie、storage、或者 server 里获取数据。
 
 该方法内，不可以使用 `this.store.acitons`，因为 store 还未创建。
 
 该方法支持 promise，如果使用了 async/await 语法，或者 return promise，后面的生命周期方法将会等待它们 resolve。
+
+### Controller.getFinalActions(actions)
+
+controller.getFinalActions 方法在 createStore 之前执行，它应该返回一个对象，作为 createStore 的 actions 参数。
+
+该方法将得到 actions 参数，为当前 Controller 的 actions。
+
+该方法的作用是，提供在运行时确定 actions 的能力，比如讲多个页面共享的 shared-actions 合并进来。
+
+该方法内，不可以使用 `this.store.acitons`，因为 store 还未创建。
+
+该方法不支持 promise，必须立刻返回 actions
 
 ### Controller.shouldComponentCreate()
 
@@ -403,7 +418,6 @@ pageDidBack 里同步的执行 action 将不会引起 view 渲染，此时 view 
 
 该方法比（第二次或第二次以上的） `componentDidMount` 生命周期更早执行。
 
-
 ### Controller.windowWillUnload()
 
 controller.windowWillUnload() 方法跟 `pageWillLeave` 方法性质类似，只是触发时机为用户关闭窗口。
@@ -421,6 +435,13 @@ controller.stateDidChange 是一个特殊的生命周期，当 store 里的 stat
 比如，当某个 `SHOW_POP` 触发时，1 秒后触发 `HIDE_POP`。
 
 比如，当 `UPDATE_USER` 触发时，调用 fetch 方法，更新数据到 server 端等等。
+
+### Controller.stateDidReuse(state)
+
+controller.stateDidReuse 是一个特殊的生命周期。当服务端完成过渲染时，它会将 html 接口和 state 对象都返回给浏览器端；react-imvc 内部将会尝试复用服务端提供的 state，不再调用 `getInitialState`、`shouldComponentCreate` 和 `componentWillCreate` 三个生命周期方法，而是调用 `stateDidReuse` 生命周期方法。
+
+由于服务端的 context 和浏览器端的 context 只有少数几个基础数据是共享的，其它数据则不共享。该方法可以方便地将 state 里需要缓存的对象，放进 context 对象里。
+
 
 ## Event handler
 
@@ -476,6 +497,20 @@ function View({ state, handlers }) {
     )
 }
 ```
+
+### handleInputChange(path, value, oldValue) -> final value
+
+注意：react-imvc 为 Controller 提供了一个功能性的事件处理器： `handleInputChange`。请不要用`handleInputChange`命名你的事件处理器，防止错误调用。
+
+该方法必须跟 `Input` 组件配合，当 Input 即将要更新 global state 对象时，handleInputChange 将被触发。
+
+该方法接受三个参数：
+
+- path: 当前要更新的字段的 path 路径
+- value: 当前最新的 value 值
+- oldValue：上一个 value 值
+
+该方法的返回值将作为最终的 value 值，更新给 state。
 
 
 ## Userful Components
@@ -768,3 +803,53 @@ react-imvc 内置一个默认的 layout，可以满足最简单的需求，但�
 Layout 的计算规则是：`path.join(config.root, config.routes, config.layout)`
 
 [点击查看默认的 layout，可以参考它进行修改](../page/view.js)。
+
+## High Order Component
+
+react-imvc 提供了高阶组件，可以便利地实现一些特殊需求。
+
+### connect(selector)(ReactComponent)
+
+connect 是一个高阶函数，第一次调用时接受 selector 函数作为参数，返回 withData 函数。
+
+withData 函数接受一个 React 组件作为参数，返回新的 React 组件。withData 会将 selector 函数返回的数据，作为 props 传入新的 React 组件。
+
+selector({ state, handlers, actions }) 函数将得到一个 data 参数，其中包含三个字段 state, handlers, acitons，分别对应 controller 里的 global state, global handlers 和 actions 对象。
+
+```javascript
+import React from "react";
+import connect from 'react-imvc/hoc/connect'
+
+const withData = connect(({ state }) => {
+  return {
+    content: state.loadingText
+  }
+})
+
+export default withData(Loading)
+
+function Loading(props) {
+  if (!props.content) {
+    return null;
+  }
+  return (
+    <div id="wxloading" className="wx_loading">
+      <div className="wx_loading_inner">
+        <i className="wx_loading_icon" />
+        {props.content}
+      </div>
+    </div>
+  );
+}
+
+```
+
+connect 高阶组件的作用是
+
+- 避免层层传递 state 到子孙组件，通过 connect 可以走一段捷径
+
+- connect 内部使用 `ReactPureComponent` 如果 props 不变，组件不会更新。
+
+- 由于 PureComponent 机制只检查 `props` 和 `state`，其它通过 ReactContext 获取数据的组件，可能不会被更新，比如 connect 的组件内部有 `Input` 组件时，需要将 Input 组件的 value 指作为 withData 的返回值的一部分，否则 `Input` 组件将不会更新。这是 connect 组件的一个副作用。
+
+慎用 connect 高阶组件，确保只在可控的地方使用，比如常年不变的 Layout 等公共组件。
