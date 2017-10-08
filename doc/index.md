@@ -8,7 +8,7 @@
 - [Controller API](#controller-api)
 - [Controller Life Cycle Method](#controller-life-cycle-method)
 - [Event Handler](#event-handler)
-- [Userful Components](#useful-components)
+- [Useful Components](#useful-components)
 - [Npm Scripts](#npm-scripts)
 - [Nodejs API](#nodejs-api)
 - [IMVC Configuration](#imvc-configuration)
@@ -513,7 +513,7 @@ function View({ state, handlers }) {
 该方法的返回值将作为最终的 value 值，更新给 state。
 
 
-## Userful Components
+## Useful Components
 
 react-imvc 有一些内置的 React Component，可以便利地实现某些特定需求，使用方法如下：
 
