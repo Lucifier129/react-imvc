@@ -195,6 +195,10 @@ controller.handlers 是在初始化时，从 controller 的实例里收集的以
 
 当 controller.SSR = false 时，如果 controller.Loading 有值，将渲染 controller.Loading 组件
 
+### controller.API -> object
+
+当 controller.API 存在时，将影响 controller.fetch|get|post 的行为，见[controller.fetch](#controllerfetchurlstring-optionsobject)
+
 ## Controller API
 
 ### controller.fetch(url=string, options=object)
@@ -845,13 +849,3 @@ function Loading(props) {
 }
 
 ```
-
-connect 高阶组件的作用是
-
-- 避免层层传递 state 到子孙组件，通过 connect 可以走一段捷径
-
-- connect 内部使用 `ReactPureComponent` 如果 props 不变，组件不会更新。
-
-- 由于 PureComponent 机制只检查 `props` 和 `state`，其它通过 ReactContext 获取数据的组件，可能不会被更新，比如 connect 的组件内部有 `Input` 组件时，需要将 Input 组件的 value 指作为 withData 的返回值的一部分，否则 `Input` 组件将不会更新。这是 connect 组件的一个副作用。
-
-慎用 connect 高阶组件，确保只在可控的地方使用，比如常年不变的 Layout 等公共组件。

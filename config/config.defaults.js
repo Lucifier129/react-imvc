@@ -153,6 +153,21 @@ export default {
 	 */
   webpackPlugins: [],
 
+  gulp: {
+    // 需要压缩到 static 目录的 css
+    css: [],
+    // 需要压缩到 static 目录的 html
+    html: [],
+    // 需要压缩到 static 目录的 js
+    js: [],
+    // 需要复制到 static 目录的非 html, css, js 文件
+    copy: [],
+    // 需要复制到 publish 目录的额外文件
+    publishCopy: [],
+    // 需要编译到 publish 目录的额外文件
+    publishBabel: [],
+  },
+
   /**
 	 * express 中间件 cookie-parser 的自定义配置
 	 * 默认为空

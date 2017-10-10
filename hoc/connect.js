@@ -1,24 +1,20 @@
-import React from 'react'
+import React from "react";
 
-const returnNull = () => null
-const connect = (selector=returnNull) => InputComponent => {
-	return class Connector extends React.PureComponent {
-		static contextTypes = {
-			state: React.PropTypes.object,
-			handlers: React.PropTypes.object,
-			actions: React.PropTypes.object,
-		}
-		constructor(props, context) {
-			super(props, context)
-			this.state = {...selector({...context, props})}
-		}
-		componentWillReceiveProps(nextProps, nextContext) {
-			this.setState({...selector({...nextContext, props: nextProps })})
-		}
-		render() {
-			return <InputComponent {...this.state} {...this.props} />
-		}
-	}
-}
+const returnNull = () => null;
+const connect = (selector = returnNull) => InputComponent => {
+  function Connector(props, context) {
+    return (
+      <InputComponent {...selector({ ...context, props })} {...props} />
+    );
+  }
 
-export default connect
+  Connector.contextTypes = {
+    state: React.PropTypes.object,
+    handlers: React.PropTypes.object,
+    actions: React.PropTypes.object
+  };
+
+  return Connector;
+};
+
+export default connect;
