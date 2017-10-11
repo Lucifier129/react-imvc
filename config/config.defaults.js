@@ -192,7 +192,7 @@ export default {
 	 * express view engine 的自定义配置
 	 */
   ReactViews: {
-    beautify: isDev, // 默认在开发阶段美化 html 响应内容
+    beautify: false, // 是否美化 html 响应内容
     transformViews: false // 默认不转换 view，已经有 babel 做处理
   },
   /**
