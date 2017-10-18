@@ -63,7 +63,7 @@
     "yargs": "^8.0.2"
   },
   "devDependencies": {
-    "puppeteer": "^0.10.2",
+    "puppeteer": "^0.12.0",
     "rimraf": "^2.6.1"
   }
 }
