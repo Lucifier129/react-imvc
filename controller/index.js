@@ -11,7 +11,7 @@ import ViewManager from "../component/ViewManager";
 import * as shareActions from "./actions";
 
 const EmptyView = () => false;
-
+let uid = 0; // seed of controller id
 /**
  * 绑定 Store 到 View
  * 提供 Controller 的生命周期钩子
@@ -19,10 +19,11 @@ const EmptyView = () => false;
  * 提供 fetch 方法
  */
 export default class Controller {
-  logger = true
+  logger = true;
   View = EmptyView;
   constructor(location, context) {
     this.meta = {
+      id: uid++,
       isDestroyed: false,
       hadMounted: false, // change by ControllerProxy
       unsubscribeList: []
@@ -350,7 +351,7 @@ export default class Controller {
      * 复用了 server side 的 state 数据之后执行
      */
     if (globalInitialState && this.stateDidReuse) {
-      this.stateDidReuse(finalInitialState)
+      this.stateDidReuse(finalInitialState);
     }
 
     /**
@@ -422,7 +423,8 @@ export default class Controller {
      * 在 client 端添加 logger
      */
     if (this.logger && context.isClient) {
-      let name = typeof this.logger === 'string' ? this.logger : location.pattern
+      let name =
+        typeof this.logger === "string" ? this.logger : location.pattern;
       let logger = createLogger({ name });
       let unsubscribe = store.subscribe(logger);
       this.meta.unsubscribeList.push(unsubscribe);
@@ -484,8 +486,12 @@ export default class Controller {
     this.bindStoreWithView();
     return this.render();
   }
+  reload() {
+    this.history.replace(this.location.raw)
+  }
   render() {
     let {
+      meta,
       View,
       store,
       handlers,
@@ -504,17 +510,19 @@ export default class Controller {
       handleInputChange,
       handlers
     };
+    let currentKey = `[${meta.id}]${location.raw}`;
 
     return (
       <Root context={componentContext}>
         <ViewManager
+          currentKey={currentKey}
           controller={this}
           View={View}
           state={state}
           handlers={handlers}
           actions={store.actions}
         />
-        <ControllerProxy key={location.raw} controller={this} />
+        <ControllerProxy key={currentKey} controller={this} />
       </Root>
     );
   }

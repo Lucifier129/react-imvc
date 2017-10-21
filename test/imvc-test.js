@@ -5,7 +5,7 @@ import fetch from "node-fetch";
 
 process.env.NODE_ENV = "production";
 const start = require("../start");
-const PORT = 2333;
+const PORT = 3333;
 const ROOT = path.join(__dirname, "project");
 const config = {
   root: ROOT, // 项目根目录

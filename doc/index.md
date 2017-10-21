@@ -7,6 +7,7 @@
 - [Controller Property](#controller-property)
 - [Controller API](#controller-api)
 - [Controller Life Cycle Method](#controller-life-cycle-method)
+- [Controller Method Name You Should Not Use](#controller-method-name-you-should-not-use)
 - [Event Handler](#event-handler)
 - [Useful Components](#useful-components)
 - [Npm Scripts](#npm-scripts)
@@ -282,6 +283,10 @@ controller.redirect 方法可实现重定向功能。
 
 注意，重定向功能不是修改 location 的唯一途径，只有在需要的时候使用，其它情况下，考虑用 controller.history 里的跳转方法。
 
+### controller.reload
+
+controller.reload 方法可实现刷新当前页面的功能，相当于单页应用的 window.location.reload()，通常整个页面不会刷新，而是重新实例化了一份 controller。
+
 ### controller.getCookie(key=string)
 
 controller.getCookie 用以获取 cookie 里跟 key 参数对应的 value 值。
@@ -314,6 +319,11 @@ controller.removeFromCache 方法只在客户端存在，用以手动将 control
 
 controller.refreshView 方法只在客户端存在，用当前的 state 刷新视图。
 
+### controller.combineHandlers(handlers)
+
+controller.combineHandlers 方法被用来收集 controller 的 handleXXX 开头的实例方法，放入 controller.handlers 属性中。
+
+除此之外，也可以通过手动调用 controller.combineHandlers 的形式，将其它需要合并进 handlers 的方法集弄进去。
 
 ## Controller Life Cycle Method
 
@@ -448,6 +458,22 @@ controller.stateDidReuse 是一个特殊的生命周期。当服务端完成过�
 
 由于服务端的 context 和浏览器端的 context 只有少数几个基础数据是共享的，其它数据则不共享。该方法可以方便地将 state 里需要缓存的对象，放进 context 对象里。
 
+
+## Controller Method Name You Should Not Use
+
+除了上述 controller 的 Properties，API 和 Life-Cycle Method 的名字以外，react-imvc 的 Controller 类还具有一些内部方法，不应在业务开发中使用它们。
+
+它们分别是
+
+- meta
+- handlers
+- fetchPreload
+- init
+- destroy
+- restore
+- attachLogger
+- bindStoreWithView
+- render
 
 ## Event handler
 

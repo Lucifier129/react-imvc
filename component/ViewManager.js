@@ -40,11 +40,11 @@ export default class ViewManager extends React.Component {
     this.clearItemIfNeed()
   }
   renderView(path) {
-    let { View, state, handlers, actions, controller } = this.props;
+    let { View, state, handlers, actions, controller, currentKey } = this.props;
     let isActive = state.location.raw === path;
 
     if (isActive) {
-      let view = <View state={state} handlers={handlers} actions={actions} />;
+      let view = <View key={currentKey} state={state} handlers={handlers} actions={actions} />;
       if (controller.KeepAlive) {
         this.views[path] = view;
       } else if (this.views.hasOwnProperty(path)) {
