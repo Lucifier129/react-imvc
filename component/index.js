@@ -1,5 +1,7 @@
 export Link from './Link'
 
+export NavLink from './NavLink'
+
 export Input from './Input'
 
 export Style from './Style'

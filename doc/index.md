@@ -568,6 +568,27 @@ Link 组件，可以用来实现页面的单页路由跳转效果。
 <a href="/path/to/tradition">传统风格的链接，直接用 a 标签即可</a>
 ```
 
+### NavLink
+
+NavLink 组件，跟 Link 类似，可以用来实现页面的单页路由跳转效果。除此之外，它还具备响应当前 url 激活状态的能力
+
+```javascript
+<NavLink
+    to="/list"
+    activeClassName="active"
+    activeStyle={{ color: 'red' }}
+    isActive={(path, location) => boolean}
+>
+    列表
+</NavLink>
+```
+
+- activeClassName: 当 to 属性跟当前 url 匹配时，添加到 DOM 元素上的 className 名
+- activeStyle: 当 to 属性跟当前 url 匹配时，添加到 DOM 元素上的 style 样式
+- isActive: 可选，类型必须为 function，接受两个参数 path 和 location，返回 boolean
+    * 当没有 isActive 属性时，匹配方式为 path === location.raw
+    * 当提供了 isActive 函数是，匹配方式为 `!!isActive(path, location)`
+
 ### Style
 
 Style 组件，用来将 controller.preload 里配置的 css，展示在页面上。

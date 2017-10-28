@@ -4,7 +4,7 @@ const returnNull = () => null;
 const connect = (selector = returnNull) => InputComponent => {
   function Connector(props, context) {
     return (
-      <InputComponent {...selector({ ...context, props })} {...props} />
+      <InputComponent {...props} {...selector({ ...context, props })} />
     );
   }
 

@@ -36,6 +36,15 @@ export default class Link extends Component {
     let { history, location } = this.context
     onClick && onClick(event)
 
+    if (
+      event.defaultPrevented || // onClick prevented default
+      event.button !== 0 || // ignore everything but left clicks
+      this.props.target || // let browser handle "target=_blank" etc.
+      isModifiedEvent(event) // ignore clicks with modifier keys
+    ) {
+      return
+    }
+
     if (back) {
       history.goBack()
     } else if (forward) {
@@ -51,4 +60,9 @@ export default class Link extends Component {
       }
     }
   };
+}
+
+
+function isModifiedEvent(event) {
+  return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey)
 }

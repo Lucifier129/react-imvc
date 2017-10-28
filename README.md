@@ -70,7 +70,7 @@ export default [
 
 ```json
 {
-	"presets": ["latest", "stage-0", "react"]
+	"presets": ["env", "stage-0", "react"]
 }
 ```
 
