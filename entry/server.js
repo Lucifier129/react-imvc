@@ -9,7 +9,6 @@ import favicon from 'serve-favicon'
 import helmet from 'helmet'
 import ReactViews from 'express-react-views'
 import shareRoot from '../middleware/shareRoot'
-import wrapRender from '../middleware/wrapRender'
 
 export default function createExpressApp(config) {
   const app = express()
@@ -18,16 +17,6 @@ export default function createExpressApp(config) {
   let list = Array.isArray(config.basename) ? config.basename : [config.basename || '']
   list.forEach(basename => {
     app.use(shareRoot(basename))
-  })
-
-  // handle publicPath
-  app.use((req, res, next) => {
-    let basename = req.basename // from shareRoot
-    let serverPublicPath = basename + config.staticPath
-    let publicPath = config.publicPath || serverPublicPath
-    req.serverPublicPath = serverPublicPath
-    req.publicPath = publicPath
-    next()
   })
 
   // handle helmet
@@ -55,13 +44,6 @@ export default function createExpressApp(config) {
   app.set('views', path.join(config.root, config.routes))
   app.set('view engine', 'js')
 
-  // handle default props
-  app.use(
-    wrapRender({
-      defaults: config
-    })
-  )
-
   // handle logger
   if (config.logger) {
     app.use(logger(config.logger))
@@ -85,6 +67,12 @@ export default function createExpressApp(config) {
     app.use(cookieParser(config.cookieParser))
   }
 
+  app.use('/mock', (req, res, next) => {
+    let filePath = path.join(config.root, config.src, `${req.url}.json`)
+    res.type('application/json')
+    fs.createReadStream(filePath).pipe(res)
+  })
+
   app.get('/slbhealthcheck.html', (req, res) => {
     res.send('slbhealthcheck ok')
   })
@@ -99,7 +87,7 @@ export default function createExpressApp(config) {
 
     // 开发模式用 webpack-dev-middleware 获取 assets
     app.use((req, res, next) => {
-      req.assets = getAssets(res.locals.webpackStats.toJson().assetsByChunkName)
+      res.locals.assets = getAssets(res.locals.webpackStats.toJson().assetsByChunkName)
       next()
     })
   } else {
@@ -111,15 +99,26 @@ export default function createExpressApp(config) {
 
     let assets = readAssets(config)
     app.use((req, res, next) => {
-      req.assets = assets
+      res.locals.assets = assets
       next()
     })
   }
 
-  app.use('/mock', (req, res, next) => {
-    let filePath = path.join(config.root, config.src, `${req.url}.json`)
-    res.type('application/json')
-    fs.createReadStream(filePath).pipe(res)
+  // handle publicPath and default props
+  app.use((req, res, next) => {
+    let basename = req.basename // from shareRoot
+    let serverPublicPath = basename + config.staticPath
+    let publicPath = config.publicPath || serverPublicPath
+    let defaultProps = {
+      ...config,
+      basename,
+      publicPath,
+      serverPublicPath,
+    }
+    Object.assign(res.locals, defaultProps)
+    req.serverPublicPath = serverPublicPath
+    req.publicPath = publicPath
+    next()
   })
 
   return app

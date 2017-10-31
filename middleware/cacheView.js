@@ -9,7 +9,8 @@ var defaults = {
   headers: {
     // 缓存的 response headers 默认配置
     'Content-Type': 'text/html'
-  }
+  },
+  key: (url, req) => url
 }
 
 var callNext = (req, res, next) => next()
@@ -36,7 +37,7 @@ module.exports = function cacheView (settings) {
   }
 
   return function (req, res, next) {
-    var cacheKey = req.originalUrl
+    var cacheKey = settings.key(req.originalUrl)
     var cacheContent = cache.get(cacheKey)
 
     // 命中缓存，直接返回结果
