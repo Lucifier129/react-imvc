@@ -3,13 +3,14 @@ import React, { Component, PropTypes } from 'react'
 export default class Link extends Component {
   static contextTypes = {
     location: PropTypes.object,
-    history: PropTypes.object
+    history: PropTypes.object,
+    state: PropTypes.object,
   };
   static defaultProps = {
     as: 'a'
   };
   render () {
-    let { basename = '' } = this.context.location
+    let { basename = '' } = this.context.state
     let { to, href, children, replace, back, forward, go, as, ...others } = this.props
     let Tag = as
 
