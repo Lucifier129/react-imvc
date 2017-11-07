@@ -5,7 +5,7 @@ import fetch from "node-fetch";
 
 process.env.NODE_ENV = "production";
 const start = require("../start");
-const PORT = 3333;
+let PORT = 3333;
 const ROOT = path.join(__dirname, "project");
 const config = {
   root: ROOT, // 项目根目录
@@ -27,12 +27,14 @@ describe("React-IMVC", () => {
   describe("Enable SSR", () => {
     mainTest({
       ...config,
+      port: PORT++,
       SSR: true
     });
   });
   describe("Disable SSR", () => {
     mainTest({
       ...config,
+      port: PORT++,
       SSR: false
     });
   });

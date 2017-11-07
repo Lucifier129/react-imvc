@@ -296,26 +296,30 @@ export default class Controller {
       Loading
     } = this;
 
-    // 如果 Model 存在，且 initialState 和 actions 不存在，从 Model 里解构出来
-    if (Model && initialState === undefined && actions === undefined) {
-      let { initialState: $initialState, ...$actions } = Model;
-      initialState = this.initialState = $initialState;
-      actions = this.actions = $actions;
-    }
-
-    // 关闭 SSR 后，不执行 componentWillCreate 和 shouldComponentCreate，直接返回 Loading 界面
-    if (SSR === false) {
-      if (context.isServer) {
+    /**
+     * 关闭 SSR 后，不执行 componentWillCreate 和 shouldComponentCreate，直接返回 Loading 界面
+     * SSR 如果是个方法，则执行并等待它完成
+     */
+    if (context.isServer) {
+      if (typeof this.SSR === 'function') {
+        SSR = await this.SSR(location, context)
+      }
+      if (SSR === false) {
         let View = Loading || EmptyView;
         return <View />;
-      } else if (context.isClient) {
-        window.__INITIAL_STATE__ = undefined;
       }
     }
 
     // 在 init 方法里 bind this，这样 fetch 可以支持继承
     // 如果用 fetch = (url, option = {}) => {} 的写法，它不是原型方法，无法继承
     this.fetch = this.fetch.bind(this);
+
+    // 如果 Model 存在，且 initialState 和 actions 不存在，从 Model 里解构出来
+    if (Model && initialState === undefined && actions === undefined) {
+      let { initialState: $initialState, ...$actions } = Model;
+      initialState = this.initialState = $initialState;
+      actions = this.actions = $actions;
+    }
 
     let globalInitialState;
 
@@ -392,8 +396,8 @@ export default class Controller {
 		 * 可以在 shouldComponentCreate 里重定向到别的 Url
 		 */
     if (this.shouldComponentCreate) {
-      let result = await this.shouldComponentCreate();
-      if (result === false) {
+      let shouldCreate = await this.shouldComponentCreate();
+      if (shouldCreate === false) {
         return null;
       }
     }
