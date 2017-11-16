@@ -10,7 +10,9 @@
   "scripts": {
     "build": "gulp",
     "prebuild": "rimraf ./publish",
-    "test": "mocha --opts mocha.opts"
+    "test": "mocha --opts mocha.opts",
+    "publish-imvc": "npm publish ./publish",
+    "prepublish-imvc": "npm run test && npm run build"
   },
   "repository": {
     "type": "git",
