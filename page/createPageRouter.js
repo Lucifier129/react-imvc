@@ -29,27 +29,6 @@ export default function createPageRouter(options) {
   let app = createApp(serverAppSettings);
   let layoutView = config.layout || path.join(__dirname, "view");
 
-  // 添加浏览器端 app 配置
-  router.use((req, res, next) => {
-    let { basename, publicPath } = req;
-    let context = {
-      basename,
-      publicPath,
-      restapi: config.restapi,
-      ...config.context,
-      preload: {}
-    };
-
-    res.locals.appSettings = {
-      type: "createHistory",
-      basename,
-      context,
-      ...config.appSettings
-    };
-
-    next();
-  });
-
   // 纯浏览器端渲染模式，用前置中间件拦截所有请求
   if (config.SSR === false) {
     router.all("*", (req, res) => {

@@ -121,6 +121,27 @@ export default function createExpressApp(config) {
     next()
   })
 
+   // attach appSettings for client
+   app.use((req, res, next) => {
+    let { basename, publicPath } = req;
+    let context = {
+      basename,
+      publicPath,
+      restapi: config.restapi,
+      ...config.context,
+      preload: {}
+    };
+
+    res.locals.appSettings = {
+      type: "createHistory",
+      basename,
+      context,
+      ...config.appSettings
+    };
+
+    next();
+  });
+
   return app
 }
 

@@ -53,7 +53,7 @@ module.exports = function start(options) {
   if (config.routes) {
     // get server routes
     let routes = require(path.join(config.root, config.routes));
-    routes = routes.default || routes
+    routes = routes.default || routes;
     Object.keys(routes).forEach(key => {
       let route = routes[key];
       if (typeof route === "function") {
