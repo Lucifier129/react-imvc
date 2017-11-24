@@ -50,6 +50,14 @@ module.exports = function start(options) {
 
   let server = http.createServer(app);
 
+  let pageRouter = createPageRouter(config)
+
+  // 添加 renderPage 方法，让自定义的 routes 里可以手动调用，走 IMVC 的渲染流程
+  app.use((req, res, next) => {
+    res.renderPage = pageRouter
+    next()
+  })
+
   if (config.routes) {
     // get server routes
     let routes = require(path.join(config.root, config.routes));
@@ -62,7 +70,7 @@ module.exports = function start(options) {
     });
   }
 
-  app.use(createPageRouter(config));
+  app.use(pageRouter);
 
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
