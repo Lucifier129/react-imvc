@@ -1,14 +1,14 @@
 // base controller class
 import React, { Component } from "react";
-import { createStore, createLogger } from "relite";
+import { createStore } from "relite";
 import Cookie from "js-cookie";
 import querystring from "querystring";
 import _ from "../util";
-import setRecorder from "./recorder";
 import Root from "../component/Root";
 import ControllerProxy from "../component/ControllerProxy";
 import ViewManager from "../component/ViewManager";
 import * as shareActions from "./actions";
+import attachDevToolsIfPossiable from "./attachDevToolsIfPossiable";
 
 const EmptyView = () => false;
 let uid = 0; // seed of controller id
@@ -64,11 +64,11 @@ export default class Controller {
     let { context } = this;
 
     /**
-		 * 如果已经是绝对路径
-		 * 在服务端直接返回 url
-		 * 在客户端裁剪掉 http: 使之以 // 开头
-		 * 让浏览器自动匹配协议，支持 Https
-		 */
+     * 如果已经是绝对路径
+     * 在服务端直接返回 url
+     * 在客户端裁剪掉 http: 使之以 // 开头
+     * 让浏览器自动匹配协议，支持 Https
+     */
     if (_.isAbsoluteUrl(url)) {
       if (context.isClient && url.startsWith("http:")) {
         url = url.replace("http:", "");
@@ -85,9 +85,9 @@ export default class Controller {
   }
 
   /**
-	* 封装重定向方法，根据 server/client 环境不同而选择不同的方式
-  * isRaw 是否不拼接 Url，直接使用
-	*/
+   * 封装重定向方法，根据 server/client 环境不同而选择不同的方式
+   * isRaw 是否不拼接 Url，直接使用
+   */
   redirect(redirectUrl, isRaw) {
     let { history, context } = this;
 
@@ -128,7 +128,9 @@ export default class Controller {
       let isDateInstance = options.expires instanceof Date;
       if (!isDateInstance) {
         throw new Error(
-          `cookie 的过期时间 expires 必须为 Date 的实例，而不是 ${options.expires}`
+          `cookie 的过期时间 expires 必须为 Date 的实例，而不是 ${
+            options.expires
+          }`
         );
       }
     }
@@ -152,11 +154,11 @@ export default class Controller {
   }
 
   /**
-	 * 封装 fetch, https://github.github.io/fetch
-	 * options.json === false 不自动转换为 json
-	 * options.timeout:number 超时时间
-   * options.raw 不补全 restfulBasename 
-	 */
+   * 封装 fetch, https://github.github.io/fetch
+   * options.json === false 不自动转换为 json
+   * options.timeout:number 超时时间
+   * options.raw 不补全 restfulBasename
+   */
   fetch(url, options = {}) {
     let { context, API } = this;
 
@@ -182,9 +184,9 @@ export default class Controller {
       }
     };
     /**
-		 * 浏览器端的 fetch 有 credentials: 'include'，会自动带上 cookie
-		 * 服务端得手动设置，可以从 context 对象里取 cookie
-		 */
+     * 浏览器端的 fetch 有 credentials: 'include'，会自动带上 cookie
+     * 服务端得手动设置，可以从 context 对象里取 cookie
+     */
     if (context.isServer && finalOptions.credentials === "include") {
       finalOptions.headers["Cookie"] = context.req.headers.cookie || "";
     }
@@ -192,16 +194,16 @@ export default class Controller {
     let fetchData = fetch(url, finalOptions);
 
     /**
-		 * 拓展字段，如果手动设置 options.json 为 false
-		 * 不自动 JSON.parse
-		 */
+     * 拓展字段，如果手动设置 options.json 为 false
+     * 不自动 JSON.parse
+     */
     if (options.json !== false) {
       fetchData = fetchData.then(_.toJSON);
     }
 
     /**
-		 * 设置自动化的超时处理
-		 */
+     * 设置自动化的超时处理
+     */
     if (typeof options.timeout === "number") {
       fetchData = _.timeoutReject(fetchData, options.timeout);
     }
@@ -209,7 +211,7 @@ export default class Controller {
     return fetchData;
   }
   /**
-   * 
+   *
    * 封装 get 请求，方便使用
    */
   get(url, params, options) {
@@ -231,7 +233,7 @@ export default class Controller {
     return this.fetch(url, options);
   }
   /**
-   * 
+   *
    * 封装 post 请求，方便使用
    */
   post(url, data, options) {
@@ -243,8 +245,8 @@ export default class Controller {
     return this.fetch(url, options);
   }
   /**
-	 * 预加载 css 样式等资源
-	*/
+   * 预加载 css 样式等资源
+   */
   fetchPreload(preload) {
     preload = preload || this.preload;
     let keys = Object.keys(preload);
@@ -274,9 +276,9 @@ export default class Controller {
         .then(content => {
           if (url.split("?")[0].indexOf(".css") !== -1) {
             /**
-					 * 如果是 CSS ，清空回车符
-					 * 否则同构渲染时 react 计算 checksum 值会不一致
-					 */
+             * 如果是 CSS ，清空回车符
+             * 否则同构渲染时 react 计算 checksum 值会不一致
+             */
             content = content.replace(/\r+/g, "");
           }
           context.preload[name] = content;
@@ -301,8 +303,8 @@ export default class Controller {
      * SSR 如果是个方法，则执行并等待它完成
      */
     if (context.isServer) {
-      if (typeof this.SSR === 'function') {
-        SSR = await this.SSR(location, context)
+      if (typeof this.SSR === "function") {
+        SSR = await this.SSR(location, context);
       }
       if (SSR === false) {
         let View = Loading || EmptyView;
@@ -345,8 +347,8 @@ export default class Controller {
     };
 
     /**
-		 * 动态获取初始化的 initialState
-		 */
+     * 动态获取初始化的 initialState
+     */
     if (!globalInitialState && this.getInitialState) {
       finalInitialState = await this.getInitialState(finalInitialState);
     }
@@ -359,31 +361,30 @@ export default class Controller {
     }
 
     /**
-       * 动态获取最终的 actions
-       */
+     * 动态获取最终的 actions
+     */
     if (this.getFinalActions) {
       actions = this.getFinalActions(actions);
     }
 
     /**
-		 * 创建 store
-		 */
+     * 创建 store
+     */
     let finalActions = { ...actions, ...shareActions };
     this.store = createStore(finalActions, finalInitialState);
-
-    this.attachLogger();
+    attachDevToolsIfPossiable(this.store);
 
     /**
-		 * 将 handle 开头的方法，合并到 this.handlers 中
-		 */
+     * 将 handle 开头的方法，合并到 this.handlers 中
+     */
     this.combineHandlers(this);
 
     /**
-		 * 如果存在 globalInitialState
-		 * 说明服务端渲染了 html 和 intitialState
-		 * component 已经创建
-		 * 不需要再调用 shouldComponentCreate 和 componentWillCreate
-		 */
+     * 如果存在 globalInitialState
+     * 说明服务端渲染了 html 和 intitialState
+     * component 已经创建
+     * 不需要再调用 shouldComponentCreate 和 componentWillCreate
+     */
     if (globalInitialState) {
       this.bindStoreWithView();
       return this.render();
@@ -392,9 +393,9 @@ export default class Controller {
     let promiseList = [];
 
     /**
-		 * 如果 shouldComponentCreate 返回 false，不创建和渲染 React Component
-		 * 可以在 shouldComponentCreate 里重定向到别的 Url
-		 */
+     * 如果 shouldComponentCreate 返回 false，不创建和渲染 React Component
+     * 可以在 shouldComponentCreate 里重定向到别的 Url
+     */
     if (this.shouldComponentCreate) {
       let shouldCreate = await this.shouldComponentCreate();
       if (shouldCreate === false) {
@@ -408,8 +409,8 @@ export default class Controller {
     }
 
     /**
-		 * 获取预加载的资源
-		 */
+     * 获取预加载的资源
+     */
     if (this.preload) {
       promiseList.push(this.fetchPreload());
     }
@@ -420,19 +421,6 @@ export default class Controller {
 
     this.bindStoreWithView();
     return this.render();
-  }
-  attachLogger() {
-    let { context, location, store } = this;
-    /**
-     * 在 client 端添加 logger
-     */
-    if (this.logger && context.isClient) {
-      let name =
-        typeof this.logger === "string" ? this.logger : location.pattern;
-      let logger = createLogger({ name });
-      let unsubscribe = store.subscribe(logger);
-      this.meta.unsubscribeList.push(unsubscribe);
-    }
   }
   bindStoreWithView() {
     let { context, store, location, history, meta } = this;
@@ -450,7 +438,6 @@ export default class Controller {
         }
       });
       meta.unsubscribeList.push(unsubscribe);
-      setRecorder(store);
     }
 
     // 监听路由跳转
@@ -480,7 +467,6 @@ export default class Controller {
     let { __PAGE_DID_BACK__ } = store.actions;
 
     meta.isDestroyed = false;
-    this.attachLogger();
     __PAGE_DID_BACK__(location);
 
     if (this.pageDidBack) {
@@ -491,7 +477,7 @@ export default class Controller {
     return this.render();
   }
   reload() {
-    this.history.replace(this.location.raw)
+    this.history.replace(this.location.raw);
   }
   render() {
     let {
