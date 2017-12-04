@@ -380,11 +380,13 @@ controller.shouldComponentCreate 方法触发时，view 还未被创建和渲染
 
 ### Controller.componentWillCreate()
 
-controller.componentWillCreate 方法触发时，view 还未被创建和渲染，可以在该方法内调用接口，获取首屏数据。
+controller.componentWillCreate 方法触发时，view 还未被创建和渲染，可以在该方法内调用接口，获取首屏数据，以便实现 SSR 服务端渲染。
 
 该方法内，可以使用 `this.store.actions`，调用 action 函数只会更新 store 里的 state，不会引起 view 的渲染。
 
 该方法支持 promise，如果使用了 async/await 语法，或者 return promise，后面的生命周期方法将会等待它们 resolve。
+
+注意：在该生命周期 fetch 数据时，需要 `await fetch(xxx)` 否则不会等待请求结果。
 
 ### Controller.componentDidFirstMount()
 
