@@ -733,7 +733,7 @@ react-imvc 可以作为 npm scripts 里的命令来使用，总共有三个
     // 使用 chrome dev tool 来 inspect 你的应用，并且在执行你的代码之前就自动断点
     "start:inspect-brk": "react-imvc start?inspect-brk",
     // 使用 --config 参数，为你的应用指定一个配置文件
-    "start-with-config": "react-imvc --config ./imvc.config.js",
+    "start-with-config": "react-imvc start --config ./imvc.config.js",
     // build 命令用法跟 start 类似，也可以用 --config 指定配置文件
     "build": "react-imvc build --config ./imvc.config.js",
     // test 命令使用 mocha 来运行以 -test.js 结尾的单元测试文件
