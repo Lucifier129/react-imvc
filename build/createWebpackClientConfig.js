@@ -155,6 +155,7 @@ module.exports = function createWebpackClientConfig(options) {
         loader: 'babel-loader',
         exclude: /node_modules/
       }],
+      loaders: config.webpackLoaders,
       postLoaders: postLoaders,
     },
     plugins: plugins,

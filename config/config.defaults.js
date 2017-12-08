@@ -152,6 +152,11 @@ export default {
 	 * 默认为空
 	 */
   webpackPlugins: [],
+  /**
+	 * webpack loaders 自定义配置
+	 * 默认为空
+	 */
+  webpackLoaders: [],
 
   gulp: {
     // 需要压缩到 static 目录的 css

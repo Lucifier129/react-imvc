@@ -200,6 +200,10 @@ controller.handlers 是在初始化时，从 controller 的实例里收集的以
 
 当 controller.API 存在时，将影响 controller.fetch|get|post 的行为，见[controller.fetch](#controllerfetchurlstring-optionsobject)
 
+### controller.restapi -> string
+
+当 controller.restapi 存在时，用 restapi 覆盖全局配置的 restapi，作为 fetch 方法的前缀补全
+
 ## Controller API
 
 ### controller.fetch(url=string, options=object)
