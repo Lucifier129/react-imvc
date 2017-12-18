@@ -69,6 +69,7 @@ export default class Input extends Component {
     let path = `${name}.isWarn`
     let isWarn = getValueByPath(state, path)
     if (!isWarn) {
+      onFocus && onFocus(event)
       return
     }
     this.callAction({
