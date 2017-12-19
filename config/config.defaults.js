@@ -78,6 +78,12 @@ export default {
 	 * 并访问 /__CREATE_STATIC_ENTRY__ 路径，将它的 html 响应内容作为静态入口 html 文件内容生成。
 	 */
   staticEntry: false && "index.html",
+
+  /**
+   * express.static(root, options) 的 options 参数
+   * http://expressjs.com/en/4x/api.html#express.static
+   */
+  staticOptions: {},
   /**
 	 * 静态资源的发布路径，默认为空，为空时运行时修改为 basename + staticPath
 	 * 可以将 /publish/static 目录发布到 CDN，并将 CDN 地址配置成 publicPath

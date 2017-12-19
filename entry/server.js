@@ -92,10 +92,10 @@ export default function createExpressApp(config) {
     })
   } else {
     // publish 目录启动
-    app.use(config.staticPath, express.static(path.join(config.root, config.static)))
+    app.use(config.staticPath, express.static(path.join(config.root, config.static), config.staticOptions))
     
     // 在根目录启动
-    app.use(config.staticPath, express.static(path.join(config.root, config.publish, config.static)))
+    app.use(config.staticPath, express.static(path.join(config.root, config.publish, config.static), config.staticOptions))
 
     let assets = readAssets(config)
     app.use((req, res, next) => {
