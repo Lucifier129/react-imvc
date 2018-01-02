@@ -97,7 +97,7 @@ controller.context 是一个特殊对象，所有 controller 实例都共享同�
 
 react-imvc 默认把一些基本信息填充在 context 对象里，比如
 
-- context.isClinet 是否在客户端
+- context.isClient 是否在客户端
 
 - context.isServer 是否在服务端
 
@@ -105,7 +105,7 @@ react-imvc 默认把一些基本信息填充在 context 对象里，比如
 
 - context.publicPath 当前 web app 的静态资源的发布路径，默认是 basename + '/static'
 
-- context.restapi 当前 web app 的 restfull api 的 url 前缀
+- context.restapi 当前 web app 的 restful api 的 url 前缀
 
 - context.preload 缓存预加载资源的对象（server 的 preload 不会传递给 client，而是由 client 端使用 DOM 收集 [data-preload] 节点的内容，比如 css。）
 
@@ -236,7 +236,7 @@ fetch 方法用来跟服务端进行 http 或 https 通讯，它的用法和参�
 
 ### controller.get(url=string, params=object, options=object)
 
-controller.post 方法是基于 controller.fetch 封装的方法，更简便地发送 post 请求。
+controller.get 方法是基于 controller.fetch 封装的方法，更简便地发送 get 请求。
 
 url 参数的处理，跟 controller.fetch 方法一致。
 
@@ -419,7 +419,7 @@ controller.componentWillUnmount 方法触发时，react component 即将从页�
     - 该方法在 controller 的生命周期内，可能不止运行一次。
     - pageWillLeave 比 componentWillUnmount 更早执行
     - 当 next page 的 view/component 要渲染时，才会触发 prev page 的 componentWillUnmount
-    - 可以在 pageWillLeave 里 showLoading，知道它被 next page 替换。
+    - 可以在 pageWillLeave 里 showLoading，直到它被 next page 替换。
 
 ### Controller.pageWillLeave()
 
@@ -719,7 +719,7 @@ EventWrapper 组件，提供传递事件 handler 的快捷通道。
 所有以 `handle{EventName}` 为形式的 props，如果在 controller[`handle{EventName}`] 里也存在，将被替换为 controller 的事件处理方法。
 
 ```javascript
-<EventWrapper onClick="handleClick" onTouchMove="handleToutchMove">
+<EventWrapper onClick="handleClick" onTouchMove="handleTouchMove">
     我是一些内容
 </EventWrapper>
 ```
