@@ -80,6 +80,11 @@ module.exports = function createWebpackClientConfig(options) {
       'process.env.NODE_ENV': JSON.stringify(NODE_ENV)
     })
   ]
+
+  if (Array.isArray(config.webpackPlugins)) {
+    plugins = plugins.concat(config.webpackPlugins)
+  }
+
   var watch = true
   var postLoaders = []
 
@@ -128,7 +133,7 @@ module.exports = function createWebpackClientConfig(options) {
       new OptimizeJsPlugin({
         sourceMap: false
       })
-    ], config.webpackPlugins)
+    ])
 
     watch = false
   }
