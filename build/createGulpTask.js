@@ -120,6 +120,7 @@ module.exports = function createGulpTask(options) {
 		return gulp
 			.src(config.js.src)
 			.pipe(plumber())
+			.pipe(babel())
 			.pipe(uglify())
 			.pipe(gulp.dest(config.js.dest))
 	})
