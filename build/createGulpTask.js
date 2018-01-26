@@ -32,7 +32,7 @@ var createConfig = options => {
 			dest: staticPath + '/lib'
 		},
 		copy: {
-			src: [src + '/**/*.!(html|htm|css|js)'],
+			src: [src + '/**/!(*.@(html|htm|css|js))'],
 			dest: staticPath
 		},
 		publishCopy: {
@@ -113,7 +113,7 @@ module.exports = function createGulpTask(options) {
 			.pipe(gulp.dest(config.img.dest))
 	})
 
-	gulp.task('minify-js', () => {
+	gulp.task('minify-js', ['publish-babel'], () => {
 		if (!config.js) {
 			return
 		}

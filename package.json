@@ -1,6 +1,6 @@
 {
   "name": "react-imvc",
-  "version": "1.4.5",
+  "version": "1.4.6",
   "description": "Next generation of Front End MVC Architecture",
   "main": "./index",
   "bin": {
