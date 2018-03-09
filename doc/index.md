@@ -199,9 +199,9 @@ class extends Controller {
 
 当 controller.KeepAlive = true 时，开启缓存模式。默认为 false|undefined
 
-KeepAlive 不会缓存 view，而是缓存 controller 及其 store。
+KeepAlive 会缓存 view，controller 及其 store。
 
-当页面前进或后退时，不再实例化一个新的 controller，而是从缓存里取出上次的 controller，用它的 store 重新渲染 view。并触发 `pageDidBack` 生命周期。
+当页面前进或后退时，不再实例化一个新的 controller，而是从缓存里取出上次的 controller，并展示它的 view （通过设置dispaly）。并触发 `pageDidBack` 生命周期。
 
 ### controller.handlers -> object
 
