@@ -55,14 +55,6 @@ export default class extends Controller {
 
 ## Controller Property
 
-### controller.logger -> string|boolean
-
-controller 的 logger 属性，用以显示在 logger 里，方便区分不同 controller 的 action logger。
-
-如果没有这个 logger 属性，action logger 里将显示跟 controller 匹配的 router path pattern。
-
-logger 属性默认为 true，如果设置 logger 属性为 false，将不会在 console 里展示 action 的调用情况。
-
 ### controller.location -> object
 
 controller.location 是 react-imvc 里自动根据 url 和 router path pattern 生成的类 window.location 对象。
