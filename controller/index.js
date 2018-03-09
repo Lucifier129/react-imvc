@@ -8,7 +8,7 @@ import Root from '../component/Root'
 import ControllerProxy from '../component/ControllerProxy'
 import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
-import attachDevToolsIfPossiable from './attachDevToolsIfPossiable'
+import attachDevToolsIfPossible from './attachDevToolsIfPossible'
 
 const EmptyView = () => false
 let uid = 0 // seed of controller id
@@ -379,7 +379,7 @@ export default class Controller {
 		 */
 		let finalActions = { ...actions, ...shareActions }
 		this.store = createStore(finalActions, finalInitialState)
-		attachDevToolsIfPossiable(this.store)
+		attachDevToolsIfPossible(this.store)
 
 		/**
 		 * 将 handle 开头的方法，合并到 this.handlers 中
