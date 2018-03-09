@@ -180,6 +180,21 @@ class extends Controller {
 
 如果全局配置 config.SSR === false，则全局关闭服务端渲染，controller.SSR 不会起作用。
 
+controller.SSR 可以是函数，当它是函数时，它会得到两个参数: location 和 context 对象（你也可以直接用 `this.location` 或 `this.context` 访问到）。
+
+此时，`controller.SSR(location, context)` 应当返回一个 boolean 值，返回 true 则是服务端渲染，返回 false 则不做服务端渲染。
+
+注：`controller.SSR` 函数可以是 async function（异步函数）。
+
+通过这个特性，可以对一个页面进行异步的条件判断，决定是否服务端渲染。
+
+```javascript
+class extends Controller {
+    // 这个判断可以实现，当 url 里的查询字符串参数 ssr=1 时，才做服务端渲染。
+    SSR = this.location.query.ssr === '1'
+}
+```
+
 ### controller.KeepAlive -> boolean
 
 当 controller.KeepAlive = true 时，开启缓存模式。默认为 false|undefined
