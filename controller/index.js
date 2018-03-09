@@ -19,7 +19,6 @@ let uid = 0 // seed of controller id
  * 提供 fetch 方法
  */
 export default class Controller {
-	logger = true
 	View = EmptyView
 	constructor(location, context) {
 		this.meta = {
