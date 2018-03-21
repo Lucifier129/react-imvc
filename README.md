@@ -1,6 +1,6 @@
 # react-imvc
 
-下一代前端 MVC 架构。MVC 三者都是 Isomorphic，既是服务端 MVC，也是浏览器端 MVC。
+MVC 三者都是 Isomorphic，既是服务端 MVC，也是浏览器端 MVC。
 
 react-imvc 是 isomorphic mvc 的 react 实现，它是一个 Web 框架。通过 react-imvc，我们可以更便利地实现同构 Web 应用的开发。
 
