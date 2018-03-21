@@ -21,6 +21,7 @@ var OptimizeJsPlugin = require('optimize-js-plugin')
  * }
  */
 module.exports = function createWebpackClientConfig(options) {
+  var result = {}
   var config = Object.assign({}, options)
   var alias = Object.assign({}, config.alias, {
     '@routes': path.join(config.root, config.src),
@@ -99,6 +100,12 @@ module.exports = function createWebpackClientConfig(options) {
       },
       exclude: /node_modules/
     })
+    result = Object.assign(result, {
+      customInterpolateName: function (url, name, options) {
+        // 屏蔽postLoaders匹配出来的文件路径平台差异，统一使用'/'
+        return url.replace(/\\/g, '/')
+      }
+    })
   }
 
   if (NODE_ENV === 'production') {
@@ -149,7 +156,7 @@ module.exports = function createWebpackClientConfig(options) {
     ])
   }
 
-  return {
+  result = Object.assign(result, {
     watch: watch,
     devtool: config.devtool,
     entry: entry,
@@ -174,5 +181,6 @@ module.exports = function createWebpackClientConfig(options) {
       root: root,
       alias: alias
     }
-  }
+  })
+  return result
 }
