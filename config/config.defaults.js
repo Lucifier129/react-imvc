@@ -275,5 +275,5 @@ export default {
 	/**
 	 *  是否开启开发阶段的系统提示功能
 	 */
-	notifier: true,
+	notifier: false,
 }

@@ -15,10 +15,12 @@ exports.setupClient = function setupClient(config) {
 		serverSideRender: true,
 		reporter: (options) => {
 			reporter(options)
-			notifier.notify({
-				title: 'React-IMVC',
-				message: 'Webpack 编译结束'
-			})
+			if (config.notifier) {
+				notifier.notify({
+					title: 'React-IMVC',
+					message: 'Webpack 编译结束'
+				})
+			}
 		}
 	})
 	return clientDevMiddleware
