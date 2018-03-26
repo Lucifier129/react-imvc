@@ -1,6 +1,6 @@
 {
   "name": "react-imvc",
-  "version": "1.4.7",
+  "version": "1.4.8",
   "description": "An Isomorphic MVC Framework",
   "main": "./index",
   "bin": {
@@ -55,6 +55,7 @@
     "mocha": "^3.0.2",
     "morgan": "~1.6.1",
     "node-fetch": "^1.6.3",
+    "node-notifier": "^5.2.1",
     "optimize-js-plugin": "^0.0.4",
     "querystring": "^0.2.0",
     "react": "^15.6.1",

@@ -270,5 +270,10 @@ export default {
 	 * server 端和 client 端都会接收到 config.context 里的配置
 	 * 默认为空
 	 */
-	context: {}
+	context: {},
+
+	/**
+	 *  是否开启开发阶段的系统提示功能
+	 */
+	notifier: true,
 }
