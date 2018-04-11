@@ -87,7 +87,8 @@ export default function createPageRouter(options) {
         initialState
       };
 
-      res.render(layoutView, data);
+      // 支持通过 res.locals.layoutView 动态确定 layoutView
+      res.render(res.locals.layoutView || layoutView, data);
     } catch (error) {
       next(error);
     }
