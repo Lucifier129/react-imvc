@@ -32,7 +32,7 @@ module.exports = function createWebpackClientConfig(options) {
   var NODE_ENV = config.NODE_ENV
 
   var entry = Object.assign({}, config.entry, {
-    index: [indexEntry],
+    index: ['webpack-hot-middleware/client', indexEntry],
     vendor: [
       'babel-polyfill',
       'react',
@@ -79,7 +79,9 @@ module.exports = function createWebpackClientConfig(options) {
     new webpack.optimize.CommonsChunkPlugin(config.CommonsChunkChildren),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(NODE_ENV)
-    })
+    }),
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin()
   ]
 
   if (Array.isArray(config.webpackPlugins)) {
