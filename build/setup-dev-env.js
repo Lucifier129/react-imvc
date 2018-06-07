@@ -9,12 +9,12 @@ var createWebpackServerConfig = require('./createWebpackServerConfig')
 
 exports.setupClient = function setupClient(config) {
 	var clientConfig = createWebpackClientConfig(config)
-	var _compiler = webpack(clientConfig)
-	var clientDevMiddleware = webpackDevMiddleware(_compiler, {
+	var compiler = webpack(clientConfig)
+	var middleware = webpackDevMiddleware(compiler, {
 		publicPath: config.staticPath,
 		stats: config.webpackLogger,
 		serverSideRender: true,
-		reporter: (options) => {
+		reporter: options => {
 			reporter(options)
 			if (config.notifier) {
 				notifier.notify({
@@ -25,8 +25,8 @@ exports.setupClient = function setupClient(config) {
 		}
 	})
 	return {
-		clientDevMiddleware,
-		_compiler
+		middleware,
+		compiler
 	}
 }
 
@@ -34,7 +34,10 @@ exports.setupServer = function setupServer(config, options) {
 	var serverConfig = createWebpackServerConfig(config)
 	var serverCompiler = webpack(serverConfig)
 	var mfs = new MFS()
-	var outputPath = path.join(serverConfig.output.path, serverConfig.output.filename)
+	var outputPath = path.join(
+		serverConfig.output.path,
+		serverConfig.output.filename
+	)
 	serverCompiler.outputFileSystem = mfs
 	serverCompiler.watch({}, (err, stats) => {
 		if (err) throw err
@@ -79,7 +82,12 @@ function reporter(reporterOptions) {
 	}
 	if (state) {
 		var displayStats = !options.quiet && options.stats !== false
-		if (displayStats && !(stats.hasErrors() || stats.hasWarnings()) && options.noInfo) displayStats = false
+		if (
+			displayStats &&
+			!(stats.hasErrors() || stats.hasWarnings()) &&
+			options.noInfo
+		)
+			displayStats = false
 		if (displayStats) {
 			if (stats.hasErrors()) {
 				options.error(stats.toString(options.stats))
