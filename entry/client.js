@@ -53,4 +53,4 @@ const app = createApp(appSettings)
 app.start()
 
 // 热更新
-if (module.hot) module.hot.accept()
+if (typeof module !== 'undefined' && module.hot) module.hot.accept()

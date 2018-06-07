@@ -77,12 +77,12 @@ export default function createExpressApp(config) {
 	if (config.webpackDevMiddleware) {
 		// 开发模式用 webpack-dev-middleware 代理 js 文件
 		let setupDevEnv = require('../build/setup-dev-env')
-		let webpackHotMiddleware = require('webpack-hot-middleware')
 		let { compiler, middleware } = setupDevEnv.setupClient(config)
     app.use(middleware)
     
     // 添加热更新中间件
 		if (config.hot) {
+			let webpackHotMiddleware = require('webpack-hot-middleware')
 			app.use(
 				webpackHotMiddleware(compiler, {
 					quiet: true,
