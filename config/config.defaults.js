@@ -276,4 +276,8 @@ export default {
 	 *  是否开启开发阶段的系统提示功能
 	 */
 	notifier: false,
+    /** 
+	 * 热更新开关 默认关闭
+	*/
+	hot: false
 }

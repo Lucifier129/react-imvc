@@ -32,7 +32,7 @@ module.exports = function createWebpackClientConfig(options) {
   var NODE_ENV = config.NODE_ENV
 
   var entry = Object.assign({}, config.entry, {
-    index: ['webpack-hot-middleware/client', indexEntry],
+    index: config.hot ? ['webpack-hot-middleware/client', indexEntry] : [indexEntry],
     vendor: [
       'babel-polyfill',
       'react',

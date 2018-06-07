@@ -83,7 +83,12 @@ export default function createExpressApp(config) {
     let setupDevEnv = require('../build/setup-dev-env')
     let _result = setupDevEnv.setupClient(config)
     app.use(_result.clientDevMiddleware)
-    app.use(webpackHotMiddleware(_result._compiler))
+    if (config.hot) app.use(webpackHotMiddleware(_result._compiler, {
+      quiet: true,
+      noInfo: true,
+      log: false,
+      noInfo: true
+    }))
 
     // 开发模式里，用 src 里的静态资源
     app.use(config.staticPath, express.static(path.join(config.root, config.src)))
