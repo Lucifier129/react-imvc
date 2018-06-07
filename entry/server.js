@@ -8,6 +8,7 @@ import bodyParser from 'body-parser'
 import favicon from 'serve-favicon'
 import helmet from 'helmet'
 import ReactViews from 'express-react-views'
+import webpackHotMiddleware from 'webpack-hot-middleware'
 import shareRoot from '../middleware/shareRoot'
 
 export default function createExpressApp(config) {
@@ -80,7 +81,14 @@ export default function createExpressApp(config) {
   if (config.webpackDevMiddleware) {
     // 开发模式用 webpack-dev-middleware 代理 js 文件
     let setupDevEnv = require('../build/setup-dev-env')
-    app.use(setupDevEnv.setupClient(config))
+    let _result = setupDevEnv.setupClient(config)
+    app.use(_result.clientDevMiddleware)
+    if (config.hot) app.use(webpackHotMiddleware(_result._compiler, {
+      quiet: true,
+      noInfo: true,
+      log: false,
+      noInfo: true
+    }))
 
     // 开发模式里，用 src 里的静态资源
     app.use(config.staticPath, express.static(path.join(config.root, config.src)))

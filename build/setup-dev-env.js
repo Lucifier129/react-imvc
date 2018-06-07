@@ -9,7 +9,8 @@ var createWebpackServerConfig = require('./createWebpackServerConfig')
 
 exports.setupClient = function setupClient(config) {
 	var clientConfig = createWebpackClientConfig(config)
-	var clientDevMiddleware = webpackDevMiddleware(webpack(clientConfig), {
+	var _compiler = webpack(clientConfig)
+	var clientDevMiddleware = webpackDevMiddleware(_compiler, {
 		publicPath: config.staticPath,
 		stats: config.webpackLogger,
 		serverSideRender: true,
@@ -23,7 +24,10 @@ exports.setupClient = function setupClient(config) {
 			}
 		}
 	})
-	return clientDevMiddleware
+	return {
+		clientDevMiddleware,
+		_compiler
+	}
 }
 
 exports.setupServer = function setupServer(config, options) {
