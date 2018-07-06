@@ -6,7 +6,7 @@ module.exports = function shareRoot(rootPath) {
     rootPath = rootPath.substr(0, rootPath.length - 1)
   }
 
-  var ROOT_RE = new RegExp('^' + rootPath)
+  var ROOT_RE = new RegExp('^' + rootPath, 'i')
   return function(req, res, next) {
     if (ROOT_RE.test(req.url)) {
       req.url = req.url.replace(ROOT_RE, '')
