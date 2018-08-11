@@ -2,8 +2,8 @@
  * 对console未定义及console方法未定义时，补充定义空对象、空函数，防止报错
  * 如IE 9在未开启过Dev Tools时，console对象将会是未定义
  */
-var _stubConsole = function stubConsole(global) {
-    // Avoid `console` errors in global/browsers that lack a console.
+var _stubConsole = function stubConsole(window) {
+    // Avoid `console` errors in browsers that lack a console.
     var method;
     var noop = function () {
     };
@@ -14,7 +14,7 @@ var _stubConsole = function stubConsole(global) {
         'timeline', 'timelineEnd', 'timeStamp', 'trace', 'warn', 'msIsIndependentlyComposed'
     ];
     var length = methods.length;
-    var console = (global.console = global.console || {});
+    var console = (window.console = window.console || {});
 
     while (length--) {
         method = methods[length];
@@ -26,6 +26,6 @@ var _stubConsole = function stubConsole(global) {
     }
 };
 
-_stubConsole(typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
+_stubConsole(typeof window !== "undefined" ? window : {});
 
 module.exports = _stubConsole;
