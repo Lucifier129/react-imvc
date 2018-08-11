@@ -188,6 +188,11 @@ module.exports = function createWebpackClientConfig(options) {
 					test: /\.jsx?$/,
 					loader: 'babel-loader',
 					exclude: /node_modules/
+				},
+				{
+					test: /\.json$/,
+					loader: 'json-loader',
+					exclude: /node_modules/
 				}
 			],
 			loaders: config.webpackLoaders,
@@ -200,7 +205,7 @@ module.exports = function createWebpackClientConfig(options) {
 				path.join(config.root, 'node_modules'),
 				path.join(__dirname, '../node_modules')
 			],
-			extensions: ['', '.js', '.jsx'],
+			extensions: ['', '.js', '.jsx', '.json'],
 			root: root,
 			alias: alias
 		}

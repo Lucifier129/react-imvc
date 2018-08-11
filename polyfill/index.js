@@ -1,3 +1,4 @@
+import './console'
 /**
  * babel-polyfil 给 Array.prototype 补了 symbol 属性
  * webpackJsonp 函数用 for in 遍历模块数组
