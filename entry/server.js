@@ -8,6 +8,7 @@ import bodyParser from 'body-parser'
 import favicon from 'serve-favicon'
 import helmet from 'helmet'
 import ReactViews from 'express-react-views'
+import '../middleware/console'
 import shareRoot from '../middleware/shareRoot'
 
 export default function createExpressApp(config) {
