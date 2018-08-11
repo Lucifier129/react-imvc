@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom'
 import createApp from 'create-app/lib/client'
+import '../middleware/console'
 import util from '../util'
 import $routes from '@routes'
 
