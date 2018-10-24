@@ -261,6 +261,14 @@ data 参数将在内部被 JSON.stringify ，然后作为 request payload 发送
 
 options 参数将作为 fetch 的 options 传递。
 
+### controller.prefetch(url=string)
+
+controller.prefetch 用以预加载其他页面的 js bundle 文件。
+
+其中 url 为该项目其他页面的单页地址（即不包括 basename 的部分），跟 this.history.push(url) 的字符串参数形式一样。
+
+除了使用 prefetch 方法以外，还可以使用 `<Link prefetch to={url} />` 的 prefetch 布尔属性，或者 `<Prefetch src={url} />` 组件（见下方这两个组件的文档描述）。
+
 ### controller.prependBasename(url=string)
 
 controller.prependBasename 方法，在 url 不是绝对路径时，把全局 config.basename 拼接在 url 的前头。
@@ -573,6 +581,7 @@ Link 组件，可以用来实现页面的单页路由跳转效果。
 
 ```javascript
 <Link to="/list">去列表页</Link>
+<Link to="/list" prefetch>预加载列表页的 js 文件</Link>
 <Link to="/list" replace>以替换历史记录的方式去列表页</Link>
 <Link as='span' to="/list">默认展示为 a 标签，as 属性可以替换为 span 或其他标签或组件</Link>
 <Link back>回退</Link>
@@ -601,6 +610,15 @@ NavLink 组件，跟 Link 类似，可以用来实现页面的单页路由跳转
 - isActive: 可选，类型必须为 function，接受两个参数 path 和 location，返回 boolean
     * 当没有 isActive 属性时，匹配方式为 path === location.raw
     * 当提供了 isActive 函数是，匹配方式为 `!!isActive(path, location)`
+
+### Prefetch
+
+Prefetch 组件，可以预加载特定页面的 js bundle 文件。
+
+```javascript
+import { Prefetch } from 'react-imvc/component'
+<Prefetch src="/detail" /> // 预加载详情页的 js 文件
+```
 
 ### Style
 

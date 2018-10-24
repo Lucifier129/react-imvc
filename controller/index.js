@@ -293,11 +293,21 @@ export default class Controller {
 		})
 		return Promise.all(list)
 	}
+
+	/**
+	 * 预加载页面的 js bundle
+	 */
+	prefetch(url) {
+		if (!url || typeof url !=='string') return null
+		let matches = this.matcher(url)
+		if (!matches) return null
+		return this.loader(matches.controller)
+	}
+
 	async init() {
 		let {
 			Model,
 			initialState,
-			getInitialState,
 			actions,
 			context,
 			location,
@@ -322,6 +332,7 @@ export default class Controller {
 		// 在 init 方法里 bind this，这样 fetch 可以支持继承
 		// 如果用 fetch = (url, option = {}) => {} 的写法，它不是原型方法，无法继承
 		this.fetch = this.fetch.bind(this)
+		this.prefetch = this.prefetch.bind(this)
 
 		// 如果 Model 存在，且 initialState 和 actions 不存在，从 Model 里解构出来
 		if (Model && initialState === undefined && actions === undefined) {
@@ -493,6 +504,9 @@ export default class Controller {
 			location,
 			history,
 			context,
+			matcher,
+			loader,
+			prefetch,
 			handleInputChange
 		} = this
 		let state = store.getState()
@@ -503,7 +517,10 @@ export default class Controller {
 			actions: store.actions,
 			preload: context.preload,
 			handleInputChange,
-			handlers
+			handlers,
+			matcher,
+			loader,
+			prefetch
 		}
 		let currentKey = `[${meta.id}]${location.raw}`
 
