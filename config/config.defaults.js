@@ -1,5 +1,3 @@
-import path from 'path'
-
 let cwd = process.cwd()
 let port = process.env.PORT || 3000
 let NODE_ENV = process.env.NODE_ENV || 'development'
@@ -246,13 +244,6 @@ export default {
 	 * node.js 的环境变量备份
 	 */
 	NODE_ENV: NODE_ENV,
-
-	/**
-	 * 是否用 fetch-ie8 作为 fetch polyfill
-	 * 默认是。
-	 * 如果设置为 false，则使用 whatwg-fetch
-	 */
-	fetchIE8: true,
 
 	/**
 	 * IMVC 的 layout 组件所在的路径
