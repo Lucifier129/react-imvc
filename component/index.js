@@ -1,3 +1,5 @@
+export Prefetch from "./Prefetch";
+
 export Link from './Link'
 
 export NavLink from './NavLink'

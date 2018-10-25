@@ -5,13 +5,19 @@ export default class Link extends Component {
     location: PropTypes.object,
     history: PropTypes.object,
     state: PropTypes.object,
+    prefetch: PropTypes.func
   };
   static defaultProps = {
     as: 'a'
   };
+  componentDidMount() {
+    if (this.props.prefetch) {
+      this.context.prefetch(this.props.to || this.props.href)
+    }
+  }
   render () {
     let { basename = '' } = this.context.state
-    let { to, href, children, replace, back, forward, go, as, ...others } = this.props
+    let { to, href, children, replace, back, forward, go, as, prefetch, ...others } = this.props
     let Tag = as
 
     if (Tag === 'a') {
