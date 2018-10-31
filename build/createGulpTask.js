@@ -14,7 +14,7 @@ var createConfig = options => {
 	var src = path.join(root, options.src)
 	var publish = path.join(root, options.publish)
 	var staticPath = path.join(publish, options.static)
-	var config =  {
+	var config = {
 		css: {
 			src: [src + '/**/*.css'],
 			dest: staticPath
@@ -71,14 +71,15 @@ module.exports = function createGulpTask(options) {
 			.src(config.css.src)
 			.pipe(plumber())
 			.pipe(
-				cleanCSS({
-						debug: true,
-						compatibility: 'ie7'
+				cleanCSS(
+					{
+						debug: true
 					},
-					(details) => {
-						var percent = (details.stats.minifiedSize /
-							details.stats.originalSize *
-							100).toFixed(2)
+					details => {
+						var percent = (
+							(details.stats.minifiedSize / details.stats.originalSize) *
+							100
+						).toFixed(2)
 						var message = `${details.name}(${chalk.green(percent)}%)`
 						gutil.log('gulp-clean-css:', message)
 					}
@@ -120,7 +121,7 @@ module.exports = function createGulpTask(options) {
 		return gulp
 			.src(config.js.src)
 			.pipe(plumber())
-			.pipe(babel())
+			.pipe(babel(options.babel))
 			.pipe(uglify())
 			.pipe(gulp.dest(config.js.dest))
 	})
@@ -158,5 +159,11 @@ module.exports = function createGulpTask(options) {
 
 	gulp.task('publish', ['publish-babel'])
 
-	gulp.task('default', ['minify-html', 'minify-css', 'minify-js', 'copy', 'publish'])
+	gulp.task('default', [
+		'minify-html',
+		'minify-css',
+		'minify-js',
+		'copy',
+		'publish'
+	])
 }

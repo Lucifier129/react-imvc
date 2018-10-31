@@ -5,7 +5,6 @@ var webpackDevMiddleware = require('webpack-dev-middleware')
 var MFS = require('memory-fs')
 var notifier = require('node-notifier')
 var createWebpackClientConfig = require('./createWebpackClientConfig')
-var createWebpackServerConfig = require('./createWebpackServerConfig')
 
 exports.setupClient = function setupClient(config) {
 	var clientConfig = createWebpackClientConfig(config)
@@ -31,7 +30,8 @@ exports.setupClient = function setupClient(config) {
 }
 
 exports.setupServer = function setupServer(config, options) {
-	var serverConfig = createWebpackServerConfig(config)
+	var serverConfig = createWebpackClientConfig(config)
+	serverConfig.target = 'node'
 	var serverCompiler = webpack(serverConfig)
 	var mfs = new MFS()
 	var outputPath = path.join(

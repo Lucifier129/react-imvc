@@ -121,7 +121,7 @@ export default {
 	/**
 	 * webpack devtool 配置
 	 */
-	devtool: isDev ? '#source-map' : '',
+	devtool: isDev ? 'source-map' : '',
 	/**
 	 * 是否开启基于 page 路由的代码切割
 	 * 默认只在生产环境编译时开启
@@ -161,6 +161,11 @@ export default {
 	 * 默认为空
 	 */
 	webpackLoaders: [],
+
+	// babel config
+	babel: {
+		presets: ['react-app']
+	},
 
 	gulp: {
 		// 需要压缩到 static 目录的 css
@@ -267,8 +272,8 @@ export default {
 	 *  是否开启开发阶段的系统提示功能
 	 */
 	notifier: false,
-    /** 
+	/**
 	 * 热更新开关 默认关闭
-	*/
+	 */
 	hot: false
 }
