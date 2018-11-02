@@ -8,7 +8,7 @@ var webpack = require('webpack')
 var start = require('../start')
 var getConfig = require('../config')
 var createGulpTask = require('./createGulpTask')
-var createWebpackClientConfg = require('./createWebpackClientConfig')
+var createWebpackConfg = require('./createWebpackConfig')
 
 getConfig = getConfig.default || getConfig
 
@@ -19,7 +19,7 @@ module.exports = function build(options) {
 		.then(() => startGulp(config))
 		.then(() => startWebpack(config))
 		.then(() => startStaticEntry(config))
-		.catch((error) => console.error(error))
+		.catch(error => console.error(error))
 }
 
 function delPublish(folder) {
@@ -28,7 +28,7 @@ function delPublish(folder) {
 }
 
 function startWebpack(config) {
-	var webpackConfig = createWebpackClientConfg(config)
+	var webpackConfig = createWebpackConfg(config)
 	return new Promise(function(resolve, reject) {
 		webpack(webpackConfig, function(error, stats) {
 			if (error) {
@@ -42,7 +42,6 @@ function startWebpack(config) {
 		})
 	})
 }
-
 
 function startGulp(config) {
 	createGulpTask(config)
@@ -69,12 +68,12 @@ async function startStaticEntry(config) {
 		publicPath: config.publicPath || '.',
 		appSettings: {
 			...config.appSettings,
-			type: 'createHashHistory',
+			type: 'createHashHistory'
 		},
-		SSR: false,
+		SSR: false
 	}
 
-	var {server} = await start({
+	var { server } = await start({
 		config: staticEntryConfig
 	})
 
@@ -82,9 +81,14 @@ async function startStaticEntry(config) {
 	console.log(`fetching url:${url}`)
 	var response = await fetch(url)
 	var html = await response.text()
-	let staticEntryPath = path.join(config.root, config.publish, config.static, config.staticEntry)
+	let staticEntryPath = path.join(
+		config.root,
+		config.publish,
+		config.static,
+		config.staticEntry
+	)
 
-	server.close()
+	server.close(() => console.log('finish generating static entry file'))
 
 	return new Promise((resolve, reject) => {
 		fs.writeFile(staticEntryPath, html, error => {

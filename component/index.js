@@ -1,4 +1,4 @@
-export Prefetch from "./Prefetch";
+export Prefetch from './Prefetch'
 
 export Link from './Link'
 

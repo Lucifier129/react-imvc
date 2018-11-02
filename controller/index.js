@@ -1,14 +1,15 @@
 // base controller class
-import React, { Component } from 'react'
+import 'whatwg-fetch'
+import React from 'react'
 import { createStore } from 'relite'
 import Cookie from 'js-cookie'
 import querystring from 'querystring'
 import _ from '../util'
-import Root from '../component/Root'
 import ControllerProxy from '../component/ControllerProxy'
 import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
 import attachDevToolsIfPossible from './attachDevToolsIfPossible'
+import GlobalContext from '../context'
 
 const EmptyView = () => false
 let uid = 0 // seed of controller id
@@ -29,8 +30,8 @@ export default class Controller {
 		}
 		/**
 		 * 将 location.key 赋值给 this.meta 并在 location 里删除
-     * 避免 SSR 时，因为 initialState 里总有 locaiton.key 这个随机字符串
-     * 而导致服务端的 Etag 不断变化，无法 304 。
+		 * 避免 SSR 时，因为 initialState 里总有 locaiton.key 这个随机字符串
+		 * 而导致服务端的 Etag 不断变化，无法 304 。
 		 */
 		if (location) {
 			this.meta.key = location.key
@@ -137,7 +138,9 @@ export default class Controller {
 			let isDateInstance = options.expires instanceof Date
 			if (!isDateInstance) {
 				throw new Error(
-					`cookie 的过期时间 expires 必须为 Date 的实例，而不是 ${options.expires}`
+					`cookie 的过期时间 expires 必须为 Date 的实例，而不是 ${
+						options.expires
+					}`
 				)
 			}
 		}
@@ -298,22 +301,14 @@ export default class Controller {
 	 * 预加载页面的 js bundle
 	 */
 	prefetch(url) {
-		if (!url || typeof url !=='string') return null
+		if (!url || typeof url !== 'string') return null
 		let matches = this.matcher(url)
 		if (!matches) return null
 		return this.loader(matches.controller)
 	}
 
 	async init() {
-		let {
-			Model,
-			initialState,
-			actions,
-			context,
-			location,
-			SSR,
-			Loading
-		} = this
+		let { Model, initialState, actions, context, location, SSR, Loading } = this
 
 		/**
 		 * 关闭 SSR 后，不执行 componentWillCreate 和 shouldComponentCreate，直接返回 Loading 界面
@@ -357,8 +352,6 @@ export default class Controller {
 			...initialState,
 			...globalInitialState,
 			location,
-			isClient: context.isClient,
-			isServer: context.isServer,
 			basename: context.basename,
 			publicPath: context.publicPath,
 			restapi: context.restapi
@@ -466,7 +459,9 @@ export default class Controller {
 
 		// 监听浏览器窗口关闭
 		if (this.windowWillUnload) {
-			let unlisten = history.listenBeforeUnload(this.windowWillUnload.bind(this))
+			let unlisten = history.listenBeforeUnload(
+				this.windowWillUnload.bind(this)
+			)
 			meta.unsubscribeList.push(unlisten)
 		}
 	}
@@ -525,17 +520,19 @@ export default class Controller {
 		let currentKey = `[${meta.id}]${location.raw}`
 
 		return (
-			<Root context={componentContext}>
-				<ViewManager
-					currentKey={currentKey}
-					controller={this}
-					View={View}
-					state={state}
-					handlers={handlers}
-					actions={store.actions}
-				/>
+			<React.Fragment>
+				<GlobalContext.Provider value={componentContext}>
+					<ViewManager
+						currentKey={currentKey}
+						controller={this}
+						View={View}
+						state={state}
+						handlers={handlers}
+						actions={store.actions}
+					/>
+				</GlobalContext.Provider>
 				<ControllerProxy key={currentKey} controller={this} />
-			</Root>
+			</React.Fragment>
 		)
 	}
 }

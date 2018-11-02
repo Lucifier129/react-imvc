@@ -1,3 +1,5 @@
+import babel from './babel'
+
 let cwd = process.cwd()
 let port = process.env.PORT || 3000
 let NODE_ENV = process.env.NODE_ENV || 'development'
@@ -144,13 +146,7 @@ export default {
 	 * 默认在开发模式时开启
 	 */
 	webpackDevMiddleware: isDev,
-	/**
-	 * webpack commentsChunkPlugin 的 chilren 配置
-	 * 默认为 true
-	 */
-	CommonsChunkChildren: {
-		children: true
-	},
+
 	/**
 	 * webpack plugins 自定义配置
 	 * 默认为空
@@ -163,9 +159,7 @@ export default {
 	webpackLoaders: [],
 
 	// babel config
-	babel: {
-		presets: ['react-app']
-	},
+	babel: babel,
 
 	gulp: {
 		// 需要压缩到 static 目录的 css

@@ -5,7 +5,7 @@ if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = "production";
 }
 
-require("babel-polyfill");
+require("@babel/polyfill");
 
 let path = require("path");
 let http = require("http");

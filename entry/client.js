@@ -1,3 +1,6 @@
+import '@babel/polyfill'
+import '../polyfill'
+import 'whatwg-fetch'
 import ReactDOM from 'react-dom'
 import createApp from 'create-app/lib/client'
 import util from '../util'
@@ -7,16 +10,20 @@ __webpack_public_path__ = window.__PUBLIC_PATH__ + '/'
 const __APP_SETTINGS__ = window.__APP_SETTINGS__ || {}
 
 const getModule = module => module.default || module
-const webpackLoader = loadModule => {
-	if (typeof loadModule === 'function') {
-		return new Promise(loadModule).then(getModule)
-	}
-	return getModule(loadModule)
+const webpackLoader = (loadModule, location, context) => {
+	return loadModule(location, context).then(getModule)
 }
 
-const viewEngine = {
-	render: ReactDOM.render
+let shouldHydrate = !!window.__INITIAL_STATE__
+const render = (view, container) => {
+	if (shouldHydrate) {
+		shouldHydrate = false
+		ReactDOM.hydrate(view, container)
+	} else {
+		ReactDOM.render(view, container)
+	}
 }
+const viewEngine = { render }
 
 const routes = util.getFlatList(
 	Array.isArray($routes) ? $routes : Object.values($routes)

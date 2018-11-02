@@ -2,9 +2,11 @@ var path = require('path')
 var gulp = require('gulp')
 var plumber = require('gulp-plumber')
 var babel = require('gulp-babel')
-var config = require('./config/config.defaults')
+var babelConfig = require('./config/babel')
 
 var dest = './publish'
+
+process.env.NODE_ENV = 'production'
 
 gulp.task('copy', () => {
 	return gulp
@@ -21,7 +23,8 @@ gulp.task('copy', () => {
 gulp.task('babel', ['copy'], () => {
 	return gulp
 		.src(['./!(node_modules|publish)/**/*.js', './*.js'])
-		.pipe(babel(config.babel))
+		.pipe(babel(babelConfig(true)))
+		.on('error', error => console.log(error))
 		.pipe(plumber())
 		.pipe(gulp.dest(dest))
 })
@@ -37,9 +40,7 @@ gulp.task('watch', () => {
 				'File ' + event.path + ' was ' + event.type + ', running tasks...'
 			)
 		})
-		.on('error', function(error) {
-			console.error(error)
-		})
+		.on('error', error => console.log(error))
 })
 
 gulp.task('default', ['babel'])

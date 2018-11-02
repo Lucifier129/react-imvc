@@ -4,17 +4,17 @@ var webpack = require('webpack')
 var webpackDevMiddleware = require('webpack-dev-middleware')
 var MFS = require('memory-fs')
 var notifier = require('node-notifier')
-var createWebpackClientConfig = require('./createWebpackClientConfig')
+var createWebpackConfig = require('./createWebpackConfig')
 
 exports.setupClient = function setupClient(config) {
-	var clientConfig = createWebpackClientConfig(config)
+	var clientConfig = createWebpackConfig(config)
 	var compiler = webpack(clientConfig)
 	var middleware = webpackDevMiddleware(compiler, {
 		publicPath: config.staticPath,
 		stats: config.webpackLogger,
 		serverSideRender: true,
-		reporter: options => {
-			reporter(options)
+		reporter: (middlewareOptions, options) => {
+			reporter(middlewareOptions, options)
 			if (config.notifier) {
 				notifier.notify({
 					title: 'React-IMVC',
@@ -30,7 +30,8 @@ exports.setupClient = function setupClient(config) {
 }
 
 exports.setupServer = function setupServer(config, options) {
-	var serverConfig = createWebpackClientConfig(config)
+	return
+	var serverConfig = createWebpackConfig(config)
 	serverConfig.target = 'node'
 	var serverCompiler = webpack(serverConfig)
 	var mfs = new MFS()
@@ -71,42 +72,31 @@ exports.setupServer = function setupServer(config, options) {
 	})
 }
 
-function reporter(reporterOptions) {
-	var time = ''
-	var state = reporterOptions.state
-	var stats = reporterOptions.stats
-	var options = reporterOptions.options
+function reporter(middlewareOptions, options) {
+	const { log, state, stats } = options
 
-	if (!!options.reportTime) {
-		time = '[' + timestamp('HH:mm:ss') + '] '
-	}
 	if (state) {
-		var displayStats = !options.quiet && options.stats !== false
-		if (
-			displayStats &&
-			!(stats.hasErrors() || stats.hasWarnings()) &&
-			options.noInfo
-		)
-			displayStats = false
+		const displayStats = middlewareOptions.stats !== false
+		
 		if (displayStats) {
 			if (stats.hasErrors()) {
-				options.error(stats.toString(options.stats))
+				log.error(stats.toString(middlewareOptions.stats))
 			} else if (stats.hasWarnings()) {
-				options.warn(stats.toString(options.stats))
+				log.warn(stats.toString(middlewareOptions.stats))
 			} else {
-				options.log(stats.toString(options.stats))
+				log.info(stats.toString(middlewareOptions.stats))
 			}
 		}
-		if (!options.noInfo && !options.quiet) {
-			var msg = 'Compiled successfully.'
-			if (stats.hasErrors()) {
-				msg = 'Failed to compile.'
-			} else if (stats.hasWarnings()) {
-				msg = 'Compiled with warnings.'
-			}
-			options.log(time + 'webpack: ' + msg)
+
+		let message = 'Compiled successfully.'
+
+		if (stats.hasErrors()) {
+			message = 'Failed to compile.'
+		} else if (stats.hasWarnings()) {
+			message = 'Compiled with warnings.'
 		}
+		log.info(message)
 	} else {
-		options.log(time + 'webpack: Compiling...')
+		log.info('Compiling...')
 	}
 }

@@ -21,22 +21,7 @@ module.exports = function createWebpackConfig(options) {
 	var entry = Object.assign({}, config.entry, {
 		index: [!!config.hot && 'webpack-hot-middleware/client', indexEntry].filter(
 			Boolean
-		),
-		vendor: [
-			'@babel/polyfill',
-			path.join(__dirname, '../polyfill'),
-			'react',
-			'react-dom',
-			'relite',
-			'create-app',
-			'classnames',
-			'querystring',
-			'whatwg-fetch',
-			'js-cookie',
-			path.join(__dirname, '../component'),
-			path.join(__dirname, '../controller'),
-			path.join(__dirname, '../util')
-		]
+		)
 	})
 
 	// 对 index 和 vendor 特殊处理
@@ -63,7 +48,16 @@ module.exports = function createWebpackConfig(options) {
 	var output = Object.assign(defaultOutput, config.output)
 
 	var plugins = [
-		new ManifestPlugin({ fileName: config.assetsPath, publicPath: publicPath }),
+		new ManifestPlugin({
+			fileName: config.assetsPath,
+			map: file => {
+				// 删除 .js 后缀，方便直接使用 obj.name 来访问
+				if (/\.js$/.test(file.name)) {
+					file.name = file.name.slice(0, -3)
+				}
+				return file
+			}
+		}),
 		// Moment.js is an extremely popular library that bundles large locale files
 		// by default due to how Webpack interprets its code. This is a practical
 		// solution that requires the user to opt into importing specific locales.
@@ -87,17 +81,12 @@ module.exports = function createWebpackConfig(options) {
 	var watch = true
 	var postLoaders = []
 	var optimization = {
-		minimizer: {
-			// Automatically split vendor and commons
-			// https://twitter.com/wSokra/status/969633336732905474
-			// https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
-			splitChunks: {
-				chunks: 'all',
-				name: false
-			},
-			// Keep the runtime chunk seperated to enable long term caching
-			// https://twitter.com/wSokra/status/969679223278505985
-			runtimeChunk: true
+		// Automatically split vendor and commons
+		// https://twitter.com/wSokra/status/969633336732905474
+		// https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
+		splitChunks: {
+			chunks: 'all',
+			name: 'vendor'
 		}
 	}
 
@@ -106,8 +95,8 @@ module.exports = function createWebpackConfig(options) {
 			{},
 			defaultOutput,
 			{
-				filename: '[name]-[hash:6].js',
-				chunkFilename: '[name]-[hash:6].js',
+				filename: '[name]-[contenthash:6].js',
+				chunkFilename: '[name]-[contenthash:6].js',
 				devtoolModuleFilenameTemplate: info =>
 					path.relative(root, info.absoluteResourcePath).replace(/\\/g, '/')
 			},
@@ -116,7 +105,6 @@ module.exports = function createWebpackConfig(options) {
 		watch = false
 		optimization = Object.assign({}, optimization, {
 			minimizer: [
-				...optimization.minimizer,
 				new TerserPlugin({
 					terserOptions: {
 						parse: {
@@ -157,7 +145,7 @@ module.exports = function createWebpackConfig(options) {
 					parallel: true,
 					// Enable file caching
 					cache: true,
-					sourceMap: shouldUseSourceMap
+					sourceMap: false
 				})
 			]
 		})
@@ -179,6 +167,17 @@ module.exports = function createWebpackConfig(options) {
 		])
 	}
 
+	const babelOptions = {
+		// include presets|plugins
+		...config.babel(false),
+		babelrc: false,
+		configFile: false,
+		cacheDirectory: true,
+		// Save disk space when time isn't as important
+		cacheCompression: isProd,
+		compact: isProd
+	}
+
 	result = Object.assign(result, {
 		mode: mode,
 		// Don't attempt to continue if there are any errors.
@@ -193,40 +192,38 @@ module.exports = function createWebpackConfig(options) {
 			rules: [
 				// Disable require.ensure as it's not a standard language feature.
 				{ parser: { requireEnsure: false } },
+				// Process application JS with Babel.
+				// The preset includes JSX, Flow, TypeScript and some ESnext features.
 				{
-					oneOf: [
-						// Process application JS with Babel.
-						// The preset includes JSX, Flow, TypeScript and some ESnext features.
-						{
-							test: /\.(js|mjs|jsx|ts|tsx)$/,
-							include: root,
-							loader: require.resolve('babel-loader'),
-							options: {
-								customize: require.resolve(
-									'babel-preset-react-app/webpack-overrides'
-								),
-								babelrc: false,
-								configFile: false,
-								presets: [require.resolve('babel-preset-react-app')],
-								cacheDirectory: true,
-								// Save disk space when time isn't as important
-								cacheCompression: isProd,
-								compact: isProd
-							}
-						}
-					]
+					test: /\.(js|mjs|jsx|ts|tsx)$/,
+					exclude: /(node_modules|bower_components)/,
+					loader: 'babel-loader',
+					options: babelOptions
 				}
+				// {
+				// 	test: /[\\/][cC]ontroller\.jsx?$/,
+				// 	loader: 'bundle-loader',
+				// 	query: {
+				// 		lazy: true,
+				// 		name: '[1]/[folder]',
+				// 		regExp: `${config.src}/(.+)/[cC]ontroller`.replace(/\//g, '[\\\\/]')
+				// 	},
+				// 	exclude: /node_modules/
+				// }
 			].concat(config.webpackLoaders, postLoaders)
 		},
 		plugins: plugins,
 		optimization,
+		performance: {
+			maxEntrypointSize: 400000
+		},
 		resolve: {
 			modules: [
 				path.resolve('node_modules'),
 				path.join(config.root, 'node_modules'),
 				path.join(__dirname, '../node_modules')
 			],
-			extensions: ['', '.js', '.jsx', '.json'],
+			extensions: ['.js', '.jsx', '.json', '.mjs', '.ts', '.tsx'],
 			alias: alias,
 			plugins: [
 				// Adds support for installing with Plug'n'Play, leading to faster installs and adding
