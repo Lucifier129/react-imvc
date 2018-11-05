@@ -30,9 +30,15 @@ exports.setupClient = function setupClient(config) {
 }
 
 exports.setupServer = function setupServer(config, options) {
-	return
 	let serverConfig = createWebpackConfig(config)
 	serverConfig.target = 'node'
+	serverConfig.entry = {
+		routes: path.join(config.root, config.src)
+	}
+	let externals = (serverConfig.externals = getExternals(config))
+	serverConfig.output.filename = 'routes.js'
+	serverConfig.output.libraryTarget = 'commonjs2'
+	delete serverConfig.optimization
 	let serverCompiler = webpack(serverConfig)
 	let mfs = new MFS()
 	let outputPath = path.join(
@@ -46,25 +52,36 @@ exports.setupServer = function setupServer(config, options) {
 		stats.errors.forEach(err => console.error(err))
 		stats.warnings.forEach(err => console.warn(err))
 		let sourceCode = mfs.readFileSync(outputPath, 'utf-8')
+		let virtualRequire = modulePath => {
+			if (externals.includes(modulePath)) {
+				return require(modulePath)
+			}
+			let filePath = path.join(serverConfig.output.path, modulePath)
+			let sourceCode = mfs.readFileSync(filePath, 'utf-8')
+			let moduleResult = runCode(sourceCode)
+			console.log('filePath', filePath)
+			return moduleResult
+		}
+		let runCode = sourceCode => {
+			return vm.runInThisContext(`
+				(function(require) {
+					var module = {exports: {}}
+									var factory = function(require, module, exports) {
+											${sourceCode}
+									}
+									try {
+											factory(require, module, module.exports)
+									} catch(error) {
+											console.log(error)
+											return null
+									}
+									return module.exports
+				})
+			`)(virtualRequire)
+		}
 
 		// 构造一个 commonjs 的模块加载函数，拿到 newModule
-		let newModule = vm.runInThisContext(
-			`
-			(function(require) {
-				var module = {exports: {}}
-                var factory = function(require, module, exports) {
-                    ${sourceCode}
-                }
-                try {
-                    factory(require, module, module.exports)
-                } catch(error) {
-                    console.log(error)
-                    return null
-                }
-                return module.exports
-			})
-		`
-		)(require)
+		let newModule = runCode(sourceCode)
 
 		if (newModule) {
 			options.handleHotModule(newModule.default || newModule)
@@ -99,4 +116,40 @@ function reporter(middlewareOptions, options) {
 	} else {
 		log.info('Compiling...')
 	}
+}
+
+function getExternals(config) {
+	var dependencies = []
+
+	var list = [
+		path.resolve('package.json'),
+		path.join(__dirname, '../package.json'),
+		path.join(config.root, '../package.json')
+	]
+
+	while (list.length) {
+		var item = list.shift()
+		try {
+			var pkg = require(item)
+			if (pkg.dependencies) {
+				dependencies = dependencies.concat(Object.keys(pkg.dependencies))
+			}
+			if (pkg.devDependencies) {
+				dependencies = dependencies.concat(Object.keys(pkg.devDependencies))
+			}
+		} catch (error) {
+			// ignore error
+		}
+	}
+
+	var map = {}
+	dependencies = dependencies.filter(name => {
+		if (map[name]) {
+			return false
+		}
+		map[name] = true
+		return true
+	})
+
+	return dependencies
 }
