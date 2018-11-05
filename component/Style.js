@@ -6,9 +6,11 @@ export default function Style({ name }) {
 		<GlobalContext.Consumer>
 			{({ preload }) => {
 				return (
-					<style type="text/css" data-preload={name}>
-						{preload[name]}
-					</style>
+					<style
+						type="text/css"
+						data-preload={name}
+						dangerouslySetInnerHTML={{ __html: preload[name] }}
+					/>
 				)
 			}}
 		</GlobalContext.Consumer>

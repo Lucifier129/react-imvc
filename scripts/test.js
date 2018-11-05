@@ -18,7 +18,6 @@ require('@babel/register')(config.babel(true))
 let Mocha = require('mocha')
 let fs = require('fs')
 let path = require('path')
-let options = require('yargs').argv
 
 // Instantiate a Mocha instance.
 let mocha = new Mocha(options)
