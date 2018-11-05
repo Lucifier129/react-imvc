@@ -1,7 +1,7 @@
 export default [
 	{
 		path: '/static_view',
-		controller: () => import(/* webpackChunkName: "static-view" */'./static-view/Controller')
+		controller: () => import('./static-view/Controller')
 	},
 	{
 		path: '/static_view_csr',

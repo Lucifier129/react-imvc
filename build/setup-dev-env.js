@@ -1,15 +1,15 @@
-var path = require('path')
-var vm = require('vm')
-var webpack = require('webpack')
-var webpackDevMiddleware = require('webpack-dev-middleware')
-var MFS = require('memory-fs')
-var notifier = require('node-notifier')
-var createWebpackConfig = require('./createWebpackConfig')
+const path = require('path')
+const vm = require('vm')
+const webpack = require('webpack')
+const webpackDevMiddleware = require('webpack-dev-middleware')
+const MFS = require('memory-fs')
+const notifier = require('node-notifier')
+const createWebpackConfig = require('./createWebpackConfig')
 
 exports.setupClient = function setupClient(config) {
-	var clientConfig = createWebpackConfig(config)
-	var compiler = webpack(clientConfig)
-	var middleware = webpackDevMiddleware(compiler, {
+	let clientConfig = createWebpackConfig(config)
+	let compiler = webpack(clientConfig)
+	let middleware = webpackDevMiddleware(compiler, {
 		publicPath: config.staticPath,
 		stats: config.webpackLogger,
 		serverSideRender: true,
@@ -31,11 +31,11 @@ exports.setupClient = function setupClient(config) {
 
 exports.setupServer = function setupServer(config, options) {
 	return
-	var serverConfig = createWebpackConfig(config)
+	let serverConfig = createWebpackConfig(config)
 	serverConfig.target = 'node'
-	var serverCompiler = webpack(serverConfig)
-	var mfs = new MFS()
-	var outputPath = path.join(
+	let serverCompiler = webpack(serverConfig)
+	let mfs = new MFS()
+	let outputPath = path.join(
 		serverConfig.output.path,
 		serverConfig.output.filename
 	)
@@ -45,10 +45,10 @@ exports.setupServer = function setupServer(config, options) {
 		stats = stats.toJson()
 		stats.errors.forEach(err => console.error(err))
 		stats.warnings.forEach(err => console.warn(err))
-		var sourceCode = mfs.readFileSync(outputPath, 'utf-8')
+		let sourceCode = mfs.readFileSync(outputPath, 'utf-8')
 
 		// 构造一个 commonjs 的模块加载函数，拿到 newModule
-		var newModule = vm.runInThisContext(
+		let newModule = vm.runInThisContext(
 			`
 			(function(require) {
 				var module = {exports: {}}
@@ -77,7 +77,7 @@ function reporter(middlewareOptions, options) {
 
 	if (state) {
 		const displayStats = middlewareOptions.stats !== false
-		
+
 		if (displayStats) {
 			if (stats.hasErrors()) {
 				log.error(stats.toString(middlewareOptions.stats))

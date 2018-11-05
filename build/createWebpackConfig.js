@@ -7,18 +7,18 @@ const TerserPlugin = require('terser-webpack-plugin')
 const PnpWebpackPlugin = require('pnp-webpack-plugin')
 
 module.exports = function createWebpackConfig(options) {
-	var result = {}
-	var config = Object.assign({}, options)
-	var alias = Object.assign({}, config.alias, {
+	let result = {}
+	let config = Object.assign({}, options)
+	let alias = Object.assign({}, config.alias, {
 		'@routes': path.join(config.root, config.src)
 	})
-	var indexEntry = path.join(__dirname, '../entry/client')
-	var root = path.join(config.root, config.src)
-	var NODE_ENV = config.NODE_ENV
-	var isProd = NODE_ENV === 'production'
+	let indexEntry = path.join(__dirname, '../entry/client')
+	let root = path.join(config.root, config.src)
+	let NODE_ENV = config.NODE_ENV
+	let isProd = NODE_ENV === 'production'
 
-	var mode = NODE_ENV
-	var entry = Object.assign({}, config.entry, {
+	let mode = NODE_ENV === 'test' ? 'development' : NODE_ENV || 'production'
+	let entry = Object.assign({}, config.entry, {
 		index: [!!config.hot && 'webpack-hot-middleware/client', indexEntry].filter(
 			Boolean
 		)
@@ -34,20 +34,20 @@ module.exports = function createWebpackConfig(options) {
 		}
 	}
 
-	var defaultOutput = {
+	let defaultOutput = {
 		// Add /* filename */ comments to generated require()s in the output.
 		pathinfo: !isProd,
 		path: path.join(config.root, config.publish, config.static),
-		filename: `[name].js`,
-		chunkFilename: `[name].js`,
+		filename: `js/[name]-entry.js`,
+		chunkFilename: `js/[name]-chunk.js`,
 		// Point sourcemap entries to original disk location (format as URL on Windows)
 		devtoolModuleFilenameTemplate: info =>
 			path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')
 	}
 
-	var output = Object.assign(defaultOutput, config.output)
+	let output = Object.assign(defaultOutput, config.output)
 
-	var plugins = [
+	let plugins = [
 		new ManifestPlugin({
 			fileName: config.assetsPath,
 			map: file => {
@@ -78,9 +78,9 @@ module.exports = function createWebpackConfig(options) {
 		plugins = plugins.concat(config.webpackPlugins)
 	}
 
-	var watch = true
-	var postLoaders = []
-	var optimization = {
+	let watch = NODE_ENV !== 'test'
+	let postLoaders = []
+	let optimization = {
 		// Automatically split vendor and commons
 		// https://twitter.com/wSokra/status/969633336732905474
 		// https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
@@ -91,12 +91,12 @@ module.exports = function createWebpackConfig(options) {
 	}
 
 	if (isProd) {
-		var output = Object.assign(
+		output = Object.assign(
 			{},
 			defaultOutput,
 			{
-				filename: '[name]-[contenthash:6].js',
-				chunkFilename: '[name]-[contenthash:6].js',
+				filename: 'js/[name]-[contenthash:6]-entry.js',
+				chunkFilename: 'js/[name]-[contenthash:6]-chunk.js',
 				devtoolModuleFilenameTemplate: info =>
 					path.relative(root, info.absoluteResourcePath).replace(/\\/g, '/')
 			},
@@ -169,10 +169,10 @@ module.exports = function createWebpackConfig(options) {
 
 	const babelOptions = {
 		// include presets|plugins
-		...config.babel(false),
 		babelrc: false,
 		configFile: false,
 		cacheDirectory: true,
+		...config.babel(false),
 		// Save disk space when time isn't as important
 		cacheCompression: isProd,
 		compact: isProd
@@ -240,5 +240,6 @@ module.exports = function createWebpackConfig(options) {
 			]
 		}
 	})
+
 	return config.webpack ? config.webpack(result) : result
 }

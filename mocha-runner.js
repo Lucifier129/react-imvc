@@ -11,23 +11,28 @@ process.on('unhandledRejection', error => {
 require('@babel/polyfill')
 
 let options = require('yargs').argv
-let getConfig = require('../config')
+let getConfig = require('./config')
 let config = getConfig(options)
 require('@babel/register')(config.babel(true))
 
 let Mocha = require('mocha')
 let fs = require('fs')
 let path = require('path')
-let options = require('yargs').argv
 
 // Instantiate a Mocha instance.
-let mocha = new Mocha(options)
+let mocha = new Mocha({
+	timeout: 20000,
+	...options
+})
 
 function travelDirectoryToAddTestFiles(dir) {
 	fs.readdirSync(dir).forEach(file => {
 		let filename = path.join(dir, file)
 		// ignore node_modules
-		if (filename.indexOf('node_modules') !== -1) {
+		if (
+			filename.indexOf('node_modules') !== -1 ||
+			filename.indexOf('publish') !== -1
+		) {
 			return
 		}
 		// read file deeply
@@ -41,7 +46,7 @@ function travelDirectoryToAddTestFiles(dir) {
 	})
 }
 
-travelDirectoryToAddTestFiles(process.cwd())
+travelDirectoryToAddTestFiles(__dirname)
 
 // Run the tests.
 mocha.run(function(failures) {

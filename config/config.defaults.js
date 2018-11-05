@@ -1,4 +1,4 @@
-import babel from './babel'
+const babel = require('./babel')
 
 let cwd = process.cwd()
 let port = process.env.PORT || 3000
@@ -6,7 +6,7 @@ let NODE_ENV = process.env.NODE_ENV || 'development'
 let isDev = NODE_ENV === 'development'
 let isProd = NODE_ENV === 'production'
 
-export default {
+module.exports = {
 	/**
 	 * node.js 应用部署的 basename，默认是空字符串
 	 * 支持传入字符串 如，'/my/basenmae'
@@ -124,11 +124,7 @@ export default {
 	 * webpack devtool 配置
 	 */
 	devtool: isDev ? 'source-map' : '',
-	/**
-	 * 是否开启基于 page 路由的代码切割
-	 * 默认只在生产环境编译时开启
-	 */
-	codeSpliting: isProd,
+
 	/**
 	 * 是否输出 webpack log 日志
 	 */

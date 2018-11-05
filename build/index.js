@@ -1,5 +1,7 @@
 process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
+require('@babel/polyfill')
+
 var fs = require('fs')
 var del = require('del')
 var path = require('path')
