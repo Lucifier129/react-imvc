@@ -38,8 +38,8 @@ module.exports = function createWebpackConfig(options) {
 		// Add /* filename */ comments to generated require()s in the output.
 		pathinfo: !isProd,
 		path: path.join(config.root, config.publish, config.static),
-		filename: `js/[name]-entry.js`,
-		chunkFilename: `js/[name]-chunk.js`,
+		filename: `js/[name].js`,
+		chunkFilename: `js/[name].js`,
 		// Point sourcemap entries to original disk location (format as URL on Windows)
 		devtoolModuleFilenameTemplate: info =>
 			path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')
@@ -95,8 +95,8 @@ module.exports = function createWebpackConfig(options) {
 			{},
 			defaultOutput,
 			{
-				filename: 'js/[name]-[contenthash:6]-entry.js',
-				chunkFilename: 'js/[name]-[contenthash:6]-chunk.js',
+				filename: 'js/[name]-[contenthash:6].js',
+				chunkFilename: 'js/[name]-[contenthash:6].js',
 				devtoolModuleFilenameTemplate: info =>
 					path.relative(root, info.absoluteResourcePath).replace(/\\/g, '/')
 			},
@@ -215,7 +215,9 @@ module.exports = function createWebpackConfig(options) {
 		plugins: plugins,
 		optimization,
 		performance: {
-			maxEntrypointSize: 400000
+			hints: false,
+			maxEntrypointSize: 400000,
+			...config.performance
 		},
 		resolve: {
 			modules: [

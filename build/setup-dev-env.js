@@ -59,7 +59,6 @@ exports.setupServer = function setupServer(config, options) {
 			let filePath = path.join(serverConfig.output.path, modulePath)
 			let sourceCode = mfs.readFileSync(filePath, 'utf-8')
 			let moduleResult = runCode(sourceCode)
-			console.log('filePath', filePath)
 			return moduleResult
 		}
 		let runCode = sourceCode => {
