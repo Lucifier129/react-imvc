@@ -1,4 +1,6 @@
-# react-imvc
+# react-imvc v2.0
+
+[2.0 升级指南](./doc/upgrade.md);[1.0 仓库和文档地址](https://github.com/Lucifier129/react-imvc/tree/v1.0);
 
 MVC 三者都是 Isomorphic，既是服务端 MVC，也是浏览器端 MVC。
 
@@ -6,8 +8,6 @@ react-imvc 是 isomorphic mvc 的 react 实现，它是一个 Web 框架。通�
 
 用法示例：
 
-- react-imvc-template [DEMO地址](https://lucifier129.github.io/react-imvc-template/publish/static/) 和 [源代码地址](https://github.com/Lucifier129/react-imvc-template)
-- todo-imvc [源代码地址](https://github.com/Lucifier129/todo-imvc)
 - isomorphic-cnode [DEMO地址](https://lucifier129.github.io/isomorphic-cnode/publish/static/) 和 [源代码地址](https://github.com/Lucifier129/isomorphic-cnode)
 
 
@@ -32,7 +32,7 @@ react-imvc 是 isomorphic mvc 的 react 实现，它是一个 Web 框架。通�
 react-imvc 是一个整体解决方案，包括服务端和客户端，所以必须从 npm 或 yarn 里下载到 package.json 里。
 
 ```shell
-npm install --save react-imvc
+npm install --save react react-dom react-imvc
 ```
 
 ## 使用 react-imvc 开发 Hello World
@@ -62,17 +62,9 @@ npm install --save react-imvc
 export default [
     {
         path: '/',
-        controller: require('./home/Controller')
+        controller: () => import('./home/Controller')
     }
 ]
-```
-
-在 package.json 平级目录下添加 .babelrc 文件
-
-```json
-{
-	"presets": ["env", "stage-0", "react"]
-}
 ```
 
 ### 第三步：编写每个页面的 MVC 结构

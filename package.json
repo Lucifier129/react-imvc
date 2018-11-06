@@ -12,7 +12,7 @@
 		"prebuild": "rimraf ./publish",
 		"test": "node mocha-runner",
 		"publish-imvc": "npm publish ./publish",
-		"prepublish-imvc": "npm run test && npm run build"
+		"prepublish-imvc": "npm run build"
 	},
 	"repository": {
 		"type": "git",
