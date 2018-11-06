@@ -1,20 +1,20 @@
-import React from "react";
+import React from 'react'
+import GlobalContext from '../context'
 
-const returnNull = () => null;
-const connect = (selector = returnNull) => InputComponent => {
-  function Connector(props, context) {
-    return (
-      <InputComponent {...props} {...selector({ ...context, props })} />
-    );
-  }
-
-  Connector.contextTypes = {
-    state: React.PropTypes.object,
-    handlers: React.PropTypes.object,
-    actions: React.PropTypes.object
-  };
-
-  return Connector;
-};
-
-export default connect;
+const returnNull = () => null
+export default (selector = returnNull) => InputComponent => {
+	return function Connector(props) {
+		return (
+			<GlobalContext.Consumer>
+				{({ state, handlers, actions }) => {
+					return (
+						<InputComponent
+							{...props}
+							{...selector({ state, handlers, actions, props })}
+						/>
+					)
+				}}
+			</GlobalContext.Consumer>
+		)
+	}
+}

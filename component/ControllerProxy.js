@@ -6,21 +6,15 @@ import React from 'react'
  */
 export default class ControllerProxy extends React.Component {
 	updateDocumentTitle() {
-		let {
-			controller
-		} = this.props
-		let {
-			html
-		} = controller.store.getState()
+		let { controller } = this.props
+		let { html } = controller.store.getState()
 
 		if (html && html.title !== document.title) {
 			document.title = html.title
 		}
 	}
 	emit(method) {
-		let {
-			controller
-		} = this.props
+		let { controller } = this.props
 		if (typeof controller[method] === 'function') {
 			controller[method]()
 		}

@@ -15,5 +15,5 @@ export default class extends Controller {
 
 
 function View({ state }) {
-    return <div id="basic_state"></div>
+    return <pre id="basic_state">{JSON.stringify(state, null, 2)}</pre>
 }

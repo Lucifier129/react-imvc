@@ -1,14 +1,14 @@
 /**
  * 获取配置
  */
- import path from 'path'
- import defaultConfig from './config.defaults'
+const path = require('path')
+const defaultConfig = require('./config.defaults')
 
- export default function getConfig(options) {
+module.exports = function getConfig(options) {
 	let config = Object.assign({}, defaultConfig)
 
 	options = options || {}
-	
+
 	let customConfig
 	switch (typeof options.config) {
 		case 'object':

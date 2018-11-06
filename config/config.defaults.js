@@ -1,4 +1,4 @@
-import path from 'path'
+const babel = require('./babel')
 
 let cwd = process.cwd()
 let port = process.env.PORT || 3000
@@ -6,7 +6,7 @@ let NODE_ENV = process.env.NODE_ENV || 'development'
 let isDev = NODE_ENV === 'development'
 let isProd = NODE_ENV === 'production'
 
-export default {
+module.exports = {
 	/**
 	 * node.js 应用部署的 basename，默认是空字符串
 	 * 支持传入字符串 如，'/my/basenmae'
@@ -123,12 +123,8 @@ export default {
 	/**
 	 * webpack devtool 配置
 	 */
-	devtool: isDev ? '#source-map' : '',
-	/**
-	 * 是否开启基于 page 路由的代码切割
-	 * 默认只在生产环境编译时开启
-	 */
-	codeSpliting: isProd,
+	devtool: isDev ? 'source-map' : '',
+
 	/**
 	 * 是否输出 webpack log 日志
 	 */
@@ -146,13 +142,7 @@ export default {
 	 * 默认在开发模式时开启
 	 */
 	webpackDevMiddleware: isDev,
-	/**
-	 * webpack commentsChunkPlugin 的 chilren 配置
-	 * 默认为 true
-	 */
-	CommonsChunkChildren: {
-		children: true
-	},
+
 	/**
 	 * webpack plugins 自定义配置
 	 * 默认为空
@@ -163,6 +153,9 @@ export default {
 	 * 默认为空
 	 */
 	webpackLoaders: [],
+
+	// babel config
+	babel: babel,
 
 	gulp: {
 		// 需要压缩到 static 目录的 css
@@ -248,13 +241,6 @@ export default {
 	NODE_ENV: NODE_ENV,
 
 	/**
-	 * 是否用 fetch-ie8 作为 fetch polyfill
-	 * 默认是。
-	 * 如果设置为 false，则使用 whatwg-fetch
-	 */
-	fetchIE8: true,
-
-	/**
 	 * IMVC 的 layout 组件所在的路径
 	 * 默认为空
 	 * 当设置为相对路径时，基于 routes 配置的 path
@@ -276,8 +262,8 @@ export default {
 	 *  是否开启开发阶段的系统提示功能
 	 */
 	notifier: false,
-    /** 
+	/**
 	 * 热更新开关 默认关闭
-	*/
+	 */
 	hot: false
 }

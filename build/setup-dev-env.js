@@ -1,21 +1,20 @@
-var path = require('path')
-var vm = require('vm')
-var webpack = require('webpack')
-var webpackDevMiddleware = require('webpack-dev-middleware')
-var MFS = require('memory-fs')
-var notifier = require('node-notifier')
-var createWebpackClientConfig = require('./createWebpackClientConfig')
-var createWebpackServerConfig = require('./createWebpackServerConfig')
+const path = require('path')
+const vm = require('vm')
+const webpack = require('webpack')
+const webpackDevMiddleware = require('webpack-dev-middleware')
+const MFS = require('memory-fs')
+const notifier = require('node-notifier')
+const createWebpackConfig = require('./createWebpackConfig')
 
 exports.setupClient = function setupClient(config) {
-	var clientConfig = createWebpackClientConfig(config)
-	var compiler = webpack(clientConfig)
-	var middleware = webpackDevMiddleware(compiler, {
+	let clientConfig = createWebpackConfig(config)
+	let compiler = webpack(clientConfig)
+	let middleware = webpackDevMiddleware(compiler, {
 		publicPath: config.staticPath,
 		stats: config.webpackLogger,
 		serverSideRender: true,
-		reporter: options => {
-			reporter(options)
+		reporter: (middlewareOptions, options) => {
+			reporter(middlewareOptions, options)
 			if (config.notifier) {
 				notifier.notify({
 					title: 'React-IMVC',
@@ -31,10 +30,18 @@ exports.setupClient = function setupClient(config) {
 }
 
 exports.setupServer = function setupServer(config, options) {
-	var serverConfig = createWebpackServerConfig(config)
-	var serverCompiler = webpack(serverConfig)
-	var mfs = new MFS()
-	var outputPath = path.join(
+	let serverConfig = createWebpackConfig(config)
+	serverConfig.target = 'node'
+	serverConfig.entry = {
+		routes: path.join(config.root, config.src)
+	}
+	let externals = (serverConfig.externals = getExternals(config))
+	serverConfig.output.filename = 'routes.js'
+	serverConfig.output.libraryTarget = 'commonjs2'
+	delete serverConfig.optimization
+	let serverCompiler = webpack(serverConfig)
+	let mfs = new MFS()
+	let outputPath = path.join(
 		serverConfig.output.path,
 		serverConfig.output.filename
 	)
@@ -44,26 +51,36 @@ exports.setupServer = function setupServer(config, options) {
 		stats = stats.toJson()
 		stats.errors.forEach(err => console.error(err))
 		stats.warnings.forEach(err => console.warn(err))
-		var sourceCode = mfs.readFileSync(outputPath, 'utf-8')
+		let sourceCode = mfs.readFileSync(outputPath, 'utf-8')
+		let virtualRequire = modulePath => {
+			if (externals.includes(modulePath)) {
+				return require(modulePath)
+			}
+			let filePath = path.join(serverConfig.output.path, modulePath)
+			let sourceCode = mfs.readFileSync(filePath, 'utf-8')
+			let moduleResult = runCode(sourceCode)
+			return moduleResult
+		}
+		let runCode = sourceCode => {
+			return vm.runInThisContext(`
+				(function(require) {
+					var module = {exports: {}}
+									var factory = function(require, module, exports) {
+											${sourceCode}
+									}
+									try {
+											factory(require, module, module.exports)
+									} catch(error) {
+											console.log(error)
+											return null
+									}
+									return module.exports
+				})
+			`)(virtualRequire)
+		}
 
 		// 构造一个 commonjs 的模块加载函数，拿到 newModule
-		var newModule = vm.runInThisContext(
-			`
-			(function(require) {
-				var module = {exports: {}}
-                var factory = function(require, module, exports) {
-                    ${sourceCode}
-                }
-                try {
-                    factory(require, module, module.exports)
-                } catch(error) {
-                    console.log(error)
-                    return null
-                }
-                return module.exports
-			})
-		`
-		)(require)
+		let newModule = runCode(sourceCode)
 
 		if (newModule) {
 			options.handleHotModule(newModule.default || newModule)
@@ -71,42 +88,67 @@ exports.setupServer = function setupServer(config, options) {
 	})
 }
 
-function reporter(reporterOptions) {
-	var time = ''
-	var state = reporterOptions.state
-	var stats = reporterOptions.stats
-	var options = reporterOptions.options
+function reporter(middlewareOptions, options) {
+	const { log, state, stats } = options
 
-	if (!!options.reportTime) {
-		time = '[' + timestamp('HH:mm:ss') + '] '
-	}
 	if (state) {
-		var displayStats = !options.quiet && options.stats !== false
-		if (
-			displayStats &&
-			!(stats.hasErrors() || stats.hasWarnings()) &&
-			options.noInfo
-		)
-			displayStats = false
+		const displayStats = middlewareOptions.stats !== false
+
 		if (displayStats) {
 			if (stats.hasErrors()) {
-				options.error(stats.toString(options.stats))
+				log.error(stats.toString(middlewareOptions.stats))
 			} else if (stats.hasWarnings()) {
-				options.warn(stats.toString(options.stats))
+				log.warn(stats.toString(middlewareOptions.stats))
 			} else {
-				options.log(stats.toString(options.stats))
+				log.info(stats.toString(middlewareOptions.stats))
 			}
 		}
-		if (!options.noInfo && !options.quiet) {
-			var msg = 'Compiled successfully.'
-			if (stats.hasErrors()) {
-				msg = 'Failed to compile.'
-			} else if (stats.hasWarnings()) {
-				msg = 'Compiled with warnings.'
-			}
-			options.log(time + 'webpack: ' + msg)
+
+		let message = 'Compiled successfully.'
+
+		if (stats.hasErrors()) {
+			message = 'Failed to compile.'
+		} else if (stats.hasWarnings()) {
+			message = 'Compiled with warnings.'
 		}
+		log.info(message)
 	} else {
-		options.log(time + 'webpack: Compiling...')
+		log.info('Compiling...')
 	}
+}
+
+function getExternals(config) {
+	var dependencies = []
+
+	var list = [
+		path.resolve('package.json'),
+		path.join(__dirname, '../package.json'),
+		path.join(config.root, '../package.json')
+	]
+
+	while (list.length) {
+		var item = list.shift()
+		try {
+			var pkg = require(item)
+			if (pkg.dependencies) {
+				dependencies = dependencies.concat(Object.keys(pkg.dependencies))
+			}
+			if (pkg.devDependencies) {
+				dependencies = dependencies.concat(Object.keys(pkg.devDependencies))
+			}
+		} catch (error) {
+			// ignore error
+		}
+	}
+
+	var map = {}
+	dependencies = dependencies.filter(name => {
+		if (map[name]) {
+			return false
+		}
+		map[name] = true
+		return true
+	})
+
+	return dependencies
 }

@@ -1,9 +1,8 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import GlobalContext from '../context'
 
 export default class Prefetch extends React.Component {
-	static contextTypes = {
-		prefetch: PropTypes.func
-	}
+	static contextType = GlobalContext
 	componentDidMount() {
 		this.context.prefetch(this.props.src)
 	}

@@ -1,16 +1,18 @@
-import React, { Component, PropTypes } from 'react'
-import Preload from './Preload'
+import React from 'react'
+import GlobalContext from '../context'
 
-export default function Style ({ name }) {
-  return <Preload as={PreloadStyle} name={name} />
-}
-
-// IE8 不支持用 React 的方式创建 style 标签，改用 InnerHTML
-function PreloadStyle (props) {
-  let html = {
-  	__html: `<style type="text/css" data-preload="${props['data-preload']}">${props.children}</style>`
-  }
-  return (
-    <div dangerouslySetInnerHTML={html} />
-  )
+export default function Style({ name }) {
+	return (
+		<GlobalContext.Consumer>
+			{({ preload }) => {
+				return (
+					<style
+						type="text/css"
+						data-preload={name}
+						dangerouslySetInnerHTML={{ __html: preload[name] }}
+					/>
+				)
+			}}
+		</GlobalContext.Consumer>
+	)
 }

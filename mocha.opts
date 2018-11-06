@@ -1,4 +1,0 @@
---require babel-register
---require babel-polyfill 
---recursive ./test/**/*-test.js
---timeout 200000
