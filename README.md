@@ -2,7 +2,7 @@
 
 ## [2.0 升级指南](./doc/upgrade.md)
 
-## [1.0 仓库和文档地址](https://github.com/Lucifier129/react-imvc/tree/v1.0);
+## [1.0 仓库和文档地址](https://github.com/Lucifier129/react-imvc/tree/v1.0)
 
 MVC 三者都是 Isomorphic，既是服务端 MVC，也是浏览器端 MVC。
 

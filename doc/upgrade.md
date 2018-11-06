@@ -158,7 +158,7 @@ webpack v4.x 里使用 `dynamic import` 语法异步加载文件，默认情况�
 
 react-imvc v2.x 提供了 `<Prefetch />` 组件，提供了 `controller.prefetch` 方法，提供了 `<Link prefetch />` 属性等三种方式，预加载其它页面的 js 文件。
 
-可以通过[访问文档]((./index.md))找到它们。
+可以通过[访问文档](./index.md))找到它们。
 
 ## 删除 imvc-root 节点。
 
