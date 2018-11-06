@@ -266,3 +266,9 @@ react-imvc v2.x 里，内置 `new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/
 
 如果之前在 config.webpackPlugins 里配置过 IgnorePlugin moment，删除它们即可。
 
+
+## 自定义 babel/webpack 配置
+
+react-imvc v2.x 的 imvc.config.js 配置文件中，新增 babel/webpack 两个字段，可以获取到当前全部的 babel/webpack 配置结果，并提供修改的机会。
+
+具体可以参考[文档](./index.md)中 Config Babel 和 Config Webpack 的部分。

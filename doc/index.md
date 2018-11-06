@@ -17,6 +17,8 @@
 - [Server Development](#server-development)
 - [Custom Layout](#custom-layout)
 - [High Order Component](#high-order-component)
+- [Config Babel](#config-babel)
+- [Config Webpack](#config-webpack)
 
 ## What is IMVC
 
@@ -926,4 +928,40 @@ function Loading(props) {
   );
 }
 
+```
+
+## Config Babel
+
+配置 babel 的方式，是设置 imv.config.js 的 babel 字段。它是一个函数，它接受一个参数 isServer。
+
+请注意，如果添加的 plugins/presets 配置，不支持服务端或客户端运行，可根据 isServer 参数来动态配置。
+
+```javascript
+// imvc.config.js
+// 引入 react-imvc 内置的 babel 配置函数
+const defaultBabel = require('react-imvc/config/babel')
+
+module.exports = {
+    ...otherConfigs,
+    babel: isServer => {
+        let babelOptions = defaultBabel(isServer)
+        babelOptions.presets.push() // 添加 presets 配置
+        babelOptions.plugins.push() // 添加 plugins 配置
+        return babelOptions
+    }
+}
+```
+
+## Config Webpack
+
+imvc.config.js 里，除了一些相关的 webpackPlugins 等配置以外，还新增了一个 config.webpack 配置，它的类型为一个函数
+
+```javascript
+module.exports = {
+    ...otherConfigs,
+    webpack: webpackConfig => {
+        webpackConfig.module.rules.push() // 添加 loader
+        return webpackConfig 
+    }
+}
 ```

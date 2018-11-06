@@ -23,7 +23,7 @@ module.exports = function createWebpackConfig(options) {
 			Boolean
 		)
 	})
-	
+
 	let defaultOutput = {
 		// Add /* filename */ comments to generated require()s in the output.
 		pathinfo: !isProd,
@@ -190,16 +190,6 @@ module.exports = function createWebpackConfig(options) {
 					loader: 'babel-loader',
 					options: babelOptions
 				}
-				// {
-				// 	test: /[\\/][cC]ontroller\.jsx?$/,
-				// 	loader: 'bundle-loader',
-				// 	query: {
-				// 		lazy: true,
-				// 		name: '[1]/[folder]',
-				// 		regExp: `${config.src}/(.+)/[cC]ontroller`.replace(/\//g, '[\\\\/]')
-				// 	},
-				// 	exclude: /node_modules/
-				// }
 			].concat(config.webpackLoaders, postLoaders)
 		},
 		plugins: plugins,
