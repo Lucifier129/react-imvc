@@ -23,17 +23,7 @@ module.exports = function createWebpackConfig(options) {
 			Boolean
 		)
 	})
-
-	// 对 index 和 vendor 特殊处理
-	if (config.entry) {
-		if (config.entry.index) {
-			entry.index.concat(config.entry.index)
-		}
-		if (config.entry.vendor) {
-			entry.vendor = entry.vendor.concat(config.entry.vendor)
-		}
-	}
-
+	
 	let defaultOutput = {
 		// Add /* filename */ comments to generated require()s in the output.
 		pathinfo: !isProd,
