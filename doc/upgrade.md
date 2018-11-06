@@ -237,3 +237,32 @@ Preload 组件的实用价值几乎为 0，开发者可以自己简单地实现�
 没有直接使用 Preload 组件的，通常不必修改。
 
 使用 controller.fetch 方法获取数据，存入 store 中，通过 state 传递到 view 里渲染即可。
+
+## 废弃一些 config 配置
+
+### 废弃 config.entry
+
+webpack entry 配置，在 react-imvc v1.x 里，config.entry 可以配置一些模块，它们会出现在 index.js 中。
+
+在 react-imvc v2.x 里，webpack v4.x 会自动优化模块，不需要手动加载。
+
+修改方式为：直接删除 entry 配置
+
+### 废弃 config.webapckLogger
+
+这个配置原先用来配置 webpack log 输出，在 react-imvc v2.x 中，始终使用默认的配置。
+
+## 自动忽略 moment locale 目录
+
+### 修改前
+
+react-imvc v1.x 里，webpack 编译时会将 moment 所有 locale 模块都打包进去
+
+### 修改后
+
+react-imvc v2.x 里，内置 `new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)` 忽略它们。
+
+### 修改方式
+
+如果之前在 config.webpackPlugins 里配置过 IgnorePlugin moment，删除它们即可。
+

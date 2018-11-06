@@ -107,11 +107,6 @@ module.exports = {
 	 */
 	output: {},
 	/**
-	 * webpack entry 自定义配置
-	 * 默认为空
-	 */
-	entry: {},
-	/**
 	 * webpack 生产环境构建时的自定义 output 配置
 	 * 默认为空
 	 */
@@ -125,13 +120,6 @@ module.exports = {
 	 */
 	devtool: isDev ? 'source-map' : '',
 
-	/**
-	 * 是否输出 webpack log 日志
-	 */
-	webpackLogger: {
-		chunks: false, // Makes the build much quieter
-		colors: true
-	},
 	/**
 	 * 是否开启 webpack 的构建产物进行可视化分析
 	 * 默认不开启
