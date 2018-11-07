@@ -76,7 +76,7 @@ exports.setupServer = function setupServer(config, options) {
 				moduleResult = runCode(sourceCode)
 			}
 
-			if (moduleResult === defaultResult) {
+			if (moduleResult === defaultModuleResult) {
 				throw new Error(`${modulePath} not found in server webpack compiler`)
 			}
 
