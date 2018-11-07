@@ -52,13 +52,34 @@ exports.setupServer = function setupServer(config, options) {
 		stats.errors.forEach(err => console.error(err))
 		stats.warnings.forEach(err => console.warn(err))
 		let sourceCode = mfs.readFileSync(outputPath, 'utf-8')
+		let defaultModuleResult = Symbol('default-module-result')
 		let virtualRequire = modulePath => {
-			if (externals.includes(modulePath)) {
+			if (matchExternals(externals, modulePath)) {
 				return require(modulePath)
 			}
+
 			let filePath = path.join(serverConfig.output.path, modulePath)
-			let sourceCode = mfs.readFileSync(filePath, 'utf-8')
-			let moduleResult = runCode(sourceCode)
+			let sourceCode = ''
+			let moduleResult = defaultModuleResult
+
+			try {
+				sourceCode = mfs.readFileSync(filePath, 'utf-8')
+			} catch (_) {
+				/**
+				 * externals 和 mfs 里没有这个文件
+				 * 它可能是 node.js 原生模块
+				 */
+				moduleResult = require(modulePath)
+			}
+
+			if (sourceCode) {
+				moduleResult = runCode(sourceCode)
+			}
+
+			if (moduleResult === defaultResult) {
+				throw new Error(`${modulePath} not found in server webpack compiler`)
+			}
+
 			return moduleResult
 		}
 		let runCode = sourceCode => {
@@ -151,4 +172,13 @@ function getExternals(config) {
 	})
 
 	return dependencies
+}
+
+function matchExternals(externals, modulePath) {
+	for (let i = 0; i < externals.length; i++) {
+		if (modulePath.startsWith(externals[i])) {
+			return true
+		}
+	}
+	return false
 }
