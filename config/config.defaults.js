@@ -142,6 +142,14 @@ module.exports = {
 	 */
 	webpackLoaders: [],
 
+	/**
+	 * 是否输出 webpack log 日志
+	 */
+	webpackLogger: {
+		chunks: false, // Makes the build much quieter
+		colors: true
+	},
+
 	// babel config
 	babel: babel,
 
