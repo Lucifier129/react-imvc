@@ -5,11 +5,9 @@ import { createStore } from 'relite'
 import Cookie from 'js-cookie'
 import querystring from 'querystring'
 import _ from '../util'
-import ControllerProxy from '../component/ControllerProxy'
 import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
 import attachDevToolsIfPossible from './attachDevToolsIfPossible'
-import GlobalContext from '../context'
 
 const EmptyView = () => false
 let uid = 0 // seed of controller id
@@ -491,14 +489,6 @@ export default class Controller {
 		this.history.replace(this.location.raw)
 	}
 	render() {
-		let { meta, location } = this
-		let currentKey = `[${meta.id}]${location.raw}`
-
-		return (
-			<React.Fragment>
-				<ViewManager currentKey={currentKey} controller={this} />
-				<ControllerProxy key={currentKey} controller={this} />
-			</React.Fragment>
-		)
+		return <ViewManager controller={this} />
 	}
 }

@@ -1,16 +1,17 @@
 import React from 'react'
 import GlobalContext from '../context'
+import ControllerProxy from './ControllerProxy'
 
 export default class ViewManager extends React.Component {
 	views = {}
 	scrollMap = {}
 	constructor(props, context) {
 		super(props, context)
-		this.addItemIfNeed(props)
+		this.addItemIfNeed(props.controller.location.raw)
 	}
-	addItemIfNeed(props) {
-		if (!this.views.hasOwnProperty(props.currentKey)) {
-			this.views[props.currentKey] = null
+	addItemIfNeed(key) {
+		if (!this.views.hasOwnProperty(key)) {
+			this.views[key] = null
 		}
 	}
 	clearItemIfNeed() {
@@ -31,44 +32,50 @@ export default class ViewManager extends React.Component {
 		}
 	}
 	componentWillReceiveProps(nextProps) {
-		if (this.props.currentKey !== nextProps.currentKey) {
-			this.scrollMap[this.props.currentKey] = window.scrollY
+		let currentPath = this.props.controller.location.raw
+		let nextPath = nextProps.controller.location.raw
+		if (currentPath !== nextPath) {
+			this.scrollMap[currentPath] = window.scrollY
 		}
-		this.addItemIfNeed(nextProps)
+		this.addItemIfNeed(nextPath)
 	}
 	componentDidUpdate() {
 		this.clearItemIfNeed()
 	}
 	renderView(path) {
-		let { controller, currentKey } = this.props
-		let isActive = currentKey === path
+		let { controller } = this.props
+		let currentPath = controller.location.raw
 
-		if (isActive) {
-			let { store, handlers, View } = controller
-			let state = store.getState()
-			let actions = store.actions
-			let view = (
-				<GlobalContext.Provider value={getContextByController(controller)}>
-					<View
-						key={currentKey}
-						state={state}
-						handlers={handlers}
-						actions={actions}
-					/>
-				</GlobalContext.Provider>
-			)
-			if (controller.KeepAlive) {
-				this.views[path] = view
-			} else if (this.views.hasOwnProperty(path)) {
-				delete this.views[path]
-			}
-			return view
-		} else {
+		if (currentPath !== path) {
 			return this.views[path]
 		}
+
+		let { meta, store, handlers, View } = controller
+		let state = store.getState()
+		let actions = store.actions
+
+		let view = (
+			<GlobalContext.Provider value={getContextByController(controller)}>
+				<View
+					key={`${meta.id}_${currentPath}`}
+					state={state}
+					handlers={handlers}
+					actions={actions}
+				/>
+			</GlobalContext.Provider>
+		)
+
+		if (controller.KeepAlive) {
+			this.views[path] = view
+		} else if (this.views.hasOwnProperty(path)) {
+			delete this.views[path]
+		}
+
+		return view
 	}
 	render() {
-		let { currentKey } = this.props
+		let { controller } = this.props
+		let currentPath = controller.location.raw
 		return (
 			<React.Fragment>
 				{Object.keys(this.views).map(path => {
@@ -76,12 +83,13 @@ export default class ViewManager extends React.Component {
 						<ViewItem
 							key={path}
 							path={path}
-							isActive={path === currentKey}
+							isActive={path === currentPath}
 							view={this.renderView(path)}
 							scrollY={this.scrollMap[path]}
 						/>
 					)
 				})}
+				<ControllerProxy key={currentPath} controller={controller} />
 			</React.Fragment>
 		)
 	}
