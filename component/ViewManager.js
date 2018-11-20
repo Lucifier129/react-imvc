@@ -1,4 +1,5 @@
 import React from 'react'
+import GlobalContext from '../context'
 
 export default class ViewManager extends React.Component {
 	views = {}
@@ -8,9 +9,8 @@ export default class ViewManager extends React.Component {
 		this.addItemIfNeed(props)
 	}
 	addItemIfNeed(props) {
-		let path = props.state.location.raw
-		if (!this.views.hasOwnProperty(path)) {
-			this.views[path] = null
+		if (!this.views.hasOwnProperty(props.currentKey)) {
+			this.views[props.currentKey] = null
 		}
 	}
 	clearItemIfNeed() {
@@ -31,8 +31,8 @@ export default class ViewManager extends React.Component {
 		}
 	}
 	componentWillReceiveProps(nextProps) {
-		if (this.props.state.location !== nextProps.state.location) {
-			this.scrollMap[this.props.state.location.raw] = window.scrollY
+		if (this.props.currentKey !== nextProps.currentKey) {
+			this.scrollMap[this.props.currentKey] = window.scrollY
 		}
 		this.addItemIfNeed(nextProps)
 	}
@@ -40,17 +40,22 @@ export default class ViewManager extends React.Component {
 		this.clearItemIfNeed()
 	}
 	renderView(path) {
-		let { View, state, handlers, actions, controller, currentKey } = this.props
-		let isActive = state.location.raw === path
+		let { controller, currentKey } = this.props
+		let isActive = currentKey === path
 
 		if (isActive) {
+			let { store, handlers, View } = controller
+			let state = store.getState()
+			let actions = store.actions
 			let view = (
-				<View
-					key={currentKey}
-					state={state}
-					handlers={handlers}
-					actions={actions}
-				/>
+				<GlobalContext.Provider value={getContextByController(controller)}>
+					<View
+						key={currentKey}
+						state={state}
+						handlers={handlers}
+						actions={actions}
+					/>
+				</GlobalContext.Provider>
 			)
 			if (controller.KeepAlive) {
 				this.views[path] = view
@@ -63,7 +68,7 @@ export default class ViewManager extends React.Component {
 		}
 	}
 	render() {
-		let { state } = this.props
+		let { currentKey } = this.props
 		return (
 			<React.Fragment>
 				{Object.keys(this.views).map(path => {
@@ -71,7 +76,7 @@ export default class ViewManager extends React.Component {
 						<ViewItem
 							key={path}
 							path={path}
-							isActive={path === state.location.raw}
+							isActive={path === currentKey}
 							view={this.renderView(path)}
 							scrollY={this.scrollMap[path]}
 						/>
@@ -102,13 +107,36 @@ class ViewItem extends React.Component {
 	}
 	render() {
 		return (
-			<div
-				className="imvc-view-item"
-				ref={this.getContainer}
-				data-path={this.props.path}
-			>
+			<div className="imvc-view-item" ref={this.getContainer}>
 				{this.props.view}
 			</div>
 		)
+	}
+}
+
+function getContextByController(ctrl) {
+	let {
+		store,
+		handlers,
+		location,
+		history,
+		context,
+		matcher,
+		loader,
+		prefetch,
+		handleInputChange
+	} = ctrl
+	let state = store.getState()
+	return {
+		location,
+		history,
+		state,
+		actions: store.actions,
+		preload: context.preload,
+		handleInputChange,
+		handlers,
+		matcher,
+		loader,
+		prefetch
 	}
 }

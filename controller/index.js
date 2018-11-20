@@ -491,46 +491,12 @@ export default class Controller {
 		this.history.replace(this.location.raw)
 	}
 	render() {
-		let {
-			meta,
-			View,
-			store,
-			handlers,
-			location,
-			history,
-			context,
-			matcher,
-			loader,
-			prefetch,
-			handleInputChange
-		} = this
-		let state = store.getState()
-		let componentContext = {
-			location,
-			history,
-			state,
-			actions: store.actions,
-			preload: context.preload,
-			handleInputChange,
-			handlers,
-			matcher,
-			loader,
-			prefetch
-		}
+		let { meta, location } = this
 		let currentKey = `[${meta.id}]${location.raw}`
 
 		return (
 			<React.Fragment>
-				<GlobalContext.Provider value={componentContext}>
-					<ViewManager
-						currentKey={currentKey}
-						controller={this}
-						View={View}
-						state={state}
-						handlers={handlers}
-						actions={store.actions}
-					/>
-				</GlobalContext.Provider>
+				<ViewManager currentKey={currentKey} controller={this} />
 				<ControllerProxy key={currentKey} controller={this} />
 			</React.Fragment>
 		)
