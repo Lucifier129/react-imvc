@@ -197,6 +197,14 @@ KeepAlive 会缓存 view，controller 及其 store。
 
 当页面前进或后退时，不再实例化一个新的 controller，而是从缓存里取出上次的 controller，并展示它的 view （通过设置dispaly）。并触发 `pageDidBack` 生命周期。
 
+### controller.KeepAliveOnPush -> boolean
+
+当 controller.KeepAliveOnPush = true 时，当页面通过 history.push 到另一个页面时，缓存当前页面。当页面回退到上一个页面时，清除当前页面的缓存。
+
+该属性可以实现只为下一个新页面的提供缓存功能。
+
+注：浏览器把前进/后退都视为 POP 事件，因此 A 页面 history.push 到 B 页面，B 页面 history.back 回到 A 时为 POP，A 页面再 history.forward 到 B 页面，也是 POP。KeepAliveOnPush 无法处理该场景，只能支持一次性来回的场景。
+
 ### controller.handlers -> object
 
 controller.handlers 是在初始化时，从 controller 的实例里收集的以 handle 开头，以箭头函数形式定义的方法的集合对象。用来传递给 controller.View 组件。

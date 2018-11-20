@@ -449,6 +449,19 @@ export default class Controller {
 			meta.unsubscribeList.push(unsubscribe)
 		}
 
+		// 判断是否缓存
+		{
+			let unlisten = history.listenBefore(location => {
+				if (!this.KeepAliveOnPush) return
+				if (location.action === 'PUSH') {
+					this.saveToCache()
+				} else {
+					this.removeFromCache()
+				}
+			})
+			meta.unsubscribeList.push(unlisten)
+		}
+
 		// 监听路由跳转
 		if (this.pageWillLeave) {
 			let unlisten = history.listenBefore(this.pageWillLeave.bind(this))
