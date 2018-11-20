@@ -75,7 +75,6 @@ export default class ViewManager extends React.Component {
 	}
 	render() {
 		let { controller } = this.props
-		let currentPath = controller.location.raw
 		return (
 			<React.Fragment>
 				{Object.keys(this.views).map(path => {
@@ -83,13 +82,16 @@ export default class ViewManager extends React.Component {
 						<ViewItem
 							key={path}
 							path={path}
-							isActive={path === currentPath}
+							isActive={path === controller.location.raw}
 							view={this.renderView(path)}
 							scrollY={this.scrollMap[path]}
 						/>
 					)
 				})}
-				<ControllerProxy key={currentPath} controller={controller} />
+				<ControllerProxy
+					key={controller.meta.id + controller.location.raw}
+					controller={controller}
+				/>
 			</React.Fragment>
 		)
 	}
