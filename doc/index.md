@@ -621,6 +621,25 @@ NavLink 组件，跟 Link 类似，可以用来实现页面的单页路由跳转
     * 当没有 isActive 属性时，匹配方式为 path === location.raw
     * 当提供了 isActive 函数是，匹配方式为 `!!isActive(path, location)`
 
+
+### Script
+
+Script 组件，用来防范 querystring 的 XSS 风险，放置 window.__INITIAL_STATE 里执行恶意代码。
+
+```javascript
+import React from 'react'
+import Script from '../component/Script'
+<Script>
+{`
+    (function() {
+        window.__INITIAL_STATE__ = ${JSON.stringify(props.initialState)}
+        window.__APP_SETTINGS__ = ${JSON.stringify(props.appSettings)}
+        window.__PUBLIC_PATH__ = '${props.publicPath}'
+    })()
+`}
+</Script>
+```
+
 ### Prefetch
 
 Prefetch 组件，可以预加载特定页面的 js bundle 文件。
