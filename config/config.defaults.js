@@ -243,10 +243,10 @@ module.exports = {
 	 */
 	layout: '',
 	/**
-	 * React SSR 时采用的渲染模式：renderToString || renderToStaticMarkup
+	 * React SSR 时采用的渲染模式：renderToString || renderToNodeStream
 	 *
 	 */
-	renderMode: 'renderToString',
+	renderMode: 'renderToNodeStream',
 	/**
 	 * IMVC APP 里的 context 参数
 	 * server 端和 client 端都会接收到 config.context 里的配置

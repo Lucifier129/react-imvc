@@ -10,7 +10,7 @@ const commonjsLoader = (loadModule, location, context) => {
 	return loadModule(location, context).then(getModule)
 }
 
-const render = view => {
+const renderToNodeStream = view => {
 	return new Promise((resolve, reject) => {
 		let stream = ReactDOMServer.renderToNodeStream(view)
 		let buffers = []
@@ -18,6 +18,15 @@ const render = view => {
 		stream.on('end', () => resolve(Buffer.concat(buffers)))
 		stream.on('error', reject)
 	})
+}
+
+const renderToString = view => {
+	return ReactDOMServer.renderToString(view)
+}
+
+const renderers = {
+	renderToNodeStream,
+	renderToString
 }
 
 export default function createPageRouter(options) {
@@ -31,6 +40,7 @@ export default function createPageRouter(options) {
 	routes = getFlatList(routes)
 
 	let router = Router()
+	let render = renderers[config.renderMode] || renderToNodeStream
 	let serverAppSettings = {
 		loader: commonjsLoader,
 		routes: routes,
