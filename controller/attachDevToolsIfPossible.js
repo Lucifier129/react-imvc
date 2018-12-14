@@ -1,4 +1,4 @@
-export default function attachDevToolsIfPossiable(store) {
+export default function attachDevToolsIfPossible(store) {
   if (process.env.NODE_ENV === "production") {
     return;
   }

@@ -85,11 +85,11 @@ export default class Input extends React.Component {
 	handleBlur = event => {
 		let { name, onBlur, check } = this.props
 		let pathOfValidState = `${name}.isValid`
-		let pathOfWranState = `${name}.isWarn`
+		let pathOfWarnState = `${name}.isWarn`
 		let isValidValue = check(event.currentTarget.value)
 		this.callAction({
 			[pathOfValidState]: isValidValue,
-			[pathOfWranState]: !isValidValue
+			[pathOfWarnState]: !isValidValue
 		})
 		onBlur && onBlur(event)
 	}

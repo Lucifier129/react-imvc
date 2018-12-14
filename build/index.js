@@ -10,7 +10,7 @@ var webpack = require('webpack')
 var start = require('../start')
 var getConfig = require('../config')
 var createGulpTask = require('./createGulpTask')
-var createWebpackConfg = require('./createWebpackConfig')
+var createWebpackConfig = require('./createWebpackConfig')
 
 getConfig = getConfig.default || getConfig
 
@@ -30,7 +30,7 @@ function delPublish(folder) {
 }
 
 function startWebpack(config) {
-	var webpackConfig = createWebpackConfg(config)
+	var webpackConfig = createWebpackConfig(config)
 	return new Promise(function(resolve, reject) {
 		webpack(webpackConfig, function(error, stats) {
 			if (error) {
