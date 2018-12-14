@@ -88,7 +88,6 @@ export default function createExpressApp(config) {
 					quiet: true,
 					noInfo: true,
 					log: false,
-					noInfo: true
 				})
 			)
 		}
