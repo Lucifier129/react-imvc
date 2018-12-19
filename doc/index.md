@@ -19,6 +19,7 @@
 - [High Order Component](#high-order-component)
 - [Config Babel](#config-babel)
 - [Config Webpack](#config-webpack)
+- [FAQ](#faq)
 
 ## What is IMVC
 
@@ -992,3 +993,12 @@ module.exports = {
     }
 }
 ```
+
+
+## FAQ
+
+### 为什么页面跳转后，preload 的样式没有加载？
+
+所有 controller.preload 共享一个缓存对象，如果两个 controller 的 preload 对象拥有相同的 key 名，后加载的 controller 会受到缓存影响，出现未请求样式或者渲染错误的样式的情况。
+
+解决方式：项目中所有 preload 的 key 都是唯一的。
