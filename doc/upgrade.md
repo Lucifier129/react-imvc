@@ -228,6 +228,8 @@ react-imvc v1.x 提供了 Preload 组件，可以渲染 controller.preload 属�
 
 react-imvc v2.x 删除 Preload 组件，更简洁地实现 Style。
 
+注：如果没有引用 `import { Preload } from 'react-imvc/component'`，只用到了 `Style` 组件，项目不会受影响。
+
 ### 修改原因和目的
 
 Preload 组件的实用价值几乎为 0，开发者可以自己简单地实现。
