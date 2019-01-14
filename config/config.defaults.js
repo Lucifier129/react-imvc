@@ -118,7 +118,7 @@ module.exports = {
 	/**
 	 * webpack devtool 配置
 	 */
-	devtool: isDev ? 'source-map' : '',
+	devtool: isDev ? 'cheap-module-eval-source-map' : '',
 
 	/**
 	 * 是否开启 webpack 的构建产物进行可视化分析
