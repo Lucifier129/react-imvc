@@ -1,7 +1,7 @@
 var path = require('path')
 var chalk = require('chalk')
 var gulp = require('gulp')
-var gutil = require('gulp-util')
+var log = require('fancy-log')
 var plumber = require('gulp-plumber')
 var cleanCSS = require('gulp-clean-css')
 var htmlmin = require('gulp-htmlmin')
@@ -81,7 +81,7 @@ module.exports = function createGulpTask(options) {
 							100
 						).toFixed(2)
 						var message = `${details.name}(${chalk.green(percent)}%)`
-						gutil.log('gulp-clean-css:', message)
+						log('gulp-clean-css:', message)
 					}
 				)
 			)
