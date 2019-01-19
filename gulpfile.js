@@ -1,45 +1,46 @@
-var gulp = require('gulp')
-var plumber = require('gulp-plumber')
-var babel = require('gulp-babel')
-var babelConfig = require('./config/babel')
-
-var dest = './publish'
-
 process.env.NODE_ENV = 'production'
 
-gulp.task('copy', () => {
-	return gulp
-		.src([
-			'./!(node_modules|publish)/**/*',
-			'./!(node_modules|publish)',
-			'./.!(git)*',
-			'./!*.js'
-		])
-		.pipe(plumber())
-		.pipe(gulp.dest(dest))
-})
+const gulp = require('gulp')
+const plumber = require('gulp-plumber')
+const gulpBabel = require('gulp-babel')
+const babelConfig = require('./config/babel')
 
-gulp.task('babel', ['copy'], () => {
-	return gulp
-		.src(['./!(node_modules|publish)/**/*.js', './*.js'])
-		.pipe(babel(babelConfig(true)))
-		.on('error', error => console.log(error))
-		.pipe(plumber())
-		.pipe(gulp.dest(dest))
-})
+const dest = './publish'
 
-gulp.task('watch', () => {
-	gulp
-		.watch(
-			['./!(node_modules|publish)**/*', './!(node_modules|publish)'],
-			['babel']
-		)
-		.on('change', function(event) {
-			console.log(
-				'File ' + event.path + ' was ' + event.type + ', running tasks...'
-			)
-		})
-		.on('error', error => console.log(error))
-})
+const copy = () => {
+  return gulp
+    .src([
+      './!(node_modules|publish)/**/*',
+      './!(node_modules|publish)',
+      './.!(git)*',
+      './!*.js'
+    ])
+    .pipe(plumber())
+    .pipe(gulp.dest(dest))
+}
 
-gulp.task('default', ['babel'])
+const babel = () => {
+  return gulp
+    .src(['./!(node_modules|publish)/**/*.js', './*.js'])
+    .pipe(gulpBabel(babelConfig(true)))
+    .on('error', error => console.log(error))
+    .pipe(plumber())
+    .pipe(gulp.dest(dest))
+}
+
+const watch = () => {
+  return gulp
+    .watch(
+      ['./!(node_modules|publish)**/*', './!(node_modules|publish)'],
+      ['babel']
+    )
+    .on('change', function(event) {
+      console.log(
+        'File ' + event.path + ' was ' + event.type + ', running tasks...'
+      )
+    })
+    .on('error', error => console.log(error))
+}
+
+exports.watch = watch
+exports.default = gulp.series(copy, babel)
