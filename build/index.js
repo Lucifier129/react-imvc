@@ -17,7 +17,14 @@ module.exports = function build(options) {
   return Promise.resolve()
     .then(() => delPublish(path.join(config.root, config.publish)))
     .then(() => startGulp(config))
-    .then(() => startWebpack(config))
+    .then(() =>
+      Promise.all(
+        [
+          startWebpackForClient(config),
+          config.useServerBundle && startWebpackForServer(config)
+        ].filter(Boolean)
+      )
+    )
     .then(() => startStaticEntry(config))
     .catch(error => console.error(error))
 }
@@ -27,15 +34,37 @@ function delPublish(folder) {
   return del(folder)
 }
 
-function startWebpack(config) {
-  let webpackConfig = createWebpackConfig(config)
+function startWebpackForClient(config) {
+  let webpackConfig = createWebpackConfig(config, false)
   return new Promise(function(resolve, reject) {
     webpack(webpackConfig, function(error, stats) {
       if (error) {
         reject(error)
       } else {
         if (config.webpackLogger) {
-          console.log('[webpack:build]', stats.toString(config.webpackLogger))
+          console.log(
+            '[webpack:client:build]',
+            stats.toString(config.webpackLogger)
+          )
+        }
+        resolve()
+      }
+    })
+  })
+}
+
+function startWebpackForServer(config) {
+  let webpackConfig = createWebpackConfig(config, true)
+  return new Promise(function(resolve, reject) {
+    webpack(webpackConfig, function(error, stats) {
+      if (error) {
+        reject(error)
+      } else {
+        if (config.webpackLogger) {
+          console.log(
+            '[webpack:server:build]',
+            stats.toString(config.webpackLogger)
+          )
         }
         resolve()
       }

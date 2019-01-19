@@ -261,5 +261,14 @@ module.exports = {
 	/**
 	 * 热更新开关 默认关闭
 	 */
-	hot: false
+	hot: false,
+	/**
+	 * 是否使用 server.bundle.js 代替 src/index 作为服务端访问的代码入口
+	 * 默认 false 兼容以前的默认行为
+	 */
+	useServerBundle: false,
+	/**
+	 * 打包出来的服务端 bunlde 的文件名
+	 */
+	serverBundleName: 'server.bundle.js'
 }

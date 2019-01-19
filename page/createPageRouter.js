@@ -31,7 +31,13 @@ const renderers = {
 
 export default function createPageRouter(options) {
 	let config = Object.assign({}, options)
-	let routes = require(path.join(config.root, config.src))
+	let routes
+
+	if (config.useServerBundle) {
+		routes = require(path.join(config.root, config.serverBundleName))
+	} else {
+		routes = require(path.join(config.root, config.src))
+	}
 
 	routes = routes.default || routes
 	if (!Array.isArray(routes)) {

@@ -5,6 +5,7 @@ const webpackDevMiddleware = require('webpack-dev-middleware')
 const MFS = require('memory-fs')
 const notifier = require('node-notifier')
 const createWebpackConfig = require('./createWebpackConfig')
+const { getExternals, matchExternals } = require('./util')
 
 exports.setupClient = function setupClient(config) {
 	let clientConfig = createWebpackConfig(config)
@@ -136,49 +137,4 @@ function reporter(middlewareOptions, options) {
 	} else {
 		log.info('Compiling...')
 	}
-}
-
-function getExternals(config) {
-	var dependencies = []
-
-	var list = [
-		path.resolve('package.json'),
-		path.join(__dirname, '../package.json'),
-		path.join(config.root, '../package.json')
-	]
-
-	while (list.length) {
-		var item = list.shift()
-		try {
-			var pkg = require(item)
-			if (pkg.dependencies) {
-				dependencies = dependencies.concat(Object.keys(pkg.dependencies))
-			}
-			if (pkg.devDependencies) {
-				dependencies = dependencies.concat(Object.keys(pkg.devDependencies))
-			}
-		} catch (error) {
-			// ignore error
-		}
-	}
-
-	var map = {}
-	dependencies = dependencies.filter(name => {
-		if (map[name]) {
-			return false
-		}
-		map[name] = true
-		return true
-	})
-
-	return dependencies
-}
-
-function matchExternals(externals, modulePath) {
-	for (let i = 0; i < externals.length; i++) {
-		if (modulePath.startsWith(externals[i])) {
-			return true
-		}
-	}
-	return false
 }
