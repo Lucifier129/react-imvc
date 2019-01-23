@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.2.0
+
+- 优化 `controller.redirect` 
+  - 支持在更多生命周期里调用，如 `getInitialState`, `shouldComponentCreate`, `componentWillCreate` 等
+  - 使用 `throw` 语句模拟浏览器跳转时中断代码执行的效果
+
 ## 2.1.0
 
 - 升级 gulp 套件到 v4.x 版本

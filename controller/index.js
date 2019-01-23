@@ -9,6 +9,7 @@ import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
 import attachDevToolsIfPossible from './attachDevToolsIfPossible'
 
+const REDIRECT = { message: 'redirect' }
 const EmptyView = () => false
 let uid = 0 // seed of controller id
 /**
@@ -306,6 +307,15 @@ export default class Controller {
 	}
 
 	async init() {
+		try {
+			return this.initialize()
+		} catch(error) {
+			if (error === REDIRECT) return null
+			throw error
+		}
+	}
+
+	async initialize() {
 		let { Model, initialState, actions, context, location, SSR, Loading } = this
 
 		/**
