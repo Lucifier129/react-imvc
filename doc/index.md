@@ -311,7 +311,21 @@ controller.redirect 方法可实现重定向功能。
 - 如果 url 不是绝对路径，对 url 调用 controller.prependBasename 补前缀
 - 如果 isRaw 为 true，则不进行补前缀
 
-注意，重定向功能不是修改 location 的唯一途径，只有在需要的时候使用，其它情况下，考虑用 controller.history 里的跳转方法。
+注意
+    - 重定向功能不是修改 location 的唯一途径，只有在需要的时候使用，其它情况下，考虑用 controller.history 里的跳转方法。
+    - 在服务端调用 `this.redirect` 时，内部会通过 `throw` 中断执行，模拟浏览器跳转时的中断代码效果
+    - 如果在 `try-catch` 语句里使用 `this.redirect`，会有一个副作用，必须判断 catch 的是不是 `Error` 的实例
+
+```javascript
+try {
+    // do something
+    this.redirect(targetUrl)
+} catch(error) {
+    if (error instanceof Error) {
+        // catch error
+    }
+}
+```
 
 ### controller.reload
 
@@ -407,6 +421,10 @@ controller.shouldComponentCreate 方法触发时，view 还未被创建和渲染
 该方法内，可以使用 `this.store.actions`，调用 action 函数只会更新 store 里的 state，不会引起 view 的渲染。
 
 该方法支持 promise，如果使用了 async/await 语法，或者 return promise，后面的生命周期方法将会等待它们 resolve。
+
+注：react-imvc v2.2.0 开始，改变了 `this.redirect` 的行为（见其文档描述），在 `shouldComponentCreate` 里 return false 变得无意义(它不会被执行到)。
+
+将来可能废弃该生命周期，建议使用 v2.2.0 以上的朋友们，尽量不使用这个 `shouldComponentCreate` 生命周期。
 
 ### Controller.componentWillCreate()
 
