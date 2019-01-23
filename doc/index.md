@@ -312,9 +312,10 @@ controller.redirect 方法可实现重定向功能。
 - 如果 isRaw 为 true，则不进行补前缀
 
 注意
-    - 重定向功能不是修改 location 的唯一途径，只有在需要的时候使用，其它情况下，考虑用 controller.history 里的跳转方法。
-    - 在服务端调用 `this.redirect` 时，内部会通过 `throw` 中断执行，模拟浏览器跳转时的中断代码效果
-    - 如果在 `try-catch` 语句里使用 `this.redirect`，会有一个副作用，必须判断 catch 的是不是 `Error` 的实例
+
+- 重定向功能不是修改 location 的唯一途径，只有在需要的时候使用，其它情况下，考虑用 controller.history 里的跳转方法。
+- 在服务端调用 `this.redirect` 时，内部会通过 `throw` 中断执行，模拟浏览器跳转时的中断代码效果
+- 如果在 `try-catch` 语句里使用 `this.redirect`，会有一个副作用，必须判断 catch 的是不是 `Error` 的实例
 
 ```javascript
 try {
