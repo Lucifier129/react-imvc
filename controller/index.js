@@ -9,7 +9,10 @@ import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
 import attachDevToolsIfPossible from './attachDevToolsIfPossible'
 
-const REDIRECT = { message: 'redirect' }
+const REDIRECT = typeof Symbol === 'function'
+ ? Symbol('react.imvc.redirect')
+ : Object('react.imvc.redirect')
+ 
 const EmptyView = () => false
 let uid = 0 // seed of controller id
 /**
