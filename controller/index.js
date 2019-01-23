@@ -106,6 +106,9 @@ export default class Controller {
 				redirectUrl = this.prependBasename(redirectUrl)
 			}
 			context.res.redirect(redirectUrl)
+			// 使用 throw 语句，模拟浏览器跳转时中断代码执行的效果
+			// 将在外层 catch 住，并 return null 通知 create-app 无须渲染
+			throw REDIRECT
 		} else if (context.isClient) {
 			if (isRaw || _.isAbsoluteUrl(redirectUrl)) {
 				window.location.replace(redirectUrl)
