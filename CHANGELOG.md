@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2.3.0
+
+- 增加对 `react-hooks` 的支持
+  - `useCtrl` 获取当前 controller 的实例
+  - `useModel` 获取当前的 global state
+  - `useActions` 获取当前的 actions 对象
+
 ## 2.2.0
 
 - 优化 `controller.redirect` 

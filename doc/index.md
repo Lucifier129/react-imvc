@@ -10,6 +10,7 @@
 - [Controller Method Name You Should Not Use](#controller-method-name-you-should-not-use)
 - [Event Handler](#event-handler)
 - [Useful Components](#useful-components)
+- [Hooks Api](#hooks-api)
 - [Npm Scripts](#npm-scripts)
 - [Nodejs API](#nodejs-api)
 - [IMVC Configuration](#imvc-configuration)
@@ -798,6 +799,80 @@ EventWrapper 组件，提供传递事件 handler 的快捷通道。
 </EventWrapper>
 ```
 
+## Hooks Api
+
+`react-imvc` v2.3.0 版本增加了对 `react-hooks` 的支持，需要同步安装 `react` 和 `react-dom` v16.8.0 或以上版本。
+
+### useCtrl
+
+在 react 组件里获取到当前 controller 的实例。
+
+使用该 hooks-api，可以减少传递 handlers 的负担。
+
+```javascript
+import React from 'react'
+import { useCtrl } from 'react-imvc/hook'
+
+export default function Counter() {
+    let ctrl = useCtrl()
+
+    return (
+        <button onClick={ctrl.handleIncre}></button>
+    )
+}
+
+```
+
+### useModel
+
+在 react 组件里获取到当前 model 对应的 state 状态。
+
+使用该 hooks-api，可以减少传递 state 的负担。
+
+```javascript
+import React from 'react'
+import { useModel } from 'react-imvc/hook'
+
+export default function Counter() {
+    let { count } = useModel()
+
+    return (
+        <div>count:{count}</div>
+    )
+}
+```
+
+### useActions
+
+在 react 组件里获取到当前 store 里的 actions 对象。
+
+使用该 hooks-api，可以减少在 controller 里添加 handler 方法。
+
+```javascript
+import React, { useEffect } from 'react'
+import { useActions } from 'react-imvc/hook'
+
+export default function Counter() {
+    let { INCRE_COUNT } = useActions()
+
+    let handleClick = () => {
+        INCRE_COUNT()
+    }
+
+    useEffect(() => {
+        let timer = setInterval(() => {
+            INCRE_COUNT()
+        }, 1000)
+        return () => clearInterval(timer)
+    }, [])
+
+    return (
+        <button onClick={handleClick}></button>
+    )
+}
+```
+
+
 ## Npm Scripts
 
 react-imvc 可以作为 npm scripts 里的命令来使用，总共有三个
@@ -882,9 +957,7 @@ IMVC 支持开发者自定义配置，实现灵活的功能。
 
 ## Server Development
 
-如果需要为 react-imvc 开发一些 server 端的中间件，可以先在 imvc.config.js 里配置 `routes: 'routes'`。
-
-然后在根目录下新建文件夹 `routes`，新增 `routes/index.js` 文件
+如果需要为 react-imvc 开发一些 server 端的中间件，可以在根目录下新建文件夹 `routes`，新增 `routes/index.js` 文件
 
 ```javascript
 // routes/index.js

@@ -138,6 +138,7 @@ function getContextByController(ctrl) {
 	} = ctrl
 	let state = store.getState()
 	return {
+		ctrl,
 		location,
 		history,
 		state,

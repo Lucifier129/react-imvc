@@ -56,7 +56,7 @@ module.exports = {
 	 * 默认为空
 	 * 注意：express view path 也将被设置成 config.routes
 	 */
-	routes: '',
+	routes: 'routes',
 	/**
 	 * 源码构建后的目录名（生产环境跑的代码目录）
 	 * 默认是 publish

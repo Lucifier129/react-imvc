@@ -7,6 +7,7 @@ if (!process.env.NODE_ENV) {
 
 require('@babel/polyfill')
 
+let fs = require('fs')
 let path = require('path')
 let http = require('http')
 let fetch = require('node-fetch')
@@ -58,9 +59,11 @@ module.exports = function start(options) {
 		next()
 	})
 
-	if (config.routes) {
+	let routePath = path.join(config.root, config.routes)
+
+	if (hasModuleFile(routePath)) {
 		// get server routes
-		let routes = require(path.join(config.root, config.routes))
+		let routes = require(routePath)
 		routes = routes.default || routes
 		Object.keys(routes).forEach(key => {
 			let route = routes[key]
@@ -164,4 +167,12 @@ function normalizePort(val) {
 	}
 
 	return false
+}
+
+function hasModuleFile(filename) {
+	try {
+		return !!require.resolve(filename)
+	} catch (_) {
+		return false
+	}
 }
