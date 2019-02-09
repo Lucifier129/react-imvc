@@ -28,11 +28,11 @@ const createConfig = options => {
       dest: staticPath
     },
     js: {
-      src: [src + '/lib/**/*.js'],
+      src: [src + '/lib/**/*.@(js|ts|jsx|tsx)'],
       dest: staticPath + '/lib'
     },
     copy: {
-      src: [src + '/**/!(*.@(html|htm|css|js))'],
+      src: [src + '/**/!(*.@(html|htm|css|js|ts|jsx|tsx))'],
       dest: staticPath
     },
     publishCopy: {
@@ -44,8 +44,8 @@ const createConfig = options => {
     },
     publishBabel: {
       src: [
-        root + `/!(node_modules|${options.publish}|buildportal-script)/**/*.js`,
-        publish + '/*.js'
+        root + `/!(node_modules|${options.publish}|buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
+        publish + '/*.@(js|ts|jsx|tsx)'
       ],
       dest: publish
     }
@@ -160,6 +160,7 @@ module.exports = function createGulpTask(options) {
   return gulp.series(
     publishCopy,
     publishBabel,
-    gulp.parallel(copy, minifyHTML, minifyCSS, minifyJS, minifyImage)
+    copy,
+    gulp.parallel(minifyHTML, minifyCSS, minifyJS, minifyImage)
   )
 }

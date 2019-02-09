@@ -21,7 +21,7 @@ const copy = () => {
 
 const babel = () => {
   return gulp
-    .src(['./!(node_modules|publish)/**/*.js', './*.js'])
+    .src(['./!(node_modules|publish)/**/*.@(js|ts|jsx|tsx)', './*.@(js|ts|jsx|tsx)'])
     .pipe(gulpBabel(babelConfig(true)))
     .on('error', error => console.log(error))
     .pipe(plumber())

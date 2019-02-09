@@ -7,7 +7,6 @@ if (!process.env.NODE_ENV) {
 
 require('@babel/polyfill')
 
-let fs = require('fs')
 let path = require('path')
 let http = require('http')
 let fetch = require('node-fetch')

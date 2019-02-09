@@ -13,7 +13,10 @@ require('@babel/polyfill')
 let options = require('yargs').argv
 let getConfig = require('../config')
 let config = getConfig(options)
-require('@babel/register')(config.babel(true))
+require('@babel/register')({
+	...config.babel(true),
+	extensions: ['.es6', '.es', '.jsx', '.js', '.mjs', '.ts', '.tsx']
+})
 
 let Mocha = require('mocha')
 let fs = require('fs')

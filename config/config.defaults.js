@@ -267,6 +267,12 @@ module.exports = {
 	 * 默认 false 兼容以前的默认行为
 	 */
 	useServerBundle: false,
+
+	/**
+	 * 使用 fork-ts-checker-webpack-plugin 进行类型检查
+	 */
+	useTypeCheck: false,
+
 	/**
 	 * 打包出来的服务端 bunlde 的文件名
 	 */

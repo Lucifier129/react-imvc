@@ -5,6 +5,8 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 const ManifestPlugin = require('webpack-manifest-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const PnpWebpackPlugin = require('pnp-webpack-plugin')
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
+const resolve = require('resolve')
 const { getExternals } = require('./util')
 
 module.exports = function createWebpackConfig(options, isServer = false) {
@@ -69,7 +71,27 @@ module.exports = function createWebpackConfig(options, isServer = false) {
 		!isServer && new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 		new webpack.DefinePlugin({
 			'process.env.NODE_ENV': JSON.stringify(NODE_ENV)
-		})
+		}),
+		
+		// TypeScript type checking
+		config.useTypeCheck && new ForkTsCheckerWebpackPlugin({
+			 typescript: resolve.sync('typescript', {
+				 basedir: path.join(config.root, 'node_modules'),
+			 }),
+			 async: !isProd,
+			 useTypescriptIncrementalApi: true,
+			 checkSyntacticErrors: true,
+			 tsconfig: path.join(config.root, 'tsconfig.json'),
+			 reportFiles: [
+				 '**',
+				 '!**/*.json',
+				 '!**/__tests__/**',
+				 '!**/?(*.)(spec|test).*',
+				 '!**/src/setupProxy.*',
+				 '!**/src/setupTests.*',
+			 ],
+			 watch: config.root
+		 })
 	].filter(Boolean)
 
 	// 添加热更新插件
