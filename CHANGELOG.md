@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2.4.0
+
+- 增加对 `typescript` 的支持
+- `util` 模块用 `typescript` 重构
+
 ## 2.3.0
 
 - 增加对 `react-hooks` 的支持

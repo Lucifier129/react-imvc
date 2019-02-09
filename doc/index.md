@@ -11,6 +11,7 @@
 - [Event Handler](#event-handler)
 - [Useful Components](#useful-components)
 - [Hooks Api](#hooks-api)
+- [Use Typescript](#use-typescript)
 - [Npm Scripts](#npm-scripts)
 - [Nodejs API](#nodejs-api)
 - [IMVC Configuration](#imvc-configuration)
@@ -872,6 +873,46 @@ export default function Counter() {
 }
 ```
 
+## Use Typescript
+
+从 `v2.4.0` 版本开始，`react-imvc` 增加了对 `Typescript` 的支持。
+
+可以在项目里添加 `.ts` 后缀的文件，即可开始编写 `Typescript` 代码。
+
+- 可以在项目根目录下添加 `tsconfig.json` 配置 `Typescript` 编译选项（可选）
+- 在 `imvc.config.js` 里添加 `useTypeCheck` 为 `true`，可以开启在命令行里输出类型检查的 LOG 信息（可选）。
+    - 设置 `useTypeCheck` 为 `true` 后，必须添加 `tsconfig.json` 
+    - 可参考下方基础配置
+
+```json
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "preserve"
+  },
+  "include": [
+    "src",
+    "routes"
+  ]
+}
+
+```
 
 ## Npm Scripts
 
