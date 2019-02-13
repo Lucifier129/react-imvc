@@ -1,6 +1,8 @@
-import useCtrl from './useCtrl'
+import useModelState from './useModelState'
+import useModelActions from './useModelActions'
 
 export default () => {
-  let ctrl = useCtrl()
-  return ctrl.store.getState()
+  let state = useModelState()
+  let actions = useModelActions()
+  return [state, actions]
 }

@@ -826,7 +826,7 @@ export default function Counter() {
 
 ### useModel
 
-在 react 组件里获取到当前 model 对应的 state 状态。
+在 react 组件里获取到当前 model 对应的 state 状态和 actions 行为。
 
 使用该 hooks-api，可以减少传递 state 的负担。
 
@@ -835,15 +835,29 @@ import React from 'react'
 import { useModel } from 'react-imvc/hook'
 
 export default function Counter() {
-    let { count } = useModel()
+    let [state, actions] = useModel()
 
     return (
-        <div>count:{count}</div>
+        <div onClick={() => actions.INCRE()}>count:{state.count}</div>
     )
 }
 ```
 
-### useActions
+### useModelState
+
+在 react 组件里获取倒当前 model 对应的 state 状态。
+
+```javascript
+import React from 'react'
+import { useModelState } from 'react-imvc/hook'
+
+const Counter = () => {
+    let state = useModelState()
+    return state.count
+}
+```
+
+### useModelActions
 
 在 react 组件里获取到当前 store 里的 actions 对象。
 
@@ -851,10 +865,10 @@ export default function Counter() {
 
 ```javascript
 import React, { useEffect } from 'react'
-import { useActions } from 'react-imvc/hook'
+import { useModelActions } from 'react-imvc/hook'
 
 export default function Counter() {
-    let { INCRE_COUNT } = useActions()
+    let { INCRE_COUNT } = useModelActions()
 
     let handleClick = () => {
         INCRE_COUNT()
