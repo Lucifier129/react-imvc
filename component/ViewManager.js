@@ -35,8 +35,6 @@ export default class ViewManager extends React.Component {
       this.scrollMap[this.props.state.location.raw] = window.scrollY
     }
     this.addItemIfNeed(nextProps)
-  }
-  componentDidUpdate() {
     this.clearItemIfNeed()
   }
   renderView(path) {
