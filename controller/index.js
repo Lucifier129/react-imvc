@@ -515,6 +515,8 @@ export default class Controller {
 		return this.render()
 	}
 	reload() {
+		// if not remove controller cache, it will not reload correctly, it will restore instead of reload
+		this.removeFromCache()
 		this.history.replace(this.location.raw)
 	}
 	render() {
