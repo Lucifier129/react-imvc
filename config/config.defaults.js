@@ -9,7 +9,7 @@ let isProd = NODE_ENV === 'production'
 module.exports = {
 	/**
 	 * node.js 应用部署的 basename，默认是空字符串
-	 * 支持传入字符串 如，'/my/basenmae'
+	 * 支持传入字符串 如，'/my/basename'
 	 * 支持传入数组，当传入为数组时，在运行时动态确定所匹配的 basename
 	 */
 	basename: '',
