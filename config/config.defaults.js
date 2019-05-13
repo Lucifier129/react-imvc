@@ -274,7 +274,7 @@ module.exports = {
 	useTypeCheck: false,
 
 	/**
-	 * 打包出来的服务端 bunlde 的文件名
+	 * 打包出来的服务端 bundle 的文件名
 	 */
 	serverBundleName: 'server.bundle.js'
 }
