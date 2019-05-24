@@ -8,7 +8,8 @@ process.on('unhandledRejection', error => {
 	throw error
 })
 
-require('@babel/polyfill')
+require('core-js/stable')
+require('regenerator-runtime/runtime')
 
 let options = require('yargs').argv
 let getConfig = require('../config')

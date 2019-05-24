@@ -1,6 +1,7 @@
 process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
-require('@babel/polyfill')
+require('core-js/stable')
+require('regenerator-runtime/runtime')
 
 const fs = require('fs')
 const del = require('del')
