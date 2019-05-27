@@ -324,9 +324,7 @@ export default class Controller {
       if (error === REDIRECT) return null
       if (this.errorDidCatch) this.errorDidCatch(error, 'controller')
       if (this.getViewFallback) {
-        let result = this.getViewFallback()
-        this.store = null
-        return result
+        return this.getViewFallback() || <EmptyView />
       }
       throw error
     }
@@ -441,6 +439,12 @@ export default class Controller {
      */
     if (globalInitialState) {
       this.bindStoreWithView()
+
+      // 如果 preload 未收集到或者加载成功，重新加载一次
+      let preloadedKeys = Object.keys(this.context.preload || {})
+      let isPreload = Object.keys(this.preload).every(key => preloadedKeys.includes(key))
+
+      if (!isPreload) await this.fetchPreload()
       return this.render()
     }
 
