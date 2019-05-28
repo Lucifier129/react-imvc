@@ -442,7 +442,7 @@ export default class Controller {
 
       // 如果 preload 未收集到或者加载成功，重新加载一次
       let preloadedKeys = Object.keys(this.context.preload || {})
-      let isPreload = Object.keys(this.preload).every(key => preloadedKeys.includes(key))
+      let isPreload = Object.keys(this.preload || {}).every(key => preloadedKeys.includes(key))
 
       if (!isPreload) await this.fetchPreload()
       return this.render()
