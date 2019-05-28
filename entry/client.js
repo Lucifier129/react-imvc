@@ -15,7 +15,9 @@ const webpackLoader = loadModule => {
 }
 
 const viewEngine = {
-	render: ReactDOM.render
+	render: (component, container) => {
+		ReactDOM.render(component, container)
+	}
 }
 
 const routes = util.getFlatList(
