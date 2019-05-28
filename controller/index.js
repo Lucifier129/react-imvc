@@ -442,7 +442,9 @@ export default class Controller {
 
       // 如果 preload 未收集到或者加载成功，重新加载一次
       let preloadedKeys = Object.keys(this.context.preload || {})
-      let isPreload = Object.keys(this.preload || {}).every(key => preloadedKeys.includes(key))
+      let isPreload = Object.keys(this.preload || {}).every(key =>
+        preloadedKeys.includes(key)
+      )
 
       if (!isPreload) await this.fetchPreload()
       return this.render()
@@ -605,13 +607,19 @@ const proxyReactCreateElement = ctrl => {
           }
           return null
         }
-        return createElement(InputComponent, this.props)
+        let { forwardedRef, ...rest } = this.props
+        return createElement(InputComponent, { ...rest, ref: forwardedRef })
       }
     }
 
-    InputComponent.ErrorBoundary = ErrorBoundary
+    let Forwarder = React.forwardRef((props, ref) => {
+      return <ErrorBoundary {...props} forwardedRef={ref} />
+    })
 
-    return ErrorBoundary
+    Forwarder.isErrorBoundary = true
+    InputComponent.ErrorBoundary = Forwarder
+    
+    return Forwarder
   }
 
   return { attach, detach }
