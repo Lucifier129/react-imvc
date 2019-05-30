@@ -573,11 +573,12 @@ const proxyReactCreateElement = ctrl => {
   let detach = () => {
     React.createElement = createElement
   }
+  let map = new Map()
   let createErrorBoundary = InputComponent => {
     if (!InputComponent) return InputComponent
 
-    if (InputComponent.ErrorBoundary) {
-      return InputComponent.ErrorBoundary
+    if (map.has(InputComponent)) {
+      return map.get(InputComponent)
     }
 
     const displayName = InputComponent.name || InputComponent.displayName
@@ -613,12 +614,12 @@ const proxyReactCreateElement = ctrl => {
     }
 
     let Forwarder = React.forwardRef((props, ref) => {
-      return <ErrorBoundary {...props} forwardedRef={ref} />
+      return createElement(ErrorBoundary, { ...props, forwardedRef: ref })
     })
 
     Forwarder.isErrorBoundary = true
-    InputComponent.ErrorBoundary = Forwarder
-    
+    map.set(InputComponent, Forwarder)
+
     return Forwarder
   }
 
