@@ -386,6 +386,10 @@ export default class Controller {
       initialState = initialState(location, context)
     }
 
+    if(typeof initialState === 'object') {//保护性复制初始化状态，避免运行中修改引用导致其他实例初始化数据不对
+      initialState = JSON.parse(JSON.stringify(initialState))
+    }
+
     let finalInitialState = {
       ...initialState,
       ...globalInitialState,
