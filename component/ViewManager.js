@@ -38,8 +38,6 @@ export default class ViewManager extends React.Component {
 			this.scrollMap[currentPath] = window.scrollY
 		}
 		this.addItemIfNeed(nextPath)
-	}
-	componentDidUpdate() {
 		this.clearItemIfNeed()
 	}
 	renderView(path) {
@@ -138,6 +136,7 @@ function getContextByController(ctrl) {
 	} = ctrl
 	let state = store.getState()
 	return {
+		ctrl,
 		location,
 		history,
 		state,

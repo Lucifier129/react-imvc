@@ -9,6 +9,10 @@ export default [
 	},
 	{
 		path: '/basic_state',
-		controller: () => import('./basic_state/Controller')
+		controller: () => import('./basic-state/Controller')
+	},
+	{
+		path: '/error_boundary',
+		controller: () => import('./error-boundary/Controller')
 	}
 ]

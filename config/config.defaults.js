@@ -9,7 +9,7 @@ let isProd = NODE_ENV === 'production'
 module.exports = {
 	/**
 	 * node.js 应用部署的 basename，默认是空字符串
-	 * 支持传入字符串 如，'/my/basenmae'
+	 * 支持传入字符串 如，'/my/basename'
 	 * 支持传入数组，当传入为数组时，在运行时动态确定所匹配的 basename
 	 */
 	basename: '',
@@ -56,7 +56,7 @@ module.exports = {
 	 * 默认为空
 	 * 注意：express view path 也将被设置成 config.routes
 	 */
-	routes: '',
+	routes: 'routes',
 	/**
 	 * 源码构建后的目录名（生产环境跑的代码目录）
 	 * 默认是 publish
@@ -261,5 +261,20 @@ module.exports = {
 	/**
 	 * 热更新开关 默认关闭
 	 */
-	hot: false
+	hot: false,
+	/**
+	 * 是否使用 server.bundle.js 代替 src/index 作为服务端访问的代码入口
+	 * 默认 false 兼容以前的默认行为
+	 */
+	useServerBundle: false,
+
+	/**
+	 * 使用 fork-ts-checker-webpack-plugin 进行类型检查
+	 */
+	useTypeCheck: false,
+
+	/**
+	 * 打包出来的服务端 bundle 的文件名
+	 */
+	serverBundleName: 'server.bundle.js'
 }

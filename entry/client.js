@@ -1,4 +1,5 @@
-import '@babel/polyfill'
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
 import '../polyfill'
 import 'whatwg-fetch'
 import ReactDOM from 'react-dom'
@@ -11,37 +12,51 @@ const __APP_SETTINGS__ = window.__APP_SETTINGS__ || {}
 
 const getModule = module => module.default || module
 const webpackLoader = (loadModule, location, context) => {
-	return loadModule(location, context).then(getModule)
+  return loadModule(location, context).then(getModule)
 }
 
 let shouldHydrate = !!window.__INITIAL_STATE__
-const render = (view, container) => {
-	if (shouldHydrate) {
-		shouldHydrate = false
-		ReactDOM.hydrate(view, container)
-	} else {
-		ReactDOM.render(view, container)
-	}
+const render = (view, container, controller) => {
+  try {
+    if (shouldHydrate) {
+      shouldHydrate = false
+      ReactDOM.hydrate(view, container)
+    } else {
+      ReactDOM.render(view, container)
+    }
+  } catch (error) {
+    if (!controller) throw error
+
+    if (controller.errorDidCatch) {
+      controller.errorDidCatch(error, 'view')
+    }
+
+    if (controller.getViewFallback) {
+      render(controller.getViewFallback(), container)
+    } else {
+      throw error
+    }
+  }
 }
 const viewEngine = { render }
 
 const routes = util.getFlatList(
-	Array.isArray($routes) ? $routes : Object.values($routes)
+  Array.isArray($routes) ? $routes : Object.values($routes)
 )
 
 const appSettings = {
-	hashType: 'hashbang',
-	container: '#root',
-	...__APP_SETTINGS__,
-	context: {
-		preload: {},
-		...__APP_SETTINGS__.context,
-		isClient: true,
-		isServer: false
-	},
-	loader: webpackLoader,
-	routes,
-	viewEngine
+  hashType: 'hashbang',
+  container: '#root',
+  ...__APP_SETTINGS__,
+  context: {
+    preload: {},
+    ...__APP_SETTINGS__.context,
+    isClient: true,
+    isServer: false
+  },
+  loader: webpackLoader,
+  routes,
+  viewEngine
 }
 
 /**
@@ -49,9 +64,9 @@ const appSettings = {
  */
 const preload = {}
 Array.from(document.querySelectorAll('[data-preload]')).forEach(elem => {
-	let name = elem.getAttribute('data-preload')
-	let content = elem.textContent || elem.innerHTML
-	preload[name] = content
+  let name = elem.getAttribute('data-preload')
+  let content = elem.textContent || elem.innerHTML
+  preload[name] = content
 })
 appSettings.context.preload = preload
 
