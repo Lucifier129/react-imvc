@@ -27,7 +27,10 @@ module.exports = function build(options) {
       )
     )
     .then(() => startStaticEntry(config))
-    .catch(error => console.error(error))
+    .catch(error => {
+      console.error(error)
+      process.exit(1)
+    })
 }
 
 function delPublish(folder) {
