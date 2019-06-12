@@ -581,6 +581,8 @@ const proxyReactCreateElement = ctrl => {
   let createErrorBoundary = InputComponent => {
     if (!InputComponent) return InputComponent
 
+    if (InputComponent.ignoreErrors) return InputComponent
+
     if (map.has(InputComponent)) {
       return map.get(InputComponent)
     }
