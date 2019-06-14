@@ -1,5 +1,18 @@
 # CHANGELOG
 
+
+## 2.5.9
+
+- fixed gulp/webpack 配置问题
+
+## 2.5.8
+
+- fixed 全局错误捕获，导致 KeepAlive 失效的问题
+
+## 2.5.0
+
+- 增加全局错误捕获的机制
+
 ## 2.4.0
 
 - 增加对 `typescript` 的支持

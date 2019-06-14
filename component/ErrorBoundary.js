@@ -5,6 +5,7 @@ import GlobalContext from '../context'
 let createElement = React.originalCreateElement || React.createElement
 
 export default class ErrorBoundary extends React.Component {
+  static ignoreErrors = true
   static contextType = GlobalContext
   static getDerivedStateFromError() {
     return { hasError: true }

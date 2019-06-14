@@ -5,6 +5,7 @@ import React from 'react'
  * 根据 state 更新 document.title
  */
 export default class ControllerProxy extends React.Component {
+  static ignoreErrors = true
   updateDocumentTitle() {
     let { controller } = this.props
     let { html } = controller.store.getState()

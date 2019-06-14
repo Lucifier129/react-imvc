@@ -3,6 +3,7 @@ import GlobalContext from '../context'
 import ControllerProxy from './ControllerProxy'
 
 export default class ViewManager extends React.Component {
+	static ignoreErrors = true
 	views = {}
 	scrollMap = {}
 	constructor(props, context) {
@@ -96,6 +97,7 @@ export default class ViewManager extends React.Component {
 }
 
 class ViewItem extends React.Component {
+	static ignoreErrors = true
 	getContainer = container => {
 		this.container = container
 	}
