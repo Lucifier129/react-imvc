@@ -316,7 +316,6 @@ export default class Controller {
   async init() {
     if (this.errorDidCatch || this.getComponentFallback) {
       this.proxyHandler = proxyReactCreateElement(this)
-      this.proxyHandler.attach()
     }
     try {
       return await this.initialize()
@@ -552,6 +551,7 @@ export default class Controller {
     this.history.replace(this.location.raw)
   }
   render() {
+    if (this.proxyHandler) this.proxyHandler.attach()
     return <ViewManager controller={this} />
   }
 }

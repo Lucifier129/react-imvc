@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.5.10
+
+- fixed 劫持 React.createElement 的时机修改为 render 前，并在 render 后重置回去，防止内存泄漏
 
 ## 2.5.9
 

@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import path from 'path'
+import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 import createApp from 'create-app/lib/server'
 import util from '../util'
@@ -10,14 +11,27 @@ const commonjsLoader = (loadModule, location, context) => {
   return loadModule(location, context).then(getModule)
 }
 
+/**
+ * controller 里会劫持 React.createElement
+ * server side 场景缺乏恢复机制
+ * 因此在这里特殊处理，在渲染完后，恢复 React.createElement
+ */
+const createElement = React.createElement
+
 const renderToNodeStream = (view, controller) => {
   return new Promise((resolve, reject) => {
     let stream = ReactDOMServer.renderToNodeStream(view)
     let buffers = []
     stream.on('data', chunk => buffers.push(chunk))
-    stream.on('end', () => resolve(Buffer.concat(buffers)))
+    stream.on('end', () => {
+      React.createElement = createElement
+      resolve(Buffer.concat(buffers))
+    })
     stream.on('error', error => {
-      if (!controller) return reject(error)
+      if (!controller) {
+        React.createElement = createElement
+        return reject(error)
+      }
 
       if (controller.errorDidCatch) {
         controller.errorDidCatch(error, 'view')
@@ -27,6 +41,7 @@ const renderToNodeStream = (view, controller) => {
         let fallbackView = controller.getViewFallback('view')
         renderToNodeStream(fallbackView).then(resolve, reject)
       } else {
+        React.createElement = createElement
         reject(error)
       }
     })
@@ -49,6 +64,8 @@ const renderToString = (view, controller) => {
     } else {
       throw error
     }
+  } finally {
+    React.createElement = createElement
   }
 }
 
