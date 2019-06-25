@@ -28,8 +28,12 @@ const createConfig = options => {
       dest: staticPath
     },
     js: {
-      src: [src + '/lib/**/*.@(js|ts|jsx|tsx)'],
+      src: [src + '/lib/!(es5)/**/*.@(js|ts|jsx|tsx)', src + '/lib/*.@(js|ts|jsx|tsx)'],
       dest: staticPath + '/lib'
+    },
+    es5: {
+      src: [src + '/lib/es5/**/*.@(js|ts|jsx|tsx)'],
+      dest: staticPath + '/lib/es5'
     },
     copy: {
       src: [src + '/**/!(*.@(html|htm|css|js|ts|jsx|tsx))'],
@@ -44,7 +48,10 @@ const createConfig = options => {
     },
     publishBabel: {
       src: [
-        root + `/!(node_modules|${options.publish}|buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
+        root +
+          `/!(node_modules|${
+            options.publish
+          }|buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
         publish + '/*.@(js|ts|jsx|tsx)'
       ],
       dest: publish
@@ -114,7 +121,7 @@ module.exports = function createGulpTask(options) {
       .pipe(gulp.dest(config.img.dest))
   }
 
-  let minifyJS = () => {
+  let minifyES6 = () => {
     if (!config.js) {
       return
     }
@@ -124,6 +131,17 @@ module.exports = function createGulpTask(options) {
       .pipe(babel(options.babel(false), { babelrc: false }))
       .pipe(uglify())
       .pipe(gulp.dest(config.js.dest))
+  }
+
+  let minifyES5 = () => {
+    if (!config.es5) {
+      return
+    }
+    return gulp
+      .src(config.es5.src)
+      .pipe(plumber())
+      .pipe(uglify())
+      .pipe(gulp.dest(config.es5.dest))
   }
 
   let publishCopy = () => {
@@ -161,6 +179,6 @@ module.exports = function createGulpTask(options) {
     publishCopy,
     publishBabel,
     copy,
-    gulp.parallel(minifyHTML, minifyCSS, minifyJS, minifyImage)
+    gulp.parallel(minifyHTML, minifyCSS, minifyES5, minifyES6, minifyImage)
   )
 }
