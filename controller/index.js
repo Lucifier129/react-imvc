@@ -535,6 +535,12 @@ export default class Controller {
     let { meta, store } = this
     let { __PAGE_DID_BACK__ } = store.actions
 
+    if (this.proxyHandler) {
+      // detach first, and re-attach
+      this.proxyHandler.detach()
+      this.proxyHandler.attach()
+    }
+
     meta.isDestroyed = false
     __PAGE_DID_BACK__(location)
 
@@ -575,6 +581,7 @@ const proxyReactCreateElement = ctrl => {
     React.originalCreateElement = createElement
   }
   let detach = () => {
+    isAttach = false
     React.createElement = createElement
   }
   let map = new Map()
