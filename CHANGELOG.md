@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2.6.0
+
+- 升级 create-app 到 v1.0.0，跟 react-imvc v1.x 的 create-app v0.8.x 依赖做明确的版本区分
+- 新增 api `ctrl.renderView(ReactComponent)`，只在客户端生效，可以在 `componentWillCreate` 及之后的生命周期方法里执行
+
 ## 2.5.10
 
 - fixed 劫持 React.createElement 的时机修改为 render 前，并在 render 后重置回去，防止内存泄漏

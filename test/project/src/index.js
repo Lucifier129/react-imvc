@@ -14,5 +14,9 @@ export default [
 	{
 		path: '/error_boundary',
 		controller: () => import('./error-boundary/Controller')
+	},
+	{
+		path: '/render_view',
+		controller: () => import('./render-view/Controller')
 	}
 ]

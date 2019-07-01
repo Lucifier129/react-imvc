@@ -385,7 +385,8 @@ export default class Controller {
       initialState = initialState(location, context)
     }
 
-    if(typeof initialState === 'object') {//保护性复制初始化状态，避免运行中修改引用导致其他实例初始化数据不对
+    if (typeof initialState === 'object') {
+      //保护性复制初始化状态，避免运行中修改引用导致其他实例初始化数据不对
       initialState = JSON.parse(JSON.stringify(initialState))
     }
 
@@ -556,6 +557,25 @@ export default class Controller {
     this.removeFromCache()
     this.history.replace(this.location.raw)
   }
+
+  renderView(View = this.View) {
+    if (this.context.isServer) return
+    if (View && !View.viewId) {
+      View.viewId = Date.now()
+    }
+    let ctrl = Object.create(this)
+    ctrl.View = View
+    ctrl.componentDidFirstMount = null
+    ctrl.componentDidMount = null
+    ctrl.componentWillUnmount = null
+    ctrl.meta = {
+      ...this.meta,
+      id: View.viewId
+    }
+    if (this.proxyHandler) this.proxyHandler.attach()
+    this.refreshView(<ViewManager controller={ctrl} />)
+  }
+
   render() {
     if (this.proxyHandler) this.proxyHandler.attach()
     return <ViewManager controller={this} />

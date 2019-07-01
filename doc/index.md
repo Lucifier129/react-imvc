@@ -368,9 +368,37 @@ controller.saveToCache 方法只在客户端存在，用以手动将 controller 
 
 controller.removeFromCache 方法只在客户端存在，用以手动将 controller 从 KeepAlive 缓存里清除。
 
-### controller.refreshView()
+### controller.refreshView(ReactElement)
 
 controller.refreshView 方法只在客户端存在，用当前的 state 刷新视图。
+
+从 `v2.6.0` 版本开始，接受一个 ReactElement 作为参数，如果没有传递，则调用 `ctrl.render()`。
+
+可以使用 `ctrl.refreshView(<div>test</div>)` 直接将 view 渲染到页面上。
+
+### controller.renderView(ReactComponent)
+
+controller.renderView 方法只在客户端生效，从参数 ReactComponent 作为 View 渲染，如果没有传递该参数，它默认为 `this.View`。
+
+`renderView` 和 `refreshView` 的差别在于
+
+- refreshView 接受的参数是 `react-element`，而不是组件。
+- renderView 接受的参数是 `react-component`，而不是元素。
+- refreshView 只在客户端里存在，需要判断环境再调用
+- renderView 只在客户端里生效，但这个方法一直存在
+
+`renderView` 的使用场景通常是：我需要渲染一个 View，它不是 ctrl.View，但它需要接受跟 ctrl.View 一样的 props。
+
+比如根据 tab 进行单页切换时，新页面可能需要一定时间才能获取到数据，而我们需要及时的响应用户。可以在 `componentWillCreate` 里添加 `renderView`，渲染一个加载动画或者骨架屏。
+
+```javascript
+class Controller extends BaseController {
+  componentWillCreate() {
+    this.renderView(LoadingView)
+    // ...other code
+  }
+}
+```
 
 ### controller.combineHandlers(handlers)
 
