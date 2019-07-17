@@ -173,6 +173,7 @@ export default class Controller {
    * 封装 fetch, https://github.github.io/fetch
    * options.json === false 不自动转换为 json
    * options.timeout:number 超时时间
+   * options.timeoutErrorFormatter 超时时错误信息展示格式
    * options.raw 不补全 restfulBasename
    */
   fetch(url, options = {}) {
@@ -221,7 +222,10 @@ export default class Controller {
      * 设置自动化的超时处理
      */
     if (typeof options.timeout === 'number') {
-      fetchData = _.timeoutReject(fetchData, options.timeout)
+      let { timeoutErrorFormatter } = options
+      let timeoutErrorMsg = typeof timeoutErrorFormatter === 'function' ?
+          timeoutErrorFormatter({ url, options: finalOptions }) : timeoutErrorFormatter
+      fetchData = _.timeoutReject(fetchData, options.timeout, timeoutErrorMsg)
     }
 
     return fetchData
