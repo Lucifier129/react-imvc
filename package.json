@@ -1,6 +1,6 @@
 {
   "name": "react-imvc",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "An Isomorphic MVC Framework",
   "main": "./index",
   "bin": {
@@ -72,7 +72,7 @@
     "js-cookie": "^2.1.4",
     "memory-fs": "^0.4.1",
     "mocha": "^3.0.2",
-    "morgan": "~1.6.1",
+    "morgan": ">=1.9.1",
     "node-fetch": "^1.6.3",
     "node-notifier": "^5.2.1",
     "pnp-webpack-plugin": "^1.2.0",
