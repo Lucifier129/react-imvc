@@ -256,6 +256,11 @@ fetch 方法用来跟服务端进行 http 或 https 通讯，它的用法和参�
   - options.timeout 时间内，服务端没有响应，则 reject 一个 timeout error
   - 超时 reject 不会 abort 请求，内部用 `Promise.race` 忽略服务端请求的结果
 
+- 当 options.timeoutErrorFormatter 和 optons.timeout 同时存在时，有以下行为：
+
+  - 当 timeoutErrorFormatter 为字符串，它将作为超时 reject 的 error.message
+  - 当 timeoutErrorFormatter 为函数是，它将接受一个参数 `{ url, options }` 包含 fetch 方法最终发送的 url 和 options 等信息。该函数的返回值，作为超时 reject 的 error.message。
+
 - 当 url 以 /mock/ 开头时
   - 内部会对 url 进行转换 `url = config.basename + url`
   - 该特性提供在本地简单地用 json 文件 mock 数据的功能

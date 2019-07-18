@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2.6.1
+
+- 增加 `ctr.fetch` 的 options 参数，options.timeoutErrorFormatter，支持自定义超时错误信息
+- 升级 morgan 版本，解决安全隐患。
+
 ## 2.6.0
 
 - 升级 create-app 到 v1.0.0，跟 react-imvc v1.x 的 create-app v0.8.x 依赖做明确的版本区分
