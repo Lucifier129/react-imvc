@@ -227,6 +227,10 @@ controller.handlers 是在初始化时，从 controller 的实例里收集的以
 
 当 controller.restapi 存在时，用 restapi 覆盖全局配置的 restapi，作为 fetch 方法的前缀补全
 
+### controller.resetScrollOnMount -> boolean
+
+当 controller.resetScrollOnMount = true 时，在页面 DidMount 时将自动引入滚动至顶部的副作用。不想引入此副作用，请给置为 false。默认为 true
+
 ## Controller API
 
 ### controller.fetch(url=string, options=object)
