@@ -54,7 +54,7 @@ function toText(response: FetchResponse): Promise<string> {
   return response.text()
 }
 
-function timeoutReject(promise: Promise<any>, time = 0, errorMsg): Promise<any> {
+function timeoutReject(promise: Promise<any>, time = 0, errorMsg: any): Promise<any> {
   let timeoutReject = new Promise((_, reject) => {
     setTimeout(() => reject(new Error(errorMsg || `Timeout Error:${time}ms`)), time)
   })
