@@ -1,8 +1,10 @@
 # react-imvc v2.0
 
-[![Build Status](https://travis-ci.org/Lucifier129/react-imvc.svg?branch=master)](https://travis-ci.org/Lucifier129/react-imvc)
+[![Build Status](https://travis-ci.org/Lucifier129/react-imvc.svg?branch=master)](https://travis-ci.org/Lucifier129/react-imvc) 
+[![dependencies Status](https://david-dm.org/Lucifier129/react-imvc/status.svg)](https://david-dm.org/Lucifier129/react-imvc) 
+[![PRs-welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Lucifier129/react-imvc/pull/new/master)
 
-[![NPM](https://nodei.co/npm/react-imvc.png?downloads=true)](https://nodei.co/npm/react-imvc/)  
+[![NPM](https://nodei.co/npm/react-imvc.png?downloads=true)](https://nodei.co/npm/react-imvc/)
 
 ## [2.0 升级指南](./doc/upgrade.md)
 
