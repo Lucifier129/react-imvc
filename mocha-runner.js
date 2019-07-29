@@ -55,7 +55,6 @@ travelDirectoryToAddTestFiles(__dirname)
 
 // Run the tests.
 mocha.run(function(failures) {
-  process.on('exit', function() {
-    process.exit(failures) // exit with non-zero status if there were failures
-  })
+  // exit with non-zero status if there were failures
+  process.exit(failures)
 })
