@@ -1,5 +1,9 @@
 # react-imvc v2.0
 
+[![Build Status](https://travis-ci.org/Lucifier129/react-imvc.svg?branch=master)](https://travis-ci.org/Lucifier129/react-imvc)
+
+[![NPM](https://nodei.co/npm/react-imvc.png?downloads=true)](https://nodei.co/npm/react-imvc/)  
+
 ## [2.0 升级指南](./doc/upgrade.md)
 
 ## [1.0 仓库和文档地址](https://github.com/Lucifier129/react-imvc/tree/v1.0)
