@@ -1,22 +1,23 @@
 import fs from 'fs'
 import gulp from 'gulp'
 import path from 'path'
-import webpack, { Stats } from 'webpack'
+import webpack from 'webpack'
 import del from 'del'
 import start from '../start'
-import getConfig from '../config'
+import getConfig, { Config, Options } from '../config'
 import createGulpTask from './createGulpTask'
 import createWebpackConfig from './createWebpackConfig'
-import { resolve } from 'url';
 
-interface Options {
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
 
-}
+process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
-export default (options: Options): Promise<Options> => {
+
+export default (options: Options): Promise<Config> => {
   let config = getConfig(options)
   let delPublicPgs: () => Promise<string[]> = 
-    () => delPublish(path.join(config.root, config.publish))
+    () => delPublish(path.join(<string>config.root, <string>config.publish))
   let startGulpPgs: () => Promise<GulpConfig> =
     () => startGulp(config)
   let startWebpackPgs: () => Promise<(Config | boolean)[]> = () =>
@@ -26,8 +27,19 @@ export default (options: Options): Promise<Options> => {
         config.useServerBundle && startWebpackForServer(config)
       ].filter(Boolean)
     )
+  let startStaticEntryPgs: () => Promise<Config> = () => startStaticEntry(config)
+  let errorHandler: (error: Error) => never = (error: Error) => {
+    console.error(error)
+    process.exit(1)
+    throw new Error('something is worng')
+  }
+
   return Promise.resolve()
-    .then()
+    .then(delPublicPgs)
+    .then(startGulpPgs)
+    .then(startWebpackPgs)
+    .then(startStaticEntryPgs)
+    .catch(errorHandler)
 }
 
 const delPublish = (folder: string): Promise<string[]> => {
@@ -35,14 +47,10 @@ const delPublish = (folder: string): Promise<string[]> => {
   return del(folder)
 }
 
-interface Config {
-  webpackLogger: Stats.ToStringOptions
-}
-
 const startWebpackForClient = (config: Config): Promise<Config | boolean> => {
   let webpackConfig = createWebpackConfig(config, false)
   return new Promise((resolve, reject) => {
-    webpack(webpackConfig, (error: Error, stats: Stats) => {
+    webpack(webpackConfig, (error: Error, stats: webpack.Stats) => {
       if (error) {
         reject(error)
       } else {
@@ -61,7 +69,7 @@ const startWebpackForClient = (config: Config): Promise<Config | boolean> => {
 const startWebpackForServer = (config: Config): Promise<Config> => {
   let webpackConfig = createWebpackConfig(config, true)
   return new Promise((resolve, reject) => {
-    webpack(webpackConfig, (error: Error, stats: Stats) => {
+    webpack(webpackConfig, (error: Error, stats: webpack.Stats) => {
       if (error) {
         reject(error)
       } else {
@@ -96,19 +104,9 @@ const startGulp = (config: GulpConfig): Promise<GulpConfig> => {
   })
 }
 
-interface StaticEntryConfig {
-  port: number
-  appSettings: object
-  root: string
-  static: string
-  staticEntry?: string
-  publish: string
-  publicPath?: string
-}
-
-const startStaticEntry = async (config: StaticEntryConfig): Promise<StaticEntryConfig | undefined> => {
+const startStaticEntry = async (config: Config): Promise<Config> => {
   if (!config.staticEntry) {
-    return
+    return new Promise<Config>((resolve) => { resolve() })
   }
   console.log(`start generating static entry file`)
 
@@ -132,10 +130,10 @@ const startStaticEntry = async (config: StaticEntryConfig): Promise<StaticEntryC
   let response = await fetch(url)
   let html = await response.text()
   let staticEntryPath = path.join(
-    config.root,
-    config.publish,
-    config.static,
-    config.staticEntry
+    <string>config.root,
+    <string>config.publish,
+    <string>config.static,
+    <string>config.staticEntry
   )
 
   server.close((): void => console.log('finish generating static entry file'))
