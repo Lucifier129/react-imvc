@@ -7,8 +7,8 @@ import defaultConfig, { Config } from'./config.defaults'
 export interface Options {
 	config?: Config
 	[x: string]: unknown
-	_: string[]
-	$0: string;
+	_?: string[]
+	$0?: string;
 }
 
 const getConfig: (options: Options) => Config = (options) => {
