@@ -5,30 +5,35 @@ import helmet from 'helmet'
 import compression from 'compression'
 import Babel, { GetBabelFunc } from './babel'
 
-let cwd = process.cwd()
-let port = process.env.PORT || 3000
-let NODE_ENV = process.env.NODE_ENV || 'development'
-let isDev = NODE_ENV === 'development'
-let isProd = NODE_ENV === 'production'
+let cwd: string = process.cwd()
+let port: number | string = process.env.PORT || 3000
+let NODE_ENV: string = process.env.NODE_ENV || 'development'
+let isDev: boolean = NODE_ENV === 'development'
+let isProd: boolean = NODE_ENV === 'production'
 
 export interface AppSettings {
+	type: string
   hashType: string, // hash history 显示的起点缀，默认是 !
   container: string // react 组件渲染的容器
 }
 
 export interface GulpConfig {
   // 需要压缩到 static 目录的 css
-  css: string[]
+  css?: string[]
   // 需要压缩到 static 目录的 html
-  html: string[]
+	html?: string[]
+	
+	img?: string[]
   // 需要压缩到 static 目录的 js
-  js: string[]
+	js?: string[]
+	
+	es5?: string[]
   // 需要复制到 static 目录的非 html, css, js 文件
-  copy: string[]
+  copy?: string[]
   // 需要复制到 publish 目录的额外文件
-  publishCopy: string[]
+  publishCopy?: string[]
   // 需要编译到 publish 目录的额外文件
-  publishBabel: string[]
+  publishBabel?: string[]
 }
 
 export interface Views {
@@ -113,7 +118,7 @@ export interface Config {
 	 * 如果设置了 staticEntry，react-imvc 在 build 阶段，使用关闭 SSR 的模式启动一次 react-imvc app
 	 * 并访问 /__CREATE_STATIC_ENTRY__ 路径，将它的 html 响应内容作为静态入口 html 文件内容生成。
 	 */
-	staticEntry: string | boolean
+	staticEntry: string
 
 	/**
 	 * express.static(root, options) 的 options 参数
@@ -176,7 +181,7 @@ export interface Config {
 	 * webpack loaders 自定义配置
 	 * 默认为空
 	 */
-	webpackLoaders: webpack.Loader[]
+	webpackLoaders: webpack.RuleSetRule[]
 
 	/**
 	 * 是否输出 webpack log 日志
@@ -280,6 +285,18 @@ export interface Config {
 	 * 打包出来的服务端 bundle 的文件名
 	 */
 	serverBundleName: string
+	/**
+	 * 性能优化配置
+	 */
+	performance?: webpack.Options.Performance
+	/**
+	 * webpack配置处理
+	 */
+	webpack?: (result: webpack.Configuration, isServer: boolean) => webpack.Configuration
+	/**
+	 * 编译入口
+	 */
+	entry?: string | string[] | webpack.Entry | webpack.EntryFunc
 }
 
 const defaultConfig: Config = {
@@ -296,7 +313,7 @@ const defaultConfig: Config = {
 	publish: 'publish',
 	static: 'static',
 	staticPath: '/static',
-	staticEntry: false && 'index.html',
+	staticEntry: '', // 'index.html'
 	staticOptions: {},
 	publicPath: '',
 	restapi: '',

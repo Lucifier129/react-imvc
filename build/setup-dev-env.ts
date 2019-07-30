@@ -1,20 +1,24 @@
-const path = require('path')
-const vm = require('vm')
-const webpack = require('webpack')
-const webpackDevMiddleware = require('webpack-dev-middleware')
-const MFS = require('memory-fs')
-const notifier = require('node-notifier')
-const createWebpackConfig = require('./createWebpackConfig')
-const { getExternals, matchExternals } = require('./util')
+import path from 'path'
+import vm from 'vm'
+import webpack from 'webpack'
+import webpackDevMiddleware from 'webpack-dev-middleware'
+import MFS from 'memory-fs'
+import notifier from 'node-notifier'
+import createWebpackConfig from './createWebpackConfig'
+import { getExternals, matchExternals } from './util'
+import { Config } from '../config'
 
-exports.setupClient = function setupClient(config) {
-	let clientConfig = createWebpackConfig(config)
-	let compiler = webpack(clientConfig)
-	let middleware = webpackDevMiddleware(compiler, {
+export const setupClient: (config: Config) => {
+	compiler: webpack.Compiler,
+	middleware: webpackDevMiddleware.WebpackDevMiddleware 
+} = (config: Config) => {
+	let clientConfig: webpack.Configuration = createWebpackConfig(config)
+	let compiler: webpack.Compiler = webpack(clientConfig)
+	let middleware: webpackDevMiddleware.WebpackDevMiddleware = webpackDevMiddleware(compiler, {
 		publicPath: config.staticPath,
 		stats: config.webpackLogger,
 		serverSideRender: true,
-		reporter: (middlewareOptions, options) => {
+		reporter: (middlewareOptions: webpackDevMiddleware.Options, options: webpackDevMiddleware.ReporterOptions) => {
 			reporter(middlewareOptions, options)
 			if (config.notifier) {
 				notifier.notify({
@@ -30,31 +34,38 @@ exports.setupClient = function setupClient(config) {
 	}
 }
 
-exports.setupServer = function setupServer(config, options) {
-	let serverConfig = createWebpackConfig(config, true)
+export const setupServer = (config: Config, options) => {
+	let serverConfig: webpack.Configuration = createWebpackConfig(config, true)
 	serverConfig.target = 'node'
 	serverConfig.entry = {
 		routes: path.join(config.root, config.src)
 	}
+	if (!serverConfig.output) {
+		serverConfig.output = {
+			filename: 'routes.js',
+			libraryTarget: 'commonjs2'
+		}
+	} else {
+		serverConfig.output.filename = 'routes.js'
+		serverConfig.output.libraryTarget = 'commonjs2'
+	}
 	let externals = (serverConfig.externals = getExternals(config))
-	serverConfig.output.filename = 'routes.js'
-	serverConfig.output.libraryTarget = 'commonjs2'
 	delete serverConfig.optimization
 	let serverCompiler = webpack(serverConfig)
 	let mfs = new MFS()
 	let outputPath = path.join(
-		serverConfig.output.path,
-		serverConfig.output.filename
+		<string>serverConfig.output.path,
+		<string>serverConfig.output.filename
 	)
 	serverCompiler.outputFileSystem = mfs
 	serverCompiler.watch({}, (err, stats) => {
 		if (err) throw err
-		stats = stats.toJson()
-		stats.errors.forEach(err => console.error(err))
-		stats.warnings.forEach(err => console.warn(err))
+		let currentStats = stats.toJson()
+		currentStats.errors.forEach(err => console.error(err))
+		currentStats.warnings.forEach(err => console.warn(err))
 		let sourceCode = mfs.readFileSync(outputPath, 'utf-8')
 		let defaultModuleResult = Symbol('default-module-result')
-		let virtualRequire = modulePath => {
+		let virtualRequire: (modulePath: string) => Symbol = modulePath => {
 			if (matchExternals(externals, modulePath)) {
 				return require(modulePath)
 			}
@@ -83,7 +94,7 @@ exports.setupServer = function setupServer(config, options) {
 
 			return moduleResult
 		}
-		let runCode = sourceCode => {
+		let runCode = (sourceCode: string) => {
 			return vm.runInThisContext(`
 				(function(require) {
 					var module = {exports: {}}
@@ -110,10 +121,10 @@ exports.setupServer = function setupServer(config, options) {
 	})
 }
 
-function reporter(middlewareOptions, options) {
+function reporter(middlewareOptions: webpackDevMiddleware.Options, options: webpackDevMiddleware.ReporterOptions) {
 	const { log, state, stats } = options
 
-	if (state) {
+	if (state && stats !== undefined) {
 		const displayStats = middlewareOptions.stats !== false
 
 		if (displayStats) {

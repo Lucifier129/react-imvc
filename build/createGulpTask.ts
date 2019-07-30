@@ -1,20 +1,37 @@
 import path from 'path'
 import chalk from 'chalk'
 import gulp from 'gulp'
-const log = require('fancy-log')
-const plumber = require('gulp-plumber')
-const cleanCSS = require('gulp-clean-css')
-const htmlmin = require('gulp-htmlmin')
-const imagemin = require('gulp-imagemin')
-const uglify = require('gulp-uglify')
-const babel = require('gulp-babel')
+import log from 'fancy-log'
+import plumber from 'gulp-plumber'
+import cleanCSS from 'gulp-clean-css'
+import htmlmin from 'gulp-htmlmin'
+import imagemin from 'gulp-imagemin'
+import uglify from 'gulp-uglify'
+import babel from 'gulp-babel'
+import { Config } from '../config'
 
-const createConfig = options => {
+interface GulpConfigItem {
+	src?: string[],
+	dest?: string
+}
+
+interface GulpConfig {
+  css: GulpConfigItem
+  html?: GulpConfigItem
+	img?: GulpConfigItem
+	js?: GulpConfigItem
+	es5?: GulpConfigItem
+  copy?: GulpConfigItem
+  publishCopy?: GulpConfigItem
+  publishBabel?: GulpConfigItem
+}
+
+const createConfig: (options: Config) => GulpConfig = options => {
   let root = options.root
   let src = path.join(root, options.src)
   let publish = path.join(root, options.publish)
   let staticPath = path.join(publish, options.static)
-  let config = {
+  let config: GulpConfig = {
     css: {
       src: [src + '/**/*.css'],
       dest: staticPath
@@ -67,7 +84,7 @@ const createConfig = options => {
   return config
 }
 
-module.exports = function createGulpTask(options) {
+const createGulpTask: (options: Config) => gulp.TaskFunction = (options) => {
   let config = Object.assign(createConfig(options))
 
   let minifyCSS = () => {
@@ -82,7 +99,7 @@ module.exports = function createGulpTask(options) {
           {
             debug: true
           },
-          details => {
+          (details: any) => {
             var percent = (
               (details.stats.minifiedSize / details.stats.originalSize) *
               100
@@ -128,7 +145,7 @@ module.exports = function createGulpTask(options) {
     return gulp
       .src(config.js.src)
       .pipe(plumber())
-      .pipe(babel(options.babel(false), { babelrc: false }))
+      .pipe(babel(options.babel(false)))
       .pipe(uglify())
       .pipe(gulp.dest(config.js.dest))
   }
@@ -182,3 +199,4 @@ module.exports = function createGulpTask(options) {
     gulp.parallel(minifyHTML, minifyCSS, minifyES5, minifyES6, minifyImage)
   )
 }
+export default createGulpTask

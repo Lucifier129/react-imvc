@@ -5,7 +5,7 @@ import path from 'path'
 import defaultConfig, { Config } from'./config.defaults'
 
 export interface Options {
-  config: Partial<Config>
+	config: Config
 }
 
 const getConfig: (options: Options) => Config = (options) => {

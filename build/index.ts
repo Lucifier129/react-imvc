@@ -15,10 +15,10 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
 
 export default (options: Options): Promise<Config> => {
-  let config = getConfig(options)
+  let config: Config = getConfig(options)
   let delPublicPgs: () => Promise<string[]> = 
     () => delPublish(path.join(<string>config.root, <string>config.publish))
-  let startGulpPgs: () => Promise<GulpConfig> =
+  let startGulpPgs: () => Promise<Config> =
     () => startGulp(config)
   let startWebpackPgs: () => Promise<(Config | boolean)[]> = () =>
     Promise.all(
@@ -48,7 +48,7 @@ const delPublish = (folder: string): Promise<string[]> => {
 }
 
 const startWebpackForClient = (config: Config): Promise<Config | boolean> => {
-  let webpackConfig = createWebpackConfig(config, false)
+  let webpackConfig: webpack.Configuration = createWebpackConfig(config, false)
   return new Promise((resolve, reject) => {
     webpack(webpackConfig, (error: Error, stats: webpack.Stats) => {
       if (error) {
@@ -67,7 +67,7 @@ const startWebpackForClient = (config: Config): Promise<Config | boolean> => {
 }
 
 const startWebpackForServer = (config: Config): Promise<Config> => {
-  let webpackConfig = createWebpackConfig(config, true)
+  let webpackConfig: webpack.Configuration = createWebpackConfig(config, true)
   return new Promise((resolve, reject) => {
     webpack(webpackConfig, (error: Error, stats: webpack.Stats) => {
       if (error) {
@@ -85,11 +85,7 @@ const startWebpackForServer = (config: Config): Promise<Config> => {
   })
 }
 
-interface GulpConfig {
-
-}
-
-const startGulp = (config: GulpConfig): Promise<GulpConfig> => {
+const startGulp = (config: Config): Promise<Config> => {
   return new Promise((resolve, reject) => {
     gulp.task('default', createGulpTask(config))
 
@@ -105,12 +101,12 @@ const startGulp = (config: GulpConfig): Promise<GulpConfig> => {
 }
 
 const startStaticEntry = async (config: Config): Promise<Config> => {
-  if (!config.staticEntry) {
+  if (config.staticEntry === '') {
     return new Promise<Config>((resolve) => { resolve() })
   }
   console.log(`start generating static entry file`)
 
-  let staticEntryconfig = {
+  let staticEntryconfig: Config = {
     ...config,
     root: path.join(config.root, config.publish),
     publicPath: config.publicPath || '',
@@ -125,15 +121,15 @@ const startStaticEntry = async (config: Config): Promise<Config> => {
     config: staticEntryconfig
   })
 
-  let url = `heep://localhost:${config.port}/__CREATE_STATIC_ENTRY__`
+  let url: string = `heep://localhost:${config.port}/__CREATE_STATIC_ENTRY__`
   console.log(`fetching url:${url}`)
-  let response = await fetch(url)
-  let html = await response.text()
-  let staticEntryPath = path.join(
-    <string>config.root,
-    <string>config.publish,
-    <string>config.static,
-    <string>config.staticEntry
+  let response: Response = await fetch(url)
+  let html: string = await response.text()
+  let staticEntryPath: string = path.join(
+    config.root,
+    config.publish,
+    config.static,
+    config.staticEntry
   )
 
   server.close((): void => console.log('finish generating static entry file'))

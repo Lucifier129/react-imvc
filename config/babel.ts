@@ -1,6 +1,31 @@
 export interface BabelConfig {
-  presets?: (string | (string | object)[])[]
-  plugins?: (string | (string | object)[] | boolean)[]
+  filename?: string,
+  filenameRelative?: string,
+  presets?: string[],
+  plugins?: string[],
+  highlightCode?: boolean,
+  only?: string | string[],
+  ignore?: string | string[],
+  auxiliaryCommentBefore?: any,
+  auxiliaryCommentAfter?: any,
+  sourceMaps?: any,
+  inputSourceMap?: any,
+  sourceMapTarget?: any,
+  sourceFileName?: any,
+  sourceRoot?: any,
+  moduleRoot?: any,
+  moduleIds?: any,
+  moduleId?: any,
+  getModuleId?: any,
+  resolveModuleSource?: any,
+  keepModuleIdExtesions?: boolean,
+  code?: boolean,
+  ast?: boolean,
+  compact?: any,
+  comments?: boolean,
+  shouldPrintComment?: any,
+  env?: any,
+  retainLines?: boolean
 }
 
 export type GetBabelFunc = (isServer: boolean) => BabelConfig 
@@ -10,13 +35,16 @@ const Babel: GetBabelFunc = (isServer = true) => ({
     '@babel/preset-env',
     '@babel/preset-react',
     // typescript
-    [
-      '@babel/preset-typescript',
-      {
-        isTSX: true,
-        allExtensions: true
-      }
-    ]
+    // 
+    // typescript 中配置不生效
+    // [
+    //   '@babel/preset-typescript',
+    //   {
+    //     isTSX: true,
+    //     allExtensions: true
+    //   }
+    // ]
+    '@babel/preset-typescript'
   ],
   plugins: [
     // Stage 0
