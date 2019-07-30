@@ -12,9 +12,9 @@ let isDev: boolean = NODE_ENV === 'development'
 let isProd: boolean = NODE_ENV === 'production'
 
 export interface AppSettings {
-	type: string
-  hashType: string, // hash history 显示的起点缀，默认是 !
-  container: string // react 组件渲染的容器
+	type?: string
+  hashType?: string, // hash history 显示的起点缀，默认是 !
+  container?: string // react 组件渲染的容器
 }
 
 export interface GulpConfig {
@@ -33,7 +33,9 @@ export interface GulpConfig {
   // 需要复制到 publish 目录的额外文件
   publishCopy?: string[]
   // 需要编译到 publish 目录的额外文件
-  publishBabel?: string[]
+	publishBabel?: string[]
+	
+	[propName: string]: string[] | undefined
 }
 
 export interface Views {

@@ -1,8 +1,8 @@
 export interface BabelConfig {
   filename?: string,
   filenameRelative?: string,
-  presets?: string[],
-  plugins?: string[],
+  presets?: any[],
+  plugins?: any[],
   highlightCode?: boolean,
   only?: string | string[],
   ignore?: string | string[],
@@ -26,6 +26,7 @@ export interface BabelConfig {
   shouldPrintComment?: any,
   env?: any,
   retainLines?: boolean
+  babelrc?: any
 }
 
 export type GetBabelFunc = (isServer: boolean) => BabelConfig 

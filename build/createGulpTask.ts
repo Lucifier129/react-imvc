@@ -17,13 +17,14 @@ interface GulpConfigItem {
 
 interface GulpConfig {
   css: GulpConfigItem
-  html?: GulpConfigItem
-	img?: GulpConfigItem
-	js?: GulpConfigItem
-	es5?: GulpConfigItem
-  copy?: GulpConfigItem
-  publishCopy?: GulpConfigItem
-  publishBabel?: GulpConfigItem
+  html: GulpConfigItem
+	img: GulpConfigItem
+	js: GulpConfigItem
+	es5: GulpConfigItem
+  copy: GulpConfigItem
+  publishCopy: GulpConfigItem
+  publishBabel: GulpConfigItem
+  [propName: string]: GulpConfigItem
 }
 
 const createConfig: (options: Config) => GulpConfig = options => {
@@ -76,8 +77,10 @@ const createConfig: (options: Config) => GulpConfig = options => {
   }
 
   for (let key in options.gulp) {
-    if (config.hasOwnProperty(key) && options.gulp[key]) {
-      config[key].src = config[key].src.concat(options.gulp[key])
+    if (config.hasOwnProperty(key) && config[key].src !== undefined && options.gulp !== undefined && options.gulp[key] !== undefined) {
+      let item: GulpConfigItem = config[key]
+      let src: string [] = <string[]>item.src
+      src = src.concat(<string[]>options.gulp[key])
     }
   }
 
@@ -178,7 +181,7 @@ const createGulpTask: (options: Config) => gulp.TaskFunction = (options) => {
     return gulp
       .src(config.publishBabel.src)
       .pipe(plumber())
-      .pipe(babel(options.babel(true), { babelrc: false }))
+      .pipe(babel(options.babel(true)))  // babelrc: false
       .pipe(gulp.dest(config.publishBabel.dest))
   }
 

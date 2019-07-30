@@ -34,7 +34,11 @@ export const setupClient: (config: Config) => {
 	}
 }
 
-export const setupServer = (config: Config, options) => {
+interface SetupServerOptions {
+	handleHotModule: (value: any) => void
+}
+
+export const setupServer: (config: Config, options: SetupServerOptions) => void = (config, options) => {
 	let serverConfig: webpack.Configuration = createWebpackConfig(config, true)
 	serverConfig.target = 'node'
 	serverConfig.entry = {
@@ -49,11 +53,11 @@ export const setupServer = (config: Config, options) => {
 		serverConfig.output.filename = 'routes.js'
 		serverConfig.output.libraryTarget = 'commonjs2'
 	}
-	let externals = (serverConfig.externals = getExternals(config))
+	let externals: string[] = (serverConfig.externals = getExternals(config))
 	delete serverConfig.optimization
-	let serverCompiler = webpack(serverConfig)
-	let mfs = new MFS()
-	let outputPath = path.join(
+	let serverCompiler: webpack.Compiler = webpack(serverConfig)
+	let mfs: MFS = new MFS()
+	let outputPath: string = path.join(
 		<string>serverConfig.output.path,
 		<string>serverConfig.output.filename
 	)
@@ -63,16 +67,18 @@ export const setupServer = (config: Config, options) => {
 		let currentStats = stats.toJson()
 		currentStats.errors.forEach(err => console.error(err))
 		currentStats.warnings.forEach(err => console.warn(err))
-		let sourceCode = mfs.readFileSync(outputPath, 'utf-8')
-		let defaultModuleResult = Symbol('default-module-result')
+		let sourceCode: string = mfs.readFileSync(outputPath, 'utf-8')
+		let defaultModuleResult: Symbol = Symbol('default-module-result')
 		let virtualRequire: (modulePath: string) => Symbol = modulePath => {
 			if (matchExternals(externals, modulePath)) {
 				return require(modulePath)
 			}
-
-			let filePath = path.join(serverConfig.output.path, modulePath)
-			let sourceCode = ''
-			let moduleResult = defaultModuleResult
+			let filePath: string = modulePath
+			if (serverConfig.output !== undefined && typeof serverConfig.output.path === 'string') {
+				filePath = path.join(<string>serverConfig.output.path, modulePath)
+			}
+			let sourceCode: string = ''
+			let moduleResult: Symbol = defaultModuleResult
 
 			try {
 				sourceCode = mfs.readFileSync(filePath, 'utf-8')
@@ -121,7 +127,10 @@ export const setupServer = (config: Config, options) => {
 	})
 }
 
-function reporter(middlewareOptions: webpackDevMiddleware.Options, options: webpackDevMiddleware.ReporterOptions) {
+export const reporter: (
+	middlewareOptions: webpackDevMiddleware.Options,
+	options: webpackDevMiddleware.ReporterOptions
+) => void = (middlewareOptions, options) => {
 	const { log, state, stats } = options
 
 	if (state && stats !== undefined) {

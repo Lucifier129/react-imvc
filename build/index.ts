@@ -4,7 +4,7 @@ import path from 'path'
 import webpack from 'webpack'
 import del from 'del'
 import start from '../start'
-import getConfig, { Config, Options } from '../config'
+import getConfig, { Config, Options, AppSettings } from '../config'
 import createGulpTask from './createGulpTask'
 import createWebpackConfig from './createWebpackConfig'
 
@@ -106,14 +106,15 @@ const startStaticEntry = async (config: Config): Promise<Config> => {
   }
   console.log(`start generating static entry file`)
 
+  let appSettings: AppSettings = {
+    ...config.appSettings,
+    type: 'createHashHistory'
+  }
   let staticEntryconfig: Config = {
     ...config,
     root: path.join(config.root, config.publish),
     publicPath: config.publicPath || '',
-    appSettings: {
-      ...config.appSettings,
-      type: 'createHashHistory'
-    },
+    appSettings,
     SSR: true
   }
 
