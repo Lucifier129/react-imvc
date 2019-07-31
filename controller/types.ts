@@ -1,77 +1,65 @@
-export type Controller = {
-    location: Location
-    context: Context
-    handlers: Handlers
-    matcher: Matcher
-    loader: Loader
-    routes: Routes
-    store: Store
-    errorDidCatch: any
-    getComponentFallback: any
-    proxyHandler: any
-    Model: Record<string, any>
-    initialState: Record<string, any>
-    actions: Record<string, any>
-    SSR: boolean | any
-    Loading: React.FC
-    KeepAliveOnPush: boolean
-    [propName: string]: any
-    getViewFallback(...args: any): any
-    getInitialState(...args: any): any
-    stateDidReuse(...args: any): any
-    getFinalActions(...args: any): any
-    fetchPreload(...args: any): any
-    shouldComponentCreate(...args: any): any
-    componentWillCreate(...args: any): any
-    refreshView(...args: any): any
-    stateDidChange(...args: any): any
-    saveToCache(...args: any): any
-    removeFromCache(...args: any): any
-    pageWillLeave(...args: any): any
-    windowWillUnload(...args: any): any
-    pageDidBack(...args: any): any
+import Controller from './index'
+
+export interface State {
+    [propName:string]: any
 }
 
-export type Location = {
-    path?: any
-    // search: any
-    // hash: any
-    // state: any
-    // action: any
-    key?: any
+export interface Actions {
+    [propName:string]: { (...args:any):State } | State
+}
 
+export interface Model {
+    initialState?: State
+    [propName:string]: any
+}
+
+export interface Preload  {
+    [propName:string]: string
+}
+
+export type API = Record<string, string>
+
+export interface Payload {
+    [propName:string]: any 
+}
+
+export interface Location {
+    // path?: any
+    key?: string
     action: string
     basename: string
     hash: string
-    params: any
+    params: object
     pathname: string
     pattern: string
-    query: any
+    query: object
     raw: string
     search: string
-    state: any | undefined
+    state: any
 }
 
-export type Context = {
+export interface Context {
     basename: string
     env: string
     isClient: boolean
     isServer: boolean
     preload: Record<string, string>
-    prevLocation: any | null
+    prevLocation: object | null
     publicPath: string
     restapi: string
-    userInfo: Record<string, any>
+    userInfo: object
     [propName: string]: any
 }
 
-export type Handlers = Record<string, Handle>
+export interface Handlers {
+    [handleName: string]: Handle
+}
 
-type Handle = {
+interface Handle {
     (...args:any):any
 }
 
-export type Meta = {
+export interface Meta {
     key?: string | null
     hadMounted: boolean
     id: number
@@ -79,48 +67,53 @@ export type Meta = {
     unsubscribeList: any
 }
 
-export type History = {
-    createHref(e: any): any
-    createKey(): any
-    createLocation(e: any): any
-    createPath(e: any): any
-    getCurrentLocation(): any
-    go(e: any): any
-    goBack(): any
-    goForward(): any
-    listen(e: any): any
-    listenBefore(e: any): any
-    listenBeforeUnload(e: any): any
-    push(e: any): void
-    replace(e: any): void
-    transitionTo(e: any): any
+export interface History {
+    createHref(e: string): string
+    createKey(): string
+    createLocation(e: string): Location
+    createPath(e: string): string
+    getCurrentLocation(): Location
+    go(url: string): void
+    goBack(): void
+    goForward(): void
+    listen(func: any): object
+    listenBefore(func: any): object
+    listenBeforeUnload(func: any): object
+    push(url: string): void
+    replace(url: string): void
+    transitionTo(url: string): void
     // pushLocation():void
     // replaceLocation():void
 }
 
-export type Loader = {
+export interface Loader {
     (...args:any):any
 }
 
-export type Routes = Route[]
+export interface Routes {
+    [index: number]: Route
+}
 
-type Route = {
+interface Route {
     path: string,
     controller: Controller
 }
 
-export type Matcher = {
-    (...args:any):any
-    // path: string
-    // params: Record<string, string>
-    // controller: Controller
+export interface Matcher {
+    (...args:any):MatcherReturn
 }
 
-export type Store = {
+interface MatcherReturn {
+    path?: string
+    params?: Record<string, string>
+    controller?: Controller
+}
+
+export interface Store {
     actions: Record<string, any>
-    dispatch(...args:any): any
-    getState(): any
-    publish(...args:any): any
-    replaceState(...args:any): any
-    subscribe(callback:(...args: any)=>any): any
+    dispatch(...args:any): void
+    getState(): State
+    publish(...args:any): void
+    replaceState(...args:any): void
+    subscribe(callback:(...args: any)=>any): object
 }
