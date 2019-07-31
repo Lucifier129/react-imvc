@@ -1,10 +1,14 @@
 import React from 'react'
 
+type Props = {
+  controller: any
+}
+
 /**
  * ViewProxy 把 react 组件生命周期同步到 controller 里
  * 根据 state 更新 document.title
  */
-export default class ControllerProxy extends React.Component {
+export default class ControllerProxy extends React.Component<Props> {
   static ignoreErrors = true
   updateDocumentTitle() {
     let { controller } = this.props
@@ -14,7 +18,7 @@ export default class ControllerProxy extends React.Component {
       document.title = html.title
     }
   }
-  emit(method) {
+  emit(method:string) {
     let { controller } = this.props
     try {
       if (typeof controller[method] === 'function') {

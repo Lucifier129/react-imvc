@@ -8,14 +8,26 @@ import _ from '../util'
 import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
 import attachDevToolsIfPossible from './attachDevToolsIfPossible'
+import context from '../context';
+import {
+  Controller as Source,
+  Location,
+  Context,
+  Handlers,
+  Meta,
+  History,
+  Matcher,
+  Store,
+  Loader
+} from './types'
 
-const REDIRECT =
+const REDIRECT:boolean =
   typeof Symbol === 'function'
     ? Symbol('react.imvc.redirect')
     : Object('react.imvc.redirect')
 
-const EmptyView = () => false
-let uid = 0 // seed of controller id
+const EmptyView:React.FC = () => null
+let uid:number = 0 // seed of controller id
 /**
  * 绑定 Store 到 View
  * 提供 Controller 的生命周期钩子
@@ -23,8 +35,43 @@ let uid = 0 // seed of controller id
  * 提供 fetch 方法
  */
 export default class Controller {
-  View = EmptyView
-  constructor(location, context) {
+  View: React.FC = EmptyView
+  restapi: string = ''
+  preload: Record<string, string> | string[] = {}
+  API: Record<string, string> = {}
+  Model: Record<string, any> = {}
+  initialState: Record<string, any> = {}
+  actions: Record<string, any> = {}
+  SSR: boolean | any = true
+  KeepAliveOnPush: boolean = false
+  history: History
+  store: Store
+  location: Location
+  context: Context
+  handlers: Handlers
+  meta: Meta
+  errorDidCatch: any
+  getComponentFallback: any
+  proxyHandler: any
+
+  Loading:React.FC = (...args: any) => null
+  matcher: Matcher = (...args: any) => { return {} }
+  loader: Loader = (...args: any) => { return {} }
+  getViewFallback = (...args: any) => { return {} }
+  getInitialState = (...args: any) => { return {} }
+  stateDidReuse = (...args: any) => { return {} }
+  getFinalActions = (...args: any) => { return {} }
+  shouldComponentCreate = (...args: any) => { return {} }
+  componentWillCreate = (...args: any) => { return {} }
+  refreshView = (...args: any) => { return {} }
+  stateDidChange = (...args: any) => { return {} }
+  saveToCache = (...args: any) => { return {} }
+  removeFromCache = (...args: any) => { return {} }
+  pageWillLeave = (...args: any) => { return {} }
+  windowWillUnload = (...args: any) => { return {} }
+  pageDidBack = (...args: any) => { return {} }
+  
+  constructor(location:Location, context:Context) {
     this.meta = {
       id: uid++,
       isDestroyed: false,
@@ -43,9 +90,11 @@ export default class Controller {
     this.location = location
     this.context = context
     this.handlers = {}
+    this.history = {} as History
+    this.store = {} as Store
   }
   // 绑定 handler 的 this 值为 controller 实例
-  combineHandlers(source) {
+  combineHandlers(source:Source):void {
     let { handlers } = this
     Object.keys(source).forEach(key => {
       let value = source[key]
@@ -55,7 +104,7 @@ export default class Controller {
     })
   }
   // 补 basename 前缀
-  prependBasename(pathname) {
+  prependBasename(pathname:string):string {
     if (_.isAbsoluteUrl(pathname)) {
       return pathname
     }
@@ -63,7 +112,7 @@ export default class Controller {
     return basename + pathname
   }
   // 补 publicPath 前缀
-  prependPublicPath(pathname) {
+  prependPublicPath(pathname:string):string {
     if (_.isAbsoluteUrl(pathname)) {
       return pathname
     }
@@ -72,7 +121,7 @@ export default class Controller {
   }
 
   // 处理 url 的相对路径或 mock 地址问题
-  prependRestapi(url) {
+  prependRestapi(url:string):string {
     let { context } = this
 
     /**
@@ -101,7 +150,7 @@ export default class Controller {
    * 封装重定向方法，根据 server/client 环境不同而选择不同的方式
    * isRaw 是否不拼接 Url，直接使用
    */
-  redirect(redirectUrl, isRaw) {
+  redirect(redirectUrl:string, isRaw:boolean):void {
     let { history, context } = this
 
     if (context.isServer) {
@@ -122,13 +171,13 @@ export default class Controller {
     }
   }
   // 封装 cookie 的同构方法
-  cookie(key, value, options) {
+  cookie(key:string, value:string, options:any):any {
     if (value == null) {
       return this.getCookie(key)
     }
     this.setCookie(key, value, options)
   }
-  getCookie(key) {
+  getCookie(key:string):string | undefined {
     let { context } = this
     if (context.isServer) {
       let { req } = context
@@ -137,7 +186,7 @@ export default class Controller {
       return Cookie.get(key)
     }
   }
-  setCookie(key, value, options) {
+  setCookie(key:string, value:string, options:any):void {
     let { context } = this
 
     if (options && options.expires) {
@@ -158,7 +207,7 @@ export default class Controller {
       Cookie.set(key, value, options)
     }
   }
-  removeCookie(key, options) {
+  removeCookie(key:string, options:any):void {
     let { context } = this
 
     if (context.isServer) {
@@ -176,7 +225,7 @@ export default class Controller {
    * options.timeoutErrorFormatter 超时时错误信息展示格式
    * options.raw 不补全 restfulBasename
    */
-  fetch(url, options = {}) {
+  fetch(url:string, options:any = {}):Promise<any> {
     let { context, API } = this
 
     /**
@@ -208,7 +257,7 @@ export default class Controller {
       finalOptions.headers['Cookie'] = context.req.headers.cookie || ''
     }
 
-    let fetchData = fetch(url, finalOptions)
+    let fetchData:Promise<any> = fetch(url, finalOptions)
 
     /**
      * 拓展字段，如果手动设置 options.json 为 false
@@ -234,7 +283,7 @@ export default class Controller {
    *
    * 封装 get 请求，方便使用
    */
-  get(url, params, options) {
+  get(url:string, params:any, options:any):Promise<any> {
     let { API } = this
     /**
      * API shortcut，方便 fetch(name, options) 代替 url
@@ -256,7 +305,7 @@ export default class Controller {
    *
    * 封装 post 请求，方便使用
    */
-  post(url, data, options) {
+  post(url:string, data:any, options:any):Promise<any> {
     options = {
       ...options,
       method: 'POST',
@@ -267,7 +316,7 @@ export default class Controller {
   /**
    * 预加载 css 样式等资源
    */
-  fetchPreload(preload) {
+  fetchPreload(preload?:any):Promise<any> | undefined {
     preload = preload || this.preload
     let keys = Object.keys(preload)
 
@@ -310,14 +359,14 @@ export default class Controller {
   /**
    * 预加载页面的 js bundle
    */
-  prefetch(url) {
+  prefetch(url:string):any {
     if (!url || typeof url !== 'string') return null
     let matches = this.matcher(url)
     if (!matches) return null
     return this.loader(matches.controller)
   }
 
-  async init() {
+  async init():Promise<any> {
     if (this.errorDidCatch || this.getComponentFallback) {
       this.proxyHandler = proxyReactCreateElement(this)
     }
@@ -333,7 +382,7 @@ export default class Controller {
     }
   }
 
-  destroy() {
+  destroy():void {
     let { meta } = this
 
     if (this.proxyHandler) {
@@ -342,13 +391,13 @@ export default class Controller {
     }
 
     if (meta.unsubscribeList.length > 0) {
-      meta.unsubscribeList.forEach(unsubscribe => unsubscribe())
+      meta.unsubscribeList.forEach((unsubscribe: any) => unsubscribe())
       meta.unsubscribeList.length = 0
     }
     meta.isDestroyed = true
   }
 
-  async initialize() {
+  async initialize():Promise<any> {
     let { Model, initialState, actions, context, location, SSR, Loading } = this
 
     /**
@@ -360,7 +409,7 @@ export default class Controller {
         SSR = await this.SSR(location, context)
       }
       if (SSR === false) {
-        let View = Loading || EmptyView
+        let View:React.FC = Loading || EmptyView
         return <View />
       }
     }
@@ -499,7 +548,7 @@ export default class Controller {
     }
 
     if (store) {
-      let unsubscribe = store.subscribe(data => {
+      let unsubscribe = store.subscribe((data: any) => {
         this.refreshView()
         if (this.stateDidChange) {
           this.stateDidChange(data)
@@ -510,7 +559,7 @@ export default class Controller {
 
     // 判断是否缓存
     {
-      let unlisten = history.listenBefore(location => {
+      let unlisten = history.listenBefore((location: any) => {
         if (!this.KeepAliveOnPush) return
         if (location.action === 'PUSH') {
           this.saveToCache()
@@ -536,7 +585,7 @@ export default class Controller {
     }
   }
 
-  restore(location, context) {
+  restore(location: Location, context: Context) {
     let { meta, store } = this
     let { __PAGE_DID_BACK__ } = store.actions
 
@@ -589,12 +638,12 @@ export default class Controller {
 // fixed: webpack rebuild lost original React.createElement
 let createElement = React.originalCreateElement || React.createElement
 
-const proxyReactCreateElement = ctrl => {
+const proxyReactCreateElement = (ctrl: any) => {
   let isAttach = false
   let attach = () => {
     if (isAttach) return
     isAttach = true
-    React.createElement = (type, ...args) => {
+    React.createElement = (type: any, ...args: any) => {
       if (typeof type === 'function') {
         if (!type.isErrorBoundary) {
           type = createErrorBoundary(type)
@@ -609,7 +658,7 @@ const proxyReactCreateElement = ctrl => {
     React.createElement = createElement
   }
   let map = new Map()
-  let createErrorBoundary = InputComponent => {
+  let createErrorBoundary = (InputComponent: any) => {
     if (!InputComponent) return InputComponent
 
     if (InputComponent.ignoreErrors) return InputComponent
@@ -632,7 +681,7 @@ const proxyReactCreateElement = ctrl => {
         return { hasError: true }
       }
 
-      componentDidCatch(error) {
+      componentDidCatch(error: any) {
         if (typeof ctrl.errorDidCatch === 'function') {
           ctrl.errorDidCatch(error, 'view')
         }
@@ -663,12 +712,12 @@ const proxyReactCreateElement = ctrl => {
   return { attach, detach }
 }
 
-const proxyStoreActions = ctrl => {
+const proxyStoreActions = (ctrl: any) => {
   let actions = {}
 
   for (let key in ctrl.store.actions) {
     let action = ctrl.store.actions[key]
-    actions[key] = payload => {
+    actions[key] = (payload: any) => {
       try {
         return action(payload)
       } catch (error) {
