@@ -36,6 +36,7 @@ export interface Location {
     raw: string
     search: string
     state: any
+    [propName: string]: any
 }
 
 export interface Context {

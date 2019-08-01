@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
 import compression from 'compression'
 import Babel, { GetBabelFunc } from './babel'
+import Controller from '../controller'
 
 let cwd: string = process.cwd()
 let port: number | string = process.env.PORT || 3000
@@ -11,10 +12,40 @@ let NODE_ENV: string = process.env.NODE_ENV || 'development'
 let isDev: boolean = NODE_ENV === 'development'
 let isProd: boolean = NODE_ENV === 'production'
 
+export interface AppSettingRoute {
+	path: string
+	controller: Controller
+	keys: string[]
+}
+export interface ViewEngine {
+	render: (html: string, container: DocumentType) => Element
+	[propName: string]: any
+}
+export interface AppSettingLoader {
+	(module: AppSettingController, location: string, context: AppSettingContext): Promise<any>
+}
+export interface AppSettingContext {
+	isServer: boolean
+	isClient: boolean
+}
+export interface AppSettingController {
+	(...args: any): any
+	render: () => Element
+	init?: (...args: any[]) => any
+	update?: (...args: any[]) => any
+	destroy?: (...args: any[]) => any
+	[propName: string]: any
+}
 export interface AppSettings {
 	type?: string
   hashType?: string, // hash history 显示的起点缀，默认是 !
-  container?: string // react 组件渲染的容器
+	container?: string // react 组件渲染的容器
+	routes?: AppSettingRoute[]
+	viewEngine?: ViewEngine
+	loader?: AppSettingLoader
+	cacheAmount?: number
+	basename?: string
+	context?: AppSettingContext
 }
 
 export interface GulpConfig {
@@ -88,39 +119,39 @@ export interface Config {
 	 * react-imvc app 所在的根目录
 	 * 默认是 cwd
 	 */
-	root?: string
+	root: string
 	/**
 	 * page 源代码的目录
 	 * 默认是 src
 	 */
-	src?: string
+	src: string
 	/**
 	 * server 源代码的目录
 	 * 默认为空
 	 * 注意：express view path 也将被设置成 config.routes
 	 */
-	routes?: string
+	routes: string
 	/**
 	 * 源码构建后的目录名（生产环境跑的代码目录）
 	 * 默认是 publish
 	 */
-	publish?: string
+	publish: string
 	/**
 	 * 源码里的静态资源构建后的目录名，该目录会出现在 publish 字段配置的目录下
 	 * 默认是 static，即静态资源会出现在 /publish/static 目录下
 	 */
-	static?: string
+	static: string
 	/**
 	 * node.js 静态资源服务的路径
 	 * 默认是 /static
 	 */
-	staticPath?: string
+	staticPath: string
 	/**
 	 * hash history 的 spa 入口文件名，它将出现在 /static 目录下
 	 * 如果设置了 staticEntry，react-imvc 在 build 阶段，使用关闭 SSR 的模式启动一次 react-imvc app
 	 * 并访问 /__CREATE_STATIC_ENTRY__ 路径，将它的 html 响应内容作为静态入口 html 文件内容生成。
 	 */
-	staticEntry?: string
+	staticEntry: string
 
 	/**
 	 * express.static(root, options) 的 options 参数
@@ -131,7 +162,7 @@ export interface Config {
 	 * 静态资源的发布路径，默认为空，为空时运行时修改为 basename + staticPath
 	 * 可以将 /publish/static 目录发布到 CDN，并将 CDN 地址配置成 publicPath
 	 */
-	publicPath?: string
+	publicPath: string
 	/**
 	 * restapi basename
 	 * 默认为空
@@ -143,7 +174,7 @@ export interface Config {
 	 * react-imvc 默认使用 hash 作为静态资源 js 的文件名
 	 * 所以它需要生成一份 assets.json 表，匹配 vendor, index 等文件的 mapping 关系
 	 */
-	assetsPath?: string
+	assetsPath: string
 	/**
 	 * webpack output 自定义配置
 	 * 默认为空

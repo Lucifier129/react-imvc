@@ -1,9 +1,12 @@
+/// <reference path="../types/index.d.ts" />
+
 import path from 'path'
 import fetch from 'node-fetch'
 import http from 'http'
 import express from 'express'
 import puppeteer from 'puppeteer'
 import { Config } from '../config'
+import { Global, WindowNative as Window } from '../types/index'
 
 interface Server extends http.Server {
 	isTouched?: boolean
@@ -126,7 +129,7 @@ function mainTest(config: Config) {
 			await page.waitFor('#static_view')
 			let serverContent = await fetchContent(url)
 			let __CUSTOM_LAYOUT__ = await page.evaluate(
-				() => window.__CUSTOM_LAYOUT__
+				() => (<Window>window).__CUSTOM_LAYOUT__
 			)
 
 			expect(serverContent.includes('window.__CUSTOM_LAYOUT__')).toBe(true)
@@ -150,10 +153,10 @@ function mainTest(config: Config) {
 			await page.goto(url)
 			await page.waitFor('#basic_state')
 
-			let clientController = await page.evaluate(() => window.controller)
+			let clientController = await page.evaluate(() => (<Window>window).controller)
 
 			if (config.SSR) {
-				let serverController = global.controller
+				let serverController = (<Global>global).controller
 
 				let locationKeys = [
 					'params',

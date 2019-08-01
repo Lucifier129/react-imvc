@@ -3,6 +3,7 @@ import path from 'path'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import ManifestPlugin from 'webpack-manifest-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
+// @ts-ignore
 import PnpWebpackPlugin from 'pnp-webpack-plugin'
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
 import resolve from 'resolve'
