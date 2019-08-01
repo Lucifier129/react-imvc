@@ -16,6 +16,7 @@ import debug from 'debug'
 import createExpressApp from '../entry/server'
 import getConfig, { Options, Config } from '../config'
 import createPageRouter from '../page/createPageRouter'
+import { Global, Res } from '../types'
 
 const start: (options: Options) => Promise<{server: http.Server, app: express.Express}> = (options) => {
 	let config: Config = getConfig(options)
@@ -36,7 +37,7 @@ const start: (options: Options) => Promise<{server: http.Server, app: express.Ex
 		}
 		return fetch(url, options)
   }
-  global.fetch = fetchNative  
+  (<Global>global).fetch = fetchNative  
 
 	/**
 	 * set port from environment and store in Express.
@@ -52,12 +53,12 @@ const start: (options: Options) => Promise<{server: http.Server, app: express.Ex
 	let pageRouter = createPageRouter(config)
 
 	// 添加 renderPage 方法，让自定义的 routes 里可以手动调用，走 IMVC 的渲染流程
-	app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+	app.use((req: express.Request, res:any, next: express.NextFunction) => {
 		res.renderPage = pageRouter
 		next()
 	})
 
-	let routePath = path.join(config.root, config.routes)
+	let routePath = path.join(<string>config.root, <string>config.routes)
 
 	if (hasModuleFile(routePath)) {
 		// get server routes

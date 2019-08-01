@@ -10,7 +10,7 @@ import helmet from 'helmet'
 // @ts-ignore
 import ReactViews from 'express-react-views'
 import shareRoot from '../middleware/shareRoot'
-import { Request } from '../types'
+import { Req } from '../types'
 import { Config } from '../config'
 
 export default function createExpressApp(config: Config) {
@@ -43,7 +43,7 @@ export default function createExpressApp(config: Config) {
 	app.engine('js', ReactViews.createEngine(config.ReactViews))
 
 	// view engine setup
-	app.set('views', path.join(config.root, config.routes))
+	app.set('views', path.join(<string>config.root, <string>config.routes))
 	app.set('view engine', 'js')
 
 	// handle logger
@@ -68,7 +68,7 @@ export default function createExpressApp(config: Config) {
 	}
 
 	app.use('/mock', (req, res, next) => {
-		let filePath = path.join(config.root, config.src, `${req.path}.json`)
+		let filePath = path.join(<string>config.root, <string>config.src, `${req.path}.json`)
 		res.type('application/json')
 		fs.createReadStream(filePath).pipe(res)
 	})
@@ -97,8 +97,8 @@ export default function createExpressApp(config: Config) {
 
 		// 开发模式里，用 src 里的静态资源
 		app.use(
-			config.staticPath,
-			express.static(path.join(config.root, config.src))
+			<string>config.staticPath,
+			express.static(path.join(<string>config.root, <string>config.src))
 		)
 
 		// 开发模式用 webpack-dev-middleware 获取 assets
@@ -111,18 +111,18 @@ export default function createExpressApp(config: Config) {
 	} else {
 		// publish 目录启动
 		app.use(
-			config.staticPath,
+			<string>config.staticPath,
 			express.static(
-				path.join(config.root, config.static),
+				path.join(<string>config.root, <string>config.static),
 				config.staticOptions
 			)
 		)
 
 		// 在根目录启动
 		app.use(
-			config.staticPath,
+			<string>config.staticPath,
 			express.static(
-				path.join(config.root, config.publish, config.static),
+				path.join(<string>config.root, <string>config.publish, <string>config.static),
 				config.staticOptions
 			)
 		)
@@ -135,9 +135,9 @@ export default function createExpressApp(config: Config) {
 	}
 
 	// handle publicPath and default props
-	app.use((req: Request, res, next) => {
+	app.use((req: Req, res, next) => {
 		let basename = req.basename // from shareRoot
-		let serverPublicPath = basename + config.staticPath
+		let serverPublicPath = basename + <string>config.staticPath
 		let publicPath = config.publicPath || serverPublicPath
 		let defaultProps = {
 			...config,
@@ -152,7 +152,7 @@ export default function createExpressApp(config: Config) {
 	})
 
 	// attach appSettings for client
-	app.use((req: Request, res, next) => {
+	app.use((req: Req, res, next) => {
 		let { basename, publicPath } = req
 		let context = {
 			basename,
@@ -188,9 +188,9 @@ function readAssets(config: Config) {
 	// 生产模式直接用编译好的资源表
 	let assetsPathList = [
 		// 在 publish 目录下启动
-		path.join(config.root, config.static, config.assetsPath),
+		path.join(<string>config.root, <string>config.static, <string>config.assetsPath),
 		// 在项目根目录下启动
-		path.join(config.root, config.publish, config.static, config.assetsPath)
+		path.join(<string>config.root, <string>config.publish, <string>config.static, <string>config.assetsPath)
 	]
 
 	while (assetsPathList.length) {

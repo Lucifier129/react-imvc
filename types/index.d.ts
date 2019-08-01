@@ -4,6 +4,7 @@ import express from 'express'
 export interface Global extends NodeJS.Global {
   controller: Controller
   __webpack_public_path__: string
+  fetch: any
 }
 
 export interface WindowNative extends Window {
@@ -22,6 +23,7 @@ export interface Req extends express.Request {
 
 export interface Res extends express.Response {
   sendResponse: express.Send
+  renderPage: any
 }
 
 export interface RequestHandler extends express.RequestHandler {

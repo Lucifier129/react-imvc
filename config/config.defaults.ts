@@ -119,39 +119,39 @@ export interface Config {
 	 * react-imvc app 所在的根目录
 	 * 默认是 cwd
 	 */
-	root: string
+	root?: string
 	/**
 	 * page 源代码的目录
 	 * 默认是 src
 	 */
-	src: string
+	src?: string
 	/**
 	 * server 源代码的目录
 	 * 默认为空
 	 * 注意：express view path 也将被设置成 config.routes
 	 */
-	routes: string
+	routes?: string
 	/**
 	 * 源码构建后的目录名（生产环境跑的代码目录）
 	 * 默认是 publish
 	 */
-	publish: string
+	publish?: string
 	/**
 	 * 源码里的静态资源构建后的目录名，该目录会出现在 publish 字段配置的目录下
 	 * 默认是 static，即静态资源会出现在 /publish/static 目录下
 	 */
-	static: string
+	static?: string
 	/**
 	 * node.js 静态资源服务的路径
 	 * 默认是 /static
 	 */
-	staticPath: string
+	staticPath?: string
 	/**
 	 * hash history 的 spa 入口文件名，它将出现在 /static 目录下
 	 * 如果设置了 staticEntry，react-imvc 在 build 阶段，使用关闭 SSR 的模式启动一次 react-imvc app
 	 * 并访问 /__CREATE_STATIC_ENTRY__ 路径，将它的 html 响应内容作为静态入口 html 文件内容生成。
 	 */
-	staticEntry: string
+	staticEntry?: string
 
 	/**
 	 * express.static(root, options) 的 options 参数
@@ -162,7 +162,7 @@ export interface Config {
 	 * 静态资源的发布路径，默认为空，为空时运行时修改为 basename + staticPath
 	 * 可以将 /publish/static 目录发布到 CDN，并将 CDN 地址配置成 publicPath
 	 */
-	publicPath: string
+	publicPath?: string
 	/**
 	 * restapi basename
 	 * 默认为空
@@ -174,7 +174,7 @@ export interface Config {
 	 * react-imvc 默认使用 hash 作为静态资源 js 的文件名
 	 * 所以它需要生成一份 assets.json 表，匹配 vendor, index 等文件的 mapping 关系
 	 */
-	assetsPath: string
+	assetsPath?: string
 	/**
 	 * webpack output 自定义配置
 	 * 默认为空
