@@ -20,7 +20,7 @@ import createPageRouter from '../page/createPageRouter'
 const start: (options: Options) => Promise<{server: http.Server, app: express.Express}> = (options) => {
 	let config: Config = getConfig(options)
 	let app: express.Express = createExpressApp(config)
-	let port: number = normalizePort(config.port)
+	let port: number | string | undefined = normalizePort(<string>config.port)
 
 	/**
 	 * make fetch works like in browser
@@ -151,7 +151,7 @@ const start: (options: Options) => Promise<{server: http.Server, app: express.Ex
  * Normalize a port into a number, string, or false.
  */
 
-const normalizePort: (val: string) => number | string | boolean = (val) => {
+const normalizePort: (val: string) => number | string | undefined = (val) => {
 	let port = parseInt(val, 10)
 
 	if (isNaN(port)) {
@@ -164,10 +164,10 @@ const normalizePort: (val: string) => number | string | boolean = (val) => {
 		return port
 	}
 
-	return false
+	return undefined
 }
 
-const hasModuleFile: (filename: string) => string | boolean = (filename) => {
+const hasModuleFile: (filename: string) => boolean = (filename) => {
 	try {
 		return !!require.resolve(filename)
 	} catch (_) {
