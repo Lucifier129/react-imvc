@@ -1,24 +1,28 @@
-export default function attachDevToolsIfPossible(store) {
+import { Store } from './types'
+
+export default function attachDevToolsIfPossible(store:Store) {
   if (process.env.NODE_ENV === "production") {
     return;
   }
+  // @ts-ignore
   if (typeof window === "undefined" || !window.__REDUX_DEVTOOLS_EXTENSION__) {
     return;
   }
 
-  const __FROM_REDUX_DEVTOOLS_EXTENSION__ = "__FROM_REDUX_DEVTOOLS_EXTENSION__";
+  const __FROM_REDUX_DEVTOOLS_EXTENSION__:string = "__FROM_REDUX_DEVTOOLS_EXTENSION__";
 
-  let options = {
+  let options:object = {
     name: window.location.pathname + window.location.search,
     actionsWhitelist: Object.keys(store.actions)
   };
-  let reduxStore = __REDUX_DEVTOOLS_EXTENSION__(
+  // @ts-ignore
+  let reduxStore:Store = __REDUX_DEVTOOLS_EXTENSION__(
     store.getState,
     store.getState(),
     options
   );
-  let isSync = false;
-  store.subscribe(data => {
+  let isSync:boolean = false;
+  store.subscribe((data: { [propName:string]: string }) => {
     if (!data || data.actionType === __FROM_REDUX_DEVTOOLS_EXTENSION__) {
       return;
     }

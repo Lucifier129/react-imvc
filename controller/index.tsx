@@ -1,30 +1,93 @@
 // base controller class
 import 'whatwg-fetch'
 import React from 'react'
-import { createStore } from 'relite'
+// @ts-ignore
+import createStore from 'relite'
+// @ts-ignore
 import Cookie from 'js-cookie'
-import querystring from 'querystring'
+import querystring, { stringify } from 'querystring'
 import _ from '../util'
 import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
 import attachDevToolsIfPossible from './attachDevToolsIfPossible'
+import {
+  State,
+  Actions,
+  Preload,
+  API,
+  Model,
+  Location,
+  Context,
+  Handlers,
+  Meta,
+  History,
+  Matcher,
+  Store,
+  Loader,
+  Payload
+} from './types'
 
-const REDIRECT =
+const REDIRECT: boolean =
   typeof Symbol === 'function'
     ? Symbol('react.imvc.redirect')
     : Object('react.imvc.redirect')
 
-const EmptyView = () => false
-let uid = 0 // seed of controller id
+const EmptyView: React.FC = () => null
+let uid: number = 0 // seed of controller id
 /**
  * 绑定 Store 到 View
  * 提供 Controller 的生命周期钩子
  * 组装事件处理器 Event Handlers
  * 提供 fetch 方法
  */
+interface BaseViewFC extends React.FC {
+  viewId?: any
+}
+interface BaseViewClass extends React.ComponentClass {
+  viewId?: any
+}
+type UdfFuncType = {
+  (...args: any):any
+}
+
 export default class Controller {
-  View = EmptyView
-  constructor(location, context) {
+  View: BaseViewFC | BaseViewClass = EmptyView
+  restapi: string = ''
+  preload: Preload = {}
+  API: API = {}
+  Model: Model = {}
+  initialState: State | undefined
+  actions: Actions | undefined
+  SSR: boolean | { (location:Location, context: Context):boolean } = false
+  KeepAliveOnPush: boolean = false
+  history: History
+  store: Store
+  location: Location
+  context: Context
+  handlers: Handlers
+  meta: Meta
+  errorDidCatch: { (error:Error, str: string):void } | undefined
+  getComponentFallback: { (displayName: string, InputComponent: any):void } | undefined
+  proxyHandler: any
+  [propName: string]: any
+
+  Loading: BaseViewFC | BaseViewClass = (...args) => null
+  matcher: Matcher | undefined
+  loader: Loader | undefined
+  getViewFallback:UdfFuncType | undefined
+  getInitialState:UdfFuncType | undefined
+  stateDidReuse:UdfFuncType | undefined
+  getFinalActions:UdfFuncType | undefined
+  shouldComponentCreate:UdfFuncType | undefined
+  componentWillCreate:UdfFuncType | undefined
+  refreshView:UdfFuncType | undefined
+  stateDidChange:UdfFuncType | undefined
+  saveToCache:UdfFuncType | undefined
+  pageWillLeave:UdfFuncType | undefined
+  windowWillUnload:UdfFuncType | undefined
+  pageDidBack:UdfFuncType | undefined
+
+  constructor(location: Location, context: Context) {
     this.meta = {
       id: uid++,
       isDestroyed: false,
@@ -43,9 +106,11 @@ export default class Controller {
     this.location = location
     this.context = context
     this.handlers = {}
+    this.history = {} as History
+    this.store = {} as Store
   }
   // 绑定 handler 的 this 值为 controller 实例
-  combineHandlers(source) {
+  combineHandlers(source: Controller): void {
     let { handlers } = this
     Object.keys(source).forEach(key => {
       let value = source[key]
@@ -55,7 +120,7 @@ export default class Controller {
     })
   }
   // 补 basename 前缀
-  prependBasename(pathname) {
+  prependBasename(pathname: string): string {
     if (_.isAbsoluteUrl(pathname)) {
       return pathname
     }
@@ -63,7 +128,7 @@ export default class Controller {
     return basename + pathname
   }
   // 补 publicPath 前缀
-  prependPublicPath(pathname) {
+  prependPublicPath(pathname: string): string {
     if (_.isAbsoluteUrl(pathname)) {
       return pathname
     }
@@ -72,7 +137,7 @@ export default class Controller {
   }
 
   // 处理 url 的相对路径或 mock 地址问题
-  prependRestapi(url) {
+  prependRestapi(url: string): string {
     let { context } = this
 
     /**
@@ -101,7 +166,7 @@ export default class Controller {
    * 封装重定向方法，根据 server/client 环境不同而选择不同的方式
    * isRaw 是否不拼接 Url，直接使用
    */
-  redirect(redirectUrl, isRaw) {
+  redirect(redirectUrl: string, isRaw: boolean): void {
     let { history, context } = this
 
     if (context.isServer) {
@@ -122,13 +187,13 @@ export default class Controller {
     }
   }
   // 封装 cookie 的同构方法
-  cookie(key, value, options) {
+  cookie(key: string, value: string, options: any): any {
     if (value == null) {
       return this.getCookie(key)
     }
     this.setCookie(key, value, options)
   }
-  getCookie(key) {
+  getCookie(key: string): string | undefined {
     let { context } = this
     if (context.isServer) {
       let { req } = context
@@ -137,7 +202,7 @@ export default class Controller {
       return Cookie.get(key)
     }
   }
-  setCookie(key, value, options) {
+  setCookie(key: string, value: string, options: any): void {
     let { context } = this
 
     if (options && options.expires) {
@@ -158,7 +223,7 @@ export default class Controller {
       Cookie.set(key, value, options)
     }
   }
-  removeCookie(key, options) {
+  removeCookie(key: string, options: any): void {
     let { context } = this
 
     if (context.isServer) {
@@ -176,7 +241,7 @@ export default class Controller {
    * options.timeoutErrorFormatter 超时时错误信息展示格式
    * options.raw 不补全 restfulBasename
    */
-  fetch(url, options = {}) {
+  fetch(url: string, options: Record<string, any> = {}): Promise<any> {
     let { context, API } = this
 
     /**
@@ -208,7 +273,7 @@ export default class Controller {
       finalOptions.headers['Cookie'] = context.req.headers.cookie || ''
     }
 
-    let fetchData = fetch(url, finalOptions)
+    let fetchData: Promise<any> = fetch(url, finalOptions as RequestInit)
 
     /**
      * 拓展字段，如果手动设置 options.json 为 false
@@ -223,8 +288,10 @@ export default class Controller {
      */
     if (typeof options.timeout === 'number') {
       let { timeoutErrorFormatter } = options
-      let timeoutErrorMsg = typeof timeoutErrorFormatter === 'function' ?
-          timeoutErrorFormatter({ url, options: finalOptions }) : timeoutErrorFormatter
+      let timeoutErrorMsg =
+        typeof timeoutErrorFormatter === 'function'
+          ? timeoutErrorFormatter({ url, options: finalOptions })
+          : timeoutErrorFormatter
       fetchData = _.timeoutReject(fetchData, options.timeout, timeoutErrorMsg)
     }
 
@@ -234,7 +301,7 @@ export default class Controller {
    *
    * 封装 get 请求，方便使用
    */
-  get(url, params, options) {
+  get(url: string, params: object, options: object): Promise<any> {
     let { API } = this
     /**
      * API shortcut，方便 fetch(name, options) 代替 url
@@ -256,7 +323,7 @@ export default class Controller {
    *
    * 封装 post 请求，方便使用
    */
-  post(url, data, options) {
+  post(url: string, data: any, options: object): Promise<any> {
     options = {
       ...options,
       method: 'POST',
@@ -267,7 +334,7 @@ export default class Controller {
   /**
    * 预加载 css 样式等资源
    */
-  fetchPreload(preload) {
+  fetchPreload(preload?: Preload): Promise<any> | undefined {
     preload = preload || this.preload
     let keys = Object.keys(preload)
 
@@ -280,7 +347,7 @@ export default class Controller {
       if (context.preload[name]) {
         return
       }
-      let url = preload[name]
+      let url = (preload as Preload)[name]
 
       if (!_.isAbsoluteUrl(url)) {
         if (context.isServer) {
@@ -310,14 +377,14 @@ export default class Controller {
   /**
    * 预加载页面的 js bundle
    */
-  prefetch(url) {
+  prefetch(url: string): any {
     if (!url || typeof url !== 'string') return null
-    let matches = this.matcher(url)
+    let matches = (this.matcher as Matcher)(url)
     if (!matches) return null
-    return this.loader(matches.controller)
+    return (this.loader as Loader)(matches.controller)
   }
 
-  async init() {
+  async init(): Promise<any> {
     if (this.errorDidCatch || this.getComponentFallback) {
       this.proxyHandler = proxyReactCreateElement(this)
     }
@@ -333,7 +400,7 @@ export default class Controller {
     }
   }
 
-  destroy() {
+  destroy(): void {
     let { meta } = this
 
     if (this.proxyHandler) {
@@ -342,13 +409,13 @@ export default class Controller {
     }
 
     if (meta.unsubscribeList.length > 0) {
-      meta.unsubscribeList.forEach(unsubscribe => unsubscribe())
+      meta.unsubscribeList.forEach((unsubscribe: any) => unsubscribe())
       meta.unsubscribeList.length = 0
     }
     meta.isDestroyed = true
   }
 
-  async initialize() {
+  async initialize(): Promise<any> {
     let { Model, initialState, actions, context, location, SSR, Loading } = this
 
     /**
@@ -360,7 +427,7 @@ export default class Controller {
         SSR = await this.SSR(location, context)
       }
       if (SSR === false) {
-        let View = Loading || EmptyView
+        let View: BaseViewFC | BaseViewClass = Loading || EmptyView
         return <View />
       }
     }
@@ -377,11 +444,14 @@ export default class Controller {
       actions = this.actions = $actions
     }
 
-    let globalInitialState
+    let globalInitialState: State | undefined
 
     // 服务端把 initialState 吐在 html 里的全局变量 __INITIAL_STATE__ 里
+    // @ts-ignore
     if (typeof __INITIAL_STATE__ !== 'undefined') {
+      // @ts-ignore
       globalInitialState = __INITIAL_STATE__
+      // @ts-ignore
       __INITIAL_STATE__ = undefined
     }
 
@@ -394,7 +464,7 @@ export default class Controller {
       initialState = JSON.parse(JSON.stringify(initialState))
     }
 
-    let finalInitialState = {
+    let finalInitialState: State = {
       ...initialState,
       ...globalInitialState,
       location,
@@ -427,7 +497,7 @@ export default class Controller {
     /**
      * 创建 store
      */
-    let finalActions = { ...actions, ...shareActions }
+    let finalActions: Actions = { ...actions, ...shareActions }
     this.store = createStore(finalActions, finalInitialState)
     attachDevToolsIfPossible(this.store)
 
@@ -449,8 +519,8 @@ export default class Controller {
       this.bindStoreWithView()
 
       // 如果 preload 未收集到或者加载成功，重新加载一次
-      let preloadedKeys = Object.keys(this.context.preload || {})
-      let isPreload = Object.keys(this.preload || {}).every(key =>
+      let preloadedKeys:string[] = Object.keys(this.context.preload || {})
+      let isPreload:boolean = Object.keys(this.preload || {}).every(key =>
         preloadedKeys.includes(key)
       )
 
@@ -458,7 +528,7 @@ export default class Controller {
       return this.render()
     }
 
-    let promiseList = []
+    let promiseList:(Promise<any> | undefined)[] = []
 
     /**
      * 如果 shouldComponentCreate 返回 false，不创建和渲染 React Component
@@ -499,8 +569,8 @@ export default class Controller {
     }
 
     if (store) {
-      let unsubscribe = store.subscribe(data => {
-        this.refreshView()
+      let unsubscribe:object = store.subscribe((data: any) => {
+        (this.refreshView as UdfFuncType)()
         if (this.stateDidChange) {
           this.stateDidChange(data)
         }
@@ -510,10 +580,10 @@ export default class Controller {
 
     // 判断是否缓存
     {
-      let unlisten = history.listenBefore(location => {
+      let unlisten:object = history.listenBefore((location: Location) => {
         if (!this.KeepAliveOnPush) return
         if (location.action === 'PUSH') {
-          this.saveToCache()
+          (this.saveToCache as UdfFuncType)()
         } else {
           this.removeFromCache()
         }
@@ -523,20 +593,20 @@ export default class Controller {
 
     // 监听路由跳转
     if (this.pageWillLeave) {
-      let unlisten = history.listenBefore(this.pageWillLeave.bind(this))
+      let unlisten:object = history.listenBefore(this.pageWillLeave.bind(this))
       meta.unsubscribeList.push(unlisten)
     }
 
     // 监听浏览器窗口关闭
     if (this.windowWillUnload) {
-      let unlisten = history.listenBeforeUnload(
+      let unlisten:object = history.listenBeforeUnload(
         this.windowWillUnload.bind(this)
       )
       meta.unsubscribeList.push(unlisten)
     }
   }
 
-  restore(location, context) {
+  restore(location: Location, context: Context) {
     let { meta, store } = this
     let { __PAGE_DID_BACK__ } = store.actions
 
@@ -567,7 +637,7 @@ export default class Controller {
     if (View && !View.viewId) {
       View.viewId = Date.now()
     }
-    let ctrl = Object.create(this)
+    let ctrl:Controller = Object.create(this)
     ctrl.View = View
     ctrl.componentDidFirstMount = null
     ctrl.componentDidMount = null
@@ -577,7 +647,7 @@ export default class Controller {
       id: View.viewId
     }
     if (this.proxyHandler) this.proxyHandler.attach()
-    this.refreshView(<ViewManager controller={ctrl} />)
+    (this.refreshView as UdfFuncType)(<ViewManager controller={ctrl} />)
   }
 
   render() {
@@ -587,14 +657,15 @@ export default class Controller {
 }
 
 // fixed: webpack rebuild lost original React.createElement
+// @ts-ignore
 let createElement = React.originalCreateElement || React.createElement
 
-const proxyReactCreateElement = ctrl => {
-  let isAttach = false
-  let attach = () => {
+const proxyReactCreateElement:{ (ctrl: Controller): { attach:object, detach:object } } = ctrl => {
+  let isAttach:boolean = false
+  let attach:object = () => {
     if (isAttach) return
     isAttach = true
-    React.createElement = (type, ...args) => {
+    React.createElement = (type: any, ...args: any) => {
       if (typeof type === 'function') {
         if (!type.isErrorBoundary) {
           type = createErrorBoundary(type)
@@ -602,14 +673,15 @@ const proxyReactCreateElement = ctrl => {
       }
       return createElement(type, ...args)
     }
+    // @ts-ignore
     React.originalCreateElement = createElement
   }
-  let detach = () => {
+  let detach:object = () => {
     isAttach = false
     React.createElement = createElement
   }
-  let map = new Map()
-  let createErrorBoundary = InputComponent => {
+  let map:Map<any, any> = new Map()
+  let createErrorBoundary = (InputComponent: any) => {
     if (!InputComponent) return InputComponent
 
     if (InputComponent.ignoreErrors) return InputComponent
@@ -618,9 +690,12 @@ const proxyReactCreateElement = ctrl => {
       return map.get(InputComponent)
     }
 
-    const displayName = InputComponent.name || InputComponent.displayName
+    const displayName:string = InputComponent.name || InputComponent.displayName
 
-    class ErrorBoundary extends React.Component {
+    interface ErrorBoundaryProps {
+      forwardedRef?: any
+    }
+    class ErrorBoundary extends React.Component<ErrorBoundaryProps> {
       static displayName = `ErrorBoundary(${displayName})`
       static isErrorBoundary = true
 
@@ -632,7 +707,7 @@ const proxyReactCreateElement = ctrl => {
         return { hasError: true }
       }
 
-      componentDidCatch(error) {
+      componentDidCatch(error: any) {
         if (typeof ctrl.errorDidCatch === 'function') {
           ctrl.errorDidCatch(error, 'view')
         }
@@ -640,7 +715,7 @@ const proxyReactCreateElement = ctrl => {
       render() {
         if (this.state.hasError) {
           if (ctrl.getComponentFallback) {
-            let result = ctrl.getComponentFallback(displayName, InputComponent)
+            let result:any = ctrl.getComponentFallback(displayName, InputComponent)
             if (result !== undefined) return result
           }
           return null
@@ -650,7 +725,10 @@ const proxyReactCreateElement = ctrl => {
       }
     }
 
-    let Forwarder = React.forwardRef((props, ref) => {
+    let Forwarder: {
+      isErrorBoundary?: boolean
+      [propName: string]: any
+    } = React.forwardRef((props, ref) => {
       return createElement(ErrorBoundary, { ...props, forwardedRef: ref })
     })
 
@@ -663,16 +741,16 @@ const proxyReactCreateElement = ctrl => {
   return { attach, detach }
 }
 
-const proxyStoreActions = ctrl => {
-  let actions = {}
+const proxyStoreActions:{ (ctrl: Controller):any } = ctrl => {
+  let actions:Actions = {}
 
   for (let key in ctrl.store.actions) {
-    let action = ctrl.store.actions[key]
-    actions[key] = payload => {
+    let action:{ (...args:any):State } = ctrl.store.actions[key]
+    actions[key] = (payload: Payload) => {
       try {
         return action(payload)
       } catch (error) {
-        ctrl.errorDidCatch(error, 'model')
+        (ctrl.errorDidCatch as { (error: Error, str: string):void})(error, 'model')
         throw error
       }
     }
