@@ -5,11 +5,18 @@ import express from 'express'
 import puppeteer from 'puppeteer'
 import { Config } from '../config'
 
+interface Server extends http.Server {
+	isTouched?: boolean
+}
+interface App extends express.Express {
+	isTouched?: boolean
+}
+
 process.env.NODE_ENV = 'development'
 const start = require('../start')
 let PORT = 3333
 const ROOT = path.join(__dirname, 'project')
-const config = {
+const config: Config = {
 	root: ROOT, // 项目根目录
 	port: PORT, // server 端口号
 	logger: null, // 不出 log
@@ -41,7 +48,7 @@ describe('React-IMVC', () => {
 	})
 })
 function mainTest(config: Config) {
-	let app: express.Express, server: http.Server, browser: puppeteer.Browser
+	let app: App, server: Server, browser: puppeteer.Browser
 
 	before(async () => {
 		try {
