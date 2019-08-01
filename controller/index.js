@@ -653,6 +653,11 @@ const proxyReactCreateElement = ctrl => {
       return createElement(ErrorBoundary, { ...props, forwardedRef: ref })
     })
 
+    /**
+     * 同步 InputComponent 的静态属性/方法，一些 UI 框架，如 Ant-Design 
+     * 依赖静态属性/方法去判断组件类型
+     */
+    Object.assign(Forwarder, InputComponent)
     Forwarder.isErrorBoundary = true
     map.set(InputComponent, Forwarder)
 
