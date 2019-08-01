@@ -24,7 +24,7 @@ export default (options: Options): Promise<Config> => {
     Promise.all(
       [
         startWebpackForClient(config),
-        config.useServerBundle && startWebpackForServer(config)
+        <boolean>config.useServerBundle && startWebpackForServer(config)
       ].filter(Boolean)
     )
   let startStaticEntryPgs: () => Promise<Config> = () => startStaticEntry(config)
@@ -112,7 +112,7 @@ const startStaticEntry = async (config: Config): Promise<Config> => {
   }
   let staticEntryconfig: Config = {
     ...config,
-    root: path.join(config.root, config.publish),
+    root: path.join(<string>config.root, <string>config.publish),
     publicPath: config.publicPath || '',
     appSettings,
     SSR: true
@@ -127,10 +127,10 @@ const startStaticEntry = async (config: Config): Promise<Config> => {
   let response: Response = await fetch(url)
   let html: string = await response.text()
   let staticEntryPath: string = path.join(
-    config.root,
-    config.publish,
-    config.static,
-    config.staticEntry
+    <string>config.root,
+    <string>config.publish,
+    <string>config.static,
+    <string>config.staticEntry
   )
 
   server.close((): void => console.log('finish generating static entry file'))

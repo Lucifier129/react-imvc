@@ -15,7 +15,7 @@ export const setupClient: (config: Config) => {
 	let clientConfig: webpack.Configuration = createWebpackConfig(config)
 	let compiler: webpack.Compiler = webpack(clientConfig)
 	let middleware: webpackDevMiddleware.WebpackDevMiddleware = webpackDevMiddleware(compiler, {
-		publicPath: config.staticPath,
+		publicPath: <string>config.staticPath,
 		stats: config.webpackLogger,
 		serverSideRender: true,
 		reporter: (middlewareOptions: webpackDevMiddleware.Options, options: webpackDevMiddleware.ReporterOptions) => {
@@ -42,7 +42,7 @@ export const setupServer: (config: Config, options: SetupServerOptions) => void 
 	let serverConfig: webpack.Configuration = createWebpackConfig(config, true)
 	serverConfig.target = 'node'
 	serverConfig.entry = {
-		routes: path.join(config.root, config.src)
+		routes: path.join(<string>config.root, <string>config.src)
 	}
 	if (!serverConfig.output) {
 		serverConfig.output = {

@@ -8,7 +8,7 @@ import createApp from 'create-app/lib/client'
 import util from '../util'
 // @ts-ignore
 import $routes from '@routes'
-import { Global, WindowNative as Window } from '../types'
+import { Global, WindowNative as Window, NativeModule } from '../types'
 import Controller from '../controller'
 import { AppSettingContext, AppSettingLoader, AppSettingController, AppSettings } from '../config'
 
@@ -20,7 +20,7 @@ const webpackLoader: AppSettingLoader = (loadModule: AppSettingController, locat
   return loadModule(location, context).then(getModule)
 }
 
-let shouldHydrate = !!window.__INITIAL_STATE__
+let shouldHydrate = !!(<Window>window).__INITIAL_STATE__
 const render = (view: React.DOMElement<React.DOMAttributes<Element>, Element>, container: Element | null, controller?: Controller) => {
   try {
     if (shouldHydrate) {
@@ -84,4 +84,11 @@ const app = createApp(appSettings)
 app.start()
 
 // 热更新
-if (typeof module !== 'undefined' && module.hot) module.hot.accept()
+if (typeof module !== 'undefined' && (<NativeModule>module).hot) {
+  if ((<NativeModule>module).hot) {
+    let hot = (<NativeModule>module).hot
+    if (hot && hot.accept) {
+      hot.accept()
+    }
+  }
+}

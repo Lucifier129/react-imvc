@@ -12,8 +12,8 @@ export interface WindowNative extends Window {
   __CUSTOM_LAYOUT__: string
   __PUBLIC_PATH__: string
   __APP_SETTINGS__: object
+  __INITIAL_STATE__: object
 }
-
 
 export interface Req extends express.Request {
   basename?: string
@@ -28,4 +28,10 @@ export interface Res extends express.Response {
 
 export interface RequestHandler extends express.RequestHandler {
   (req: Req, res: Res, next: express.NextFunction): any
+}
+
+export interface NativeModule extends NodeModule {
+  hot?: {
+    accept: Function
+  }
 }

@@ -169,6 +169,7 @@ export interface Config {
 	 * 如果配置了这个属性，controller.fetch 方法将为非绝对路径 url 参数，补上 restapi 作为前缀。
 	 */
 	restapi?: string
+	serverRestapi?: string,
 	/**
 	 * webpack 资源表所在的路径，相对于 webpack 的 output.path
 	 * react-imvc 默认使用 hash 作为静态资源 js 的文件名
@@ -222,7 +223,7 @@ export interface Config {
 	webpackLogger?: webpack.Stats.ToStringOptions
 
 	// babel config
-	babel?: GetBabelFunc
+	babel: GetBabelFunc
 
 	gulp?: GulpConfig
 

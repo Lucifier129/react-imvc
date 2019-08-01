@@ -7,7 +7,7 @@ export const getExternals: (config: Config) => string[] = config => {
   let list: string[] = [
     path.resolve('package.json'),
     path.join(__dirname, '../package.json'),
-    path.join(config.root, '../package.json')
+    path.join(<string>config.root, '../package.json')
   ]
 
   while (true) {

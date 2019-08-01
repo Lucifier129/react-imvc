@@ -14,7 +14,7 @@ const createWebpackConfig: (options: Config, isServer?: boolean) => webpack.Conf
   = (options, isServer = false) => {
 	let result: webpack.Configuration = {}
 	let config: Config = Object.assign({}, options)
-	let root: string = path.join(config.root, config.src)
+	let root: string = path.join(<string>config.root, <string>config.src)
 	let alias: { [key: string]: string; } = Object.assign({}, config.alias, {
 		'@routes': root
 	})
@@ -41,13 +41,13 @@ const createWebpackConfig: (options: Config, isServer?: boolean) => webpack.Conf
 		defaultOutput = {
 			...defaultOutput,
 			libraryTarget: 'commonjs2',
-			path: path.join(config.root, config.publish),
+			path: path.join(<string>config.root, <string>config.publish),
 			filename: config.serverBundleName,
 		}
 	} else {
 		defaultOutput = {
 			...defaultOutput,
-			path: path.join(config.root, config.publish, config.static),
+			path: path.join(<string>config.root, <string>config.publish, <string>config.static),
 			filename: `js/[name].js`,
 			chunkFilename: `js/[name].js`,
 		}
@@ -82,12 +82,12 @@ const createWebpackConfig: (options: Config, isServer?: boolean) => webpack.Conf
 		// TypeScript type checking
 		config.useTypeCheck && new ForkTsCheckerWebpackPlugin({
 			 typescript: resolve.sync('typescript', {
-				 basedir: path.join(config.root, 'node_modules'),
+				 basedir: path.join(<string>config.root, 'node_modules'),
 			 }),
 			 async: !isProd,
 			 useTypescriptIncrementalApi: true,
 			 checkSyntacticErrors: true,
-			 tsconfig: path.join(config.root, 'tsconfig.json'),
+			 tsconfig: path.join(<string>config.root, 'tsconfig.json'),
 			 reportFiles: [
 				 '**',
 				 '!**/*.json',
@@ -209,7 +209,7 @@ const createWebpackConfig: (options: Config, isServer?: boolean) => webpack.Conf
 		babelrc: false,
 		configFile: false,
 		cacheDirectory: true,
-		...config.babel(isServer),
+		...(<Function>config.babel)(isServer),
 		// Save disk space when time isn't as important
 		cacheCompression: isProd,
 		compact: isProd
@@ -226,7 +226,7 @@ const createWebpackConfig: (options: Config, isServer?: boolean) => webpack.Conf
       options: babelOptions
     }
   ]
-  moduleRulesConfig.concat(config.webpackLoaders, postLoaders)
+  moduleRulesConfig.concat(<webpack.RuleSetRule | ConcatArray<webpack.RuleSetRule>>config.webpackLoaders, postLoaders)
   const moduleConfig: webpack.Module = {
     // makes missing exports an error instead of warning
     strictExportPresence: true,
@@ -240,7 +240,7 @@ const createWebpackConfig: (options: Config, isServer?: boolean) => webpack.Conf
   const resolveConfig = {
     modules: [
       path.resolve('node_modules'),
-      path.join(config.root, 'node_modules'),
+      path.join(<string>config.root, 'node_modules'),
       path.join(__dirname, '../node_modules')
     ],
     extensions: ['.js', '.jsx', '.json', '.mjs', '.ts', '.tsx'],

@@ -1,7 +1,22 @@
 import React from 'react'
 import Script from '../component/Script'
+import { AppSettings } from '../config'
 
-export default function Page(props) {
+interface Props {
+	description?: string
+	keywords?: string
+	title?: string
+	content: string
+	initialState?: object
+	appSettings: AppSettings
+	publicPath: string
+	assets: {
+		vendor: string
+		index: string
+	}
+}
+
+export default function Page(props: Props) {
 	return (
 		<html>
 			<head>

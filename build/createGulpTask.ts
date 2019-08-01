@@ -30,9 +30,9 @@ interface GulpConfig {
 
 const createConfig: (options: Config) => GulpConfig = options => {
   let root = options.root
-  let src = path.join(root, options.src)
-  let publish = path.join(root, options.publish)
-  let staticPath = path.join(publish, options.static)
+  let src = path.join(<string>root, <string>options.src)
+  let publish = path.join(<string>root, <string>options.publish)
+  let staticPath = path.join(publish, <string>options.static)
   let config: GulpConfig = {
     css: {
       src: [src + '/**/*.css'],
@@ -146,12 +146,20 @@ const createGulpTask: (options: Config) => gulp.TaskFunction = (options) => {
     if (!config.js) {
       return
     }
-    return gulp
+    if (options.babel) {
+      return gulp
       .src(config.js.src)
       .pipe(plumber())
-      .pipe(babel(options.babel(false)))
+      .pipe(babel((options.babel)(false)))
       .pipe(uglify())
       .pipe(gulp.dest(config.js.dest))
+    } else {
+      return gulp
+      .src(config.js.src)
+      .pipe(plumber())
+      .pipe(uglify())
+      .pipe(gulp.dest(config.js.dest))
+    }
   }
 
   let minifyES5 = () => {

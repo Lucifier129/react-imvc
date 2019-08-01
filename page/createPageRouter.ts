@@ -2,12 +2,16 @@ import { Router } from 'express'
 import path from 'path'
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
+// @ts-ignore
 import createApp from 'create-app/lib/server'
 import util from '../util'
+import { AppSettingContext, AppSettingLoader, AppSettingController, Config } from '../config'
+import { Req } from '../types'
+import Controller from '../controller'
 
 const { getFlatList } = util
-const getModule = module => module.default || module
-const commonjsLoader = (loadModule, location, context) => {
+const getModule = (module: any) => module.default || module
+const commonjsLoader: AppSettingLoader = (loadModule: AppSettingController, location, context: AppSettingContext) => {
   return loadModule(location, context).then(getModule)
 }
 
@@ -18,10 +22,11 @@ const commonjsLoader = (loadModule, location, context) => {
  */
 const createElement = React.createElement
 
-const renderToNodeStream = (view, controller) => {
+const renderToNodeStream: (view: React.ReactElement, constroller?: Controller) => any
+  = (view, controller) => {
   return new Promise((resolve, reject) => {
     let stream = ReactDOMServer.renderToNodeStream(view)
-    let buffers = []
+    let buffers: Uint8Array[] = []
     stream.on('data', chunk => buffers.push(chunk))
     stream.on('end', () => {
       React.createElement = createElement
@@ -48,7 +53,8 @@ const renderToNodeStream = (view, controller) => {
   })
 }
 
-const renderToString = (view, controller) => {
+const renderToString: (view: React.ReactElement, controller?: Controller) => any 
+  = (view, controller) => {
   try {
     return ReactDOMServer.renderToString(view)
   } catch (error) {
@@ -69,19 +75,23 @@ const renderToString = (view, controller) => {
   }
 }
 
-const renderers = {
+const renderers: {
+  renderToNodeStream: typeof renderToNodeStream,
+  renderToString: typeof renderToString,
+  [propName: string]: any
+} = {
   renderToNodeStream,
   renderToString
 }
 
-export default function createPageRouter(options) {
+export default function createPageRouter(options: Config) {
   let config = Object.assign({}, options)
   let routes
 
   if (config.useServerBundle) {
-    routes = require(path.join(config.root, config.serverBundleName))
+    routes = require(path.join(<string>config.root, <string>config.serverBundleName))
   } else {
-    routes = require(path.join(config.root, config.src))
+    routes = require(path.join(<string>config.root, <string>config.src))
   }
 
   routes = routes.default || routes
@@ -91,7 +101,7 @@ export default function createPageRouter(options) {
   routes = getFlatList(routes)
 
   let router = Router()
-  let render = renderers[config.renderMode] || renderToNodeStream
+  let render = renderers[<string>config.renderMode] || renderToNodeStream
   let serverAppSettings = {
     loader: commonjsLoader,
     routes: routes,
@@ -110,7 +120,7 @@ export default function createPageRouter(options) {
     // 带服务端渲染模式的开发环境，需要动态编译 src/routes
     var setupDevEnv = require('../build/setup-dev-env')
     setupDevEnv.setupServer(config, {
-      handleHotModule: $routes => {
+      handleHotModule: ($routes: any[] | object) => {
         const routes = getFlatList(
           Array.isArray($routes) ? $routes : Object.values($routes)
         )
@@ -123,7 +133,7 @@ export default function createPageRouter(options) {
   }
 
   // handle page
-  router.all('*', async (req, res, next) => {
+  router.all('*', async (req: Req, res, next) => {
     let { basename, serverPublicPath, publicPath } = req
     let context = {
       basename,
