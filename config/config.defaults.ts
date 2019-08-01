@@ -223,7 +223,7 @@ export interface Config {
 	webpackLogger?: webpack.Stats.ToStringOptions
 
 	// babel config
-	babel: GetBabelFunc
+	babel?: GetBabelFunc
 
 	gulp?: GulpConfig
 

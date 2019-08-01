@@ -53,7 +53,7 @@ describe('React-IMVC', () => {
 function mainTest(config: Config) {
 	let app: App, server: Server, browser: puppeteer.Browser
 
-	before(async () => {
+	beforeAll(async () => {
 		try {
 			let result = await start({ config })
 			app = result.app
@@ -64,7 +64,7 @@ function mainTest(config: Config) {
 		}
 	})
 
-	after(() => {
+	afterAll(() => {
 		browser.close()
 		server.close()
 	})

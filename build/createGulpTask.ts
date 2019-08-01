@@ -146,20 +146,12 @@ const createGulpTask: (options: Config) => gulp.TaskFunction = (options) => {
     if (!config.js) {
       return
     }
-    if (options.babel) {
-      return gulp
-      .src(config.js.src)
-      .pipe(plumber())
-      .pipe(babel((options.babel)(false)))
-      .pipe(uglify())
-      .pipe(gulp.dest(config.js.dest))
-    } else {
-      return gulp
-      .src(config.js.src)
-      .pipe(plumber())
-      .pipe(uglify())
-      .pipe(gulp.dest(config.js.dest))
-    }
+    return gulp
+    .src(config.js.src)
+    .pipe(plumber())
+    .pipe(babel(options.babel(false)))
+    .pipe(uglify())
+    .pipe(gulp.dest(config.js.dest))
   }
 
   let minifyES5 = () => {
