@@ -52,10 +52,10 @@ export interface Context {
 }
 
 export interface Handlers {
-    [handleName: string]: Handle
+    [handleName: string]: Handler
 }
 
-interface Handle {
+interface Handler {
     (...args:any):any
 }
 
@@ -73,7 +73,7 @@ export interface History {
     createLocation(e: string): Location
     createPath(e: string): string
     getCurrentLocation(): Location
-    go(url: string): void
+    go(url: number): void
     goBack(): void
     goForward(): void
     listen(func: any): object

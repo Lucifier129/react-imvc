@@ -2,37 +2,47 @@ import React from 'react'
 import GlobalContext from '../context'
 
 // fixed: webpack rebuild lost original React.createElement
+// @ts-ignore
 let createElement = React.originalCreateElement || React.createElement
 
-export default class ErrorBoundary extends React.Component {
-  static ignoreErrors = true
-  static contextType = GlobalContext
-  static getDerivedStateFromError() {
+type Props = {
+  fallback: object | null
+  children?: { (...args:any):any }
+}
+
+type State = {
+  hasError: boolean
+}
+
+export default class ErrorBoundary extends React.Component<Props, State> {
+  static ignoreErrors:boolean = true
+  static contextType:React.Context<any> = GlobalContext
+  static getDerivedStateFromError():{ hasError:boolean } {
     return { hasError: true }
   }
-  static defaultProps = {
+  static defaultProps:Props = {
     fallback: null
   }
-  state = {
+  state:State = {
     hasError: false
   }
-  catchError(error) {
+  catchError(error:Error):void {
     let { ctrl } = this.context
     if (ctrl.errorDidCatch) {
       ctrl.errorDidCatch(error, 'view')
     }
   }
-  componentDidCatch(error) {
+  componentDidCatch(error:Error):void {
     this.catchError(error)
   }
-  render() {
+  render():React.ReactNode {
     if (this.state.hasError) {
       return this.props.fallback
     }
     let prevCreateElement = React.createElement
     React.createElement = createElement
     try {
-      return this.props.children()
+      return (this.props.children as { (...args:any):any })()
     } catch (error) {
       this.catchError(error)
       return this.props.fallback
@@ -42,14 +52,14 @@ export default class ErrorBoundary extends React.Component {
   }
 }
 
-export const withFallback = fallback => InputComponent => {
-  function Component(props) {
+export const withFallback = (fallback: object) => (InputComponent: React.ComponentType) => {
+  function Component(props:object) {
     return createElement(ErrorBoundary, { fallback }, () =>
       createElement(InputComponent, props)
     )
   }
 
-  const displayName = InputComponent.name || InputComponent.displayName
+  const displayName:string = InputComponent.name || InputComponent.displayName as string
 
   Component.name = `ErrorBoundary(${displayName})`
 

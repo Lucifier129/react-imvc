@@ -1,18 +1,32 @@
 import React from 'react'
 import GlobalContext from '../context'
+import { History, Location } from '../controller/types'
 
-export default class Link extends React.Component {
-	static contextType = GlobalContext
-	static defaultProps = {
+type Props = {
+	as?: keyof HTMLElementTagNameMap
+	to?: string
+	href?: string
+	children?: React.ReactChild
+	replace?: boolean
+	back?: boolean
+	forward?: boolean
+	go?: number
+	prefetch?: boolean
+	[propName: string]: any
+}
+
+export default class Link extends React.Component<Props> {
+	static contextType:React.Context<any> = GlobalContext
+	static defaultProps: Props = {
 		as: 'a'
 	}
-	componentDidMount() {
+	componentDidMount():void {
 		if (this.props.prefetch) {
 			this.context.prefetch(this.props.to || this.props.href)
 		}
 	}
-	render() {
-		let { basename = '' } = this.context.state
+	render():React.ReactNode {
+		let { basename = '' } = this.context.state as { basename: string }
 		let {
 			to,
 			href,
@@ -25,29 +39,28 @@ export default class Link extends React.Component {
 			prefetch,
 			...others
 		} = this.props
-		let Tag = as
 
-		if (Tag === 'a') {
-			let targetPath = to ? `${basename}${to}` : null
+		if (as === 'a') {
+			let targetPath:string | null = to ? `${basename}${to}` : null
 			if (!targetPath && href) {
 				targetPath = href
 			}
 			return (
-				<a {...others} href={targetPath} onClick={this.handleClick}>
+				<a {...others} href={targetPath as string} onClick={this.handleClick}>
 					{children}
 				</a>
 			)
 		}
 
-		return (
-			<Tag {...others} onClick={this.handleClick}>
-				{children}
-			</Tag>
-		)
+		return React.createElement(
+			as,
+			Object.assign({}, others, { onClick: this.handleClick }),
+			children
+		  )
 	}
-	handleClick = event => {
+	handleClick = (event: React.MouseEvent<HTMLElement>):void => {
 		let { onClick, replace, back, forward, go, to } = this.props
-		let { history, location } = this.context
+		let { history, location } = this.context as { history: History, location: Location }
 		onClick && onClick(event)
 
 		if (
@@ -76,6 +89,6 @@ export default class Link extends React.Component {
 	}
 }
 
-function isModifiedEvent(event) {
+function isModifiedEvent(event: React.MouseEvent<HTMLElement>) {
 	return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey)
 }

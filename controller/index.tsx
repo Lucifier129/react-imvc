@@ -67,7 +67,7 @@ export default class Controller {
   handlers: Handlers
   meta: Meta
   errorDidCatch: { (error:Error, str: string):void } | undefined
-  getComponentFallback: { (displayName: string, InputComponent: any):void } | undefined
+  getComponentFallback: { (displayName: string, InputComponent: React.ComponentType):void } | undefined
   proxyHandler: any
   [propName: string]: any
 
@@ -681,25 +681,25 @@ const proxyReactCreateElement:{ (ctrl: Controller): { attach:object, detach:obje
     React.createElement = createElement
   }
   let map:Map<any, any> = new Map()
-  let createErrorBoundary = (InputComponent: any) => {
+  let createErrorBoundary = (InputComponent: React.ComponentType & { ignoreErrors: any }) => {
     if (!InputComponent) return InputComponent
 
-    if (InputComponent.ignoreErrors) return InputComponent
+    if (InputComponent.ignoreErrors as boolean) return InputComponent
 
     if (map.has(InputComponent)) {
       return map.get(InputComponent)
     }
 
-    const displayName:string = InputComponent.name || InputComponent.displayName
+    const displayName:string = InputComponent.name || InputComponent.displayName as string
 
     interface ErrorBoundaryProps {
       forwardedRef?: any
     }
     class ErrorBoundary extends React.Component<ErrorBoundaryProps> {
-      static displayName = `ErrorBoundary(${displayName})`
-      static isErrorBoundary = true
+      static displayName:string = `ErrorBoundary(${displayName})`
+      static isErrorBoundary:boolean = true
 
-      state = {
+      state:State = {
         hasError: false
       }
 
