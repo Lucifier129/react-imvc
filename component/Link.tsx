@@ -35,12 +35,12 @@ export default class Link extends React.Component<Props> {
 			back,
 			forward,
 			go,
-			as,
+			as: tag,
 			prefetch,
 			...others
 		} = this.props
 
-		if (as === 'a') {
+		if (tag === 'a') {
 			let targetPath:string | null = to ? `${basename}${to}` : null
 			if (!targetPath && href) {
 				targetPath = href
@@ -53,7 +53,7 @@ export default class Link extends React.Component<Props> {
 		}
 
 		return React.createElement(
-			as,
+			tag as keyof HTMLElementTagNameMap,
 			Object.assign({}, others, { onClick: this.handleClick }),
 			children
 		  )

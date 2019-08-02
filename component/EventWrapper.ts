@@ -14,7 +14,9 @@ export default class EventWrapper extends React.Component<Props> {
 		as: 'div'
 	}
 	render():React.ReactNode {
-		const { children, as, ...props } = this.props 
+		const { children, as, ...RestProps } = this.props
+		let tag = as
+		let props: { [propName: string]: any } = RestProps
 		const { handlers } = this.context as { handlers: Handlers }
 		for (let key in props) {
 			if (isHandler(key)) {
@@ -25,7 +27,7 @@ export default class EventWrapper extends React.Component<Props> {
 			}
 		}
 		return React.createElement(
-			as,
+			tag as keyof HTMLElementTagNameMap,
 			props,
 			children
 		  )

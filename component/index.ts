@@ -1,13 +1,13 @@
-export Prefetch from './Prefetch'
+export { default as Prefetch } from './Prefetch'
 
-export Link from './Link'
+export { default as Link} from './Link'
 
-export NavLink from './NavLink'
+export { default as NavLink} from './NavLink'
 
-export Input from './Input'
+export { default as Input} from './Input'
 
-export Style from './Style'
+export { default as Style} from './Style'
 
-export OuterClickWrapper from './OuterClickWrapper'
+export { default as OuterClickWrapper} from './OuterClickWrapper'
 
-export EventWrapper from './EventWrapper'
+export { default as EventWrapper} from './EventWrapper'

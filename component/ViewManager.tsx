@@ -1,21 +1,26 @@
 import React from 'react'
 import GlobalContext from '../context'
 import ControllerProxy from './ControllerProxy'
+import Controller from '../controller'
 
-export default class ViewManager extends React.Component {
-	static ignoreErrors = true
-	views = {}
-	scrollMap = {}
-	constructor(props, context) {
+type Props = {
+	controller: Controller
+}
+
+export default class ViewManager extends React.Component<Props> {
+	static ignoreErrors:boolean = true
+ 	views: { [propName: string]: any } = {}
+	scrollMap: { [propName: string]: any } = {}
+	constructor(props: Props, context: React.Context<any>) {
 		super(props, context)
 		this.addItemIfNeed(props.controller.location.raw)
 	}
-	addItemIfNeed(key) {
+	addItemIfNeed(key: string):void {
 		if (!this.views.hasOwnProperty(key)) {
 			this.views[key] = null
 		}
 	}
-	clearItemIfNeed() {
+	clearItemIfNeed():void {
 		let { views, scrollMap } = this
 		let { controller } = this.props
 		let cache = controller.getAllCache()
@@ -32,7 +37,7 @@ export default class ViewManager extends React.Component {
 			}
 		}
 	}
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps(nextProps: Props):void {
 		let currentPath = this.props.controller.location.raw
 		let nextPath = nextProps.controller.location.raw
 		if (currentPath !== nextPath) {
@@ -41,9 +46,9 @@ export default class ViewManager extends React.Component {
 		this.addItemIfNeed(nextPath)
 		this.clearItemIfNeed()
 	}
-	renderView(path) {
+	renderView(path: string):JSX.Element {
 		let { controller } = this.props
-		let currentPath = controller.location.raw
+		let currentPath:string = controller.location.raw
 
 		if (currentPath !== path) {
 			return this.views[path]
@@ -72,7 +77,7 @@ export default class ViewManager extends React.Component {
 
 		return view
 	}
-	render() {
+	render():React.ReactNode {
 		let { controller } = this.props
 		return (
 			<React.Fragment>
@@ -97,16 +102,26 @@ export default class ViewManager extends React.Component {
 	}
 }
 
-class ViewItem extends React.Component {
-	static ignoreErrors = true
-	getContainer = container => {
+type ItemProps = {
+	key?: string
+	path?: string
+	isActive: boolean
+	view?: JSX.Element
+	scrollY: number
+	resetScrollOnMount?: boolean
+}
+
+class ViewItem extends React.Component<ItemProps> {
+	static ignoreErrors:boolean = true
+	container: any
+	getContainer = (container: any):void => {
 		this.container = container
 	}
-	getResetScrollOnMount = () => {
+	getResetScrollOnMount = ():boolean => {
 		let { resetScrollOnMount } = this.props
 		return resetScrollOnMount == undefined ? true : !!resetScrollOnMount
 	}
-	shouldComponentUpdate(nextProps) {
+	shouldComponentUpdate(nextProps: ItemProps):boolean {
 		if (!nextProps.isActive) {
 			this.container.style.display = 'none'
 		} else {
@@ -117,12 +132,12 @@ class ViewItem extends React.Component {
 		}
 		return nextProps.isActive
 	}
-	componentDidMount() {
+	componentDidMount():void {
 		if (this.getResetScrollOnMount()) {
 			window.scroll(0, 0)
 		}
 	}
-	render() {
+	render():React.ReactNode {
 		return (
 			<div className="imvc-view-item" ref={this.getContainer}>
 				{this.props.view}
@@ -131,7 +146,7 @@ class ViewItem extends React.Component {
 	}
 }
 
-function getContextByController(ctrl) {
+function getContextByController(ctrl: Controller) {
 	let {
 		store,
 		handlers,

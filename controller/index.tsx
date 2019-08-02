@@ -40,10 +40,16 @@ let uid: number = 0 // seed of controller id
  * 组装事件处理器 Event Handlers
  * 提供 fetch 方法
  */
-interface BaseViewFC extends React.FC {
+interface Props {
+  key?: string
+  state?: State
+  handlers?: Handlers
+  actions?: Actions
+}
+interface BaseViewFC extends React.FC<Props> {
   viewId?: any
 }
-interface BaseViewClass extends React.ComponentClass {
+interface BaseViewClass extends React.ComponentClass<Props> {
   viewId?: any
 }
 type UdfFuncType = {
@@ -69,6 +75,7 @@ export default class Controller {
   errorDidCatch: { (error:Error, str: string):void } | undefined
   getComponentFallback: { (displayName: string, InputComponent: React.ComponentType):void } | undefined
   proxyHandler: any
+  resetScrollOnMount?: boolean
   [propName: string]: any
 
   Loading: BaseViewFC | BaseViewClass = (...args) => null

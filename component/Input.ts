@@ -27,7 +27,7 @@ export default class Input extends React.Component<Props> {
 	render():React.ReactNode {
 		let { state } = this.context
 		let {
-			as,
+			as: tag,
 			name,
 			value,
 			check,
@@ -52,7 +52,7 @@ export default class Input extends React.Component<Props> {
 		}
 
 		return React.createElement(
-			as,
+			tag as keyof HTMLElementTagNameMap,
 			subProps
 		  )
 	}

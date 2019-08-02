@@ -88,7 +88,7 @@ const getPath = (path: string | string[]) => {
   return path.split(path_separator_regexp)
 }
 
-type objectOrArray = {
+export type objectOrArray = {
   [key: string]: any
   [key: number]: any
 }
@@ -119,6 +119,6 @@ function setValueByPath(
 type getValue = (ret: objectOrArray, key: string | number) => any
 const getValue: getValue = (ret, key) => ret[key]
 
-function getValueByPath(obj: objectOrArray, path: string | string[]) {
+function getValueByPath(obj: objectOrArray, path: string | string[]): any {
   return getPath(path).reduce(getValue, obj)
 }

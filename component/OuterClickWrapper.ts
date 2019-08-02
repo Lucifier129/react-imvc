@@ -1,23 +1,32 @@
 import React, { Component, Children } from 'react'
 import { findDOMNode } from 'react-dom'
 
-export default class OuterClickWrapper extends Component {
-  componentDidMount () {
+type Props = {
+  onClick?: Function
+  children?: React.ReactNode
+}
+
+export default class OuterClickWrapper extends Component<Props> {
+  componentDidMount():void {
     if (document.addEventListener) {
       document.addEventListener('click', this.handleOutterClick)
+      //@ts-ignore
     } else if (document.attachEvent) {
+      //@ts-ignore
       document.attachEvent('onclick', this.handleOutterClick)
     }
   }
-  componentWillUnmount () {
+  componentWillUnmount():void {
     if (document.removeEventListener) {
       document.removeEventListener('click', this.handleOutterClick)
+      //@ts-ignore
     } else if (document.detachEvent) {
+      //@ts-ignore
       document.detachEvent('onclick', this.handleOutterClick)
     }
   }
   // 结点是否包含结点
-  contains (rootNode, node) {
+  contains(rootNode: Element | Text, node: Node | null):boolean {
     if (typeof rootNode.contains === 'function') {
       return rootNode.contains(node)
     }
@@ -29,18 +38,18 @@ export default class OuterClickWrapper extends Component {
     }
     return false
   }
-  handleOutterClick = event => {
+  handleOutterClick = (event: Event):void => {
     let { onClick } = this.props
     if (!onClick) {
       return
     }
-    let root = findDOMNode(this)
-    let isContains = this.contains(root, event.target || event.srcElement)
+    let root: Element | Text | null = findDOMNode(this)
+    let isContains:boolean = this.contains(root as Element | Text, (event.target || event.srcElement) as Node | null)
     if (!isContains) {
       onClick(event)
     }
   };
-  render () {
+  render ():React.ReactNode {
     return Children.only(this.props.children)
   }
 }
