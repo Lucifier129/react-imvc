@@ -1,31 +1,43 @@
 import React from 'react'
 import GlobalContext from '../context'
 import _ from '../util'
+import { Payload } from '../controller/types'
 
 const { getValueByPath } = _
 
-export default class Input extends React.Component {
-	static contextType = GlobalContext
-	static defaultProps = {
+type Props = {
+	as?: keyof HTMLElementTagNameMap
+	type: string
+	name: string
+	actionType: string
+	value?: string
+	check?: { (value:string):boolean } | boolean
+	transformer?: { (currentValue:string, oldValue:string):string}
+	[propName: string]: any
+}
+
+export default class Input extends React.Component<Props> {
+	static contextType:React.Context<any> = GlobalContext
+	static defaultProps: Props = {
 		as: 'input',
 		type: 'text',
 		name: '',
 		actionType: 'UPDATE_INPUT_VALUE'
 	}
-	render() {
+	render():React.ReactNode {
 		let { state } = this.context
 		let {
-			as,
+			as: tag,
 			name,
 			value,
 			check,
 			actionType,
 			transformer,
-			...subProps
+			...restSubProps
 		} = this.props
-		let Tag = as
+		let subProps:{ [propName: string]: any } = restSubProps
 
-		let path = check ? `${name}.value` : name
+		let path:string = check ? `${name}.value` : name
 
 		if (value === undefined) {
 			value = getValueByPath(state, path)
@@ -39,20 +51,23 @@ export default class Input extends React.Component {
 			subProps.onBlur = this.handleBlur
 		}
 
-		return <Tag {...subProps} />
+		return React.createElement(
+			tag as keyof HTMLElementTagNameMap,
+			subProps
+		  )
 	}
-	getAction() {
+	getAction():{ (actionPayload: Payload):void } {
 		return this.context.actions[this.props.actionType]
 	}
-	callAction(actionPayload) {
+	callAction(actionPayload: Payload):void {
 		this.getAction()(actionPayload)
 	}
-	handleChange = event => {
+	handleChange = (event: React.ChangeEvent<HTMLInputElement>):void => {
 		let { state, handleInputChange } = this.context
 		let { name, onChange, check, transformer } = this.props
-		let currentValue = event.currentTarget.value
-		let path = check ? `${name}.value` : name
-		let oldValue = getValueByPath(state, path)
+		let currentValue:string = event.currentTarget.value
+		let path:string = check ? `${name}.value` : name
+		let oldValue:string = getValueByPath(state, path)
 
 		if (typeof transformer === 'function') {
 			currentValue = transformer(currentValue, oldValue)
@@ -68,11 +83,11 @@ export default class Input extends React.Component {
 
 		onChange && onChange(event)
 	}
-	handleFocus = event => {
+	handleFocus = (event: React.FocusEvent<HTMLInputElement>):void => {
 		let { state } = this.context
 		let { name, onFocus } = this.props
-		let path = `${name}.isWarn`
-		let isWarn = getValueByPath(state, path)
+		let path:string = `${name}.isWarn`
+		let isWarn:boolean = getValueByPath(state, path)
 		if (!isWarn) {
 			onFocus && onFocus(event)
 			return
@@ -82,11 +97,11 @@ export default class Input extends React.Component {
 		})
 		onFocus && onFocus(event)
 	}
-	handleBlur = event => {
+	handleBlur = (event: React.FocusEvent<HTMLInputElement>):void => {
 		let { name, onBlur, check } = this.props
-		let pathOfValidState = `${name}.isValid`
-		let pathOfWarnState = `${name}.isWarn`
-		let isValidValue = check(event.currentTarget.value)
+		let pathOfValidState:string = `${name}.isValid`
+		let pathOfWarnState:string = `${name}.isWarn`
+		let isValidValue:boolean = (check as { (value:string):boolean })(event.currentTarget.value)
 		this.callAction({
 			[pathOfValidState]: isValidValue,
 			[pathOfWarnState]: !isValidValue

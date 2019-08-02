@@ -1,7 +1,11 @@
 import React from 'react'
 
-export default function Script(props) {
-	let children = props.children || ''
+type Props = {
+	children: string
+}
+
+export default function Script(props: Props):JSX.Element {
+	let children:string = props.children || ''
 	return (
 		<script
 			dangerouslySetInnerHTML={{
