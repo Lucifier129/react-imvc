@@ -5,12 +5,12 @@ import { Preload } from '../controller/types'
 export default function Style({ name }: { name: string }):JSX.Element {
 	return (
 		<GlobalContext.Consumer>
-			{({ preload }:{ preload: Preload }) => {
+			{({ preload }: { preload?: Preload }) => {
 				return (
 					<style
 						type="text/css"
 						data-preload={name}
-						dangerouslySetInnerHTML={{ __html: preload[name] }}
+						dangerouslySetInnerHTML={{ __html: (preload as Preload)[name] }}
 					/>
 				)
 			}}

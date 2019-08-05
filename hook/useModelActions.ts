@@ -1,6 +1,7 @@
 import useCtrl from './useCtrl'
+import Controller from '../controller'
 
 export default () => {
-  let ctrl = useCtrl()
+  let ctrl:Controller = useCtrl()
   return ctrl.store.actions
 }
