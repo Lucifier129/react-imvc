@@ -8,7 +8,7 @@ import createWebpackConfig from './createWebpackConfig'
 import { getExternals, matchExternals } from './util'
 import { Config } from '../config'
 
-type SetupClient = (config: Config) => {
+export type SetupClient = (config: Config) => {
 	compiler: webpack.Compiler,
 	middleware: webpackDevMiddleware.WebpackDevMiddleware 
 }
@@ -40,7 +40,7 @@ interface SetupServerOptions {
 	handleHotModule: (value: any) => void
 }
 
-type SetupServer = (config: Config, options: SetupServerOptions) => void
+export type SetupServer = (config: Config, options: SetupServerOptions) => void
 
 export const setupServer: SetupServer = (config, options) => {
 	let serverConfig = createWebpackConfig(config, true)
@@ -131,7 +131,7 @@ export const setupServer: SetupServer = (config, options) => {
 	})
 }
 
-type Reporter = (
+export type Reporter = (
 	middlewareOptions: webpackDevMiddleware.Options,
 	options: webpackDevMiddleware.ReporterOptions
 ) => void

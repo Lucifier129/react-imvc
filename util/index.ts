@@ -10,12 +10,12 @@ export default {
   getFlatList
 }
 
-interface Route {
+export interface Route {
   path: string | RegExp | string[] | RegExp[]
   controller: Function
 }
 
-type RouteList = Route[]
+export type RouteList = Route[]
 
 function getFlatList(list: RouteList): RouteList {
   let result: RouteList = []

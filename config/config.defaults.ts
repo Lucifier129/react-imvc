@@ -5,6 +5,8 @@ import helmet from 'helmet'
 import compression from 'compression'
 import Babel, { GetBabelFunc } from './babel'
 import Controller from '../controller'
+import { Preload } from '../controller/types'
+import { RouteList } from '../util'
 
 let cwd = process.cwd()
 let port = process.env.PORT || 3000
@@ -12,14 +14,16 @@ let NODE_ENV = process.env.NODE_ENV || 'development'
 let isDev = NODE_ENV === 'development'
 let isProd = NODE_ENV === 'production'
 
-export interface AppSettingRoute {
-	path: string
-	controller: Controller
-	keys: string[]
-}
 export interface ViewEngine {
-	render: (html: string, container: DocumentType) => Element
+	render: Render
 	[propName: string]: any
+}
+export interface Render {
+	(
+		view: React.DOMElement<React.DOMAttributes<Element>, Element>,
+		container: Element | null,
+		controller?: Controller
+	):void 
 }
 export interface AppSettingLoader {
 	(
@@ -31,6 +35,7 @@ export interface AppSettingLoader {
 export interface AppSettingContext {
 	isServer: boolean
 	isClient: boolean
+	preload: Preload
 }
 export interface AppSettingController {
 	(...args: any): any
@@ -44,7 +49,7 @@ export interface AppSettings {
 	type?: string
 	hashType?: string // hash history 显示的起点缀，默认是 !
 	container?: string // react 组件渲染的容器
-	routes?: AppSettingRoute[]
+	routes?: RouteList
 	viewEngine?: ViewEngine
 	loader?: AppSettingLoader
 	cacheAmount?: number
