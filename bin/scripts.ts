@@ -3,13 +3,11 @@
 import querystring from 'querystring'
 import spawn from 'cross-spawn'
 import { SpawnSyncReturns } from 'child_process';
-let command: string = process.argv[2]
-let args: string[] = process.argv.slice(3)
+let command = process.argv[2]
+let args = process.argv.slice(3)
 let [script, paramsStr=''] = command.split('?')
-let query: {
-  [propName: string]: any
-} = querystring.parse(paramsStr)
-let params: string[] = Object.keys(query).map(key => {
+let query = querystring.parse(paramsStr)
+let params = Object.keys(query).map(key => {
   if (query[key] !== undefined) {
     return query[key] ? `--${key}=${query[key]}` : `--${key}`
   } else {
@@ -50,5 +48,5 @@ if (result !== undefined) {
       process.exit(1)
       break
   }
-  process.exit(<number>result.status)
+  process.exit(result.status as number)
 }

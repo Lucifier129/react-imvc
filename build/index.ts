@@ -15,20 +15,18 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
 
 export default (options: Options): Promise<Config> => {
-  let config: Config = getConfig(options)
-  let delPublicPgs: () => Promise<string[]> = 
-    () => delPublish(path.join(<string>config.root, <string>config.publish))
-  let startGulpPgs: () => Promise<Config> =
-    () => startGulp(config)
-  let startWebpackPgs: () => Promise<(Config | boolean)[]> = () =>
+  let config = getConfig(options)
+  let delPublicPgs = () => delPublish(path.join(config.root, config.publish))
+  let startGulpPgs = () => startGulp(config)
+  let startWebpackPgs = () =>
     Promise.all(
       [
         startWebpackForClient(config),
-        <boolean>config.useServerBundle && startWebpackForServer(config)
+        config.useServerBundle && startWebpackForServer(config)
       ].filter(Boolean)
     )
-  let startStaticEntryPgs: () => Promise<Config> = () => startStaticEntry(config)
-  let errorHandler: (error: Error) => never = (error: Error) => {
+  let startStaticEntryPgs = () => startStaticEntry(config)
+  let errorHandler = (error: Error) => {
     console.error(error)
     process.exit(1)
     throw new Error('something is worng')
@@ -42,15 +40,19 @@ export default (options: Options): Promise<Config> => {
     .catch(errorHandler)
 }
 
-const delPublish = (folder: string): Promise<string[]> => {
+type DelPublish = (folder: string) => Promise<string[]>
+
+const delPublish: DelPublish = (folder) => {
   console.log(`delete publish folder: ${folder}`)
   return del(folder)
 }
 
-const startWebpackForClient = (config: Config): Promise<Config | boolean> => {
-  let webpackConfig: webpack.Configuration = createWebpackConfig(config, false)
+type StartType<T> = (config: Config) => Promise<T>
+
+const startWebpackForClient: StartType<Config | boolean> = (config) => {
+  let webpackConfig = createWebpackConfig(config, false)
   return new Promise((resolve, reject) => {
-    webpack(webpackConfig, (error: Error, stats: webpack.Stats) => {
+    webpack(webpackConfig, (error, stats) => {
       if (error) {
         reject(error)
       } else {
@@ -66,10 +68,10 @@ const startWebpackForClient = (config: Config): Promise<Config | boolean> => {
   })
 }
 
-const startWebpackForServer = (config: Config): Promise<Config> => {
-  let webpackConfig: webpack.Configuration = createWebpackConfig(config, true)
+const startWebpackForServer: StartType<Config> = (config) => {
+  let webpackConfig = createWebpackConfig(config, true)
   return new Promise((resolve, reject) => {
-    webpack(webpackConfig, (error: Error, stats: webpack.Stats) => {
+    webpack(webpackConfig, (error, stats) => {
       if (error) {
         reject(error)
       } else {
@@ -85,7 +87,7 @@ const startWebpackForServer = (config: Config): Promise<Config> => {
   })
 }
 
-const startGulp = (config: Config): Promise<Config> => {
+const startGulp: StartType<Config> = (config) => {
   return new Promise((resolve, reject) => {
     gulp.task('default', createGulpTask(config))
 
@@ -100,7 +102,7 @@ const startGulp = (config: Config): Promise<Config> => {
   })
 }
 
-const startStaticEntry = async (config: Config): Promise<Config> => {
+const startStaticEntry: StartType<Config> = async (config) => {
   if (config.staticEntry === '') {
     return new Promise<Config>((resolve) => { resolve() })
   }
@@ -112,7 +114,7 @@ const startStaticEntry = async (config: Config): Promise<Config> => {
   }
   let staticEntryconfig: Config = {
     ...config,
-    root: path.join(<string>config.root, <string>config.publish),
+    root: path.join(config.root, config.publish),
     publicPath: config.publicPath || '',
     appSettings,
     SSR: true
@@ -122,21 +124,24 @@ const startStaticEntry = async (config: Config): Promise<Config> => {
     config: staticEntryconfig
   })
 
-  let url: string = `heep://localhost:${config.port}/__CREATE_STATIC_ENTRY__`
+  let url = `heep://localhost:${config.port}/__CREATE_STATIC_ENTRY__`
   console.log(`fetching url:${url}`)
-  let response: Response = await fetch(url)
-  let html: string = await response.text()
-  let staticEntryPath: string = path.join(
-    <string>config.root,
-    <string>config.publish,
-    <string>config.static,
-    <string>config.staticEntry
+  let response = await fetch(url)
+  let html = await response.text()
+  let staticEntryPath = path.join(
+    config.root,
+    config.publish,
+    config.static,
+    config.staticEntry
   )
 
-  server.close((): void => console.log('finish generating static entry file'))
+  server.close(() => console.log('finish generating static entry file'))
 
   return new Promise((resolve, reject) => {
-    let callback: (err: NodeJS.ErrnoException | null) => void = (error: NodeJS.ErrnoException | null) => {
+
+    type ErrorCallback = (err: NodeJS.ErrnoException | null) => void
+
+    let callback: ErrorCallback = (error) => {
       error ? reject(error) : resolve()
     }
     fs.writeFile(staticEntryPath, html, callback)

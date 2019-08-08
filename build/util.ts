@@ -1,17 +1,19 @@
 import path from 'path'
 import { Config } from '../config'
 
-export const getExternals: (config: Config) => string[] = config => {
+type GetExternals = (config: Config) => string[]
+
+export const getExternals: GetExternals = config => {
   let dependencies: string[] = []
 
-  let list: string[] = [
+  let list = [
     path.resolve('package.json'),
     path.join(__dirname, '../package.json'),
-    path.join(<string>config.root, '../package.json')
+    path.join(config.root, '../package.json')
   ]
 
   while (true) {
-    let item: string | undefined = list.shift()
+    let item = list.shift()
     if (item === undefined) {
       break
     }
@@ -29,11 +31,7 @@ export const getExternals: (config: Config) => string[] = config => {
     }
   }
 
-  interface DependenceMap {
-    [propName: string]: boolean
-  }
-
-  var map: DependenceMap = {}
+  var map: Record<string, boolean> = {}
   dependencies = dependencies.filter(name => {
     if (map[name]) {
       return false
@@ -45,7 +43,9 @@ export const getExternals: (config: Config) => string[] = config => {
   return dependencies
 }
 
-export const matchExternals: (externals: string[], modulePath: string) => boolean = (externals, modulePath) => {
+type MatchExternals = (externals: string[], modulePath: string) => boolean
+
+export const matchExternals: MatchExternals = (externals, modulePath) => {
   for (let i = 0; i < externals.length; i++) {
     if (modulePath.startsWith(externals[i])) {
       return true

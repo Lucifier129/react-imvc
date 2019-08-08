@@ -10,12 +10,13 @@ import resolve from 'resolve'
 import { getExternals } from './util'
 import { Config } from '../config'
 
-const createWebpackConfig: (options: Config, isServer?: boolean) => webpack.Configuration 
-  = (options, isServer = false) => {
+type CreateWebpackConfig = (options: Config, isServer?: boolean) => webpack.Configuration
+
+const createWebpackConfig: CreateWebpackConfig = (options, isServer = false) => {
 	let result: webpack.Configuration = {}
 	let config: Config = Object.assign({}, options)
-	let root: string = path.join(<string>config.root, <string>config.src)
-	let alias: { [key: string]: string; } = Object.assign({}, config.alias, {
+	let root = path.join(config.root, config.src)
+	let alias = Object.assign({}, config.alias, {
 		'@routes': root
 	})
 	let indexEntry = isServer ? root : path.join(__dirname, '../entry/client')
@@ -27,8 +28,8 @@ const createWebpackConfig: (options: Config, isServer?: boolean) => webpack.Conf
 			Boolean
 		)
   })
-  let devtoolModuleFilenameTemplate: string | ((info: webpack.DevtoolModuleFilenameTemplateInfo) => string) = 
-    info =>path.relative(root, info.absoluteResourcePath).replace(/\\/g, '/')
+  let devtoolModuleFilenameTemplate = (info: webpack.DevtoolModuleFilenameTemplateInfo) => 
+  	path.relative(root, info.absoluteResourcePath).replace(/\\/g, '/')
 
 	let defaultOutput: webpack.Output = {
 		// Add /* filename */ comments to generated require()s in the output.
@@ -41,25 +42,24 @@ const createWebpackConfig: (options: Config, isServer?: boolean) => webpack.Conf
 		defaultOutput = {
 			...defaultOutput,
 			libraryTarget: 'commonjs2',
-			path: path.join(<string>config.root, <string>config.publish),
+			path: path.join(config.root, config.publish),
 			filename: config.serverBundleName,
 		}
 	} else {
 		defaultOutput = {
 			...defaultOutput,
-			path: path.join(<string>config.root, <string>config.publish, <string>config.static),
+			path: path.join(config.root, config.publish, config.static),
 			filename: `js/[name].js`,
 			chunkFilename: `js/[name].js`,
 		}
 	}
 
-  let output: webpack.Output = Object.assign(defaultOutput, config.output)
+  let output = Object.assign(defaultOutput, config.output)
   
-  let ManifestPluginMap: (file: ManifestPlugin.FileDescriptor) => ManifestPlugin.FileDescriptor
-    = file => {
+  let ManifestPluginMap = (file: ManifestPlugin.FileDescriptor) => {
     // 删除 .js 后缀，方便直接使用 obj.name 来访问
-    if (/\.js$/.test(<string>file.name)) {
-      file.name = (<string>file.name).slice(0, -3)
+    if (/\.js$/.test(file.name as string)) {
+      file.name = (file.name as string).slice(0, -3)
     }
     return file
   }
@@ -82,12 +82,12 @@ const createWebpackConfig: (options: Config, isServer?: boolean) => webpack.Conf
 		// TypeScript type checking
 		config.useTypeCheck && new ForkTsCheckerWebpackPlugin({
 			 typescript: resolve.sync('typescript', {
-				 basedir: path.join(<string>config.root, 'node_modules'),
+				 basedir: path.join(config.root, 'node_modules'),
 			 }),
 			 async: !isProd,
 			 useTypescriptIncrementalApi: true,
 			 checkSyntacticErrors: true,
-			 tsconfig: path.join(<string>config.root, 'tsconfig.json'),
+			 tsconfig: path.join(config.root, 'tsconfig.json'),
 			 reportFiles: [
 				 '**',
 				 '!**/*.json',
@@ -204,12 +204,12 @@ const createWebpackConfig: (options: Config, isServer?: boolean) => webpack.Conf
 		])
 	}
 
-	const babelOptions = {
+	const babelOptions: webpack.RuleSetQuery = {
 		// include presets|plugins
 		babelrc: false,
 		configFile: false,
 		cacheDirectory: true,
-		...(<Function>config.babel)(isServer),
+		...(config.babel)(isServer),
 		// Save disk space when time isn't as important
 		cacheCompression: isProd,
 		compact: isProd
@@ -226,7 +226,7 @@ const createWebpackConfig: (options: Config, isServer?: boolean) => webpack.Conf
       options: babelOptions
     }
   ]
-  moduleRulesConfig.concat(<webpack.RuleSetRule | ConcatArray<webpack.RuleSetRule>>config.webpackLoaders, postLoaders)
+  moduleRulesConfig.concat(config.webpackLoaders, postLoaders)
   const moduleConfig: webpack.Module = {
     // makes missing exports an error instead of warning
     strictExportPresence: true,
@@ -240,7 +240,7 @@ const createWebpackConfig: (options: Config, isServer?: boolean) => webpack.Conf
   const resolveConfig = {
     modules: [
       path.resolve('node_modules'),
-      path.join(<string>config.root, 'node_modules'),
+      path.join(config.root, 'node_modules'),
       path.join(__dirname, '../node_modules')
     ],
     extensions: ['.js', '.jsx', '.json', '.mjs', '.ts', '.tsx'],
@@ -251,7 +251,7 @@ const createWebpackConfig: (options: Config, isServer?: boolean) => webpack.Conf
       PnpWebpackPlugin
     ]
   }
-  const resolveLoaderConfig = {
+  const resolveLoaderConfig: webpack.ResolveLoader = {
     plugins: [
       // Also related to Plug'n'Play, but this time it tells Webpack to load its loaders
       // from the current package.
