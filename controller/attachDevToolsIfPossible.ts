@@ -9,9 +9,9 @@ export default function attachDevToolsIfPossible(store:Store) {
     return;
   }
 
-  const __FROM_REDUX_DEVTOOLS_EXTENSION__:string = "__FROM_REDUX_DEVTOOLS_EXTENSION__";
+  const __FROM_REDUX_DEVTOOLS_EXTENSION__ = "__FROM_REDUX_DEVTOOLS_EXTENSION__";
 
-  let options:object = {
+  let options = {
     name: window.location.pathname + window.location.search,
     actionsWhitelist: Object.keys(store.actions)
   };
@@ -21,8 +21,8 @@ export default function attachDevToolsIfPossible(store:Store) {
     store.getState(),
     options
   );
-  let isSync:boolean = false;
-  store.subscribe((data: { [propName:string]: string }) => {
+  let isSync = false;
+  store.subscribe((data: Record<string, string>) => {
     if (!data || data.actionType === __FROM_REDUX_DEVTOOLS_EXTENSION__) {
       return;
     }
