@@ -24,13 +24,13 @@ function NavLink({
   to,
   ...rest
 }: ComponentProps) {
-  let isActive: boolean = checkActive(getIsActive, to, location)
-  let finalClassName:string = classnames(className, isActive && activeClassName)
-  let finalStyle: object = isActive ? { ...style, ...activeStyle } : style
+  let isActive = checkActive(getIsActive, to, location)
+  let finalClassName = classnames(className, isActive && activeClassName)
+  let finalStyle = isActive ? { ...style, ...activeStyle } : style
   return <Link to={to} className={finalClassName} style={finalStyle} {...rest} />
 }
 
-function checkActive(getIsActive: { (...args: any[]): boolean }, path: string, location: Location): boolean {
+function checkActive(getIsActive: { (...args: any[]): boolean }, path: string, location: Location) {
   return getIsActive
     ? !!getIsActive(path, location)
     : path === location.raw

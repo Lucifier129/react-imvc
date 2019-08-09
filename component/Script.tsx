@@ -4,8 +4,8 @@ type Props = {
 	children: string
 }
 
-export default function Script(props: Props):JSX.Element {
-	let children:string = props.children || ''
+export default function Script(props: Props) {
+	let children = props.children || ''
 	return (
 		<script
 			dangerouslySetInnerHTML={{

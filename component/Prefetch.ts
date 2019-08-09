@@ -6,11 +6,11 @@ type Props = {
 }
 
 export default class Prefetch extends React.Component<Props> {
-	static contextType:React.Context<any> = GlobalContext
-	componentDidMount():void {
+	static contextType = GlobalContext
+	componentDidMount() {
 		this.context.prefetch(this.props.src)
 	}
-	render():React.ReactNode {
+	render() {
 		return null
 	}
 }

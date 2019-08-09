@@ -2,7 +2,7 @@ import React from 'react'
 import GlobalContext from '../context'
 import { Preload } from '../controller/types'
 
-export default function Style({ name }: { name: string }):JSX.Element {
+export default function Style({ name }: { name: string }) {
 	return (
 		<GlobalContext.Consumer>
 			{({ preload }: { preload?: Preload }) => {

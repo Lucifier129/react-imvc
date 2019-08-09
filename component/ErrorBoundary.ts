@@ -15,9 +15,9 @@ type State = {
 }
 
 export default class ErrorBoundary extends React.Component<Props, State> {
-  static ignoreErrors:boolean = true
-  static contextType:React.Context<any> = GlobalContext
-  static getDerivedStateFromError():{ hasError:boolean } {
+  static ignoreErrors = true
+  static contextType = GlobalContext
+  static getDerivedStateFromError() {
     return { hasError: true }
   }
   static defaultProps:Props = {
@@ -26,16 +26,16 @@ export default class ErrorBoundary extends React.Component<Props, State> {
   state:State = {
     hasError: false
   }
-  catchError(error:Error):void {
+  catchError(error:Error) {
     let { ctrl } = this.context
     if (ctrl.errorDidCatch) {
       ctrl.errorDidCatch(error, 'view')
     }
   }
-  componentDidCatch(error:Error):void {
+  componentDidCatch(error:Error) {
     this.catchError(error)
   }
-  render():React.ReactNode {
+  render() {
     if (this.state.hasError) {
       return this.props.fallback
     }
@@ -59,7 +59,7 @@ export const withFallback = (fallback: object) => (InputComponent: React.Compone
     )
   }
 
-  const displayName:string = InputComponent.name || InputComponent.displayName as string
+  const displayName = InputComponent.name || InputComponent.displayName
 
   Component.name = `ErrorBoundary(${displayName})`
 

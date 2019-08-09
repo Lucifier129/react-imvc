@@ -8,19 +8,19 @@ type Props = {
 }
 
 export default class ViewManager extends React.Component<Props> {
-	static ignoreErrors:boolean = true
- 	views: { [propName: string]: any } = {}
-	scrollMap: { [propName: string]: any } = {}
+	static ignoreErrors = true
+ 	views: Record<string, any> = {}
+	scrollMap: Record<string, any> = {}
 	constructor(props: Props, context: React.Context<any>) {
 		super(props, context)
 		this.addItemIfNeed(props.controller.location.raw)
 	}
-	addItemIfNeed(key: string):void {
+	addItemIfNeed(key: string) {
 		if (!this.views.hasOwnProperty(key)) {
 			this.views[key] = null
 		}
 	}
-	clearItemIfNeed():void {
+	clearItemIfNeed() {
 		let { views, scrollMap } = this
 		let { controller } = this.props
 		let cache = controller.getAllCache()
@@ -37,7 +37,7 @@ export default class ViewManager extends React.Component<Props> {
 			}
 		}
 	}
-	componentWillReceiveProps(nextProps: Props):void {
+	componentWillReceiveProps(nextProps: Props) {
 		let currentPath = this.props.controller.location.raw
 		let nextPath = nextProps.controller.location.raw
 		if (currentPath !== nextPath) {
@@ -46,9 +46,9 @@ export default class ViewManager extends React.Component<Props> {
 		this.addItemIfNeed(nextPath)
 		this.clearItemIfNeed()
 	}
-	renderView(path: string):JSX.Element {
+	renderView(path: string) {
 		let { controller } = this.props
-		let currentPath:string = controller.location.raw
+		let currentPath = controller.location.raw
 
 		if (currentPath !== path) {
 			return this.views[path]
@@ -77,7 +77,7 @@ export default class ViewManager extends React.Component<Props> {
 
 		return view
 	}
-	render():React.ReactNode {
+	render() {
 		let { controller } = this.props
 		return (
 			<React.Fragment>
@@ -112,16 +112,16 @@ type ItemProps = {
 }
 
 class ViewItem extends React.Component<ItemProps> {
-	static ignoreErrors:boolean = true
+	static ignoreErrors = true
 	container: any
-	getContainer = (container: any):void => {
+	getContainer = (container: any) => {
 		this.container = container
 	}
-	getResetScrollOnMount = ():boolean => {
+	getResetScrollOnMount = () => {
 		let { resetScrollOnMount } = this.props
 		return resetScrollOnMount == undefined ? true : !!resetScrollOnMount
 	}
-	shouldComponentUpdate(nextProps: ItemProps):boolean {
+	shouldComponentUpdate(nextProps: ItemProps) {
 		if (!nextProps.isActive) {
 			this.container.style.display = 'none'
 		} else {
@@ -132,12 +132,12 @@ class ViewItem extends React.Component<ItemProps> {
 		}
 		return nextProps.isActive
 	}
-	componentDidMount():void {
+	componentDidMount() {
 		if (this.getResetScrollOnMount()) {
 			window.scroll(0, 0)
 		}
 	}
-	render():React.ReactNode {
+	render() {
 		return (
 			<div className="imvc-view-item" ref={this.getContainer}>
 				{this.props.view}
