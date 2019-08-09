@@ -1,7 +1,8 @@
 import useCtrl from './useCtrl'
 import Controller from '../controller'
+import { Actions } from '../controller/types'
 
-export default () => {
-  let ctrl:Controller = useCtrl()
+export default ():Actions => {
+  let ctrl = useCtrl()
   return ctrl.store.actions
 }

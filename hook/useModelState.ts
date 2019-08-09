@@ -1,7 +1,8 @@
 import useCtrl from './useCtrl'
 import Controller from '../controller'
+import { State } from '../controller/types'
 
-export default () => {
-  let ctrl:Controller = useCtrl()
+export default ():State => {
+  let ctrl = useCtrl()
   return ctrl.store.getState()
 }
