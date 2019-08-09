@@ -16,19 +16,21 @@ import debug from 'debug'
 import createExpressApp from '../entry/server'
 import getConfig, { Options, Config } from '../config'
 import createPageRouter from '../page/createPageRouter'
-import { Global, Res } from '../types'
+import { Global, RequestHandler  } from '../types'
 
-const start: (options: Options) => Promise<{server: http.Server, app: express.Express}> = (options) => {
-	let config: Config = getConfig(options)
-	let app: express.Express = createExpressApp(config)
-	let port: number | string | undefined = normalizePort(<string>config.port)
+type StartFunc = (options: Options) => Promise<{server: http.Server, app: express.Express}>
+
+const start: StartFunc = (options) => {
+	let config = getConfig(options)
+	let app = createExpressApp(config)
+	let port = normalizePort(<string>config.port)
 
 	/**
 	 * make fetch works like in browser
 	 * when url starts with //, prepend protocol
 	 * when url starts with /, prepend protocol, host and port
 	 */
-  let fetchNative: (url: string, options: nodeFetch.RequestInit) => Promise<nodeFetch.Response> = (url, options) => {
+  let fetchNative = (url: string, options: nodeFetch.RequestInit) => {
 		if (url.startsWith('//')) {
 			url = 'http:' + url
 		}
@@ -37,7 +39,7 @@ const start: (options: Options) => Promise<{server: http.Server, app: express.Ex
 		}
 		return fetch(url, options)
   }
-  (<Global>global).fetch = fetchNative  
+  (global as Global).fetch = fetchNative  
 
 	/**
 	 * set port from environment and store in Express.
@@ -48,17 +50,18 @@ const start: (options: Options) => Promise<{server: http.Server, app: express.Ex
 	 * Create HTTP server.
 	 */
 
-	let server: http.Server = http.createServer(app)
+	let server = http.createServer(app)
 
 	let pageRouter = createPageRouter(config)
 
 	// 添加 renderPage 方法，让自定义的 routes 里可以手动调用，走 IMVC 的渲染流程
-	app.use((req: express.Request, res:any, next: express.NextFunction) => {
+	let addRenderPage: RequestHandler = (req, res, next) => {
 		res.renderPage = pageRouter
 		next()
-	})
+	}
+	app.use(addRenderPage as express.RequestHandler)
 
-	let routePath = path.join(<string>config.root, <string>config.routes)
+	let routePath = path.join(config.root, config.routes)
 
 	if (hasModuleFile(routePath)) {
 		// get server routes
@@ -75,29 +78,30 @@ const start: (options: Options) => Promise<{server: http.Server, app: express.Ex
 	app.use(pageRouter)
 
 	// catch 404 and forward to error handler
-	app.use(function(req: express.Request, res: express.Response, next: express.NextFunction) {
+	let catch404: RequestHandler = function(req, res, next) {
 		const err: any = new Error('Not Found')
 		err.status = 404
 		res.render('404', err)
-	})
+	}
+	app.use(catch404 as express.RequestHandler)
 
 	// error handlers
 
 	// development error handler
 	// will print stacktrace
 	if (app.get('env') === 'development') {
-		app.use(function(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
+		app.use(function(err: any, req, res, next) {
 			res.status(err.status || 500)
 			res.send(err.stack)
-		})
+		} as express.ErrorRequestHandler)
 	}
 
 	// production error handler
 	// no stacktraces leaked to user
-	app.use(function(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
+	app.use(function(err: any, req, res, next) {
 		res.status(err.status || 500)
 		res.json(err.message)
-	})
+	} as express.ErrorRequestHandler)
 
 	return new Promise<{server: http.Server, app: express.Express}>((resolve, reject) => {
     /**
@@ -152,7 +156,7 @@ const start: (options: Options) => Promise<{server: http.Server, app: express.Ex
  * Normalize a port into a number, string, or false.
  */
 
-const normalizePort: (val: string) => number | string | undefined = (val) => {
+const normalizePort = (val: string) => {
 	let port = parseInt(val, 10)
 
 	if (isNaN(port)) {
@@ -168,7 +172,7 @@ const normalizePort: (val: string) => number | string | undefined = (val) => {
 	return undefined
 }
 
-const hasModuleFile: (filename: string) => boolean = (filename) => {
+const hasModuleFile = (filename: string) => {
 	try {
 		return !!require.resolve(filename)
 	} catch (_) {

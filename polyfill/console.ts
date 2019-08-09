@@ -5,7 +5,10 @@
 export interface NativeWindow {
   console?: any
 }
-const consolePolyfill: (window: NativeWindow) => void = (window) => {
+
+type ConsolePolyfill = (window: NativeWindow) => void
+
+const consolePolyfill: ConsolePolyfill = (window) => {
   // Avoid `console` errors in browsers that lack a console.
   let method
   let noop = function() {}

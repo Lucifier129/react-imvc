@@ -47,7 +47,7 @@ const travelDirectoryToAddTestFiles = (dir: string) => {
 travelDirectoryToAddTestFiles(process.cwd())
 
 // Run the tests.
-mocha.run((failures: number) => {
+mocha.run((failures) => {
 	process.on('exit', function() {
 		process.exit(failures) // exit with non-zero status if there were failures
 	})

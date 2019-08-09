@@ -6,8 +6,9 @@ import ReactDOMServer from 'react-dom/server'
 import createApp from 'create-app/lib/server'
 import util from '../util'
 import { AppSettingContext, AppSettingLoader, AppSettingController, Config } from '../config'
-import { Req } from '../types'
+import { Req, Res } from '../types'
 import Controller from '../controller'
+import { State } from '../controller/types'
 
 const { getFlatList } = util
 const getModule = (module: any) => module.default || module
@@ -22,8 +23,9 @@ const commonjsLoader: AppSettingLoader = (loadModule: AppSettingController, loca
  */
 const createElement = React.createElement
 
-const renderToNodeStream: (view: React.ReactElement, constroller?: Controller) => any
-  = (view, controller) => {
+type RenderToAny = (view: React.ReactElement, constroller?: Controller) => any
+
+const renderToNodeStream: RenderToAny = (view, controller) => {
   return new Promise((resolve, reject) => {
     let stream = ReactDOMServer.renderToNodeStream(view)
     let buffers: Uint8Array[] = []
@@ -53,8 +55,7 @@ const renderToNodeStream: (view: React.ReactElement, constroller?: Controller) =
   })
 }
 
-const renderToString: (view: React.ReactElement, controller?: Controller) => any 
-  = (view, controller) => {
+const renderToString: RenderToAny = (view, controller) => {
   try {
     return ReactDOMServer.renderToString(view)
   } catch (error) {
@@ -89,9 +90,9 @@ export default function createPageRouter(options: Config) {
   let routes
 
   if (config.useServerBundle) {
-    routes = require(path.join(<string>config.root, <string>config.serverBundleName))
+    routes = require(path.join(config.root, config.serverBundleName))
   } else {
-    routes = require(path.join(<string>config.root, <string>config.src))
+    routes = require(path.join(config.root, config.src))
   }
 
   routes = routes.default || routes
@@ -101,7 +102,7 @@ export default function createPageRouter(options: Config) {
   routes = getFlatList(routes)
 
   let router = Router()
-  let render = renderers[<string>config.renderMode] || renderToNodeStream
+  let render = renderers[config.renderMode] || renderToNodeStream
   let serverAppSettings = {
     loader: commonjsLoader,
     routes: routes,
@@ -149,7 +150,8 @@ export default function createPageRouter(options: Config) {
     }
 
     try {
-      let { content, controller } = await app.render(req.url, context)
+      let { content, controller } = await app.render(req.url, context) as 
+      { content: any, controller: Controller }
 
       /**
        * 如果没有返回 content
@@ -162,7 +164,7 @@ export default function createPageRouter(options: Config) {
       // content 可能是异步渲染的
       content = await content
 
-      let initialState = controller.store
+      let initialState: State | undefined = controller.store
         ? controller.store.getState()
         : undefined
       let htmlConfigs = initialState ? initialState.html : undefined
