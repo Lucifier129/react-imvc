@@ -26,7 +26,7 @@ export interface Res extends express.Response {
   renderPage: any
 }
 
-export interface RequestHandler extends express.RequestHandler {
+export interface RequestHandler {
   (req: Req, res: Res, next: express.NextFunction): any
 }
 
