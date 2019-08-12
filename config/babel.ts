@@ -1,4 +1,4 @@
-export interface BabelConfig {
+export interface BabelConfig  {
   filename?: string,
   filenameRelative?: string,
   presets?: any[],

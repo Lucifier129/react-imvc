@@ -11,7 +11,7 @@ type Props = {
  */
 export default class ControllerProxy extends React.Component<Props> {
   static ignoreErrors = true
-  updateDocumentTitle():void {
+  updateDocumentTitle() {
     let { controller } = this.props
     let { html } = controller.store.getState()
 
@@ -19,7 +19,7 @@ export default class ControllerProxy extends React.Component<Props> {
       document.title = html.title
     }
   }
-  emit(method:string):void {
+  emit(method:string) {
     let { controller } = this.props
     try {
       if (typeof controller[method] === 'function') {
@@ -33,7 +33,7 @@ export default class ControllerProxy extends React.Component<Props> {
       }
     }
   }
-  componentDidMount():void {
+  componentDidMount() {
     let { controller } = this.props
     this.updateDocumentTitle()
     if (!controller.meta.hadMounted) {
@@ -42,13 +42,13 @@ export default class ControllerProxy extends React.Component<Props> {
     }
     this.emit('componentDidMount')
   }
-  componentWillUnmount():void {
+  componentWillUnmount() {
     this.emit('componentWillUnmount')
   }
-  componentDidUpdate():void {
+  componentDidUpdate() {
     this.updateDocumentTitle()
   }
-  render():React.ReactNode {
+  render() {
     return null
   }
 }

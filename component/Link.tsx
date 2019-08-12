@@ -16,16 +16,16 @@ type Props = {
 }
 
 export default class Link extends React.Component<Props> {
-	static contextType:React.Context<any> = GlobalContext
+	static contextType = GlobalContext
 	static defaultProps: Props = {
 		as: 'a'
 	}
-	componentDidMount():void {
+	componentDidMount() {
 		if (this.props.prefetch) {
 			this.context.prefetch(this.props.to || this.props.href)
 		}
 	}
-	render():React.ReactNode {
+	render() {
 		let { basename = '' } = this.context.state as { basename: string }
 		let {
 			to,
@@ -41,7 +41,7 @@ export default class Link extends React.Component<Props> {
 		} = this.props
 
 		if (tag === 'a') {
-			let targetPath:string | null = to ? `${basename}${to}` : null
+			let targetPath = to ? `${basename}${to}` : null
 			if (!targetPath && href) {
 				targetPath = href
 			}
@@ -58,7 +58,7 @@ export default class Link extends React.Component<Props> {
 			children
 		  )
 	}
-	handleClick = (event: React.MouseEvent<HTMLElement>):void => {
+	handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		let { onClick, replace, back, forward, go, to } = this.props
 		let { history, location } = this.context as { history: History, location: Location }
 		onClick && onClick(event)

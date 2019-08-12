@@ -17,17 +17,17 @@ export interface Result {
   keys: () => string[]
 }
 export interface Record {
-  value?: any,
-  expire?: number,
+  value: any,
+  expire: number,
   timeout?: NodeJS.Timeout
 }
 export default () => {
   var result: Result
   var cache: { [propName: string]: any } = Object.create(null)
-  var debug: boolean = false
-  var hitCount: number = 0
-  var missCount: number = 0
-  var size: number = 0
+  var debug = false
+  var hitCount = 0
+  var missCount = 0
+  var size = 0
 
   function _del (key: string) {
     size--
@@ -52,7 +52,7 @@ export default () => {
         throw new Error('Cache timeout callback must be a function')
       }
 
-      var oldRecord: any = cache[key]
+      var oldRecord = cache[key]
       if (oldRecord) {
         clearTimeout(oldRecord.timeout)
       } else {
@@ -64,7 +64,7 @@ export default () => {
         expire: time + Date.now()
       }
 
-      if (!isNaN(<number>record.expire)) {
+      if (!isNaN(record.expire)) {
         record.timeout = setTimeout(
           function () {
             _del(key)
@@ -82,12 +82,12 @@ export default () => {
     },
 
     del: function (key) {
-      var canDelete: boolean = true
+      var canDelete = true
 
       var oldRecord: Record = cache[key]
       if (oldRecord) {
         clearTimeout(<NodeJS.Timeout>oldRecord.timeout)
-        if (!isNaN(<number>oldRecord.expire) && <number>oldRecord.expire < Date.now()) {
+        if (!isNaN(oldRecord.expire) && oldRecord.expire < Date.now()) {
           canDelete = false
         }
       } else {

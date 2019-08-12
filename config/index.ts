@@ -11,12 +11,14 @@ export interface Options {
 	$0?: string;
 }
 
-const getConfig: (options: Options) => Config = (options) => {
+type GetConfig = (options: Options) => Config
+
+const getConfig: GetConfig = (options) => {
 	let config = Object.assign({}, defaultConfig)
 
 	options = options || {}
 
-	let customConfig
+	let customConfig: any
 	switch (typeof options.config) {
 		case 'object':
 			customConfig = options.config

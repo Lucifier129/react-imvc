@@ -11,28 +11,39 @@ import uglify from 'gulp-uglify'
 import babel from 'gulp-babel'
 import { Config } from '../config'
 
-interface GulpConfigItem {
-	src?: string[],
-	dest?: string
+export interface GulpConfigItem {
+	src: string[],
+	dest: string
 }
 
-interface GulpConfig {
-  css: GulpConfigItem
-  html: GulpConfigItem
+export interface GulpConfig {
+	// 需要压缩到 static 目录的 css
+	css: GulpConfigItem
+	// 需要压缩到 static 目录的 html
+	html: GulpConfigItem
+
 	img: GulpConfigItem
+	// 需要压缩到 static 目录的 js
 	js: GulpConfigItem
+
 	es5: GulpConfigItem
-  copy: GulpConfigItem
-  publishCopy: GulpConfigItem
-  publishBabel: GulpConfigItem
-  [propName: string]: GulpConfigItem
+	// 需要复制到 static 目录的非 html, css, js 文件
+	copy: GulpConfigItem
+	// 需要复制到 publish 目录的额外文件
+	publishCopy: GulpConfigItem
+	// 需要编译到 publish 目录的额外文件
+	publishBabel: GulpConfigItem
+
+	[propName: string]: GulpConfigItem
 }
 
-const createConfig: (options: Config) => GulpConfig = options => {
+type CreateConfig = (options: Config) => GulpConfig
+
+const createConfig: CreateConfig = options => {
   let root = options.root
-  let src = path.join(<string>root, <string>options.src)
-  let publish = path.join(<string>root, <string>options.publish)
-  let staticPath = path.join(publish, <string>options.static)
+  let src = path.join(root, options.src)
+  let publish = path.join(root, options.publish)
+  let staticPath = path.join(publish, options.static)
   let config: GulpConfig = {
     css: {
       src: [src + '/**/*.css'],
@@ -78,23 +89,24 @@ const createConfig: (options: Config) => GulpConfig = options => {
   }
 
   for (let key in options.gulp) {
-    if (config.hasOwnProperty(key) && config[key].src !== undefined && options.gulp !== undefined && options.gulp[key] !== undefined) {
-      let item: GulpConfigItem = config[key]
-      let src: string [] = <string[]>item.src
-      src = src.concat(<string[]>options.gulp[key])
+    if (config.hasOwnProperty(key) && options.gulp[key] !== undefined) {
+      config[key].src = config[key].src.concat(options.gulp[key] as string[])
     }
   }
 
   return config
 }
 
-const createGulpTask: (options: Config) => gulp.TaskFunction = (options) => {
-  let config = Object.assign(createConfig(options))
+type CreateGulpTask = (options: Config) => gulp.TaskFunction
+
+const createGulpTask: CreateGulpTask = (options) => {
+  let config: GulpConfig = Object.assign(createConfig(options))
 
   let minifyCSS = () => {
     if (!config.css) {
       return
     }
+
     return gulp
       .src(config.css.src)
       .pipe(plumber())
@@ -103,7 +115,7 @@ const createGulpTask: (options: Config) => gulp.TaskFunction = (options) => {
           {
             debug: true
           },
-          (details: any) => {
+          (details: Record<string, any>) => {
             var percent = (
               (details.stats.minifiedSize / details.stats.originalSize) *
               100

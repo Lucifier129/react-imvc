@@ -10,18 +10,21 @@ import util from '../util'
 import $routes from '@routes'
 import { Global, WindowNative as Window, NativeModule } from '../types'
 import Controller from '../controller'
-import { AppSettingContext, AppSettingLoader, AppSettingController, AppSettings } from '../config'
+import { Preload } from '../controller/types'
+import { AppSettingContext, AppSettingLoader, AppSettingController, AppSettings, Render } from '../config'
 
-(<Global>global).__webpack_public_path__ = (<Window>window).__PUBLIC_PATH__ + '/'
-const __APP_SETTINGS__: AppSettings = (<Window>window).__APP_SETTINGS__ || {}
+(global as Global).__webpack_public_path__ = (window as Window).__PUBLIC_PATH__ + '/'
+const __APP_SETTINGS__: AppSettings = (window as Window).__APP_SETTINGS__ || {}
 
 const getModule = (module: any) => module.default || module
-const webpackLoader: AppSettingLoader = (loadModule: AppSettingController, location, context: AppSettingContext) => {
+
+const webpackLoader: AppSettingLoader = (loadModule, location, context) => {
   return loadModule(location, context).then(getModule)
 }
 
-let shouldHydrate = !!(<Window>window).__INITIAL_STATE__
-const render = (view: React.DOMElement<React.DOMAttributes<Element>, Element>, container: Element | null, controller?: Controller) => {
+let shouldHydrate = !!(window as Window).__INITIAL_STATE__
+
+const render: Render = (view, container, controller) => {
   try {
     if (shouldHydrate) {
       shouldHydrate = false
@@ -67,26 +70,25 @@ const appSettings: AppSettings = {
 /**
  * 动态收集服务端预加载的内容
  */
-const preload: {
-  [propName: string]: any
-} = {}
+const preload: Preload = {}
 Array.from(document.querySelectorAll('[data-preload]')).forEach(elem => {
   let name = elem.getAttribute('data-preload')
   let content = elem.textContent || elem.innerHTML
   if (name) {
     preload[name] = content
   }
-})
-appSettings.context.preload = preload
+});
+if(typeof appSettings.context !== 'undefined')
+  appSettings.context.preload = preload
 
 const app = createApp.client(appSettings)
 
 app.start()
 
 // 热更新
-if (typeof module !== 'undefined' && (<NativeModule>module).hot) {
-  if ((<NativeModule>module).hot) {
-    let hot = (<NativeModule>module).hot
+if (typeof module !== 'undefined' && (module as NativeModule).hot) {
+  if ((module as NativeModule).hot) {
+    let hot = (module as NativeModule).hot
     if (hot && hot.accept) {
       hot.accept()
     }

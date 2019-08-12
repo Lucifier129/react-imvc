@@ -8,17 +8,19 @@ import createWebpackConfig from './createWebpackConfig'
 import { getExternals, matchExternals } from './util'
 import { Config } from '../config'
 
-export const setupClient: (config: Config) => {
+export type SetupClient = (config: Config) => {
 	compiler: webpack.Compiler,
 	middleware: webpackDevMiddleware.WebpackDevMiddleware 
-} = (config: Config) => {
-	let clientConfig: webpack.Configuration = createWebpackConfig(config)
-	let compiler: webpack.Compiler = webpack(clientConfig)
-	let middleware: webpackDevMiddleware.WebpackDevMiddleware = webpackDevMiddleware(compiler, {
-		publicPath: <string>config.staticPath,
+}
+
+export const setupClient: SetupClient = (config: Config) => {
+	let clientConfig = createWebpackConfig(config)
+	let compiler = webpack(clientConfig)
+	let middleware = webpackDevMiddleware(compiler, {
+		publicPath: config.staticPath,
 		stats: config.webpackLogger,
 		serverSideRender: true,
-		reporter: (middlewareOptions: webpackDevMiddleware.Options, options: webpackDevMiddleware.ReporterOptions) => {
+		reporter: (middlewareOptions, options) => {
 			reporter(middlewareOptions, options)
 			if (config.notifier) {
 				notifier.notify({
@@ -38,11 +40,13 @@ interface SetupServerOptions {
 	handleHotModule: (value: any) => void
 }
 
-export const setupServer: (config: Config, options: SetupServerOptions) => void = (config, options) => {
-	let serverConfig: webpack.Configuration = createWebpackConfig(config, true)
+export type SetupServer = (config: Config, options: SetupServerOptions) => void
+
+export const setupServer: SetupServer = (config, options) => {
+	let serverConfig = createWebpackConfig(config, true)
 	serverConfig.target = 'node'
 	serverConfig.entry = {
-		routes: path.join(<string>config.root, <string>config.src)
+		routes: path.join(config.root, config.src)
 	}
 	if (!serverConfig.output) {
 		serverConfig.output = {
@@ -53,13 +57,13 @@ export const setupServer: (config: Config, options: SetupServerOptions) => void 
 		serverConfig.output.filename = 'routes.js'
 		serverConfig.output.libraryTarget = 'commonjs2'
 	}
-	let externals: string[] = (serverConfig.externals = getExternals(config))
+	let externals = (serverConfig.externals = getExternals(config))
 	delete serverConfig.optimization
-	let serverCompiler: webpack.Compiler = webpack(serverConfig)
-	let mfs: MFS = new MFS()
-	let outputPath: string = path.join(
-		<string>serverConfig.output.path,
-		<string>serverConfig.output.filename
+	let serverCompiler = webpack(serverConfig)
+	let mfs = new MFS()
+	let outputPath = path.join(
+		serverConfig.output.path as string,
+		serverConfig.output.filename as string
 	)
 	serverCompiler.outputFileSystem = mfs
 	serverCompiler.watch({}, (err, stats) => {
@@ -68,17 +72,17 @@ export const setupServer: (config: Config, options: SetupServerOptions) => void 
 		currentStats.errors.forEach(err => console.error(err))
 		currentStats.warnings.forEach(err => console.warn(err))
 		let sourceCode: string = mfs.readFileSync(outputPath, 'utf-8')
-		let defaultModuleResult: Symbol = Symbol('default-module-result')
-		let virtualRequire: (modulePath: string) => Symbol = modulePath => {
+		let defaultModuleResult = Symbol('default-module-result')
+		let virtualRequire = (modulePath: string) => {
 			if (matchExternals(externals, modulePath)) {
 				return require(modulePath)
 			}
-			let filePath: string = modulePath
+			let filePath = modulePath
 			if (serverConfig.output !== undefined && typeof serverConfig.output.path === 'string') {
-				filePath = path.join(<string>serverConfig.output.path, modulePath)
+				filePath = path.join(serverConfig.output.path, modulePath)
 			}
-			let sourceCode: string = ''
-			let moduleResult: Symbol = defaultModuleResult
+			let sourceCode = ''
+			let moduleResult = defaultModuleResult
 
 			try {
 				sourceCode = mfs.readFileSync(filePath, 'utf-8')
@@ -127,10 +131,12 @@ export const setupServer: (config: Config, options: SetupServerOptions) => void 
 	})
 }
 
-export const reporter: (
+export type Reporter = (
 	middlewareOptions: webpackDevMiddleware.Options,
 	options: webpackDevMiddleware.ReporterOptions
-) => void = (middlewareOptions, options) => {
+) => void
+
+export const reporter: Reporter = (middlewareOptions, options) => {
 	const { log, state, stats } = options
 
 	if (state && stats !== undefined) {
