@@ -68,25 +68,6 @@ export interface Meta {
     unsubscribeList: any
 }
 
-export interface History {
-    createHref(e: string): string
-    createKey(): string
-    createLocation(e: string): Location
-    createPath(e: string): string
-    getCurrentLocation(): Location
-    go(url: number): void
-    goBack(): void
-    goForward(): void
-    listen(func: any): object
-    listenBefore(func: any): object
-    listenBeforeUnload(func: any): object
-    push(url: string): void
-    replace(url: string): void
-    transitionTo(url: string): void
-    // pushLocation():void
-    // replaceLocation():void
-}
-
 export interface Loader {
     (...args:any):any
 }
@@ -98,16 +79,6 @@ export interface Routes {
 interface Route {
     path: string,
     controller: Controller
-}
-
-export interface Matcher {
-    (...args:any):MatcherReturn
-}
-
-interface MatcherReturn {
-    path?: string
-    params?: Record<string, string>
-    controller?: Controller
 }
 
 export interface Store {

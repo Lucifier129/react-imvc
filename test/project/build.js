@@ -1,4 +1,4 @@
-const build = require('../../build/babel')
+const build = require('../../src/build/babel')
 let PORT = 3333
 const ROOT = __dirname
 const config = {

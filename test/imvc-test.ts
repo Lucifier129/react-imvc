@@ -5,8 +5,8 @@ import fetch from 'node-fetch'
 import http from 'http'
 import express from 'express'
 import puppeteer from 'puppeteer'
-import { Config } from '../config'
-import { Global, WindowNative as Window } from '../types/index'
+import { Config } from '../src/config'
+import { Global, WindowNative as Window } from '../src/types/index'
 
 interface Server extends http.Server {
 	isTouched?: boolean

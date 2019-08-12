@@ -1,5 +1,5 @@
-import Controller from '../../../../controller'
-import ErrorBoundary from '../../../../component/ErrorBoundary'
+import Controller from '../../../../src/controller'
+import ErrorBoundary from '../../../../src/component/ErrorBoundary'
 import React, { useState, useEffect } from 'react'
 
 export default class extends Controller {

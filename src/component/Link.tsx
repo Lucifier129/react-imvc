@@ -1,6 +1,7 @@
 import React from 'react'
 import GlobalContext from '../context'
-import { History, Location } from '../controller/types'
+import { Location } from '../controller/types'
+import CH from 'create-history';
 
 type Props = {
 	as?: keyof HTMLElementTagNameMap
@@ -60,7 +61,7 @@ export default class Link extends React.Component<Props> {
 	}
 	handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		let { onClick, replace, back, forward, go, to } = this.props
-		let { history, location } = this.context as { history: History, location: Location }
+		let { history, location } = this.context as { history: CH.NativeHistory, location: Location }
 		onClick && onClick(event)
 
 		if (

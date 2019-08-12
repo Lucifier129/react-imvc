@@ -1,3 +1,5 @@
+import CA from 'create-app'
+
 export default {
   toJSON,
   toText,
@@ -10,12 +12,8 @@ export default {
   getFlatList
 }
 
-export interface Route {
-  path: string | RegExp | string[] | RegExp[]
-  controller: Function
-}
 
-export type RouteList = Route[]
+export type RouteList = CA.Route[]
 
 function getFlatList(list: RouteList): RouteList {
   let result: RouteList = []

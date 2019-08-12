@@ -3,17 +3,18 @@ import path from 'path'
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 // @ts-ignore
-import createApp from 'create-app/lib/server'
+import CA from 'create-app'
 import util from '../util'
-import { AppSettingContext, AppSettingLoader, AppSettingController, Config } from '../config'
+import { AppSettingContext, AppSettingLoader, AppSettingController, Config, AppSettings } from '../config'
 import { Req, Res } from '../types'
 import Controller from '../controller'
 import { State } from '../controller/types'
 
 const { getFlatList } = util
 const getModule = (module: any) => module.default || module
-const commonjsLoader: AppSettingLoader = (loadModule: AppSettingController, location, context: AppSettingContext) => {
-  return loadModule(location, context).then(getModule)
+const commonjsLoader: CA.Loader = (loadModule, location, context) => {
+  const controller = loadModule(location, context)
+  return getModule(controller)
 }
 
 /**
@@ -23,11 +24,9 @@ const commonjsLoader: AppSettingLoader = (loadModule: AppSettingController, loca
  */
 const createElement = React.createElement
 
-type RenderToAny = (view: React.ReactElement, constroller?: Controller) => any
-
-const renderToNodeStream: RenderToAny = (view, controller) => {
+const renderToNodeStream: CA.ViewEngineRender = (view, controller) => {
   return new Promise((resolve, reject) => {
-    let stream = ReactDOMServer.renderToNodeStream(view)
+    let stream = ReactDOMServer.renderToNodeStream(<React.ReactElement>view)
     let buffers: Uint8Array[] = []
     stream.on('data', chunk => buffers.push(chunk))
     stream.on('end', () => {
@@ -45,7 +44,7 @@ const renderToNodeStream: RenderToAny = (view, controller) => {
       }
 
       if (controller.getViewFallback) {
-        let fallbackView = controller.getViewFallback('view')
+        let fallbackView: React.ReactElement = controller.getViewFallback('view')
         renderToNodeStream(fallbackView).then(resolve, reject)
       } else {
         React.createElement = createElement
@@ -55,9 +54,9 @@ const renderToNodeStream: RenderToAny = (view, controller) => {
   })
 }
 
-const renderToString: RenderToAny = (view, controller) => {
+const renderToString: CA.ViewEngineRender = (view, _, controller) => {
   try {
-    return ReactDOMServer.renderToString(view)
+    return ReactDOMServer.renderToString(<React.ReactElement>view)
   } catch (error) {
     if (!controller) throw error
 
@@ -77,9 +76,9 @@ const renderToString: RenderToAny = (view, controller) => {
 }
 
 const renderers: {
-  renderToNodeStream: typeof renderToNodeStream,
-  renderToString: typeof renderToString,
-  [propName: string]: any
+  renderToNodeStream: CA.ViewEngineRender,
+  renderToString: CA.ViewEngineRender,
+  [propName: string]: CA.ViewEngineRender
 } = {
   renderToNodeStream,
   renderToString
@@ -87,7 +86,7 @@ const renderers: {
 
 export default function createPageRouter(options: Config) {
   let config = Object.assign({}, options)
-  let routes
+  let routes: CA.Route[] = []
 
   if (config.useServerBundle) {
     routes = require(path.join(config.root, config.serverBundleName))
@@ -95,7 +94,6 @@ export default function createPageRouter(options: Config) {
     routes = require(path.join(config.root, config.src))
   }
 
-  routes = routes.default || routes
   if (!Array.isArray(routes)) {
     routes = Object.values(routes)
   }
@@ -103,13 +101,13 @@ export default function createPageRouter(options: Config) {
 
   let router = Router()
   let render = renderers[config.renderMode] || renderToNodeStream
-  let serverAppSettings = {
+  let serverAppSettings: AppSettings = {
     loader: commonjsLoader,
     routes: routes,
     viewEngine: { render }
   }
 
-  let app = createApp(serverAppSettings)
+  let app = CA.server(serverAppSettings)
   let layoutView = config.layout || path.join(__dirname, 'view')
 
   // 纯浏览器端渲染模式，用前置中间件拦截所有请求
@@ -125,7 +123,7 @@ export default function createPageRouter(options: Config) {
         const routes = getFlatList(
           Array.isArray($routes) ? $routes : Object.values($routes)
         )
-        app = createApp({
+        app = CA.server({
           ...serverAppSettings,
           routes
         })

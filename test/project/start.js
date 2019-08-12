@@ -1,5 +1,5 @@
 process.env.NODE_ENV = 'development'
-const start = require('../../start/babel')
+const start = require('../../src/start/babel')
 let PORT = 3333
 const ROOT = __dirname
 const config = {

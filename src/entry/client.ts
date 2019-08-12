@@ -4,7 +4,7 @@ import '../polyfill'
 import 'whatwg-fetch'
 import ReactDOM from 'react-dom'
 // @ts-ignore
-import createApp from 'create-app'
+import CA from 'create-app'
 import util from '../util'
 // @ts-ignore
 import $routes from '@routes'
@@ -18,13 +18,13 @@ const __APP_SETTINGS__: AppSettings = (window as Window).__APP_SETTINGS__ || {}
 
 const getModule = (module: any) => module.default || module
 
-const webpackLoader: AppSettingLoader = (loadModule, location, context) => {
+const webpackLoader: CA.Loader = (loadModule, location, context) => {
   return loadModule(location, context).then(getModule)
 }
 
 let shouldHydrate = !!(window as Window).__INITIAL_STATE__
 
-const render: Render = (view, container, controller) => {
+const render: CA.ViewEngineRender = (view, container, controller) => {
   try {
     if (shouldHydrate) {
       shouldHydrate = false
@@ -81,7 +81,7 @@ Array.from(document.querySelectorAll('[data-preload]')).forEach(elem => {
 if(typeof appSettings.context !== 'undefined')
   appSettings.context.preload = preload
 
-const app = createApp.client(appSettings)
+const app = CA.client(appSettings)
 
 app.start()
 

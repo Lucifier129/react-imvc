@@ -1,4 +1,4 @@
-import Controller from '../../../../controller'
+import Controller from '../../../../src/controller'
 import React from 'react'
 
 const delay = time => new Promise(resolve => {

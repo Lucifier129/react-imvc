@@ -6,6 +6,7 @@ import createStore from 'relite'
 // @ts-ignore
 import Cookie from 'js-cookie'
 import querystring, { stringify } from 'querystring'
+import CA from 'create-app'
 import _ from '../util'
 import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
@@ -26,6 +27,7 @@ import {
   Loader,
   Payload
 } from './types'
+import CH from 'create-history';
 
 const REDIRECT =
   typeof Symbol === 'function'
@@ -56,7 +58,7 @@ type UdfFuncType = {
   (...args: any):any
 }
 
-export default class Controller {
+export default class Controller implements CA.Controller {
   View: BaseViewFC | BaseViewClass = EmptyView
   restapi: string = ''
   preload: Preload
@@ -113,8 +115,8 @@ export default class Controller {
     this.location = location
     this.context = context
     this.handlers = {}
-    this.history = {} as History
-    this.store = {} as Store
+    this.history = {}
+    this.store = {}
     this.preload = {}
     this.API = {}
     this.Model = {}

@@ -12,7 +12,7 @@ require('core-js/stable')
 require('regenerator-runtime/runtime')
 
 let options = require('yargs').argv
-let getConfig = require('./config')
+let getConfig = require('./src/config')
 let config = getConfig(options)
 
 require('@babel/register')({
