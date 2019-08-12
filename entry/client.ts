@@ -4,7 +4,7 @@ import '../polyfill'
 import 'whatwg-fetch'
 import ReactDOM from 'react-dom'
 // @ts-ignore
-import createApp from 'create-app/lib/client'
+import createApp from 'create-app'
 import util from '../util'
 // @ts-ignore
 import $routes from '@routes'
@@ -49,7 +49,7 @@ const routes = util.getFlatList(
   Array.isArray($routes) ? $routes : Object.values($routes)
 )
 
-const appSettings = {
+const appSettings: AppSettings = {
   hashType: 'hashbang',
   container: '#root',
   ...__APP_SETTINGS__,
@@ -79,7 +79,7 @@ Array.from(document.querySelectorAll('[data-preload]')).forEach(elem => {
 })
 appSettings.context.preload = preload
 
-const app = createApp(appSettings)
+const app = createApp.client(appSettings)
 
 app.start()
 

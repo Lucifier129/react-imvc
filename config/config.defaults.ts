@@ -3,6 +3,7 @@ import webpack from 'webpack'
 import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
 import compression from 'compression'
+import createApp from 'create-app'
 import Babel, { GetBabelFunc } from './babel'
 import Controller from '../controller'
 
@@ -36,13 +37,9 @@ export interface AppSettingController {
 	destroy?: (...args: any[]) => any
 	[propName: string]: any
 }
-export interface AppSettings {
-	type?: string
+export interface AppSettings extends createApp.Settings {
   hashType?: string, // hash history 显示的起点缀，默认是 !
 	container?: string // react 组件渲染的容器
-	routes?: AppSettingRoute[]
-	viewEngine?: ViewEngine
-	loader?: AppSettingLoader
 	cacheAmount?: number
 	basename?: string
 	context?: AppSettingContext
