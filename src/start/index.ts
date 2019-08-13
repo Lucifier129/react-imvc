@@ -14,11 +14,11 @@ import fetch, * as nodeFetch from 'node-fetch'
 import express from 'express'
 import debug from 'debug'
 import createExpressApp from '../entry/server'
-import getConfig, { Options } from '../config'
+import getConfig from '../config'
 import createPageRouter from '../page/createPageRouter'
 import RIMVC from '../index'
 
-type StartFunc = (options: Options) => Promise<{server: http.Server, app: express.Express}>
+type StartFunc = (options: RIMVC.Options) => Promise<{server: http.Server, app: express.Express}>
 
 const start: StartFunc = (options) => {
 	let config = getConfig(options)

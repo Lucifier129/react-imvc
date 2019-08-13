@@ -1,12 +1,9 @@
-/// <reference path="../types/index.d.ts" />
-
 import path from 'path'
 import fetch from 'node-fetch'
 import http from 'http'
 import express from 'express'
 import puppeteer from 'puppeteer'
-import { Config } from '../src/config'
-import { Global, WindowNative as Window } from '../src/types/index'
+import RIMVC from '../src'
 
 interface Server extends http.Server {
 	isTouched?: boolean
@@ -19,7 +16,7 @@ process.env.NODE_ENV = 'development'
 const start = require('../start')
 let PORT = 3333
 const ROOT = path.join(__dirname, 'project')
-const config: Config = {
+const config: Partial<RIMVC.Config> = {
 	root: ROOT, // 项目根目录
 	port: PORT, // server 端口号
 	logger: null, // 不出 log
@@ -50,7 +47,7 @@ describe('React-IMVC', () => {
 		})
 	})
 })
-function mainTest(config: Config) {
+function mainTest(config: Partial<RIMVC.Config>) {
 	let app: App, server: Server, browser: puppeteer.Browser
 
 	beforeAll(async () => {
@@ -129,7 +126,7 @@ function mainTest(config: Config) {
 			await page.waitFor('#static_view')
 			let serverContent = await fetchContent(url)
 			let __CUSTOM_LAYOUT__ = await page.evaluate(
-				() => (<Window>window).__CUSTOM_LAYOUT__
+				() => (<RIMVC.WindowNative>window).__CUSTOM_LAYOUT__
 			)
 
 			expect(serverContent.includes('window.__CUSTOM_LAYOUT__')).toBe(true)
@@ -153,10 +150,10 @@ function mainTest(config: Config) {
 			await page.goto(url)
 			await page.waitFor('#basic_state')
 
-			let clientController = await page.evaluate(() => (<Window>window).controller)
+			let clientController = await page.evaluate(() => (<RIMVC.WindowNative>window).controller)
 
 			if (config.SSR) {
-				let serverController = (<Global>global).controller
+				let serverController = (<RIMVC.Global>global).controller
 
 				let locationKeys = [
 					'params',

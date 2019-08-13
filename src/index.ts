@@ -11,6 +11,10 @@ import yargs from 'yargs';
 export { default as start } from './start'
 export { default as buuld } from './build'
 
+const RIMVC = {
+  Controller
+}
+
 export default RIMVC
 
 namespace RIMVC {
@@ -167,10 +171,10 @@ namespace RIMVC {
   }
 
   interface OptionsMore {
-    config?: string
+    config?: string | Partial<Config>
   }
 
-  export type Options = OptionsMore & typeof yargs.argv
+  export type Options = OptionsMore & Partial<typeof yargs.argv>
 
   export interface BabelConfig  {
     filename?: string,
@@ -205,6 +209,28 @@ namespace RIMVC {
   
   export interface GetBabelFunc {
     (isServer: boolean): BabelConfig 
+  }
+
+  export interface RenderProps {
+    description?: string
+    keywords?: string
+    title?: string
+    content: string
+    initialState?: object
+    appSettings: RIMVC.AppSettings
+    publicPath: string
+    assets: {
+      vendor: string
+      index: string
+    }
+  }
+
+
+  export interface ViewProps {
+    key?: string
+    state?: RIMVC.State
+    handlers?: RIMVC.Handlers
+    actions?: RIMVC.Actions
   }
   
   export interface Config {

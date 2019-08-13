@@ -27,16 +27,10 @@ let uid = 0 // seed of controller id
  * 组装事件处理器 Event RIMVC.Handlers
  * 提供 fetch 方法
  */
-interface Props {
-  key?: string
-  state?: RIMVC.State
-  handlers?: RIMVC.Handlers
-  actions?: RIMVC.Actions
-}
-interface BaseViewFC extends React.FC<Props> {
+interface BaseViewFC extends React.FC<RIMVC.ViewProps> {
   viewId?: any
 }
-interface BaseViewClass extends React.ComponentClass<Props> {
+interface BaseViewClass extends React.ComponentClass<RIMVC.ViewProps> {
   viewId?: any
 }
 type UdfFuncType = {

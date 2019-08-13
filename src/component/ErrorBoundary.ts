@@ -6,8 +6,7 @@ import GlobalContext from '../context'
 let createElement = React.originalCreateElement || React.createElement
 
 interface Props {
-  fallback: object | null
-  children?: React.ReactChildren
+  fallback: object | string | null
 }
 
 type State = {
@@ -20,7 +19,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
   static getDerivedStateFromError() {
     return { hasError: true }
   }
-  static defaultProps:Props = {
+  static defaultProps: Props = {
     fallback: null
   }
   state:State = {

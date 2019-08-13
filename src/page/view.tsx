@@ -2,21 +2,7 @@ import React from 'react'
 import Script from '../component/Script'
 import RIMVC from '../index'
 
-interface Props {
-	description?: string
-	keywords?: string
-	title?: string
-	content: string
-	initialState?: object
-	appSettings: RIMVC.AppSettings
-	publicPath: string
-	assets: {
-		vendor: string
-		index: string
-	}
-}
-
-export default function Page(props: Props) {
+export default function Page(props: RIMVC.RenderProps) {
 	return (
 		<html>
 			<head>
