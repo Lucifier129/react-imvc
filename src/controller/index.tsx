@@ -27,12 +27,6 @@ let uid = 0 // seed of controller id
  * 组装事件处理器 Event RIMVC.Handlers
  * 提供 fetch 方法
  */
-interface BaseViewFC extends React.FC<RIMVC.ViewProps> {
-  viewId?: any
-}
-interface BaseViewClass extends React.ComponentClass<RIMVC.ViewProps> {
-  viewId?: any
-}
 type UdfFuncType = {
   (...args: any[]): any
 }
@@ -42,7 +36,7 @@ interface InitailState {
 }
 
 export default class Controller implements CA.Controller {
-  View: BaseViewFC | BaseViewClass = EmptyView
+  View: RIMVC.BaseViewFC | RIMVC.BaseViewClass = EmptyView
   restapi: string = ''
   preload: RIMVC.Preload
   API: RIMVC.API
@@ -62,7 +56,7 @@ export default class Controller implements CA.Controller {
   [propName: string]: any
   matcher?: CA.Matcher
   loader: RIMVC.Loader | undefined
-  Loading: BaseViewFC | BaseViewClass = (...args) => null
+  Loading: RIMVC.BaseViewFC | RIMVC.BaseViewClass = (...args) => null
 
   errorDidCatch?(error:Error, str: string): void
   getComponentFallback?(displayName: string, InputComponent: React.ComponentType):void
@@ -422,7 +416,7 @@ export default class Controller implements CA.Controller {
         SSR = await this.SSR(location, context)
       }
       if (SSR === false) {
-        let View: BaseViewFC | BaseViewClass = Loading || EmptyView
+        let View: RIMVC.BaseViewFC | RIMVC.BaseViewClass = Loading || EmptyView
         return <View />
       }
     }

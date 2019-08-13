@@ -53,6 +53,15 @@ namespace RIMVC {
     }
   }
 
+
+  export interface BaseViewFC extends React.FC<RIMVC.ViewProps> {
+    viewId?: any
+  }
+  
+  export interface BaseViewClass extends React.ComponentClass<RIMVC.ViewProps> {
+    viewId?: any
+  }
+
   export interface GulpConfigItem {
     src: string[],
     dest: string

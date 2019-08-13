@@ -8,21 +8,21 @@ const delay = (time: number) => new Promise(resolve => {
 export default class extends RIMVC.Controller {
   SSR = false
   View = View
-  constructor(location, context) {
+  constructor(location: RIMVC.Location, context: RIMVC.Context) {
     super(location, context)
     if (context.isClient) {
-      window.controller = this
+      (window as RIMVC.WindowNative).controller = this
     } else if (context.isServer) {
-      global.controller = this
+      (global as RIMVC.Global).controller = this
     }
   }
   async componentWillCreate() {
-    this.renderView(() => -1)
+    this.renderView(() => <div>{-1}</div>)
     await delay(1000)
   }
   componentDidMount() {
-    let count = 0
-    let View = () => count
+    let count: number = 0
+    let View: RIMVC.BaseViewFC = () => <div>{count}</div>
     setInterval(() => {
       this.renderView(View)
       count += 1
