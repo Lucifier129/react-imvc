@@ -170,7 +170,7 @@ namespace RIMVC {
     config?: string
   }
 
-  export type Options = OptionsMore & yargs.Argv
+  export type Options = OptionsMore & typeof yargs.argv
 
   export interface BabelConfig  {
     filename?: string,
