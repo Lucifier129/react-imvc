@@ -3,7 +3,7 @@ import GlobalContext from '../context'
 import ControllerProxy from './ControllerProxy'
 import Controller from '../controller'
 
-type Props = {
+interface Props {
 	controller: Controller
 }
 
@@ -55,7 +55,7 @@ export default class ViewManager extends React.Component<Props> {
 		}
 
 		let { meta, store, handlers, View } = controller
-		let state = store.getState()
+		let state = (store.getState as Function)()
 		let actions = store.actions
 
 		let view = (
@@ -158,7 +158,7 @@ function getContextByController(ctrl: Controller) {
 		prefetch,
 		handleInputChange
 	} = ctrl
-	let state = store.getState()
+	let state = (store.getState as Function)()
 	return {
 		ctrl,
 		location,

@@ -1,7 +1,7 @@
 import React from 'react'
 import GlobalContext from '../context'
 
-type Props = {
+interface Props {
 	src?:string
 }
 

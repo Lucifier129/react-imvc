@@ -1,11 +1,11 @@
 import React from 'react'
 import GlobalContext from '../context'
 import _ from '../util'
-import { Payload } from '../controller/types'
+import RIMVC from '../index'
 
 const { getValueByPath } = _
 
-type Props = {
+interface Props {
 	as?: keyof HTMLElementTagNameMap
 	type: string
 	name: string
@@ -59,7 +59,7 @@ export default class Input extends React.Component<Props> {
 	getAction() {
 		return this.context.actions[this.props.actionType]
 	}
-	callAction(actionPayload: Payload) {
+	callAction(actionPayload: RIMVC.Payload) {
 		this.getAction()(actionPayload)
 	}
 	handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

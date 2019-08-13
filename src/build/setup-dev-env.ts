@@ -6,14 +6,16 @@ import MFS from 'memory-fs'
 import notifier from 'node-notifier'
 import createWebpackConfig from './createWebpackConfig'
 import { getExternals, matchExternals } from './util'
-import { Config } from '../config'
+import RIMVC from '../index'
 
-export type SetupClient = (config: Config) => {
-	compiler: webpack.Compiler,
-	middleware: webpackDevMiddleware.WebpackDevMiddleware 
+export interface SetupClient {
+	(config: RIMVC.Config): {
+		compiler: webpack.Compiler,
+		middleware: webpackDevMiddleware.WebpackDevMiddleware 
+	}
 }
 
-export const setupClient: SetupClient = (config: Config) => {
+export const setupClient: SetupClient = (config: RIMVC.Config) => {
 	let clientConfig = createWebpackConfig(config)
 	let compiler = webpack(clientConfig)
 	let middleware = webpackDevMiddleware(compiler, {
@@ -40,7 +42,7 @@ interface SetupServerOptions {
 	handleHotModule: (value: any) => void
 }
 
-export type SetupServer = (config: Config, options: SetupServerOptions) => void
+export type SetupServer = (config: RIMVC.Config, options: SetupServerOptions) => void
 
 export const setupServer: SetupServer = (config, options) => {
 	let serverConfig = createWebpackConfig(config, true)

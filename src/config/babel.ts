@@ -1,35 +1,8 @@
-export interface BabelConfig  {
-  filename?: string,
-  filenameRelative?: string,
-  presets?: any[],
-  plugins?: any[],
-  highlightCode?: boolean,
-  only?: string | string[],
-  ignore?: string | string[],
-  auxiliaryCommentBefore?: any,
-  auxiliaryCommentAfter?: any,
-  sourceMaps?: any,
-  inputSourceMap?: any,
-  sourceMapTarget?: any,
-  sourceFileName?: any,
-  sourceRoot?: any,
-  moduleRoot?: any,
-  moduleIds?: any,
-  moduleId?: any,
-  getModuleId?: any,
-  resolveModuleSource?: any,
-  keepModuleIdExtesions?: boolean,
-  code?: boolean,
-  ast?: boolean,
-  compact?: any,
-  comments?: boolean,
-  shouldPrintComment?: any,
-  env?: any,
-  retainLines?: boolean
-  babelrc?: any
-}
+import RIMVC from '../index'
 
-export type GetBabelFunc = (isServer: boolean) => BabelConfig 
+export interface GetBabelFunc {
+  (isServer: boolean): RIMVC.BabelConfig 
+}
 
 const Babel: GetBabelFunc = (isServer = true) => ({
   presets: [

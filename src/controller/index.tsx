@@ -7,27 +7,12 @@ import createStore from 'relite'
 import Cookie from 'js-cookie'
 import querystring, { stringify } from 'querystring'
 import CA from 'create-app'
+import CH from 'create-history'
 import _ from '../util'
 import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
 import attachDevToolsIfPossible from './attachDevToolsIfPossible'
-import {
-  State,
-  Actions,
-  Preload,
-  API,
-  Model,
-  Location,
-  Context,
-  Handlers,
-  Meta,
-  History,
-  Matcher,
-  Store,
-  Loader,
-  Payload
-} from './types'
-import CH from 'create-history';
+import RIMVC from '..'
 
 const REDIRECT =
   typeof Symbol === 'function'
@@ -37,16 +22,16 @@ const REDIRECT =
 const EmptyView = () => null
 let uid = 0 // seed of controller id
 /**
- * 绑定 Store 到 View
+ * 绑定 RIMVC.Store 到 View
  * 提供 Controller 的生命周期钩子
- * 组装事件处理器 Event Handlers
+ * 组装事件处理器 Event RIMVC.Handlers
  * 提供 fetch 方法
  */
 interface Props {
   key?: string
-  state?: State
-  handlers?: Handlers
-  actions?: Actions
+  state?: RIMVC.State
+  handlers?: RIMVC.Handlers
+  actions?: RIMVC.Actions
 }
 interface BaseViewFC extends React.FC<Props> {
   viewId?: any
@@ -55,25 +40,29 @@ interface BaseViewClass extends React.ComponentClass<Props> {
   viewId?: any
 }
 type UdfFuncType = {
-  (...args: any):any
+  (...args: any[]):any
+}
+
+interface InitailState {
+  (location: RIMVC.Location, context: RIMVC.Context): RIMVC.State
 }
 
 export default class Controller implements CA.Controller {
   View: BaseViewFC | BaseViewClass = EmptyView
   restapi: string = ''
-  preload: Preload
-  API: API
-  Model: Model
-  initialState: State | undefined
-  actions: Actions | undefined
-  SSR: boolean | { (location:Location, context: Context):boolean } | undefined
+  preload: RIMVC.Preload
+  API: RIMVC.API
+  Model: RIMVC.Model
+  initialState: RIMVC.State | InitailState | undefined
+  actions: RIMVC.Actions | undefined
+  SSR: boolean | { (location:RIMVC.Location, context: RIMVC.Context):boolean } | undefined
   KeepAliveOnPush: boolean | undefined
-  history: History
-  store: Store
-  location: Location
-  context: Context
-  handlers: Handlers
-  meta: Meta
+  history: CH.NativeHistory
+  store: RIMVC.Store
+  location: RIMVC.Location
+  context: RIMVC.Context
+  handlers: RIMVC.Handlers
+  meta: RIMVC.Meta
   errorDidCatch: { (error:Error, str: string):void } | undefined
   getComponentFallback: { (displayName: string, InputComponent: React.ComponentType):void } | undefined
   proxyHandler: any
@@ -81,8 +70,8 @@ export default class Controller implements CA.Controller {
   [propName: string]: any
 
   Loading: BaseViewFC | BaseViewClass = (...args) => null
-  matcher?: Matcher
-  loader: Loader | undefined
+  matcher?: CA.Matcher
+  loader: RIMVC.Loader | undefined
   getViewFallback:UdfFuncType | undefined
   getInitialState:UdfFuncType | undefined
   stateDidReuse:UdfFuncType | undefined
@@ -96,7 +85,7 @@ export default class Controller implements CA.Controller {
   windowWillUnload:UdfFuncType | undefined
   pageDidBack:UdfFuncType | undefined
 
-  constructor(location: Location, context: Context) {
+  constructor(location: RIMVC.Location, context: RIMVC.Context) {
     this.meta = {
       id: uid++,
       isDestroyed: false,
@@ -115,9 +104,9 @@ export default class Controller implements CA.Controller {
     this.location = location
     this.context = context
     this.handlers = {}
-    this.history = {}
-    this.store = {}
     this.preload = {}
+    this.history = CH.createHistory()
+    this.store = {}
     this.API = {}
     this.Model = {}
   }
@@ -257,7 +246,7 @@ export default class Controller implements CA.Controller {
     let { context, API } = this
 
     /**
-     * API shortcut，方便 fetch(name, options) 代替 url
+     * RIMVC.API shortcut，方便 fetch(name, options) 代替 url
      */
     if (API && Object.prototype.hasOwnProperty.call(API, url)) {
       url = API[url]
@@ -316,7 +305,7 @@ export default class Controller implements CA.Controller {
   get(url: string, params: object, options: object) {
     let { API } = this
     /**
-     * API shortcut，方便 fetch(name, options) 代替 url
+     * RIMVC.API shortcut，方便 fetch(name, options) 代替 url
      */
     if (API && Object.prototype.hasOwnProperty.call(API, url)) {
       url = API[url]
@@ -346,7 +335,7 @@ export default class Controller implements CA.Controller {
   /**
    * 预加载 css 样式等资源
    */
-  fetchPreload(preload?: Preload) {
+  fetchPreload(preload?: RIMVC.Preload) {
     preload = preload || this.preload
     let keys = Object.keys(preload)
 
@@ -356,10 +345,10 @@ export default class Controller implements CA.Controller {
 
     let { context } = this
     let list = keys.map(name => {
-      if (context.preload[name]) {
+      if ((context.preload as RIMVC.Payload)[name]) {
         return
       }
-      let url = (preload as Preload)[name]
+      let url = (preload as RIMVC.Preload)[name]
 
       if (!_.isAbsoluteUrl(url)) {
         if (context.isServer) {
@@ -380,7 +369,7 @@ export default class Controller implements CA.Controller {
              */
             content = content.replace(/\r+/g, '')
           }
-          context.preload[name] = content
+          (context.preload as RIMVC.Payload)[name] = content
         })
     })
     return Promise.all(list)
@@ -391,9 +380,9 @@ export default class Controller implements CA.Controller {
    */
   prefetch(url: string) {
     if (!url || typeof url !== 'string') return null
-    let matches = (this.matcher as Matcher)(url)
+    let matches = (this.matcher as CA.Matcher)(url)
     if (!matches) return null
-    return (this.loader as Loader)(matches.controller)
+    return (this.loader as RIMVC.Loader)(matches.controller)
   }
 
   async init() {
@@ -449,14 +438,14 @@ export default class Controller implements CA.Controller {
     this.fetch = this.fetch.bind(this)
     this.prefetch = this.prefetch.bind(this)
 
-    // 如果 Model 存在，且 initialState 和 actions 不存在，从 Model 里解构出来
+    // 如果 RIMVC.Model 存在，且 initialState 和 actions 不存在，从 RIMVC.Model 里解构出来
     if (Model && initialState === undefined && actions === undefined) {
       let { initialState: $initialState, ...$actions } = Model
       initialState = this.initialState = $initialState
       actions = this.actions = $actions
     }
 
-    let globalInitialState: State | undefined
+    let globalInitialState: RIMVC.State | undefined
 
     // 服务端把 initialState 吐在 html 里的全局变量 __INITIAL_STATE__ 里
     // @ts-ignore
@@ -476,7 +465,7 @@ export default class Controller implements CA.Controller {
       initialState = JSON.parse(JSON.stringify(initialState))
     }
 
-    let finalInitialState: State = {
+    let finalInitialState: RIMVC.State = {
       ...initialState,
       ...globalInitialState,
       location,
@@ -509,7 +498,7 @@ export default class Controller implements CA.Controller {
     /**
      * 创建 store
      */
-    let finalActions: Actions = { ...actions, ...shareActions }
+    let finalActions: RIMVC.Actions = { ...actions, ...shareActions }
     this.store = createStore(finalActions, finalInitialState)
     attachDevToolsIfPossible(this.store)
 
@@ -581,7 +570,7 @@ export default class Controller implements CA.Controller {
     }
 
     if (store) {
-      let unsubscribe = store.subscribe((data: any) => {
+      let unsubscribe = (store.subscribe as Function)((data: any) => {
         (this.refreshView as UdfFuncType)()
         if (this.stateDidChange) {
           this.stateDidChange(data)
@@ -592,7 +581,7 @@ export default class Controller implements CA.Controller {
 
     // 判断是否缓存
     {
-      let unlisten = history.listenBefore((location: Location) => {
+      let unlisten = history.listenBefore((location: RIMVC.Location) => {
         if (!this.KeepAliveOnPush) return
         if (location.action === 'PUSH') {
           (this.saveToCache as UdfFuncType)()
@@ -605,22 +594,24 @@ export default class Controller implements CA.Controller {
 
     // 监听路由跳转
     if (this.pageWillLeave) {
-      let unlisten = history.listenBefore(this.pageWillLeave.bind(this))
+      let unlisten = history.listenBefore(
+        this.pageWillLeave.bind(this)
+      )
       meta.unsubscribeList.push(unlisten)
     }
 
     // 监听浏览器窗口关闭
     if (this.windowWillUnload) {
-      let unlisten = history.listenBeforeUnload(
+      let unlisten = (history.listenBeforeUnload as CH.ListenBeforeUnload)(
         this.windowWillUnload.bind(this)
       )
       meta.unsubscribeList.push(unlisten)
     }
   }
 
-  restore(location: Location, context: Context) {
+  restore(location: RIMVC.Location, context: RIMVC.Context) {
     let { meta, store } = this
-    let { __PAGE_DID_BACK__ } = store.actions
+    let { __PAGE_DID_BACK__ } = store.actions as RIMVC.Actions
 
     if (this.proxyHandler) {
       // detach first, and re-attach
@@ -628,8 +619,8 @@ export default class Controller implements CA.Controller {
       this.proxyHandler.attach()
     }
 
-    meta.isDestroyed = false
-    __PAGE_DID_BACK__(location)
+    meta.isDestroyed = false;
+    (__PAGE_DID_BACK__ as Function)(location)
 
     if (this.pageDidBack) {
       this.pageDidBack(location, context)
@@ -679,7 +670,7 @@ const proxyReactCreateElement: ProxyReactCreateElement = ctrl => {
   let attach = () => {
     if (isAttach) return
     isAttach = true
-    React.createElement = (type: any, ...args: any) => {
+    React.createElement = (type: any, ...args: any[]) => {
       if (typeof type === 'function') {
         if (!type.isErrorBoundary) {
           type = createErrorBoundary(type)
@@ -713,7 +704,7 @@ const proxyReactCreateElement: ProxyReactCreateElement = ctrl => {
       static displayName = `ErrorBoundary(${displayName})`
       static isErrorBoundary = true
 
-      state:State = {
+      state:RIMVC.State = {
         hasError: false
       }
 
@@ -756,13 +747,13 @@ const proxyReactCreateElement: ProxyReactCreateElement = ctrl => {
 }
 
 const proxyStoreActions = (ctrl: Controller) => {
-  let actions:Actions = {}
+  let actions: RIMVC.Actions = {}
 
-  for (let key in ctrl.store.actions) {
-    let action:{ (...args:any):State } = ctrl.store.actions[key]
-    actions[key] = (payload: Payload) => {
+  for (let key in ctrl.store.actions as RIMVC.Actions) {
+    let action = (ctrl.store.actions as RIMVC.Actions)[key]
+    actions[key] = (payload: RIMVC.Payload) => {
       try {
-        return action(payload)
+        return (action as { (...args: any[]): RIMVC.State })(payload)
       } catch (error) {
         (ctrl.errorDidCatch as { (error: Error, str: string):void})(error, 'model')
         throw error

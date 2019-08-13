@@ -9,42 +9,18 @@ import htmlmin from 'gulp-htmlmin'
 import imagemin from 'gulp-imagemin'
 import uglify from 'gulp-uglify'
 import babel from 'gulp-babel'
-import { Config } from '../config'
+import RIMVC from '../index'
 
-export interface GulpConfigItem {
-	src: string[],
-	dest: string
+interface  CreateGulpTaskConfig {
+  (options: RIMVC.Config): RIMVC.GulpTaskConfig
 }
 
-export interface GulpConfig {
-	// 需要压缩到 static 目录的 css
-	css: GulpConfigItem
-	// 需要压缩到 static 目录的 html
-	html: GulpConfigItem
-
-	img: GulpConfigItem
-	// 需要压缩到 static 目录的 js
-	js: GulpConfigItem
-
-	es5: GulpConfigItem
-	// 需要复制到 static 目录的非 html, css, js 文件
-	copy: GulpConfigItem
-	// 需要复制到 publish 目录的额外文件
-	publishCopy: GulpConfigItem
-	// 需要编译到 publish 目录的额外文件
-	publishBabel: GulpConfigItem
-
-	[propName: string]: GulpConfigItem
-}
-
-type CreateConfig = (options: Config) => GulpConfig
-
-const createConfig: CreateConfig = options => {
+const createConfig: CreateGulpTaskConfig = options => {
   let root = options.root
   let src = path.join(root, options.src)
   let publish = path.join(root, options.publish)
   let staticPath = path.join(publish, options.static)
-  let config: GulpConfig = {
+  let config: RIMVC.GulpTaskConfig = {
     css: {
       src: [src + '/**/*.css'],
       dest: staticPath
@@ -97,10 +73,12 @@ const createConfig: CreateConfig = options => {
   return config
 }
 
-type CreateGulpTask = (options: Config) => gulp.TaskFunction
+interface CreateGulpTask {
+  (options: RIMVC.Config): gulp.TaskFunction
+}
 
 const createGulpTask: CreateGulpTask = (options) => {
-  let config: GulpConfig = Object.assign(createConfig(options))
+  let config: RIMVC.GulpTaskConfig = Object.assign(createConfig(options))
 
   let minifyCSS = () => {
     if (!config.css) {

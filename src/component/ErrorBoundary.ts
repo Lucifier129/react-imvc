@@ -5,9 +5,9 @@ import GlobalContext from '../context'
 // @ts-ignore
 let createElement = React.originalCreateElement || React.createElement
 
-type Props = {
+interface Props {
   fallback: object | null
-  children?: { (...args:any):any }
+  children?: React.ReactChildren
 }
 
 type State = {
@@ -42,7 +42,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
     let prevCreateElement = React.createElement
     React.createElement = createElement
     try {
-      return (this.props.children as { (...args:any):any })()
+      return this.props.children as React.ReactChildren
     } catch (error) {
       this.catchError(error)
       return this.props.fallback
@@ -59,9 +59,9 @@ export const withFallback = (fallback: object) => (InputComponent: React.Compone
     )
   }
 
-  const displayName = InputComponent.name || InputComponent.displayName
+  // const displayName = InputComponent.name || InputComponent.displayName
 
-  Component.name = `ErrorBoundary(${displayName})`
+  // Component.name = `ErrorBoundary(${displayName})`
 
   return Component
 }

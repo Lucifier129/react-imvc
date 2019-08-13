@@ -1,9 +1,9 @@
 import React from 'react'
 import GlobalContext from '../context'
-import { Location } from '../controller/types'
+import RIMVC from '../index'
 import CH from 'create-history';
 
-type Props = {
+interface Props {
 	as?: keyof HTMLElementTagNameMap
 	to?: string
 	href?: string
@@ -61,7 +61,7 @@ export default class Link extends React.Component<Props> {
 	}
 	handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		let { onClick, replace, back, forward, go, to } = this.props
-		let { history, location } = this.context as { history: CH.NativeHistory, location: Location }
+		let { history, location } = this.context as { history: CH.NativeHistory, location: RIMVC.Location }
 		onClick && onClick(event)
 
 		if (

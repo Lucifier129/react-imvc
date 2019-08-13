@@ -1,16 +1,20 @@
 import React from 'react'
 import GlobalContext from '../context'
-import { Preload } from '../controller/types'
+import RIMVC from '../index'
 
-export default function Style({ name }: { name: string }) {
+interface Props {
+	name: string
+}
+
+export default function Style({ name }: Props) {
 	return (
 		<GlobalContext.Consumer>
-			{({ preload }: { preload?: Preload }) => {
+			{({ preload }: { preload?: RIMVC.Preload }) => {
 				return (
 					<style
 						type="text/css"
 						data-preload={name}
-						dangerouslySetInnerHTML={{ __html: (preload as Preload)[name] }}
+						dangerouslySetInnerHTML={{ __html: (preload as RIMVC.Preload)[name] }}
 					/>
 				)
 			}}

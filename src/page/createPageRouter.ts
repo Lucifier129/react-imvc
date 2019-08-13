@@ -5,16 +5,12 @@ import ReactDOMServer from 'react-dom/server'
 // @ts-ignore
 import CA from 'create-app'
 import util from '../util'
-import { AppSettingContext, AppSettingLoader, AppSettingController, Config, AppSettings } from '../config'
-import { Req, Res } from '../types'
+import RIMVC from '../index'
 import Controller from '../controller'
-import { State } from '../controller/types'
 
 const { getFlatList } = util
-const getModule = (module: any) => module.default || module
 const commonjsLoader: CA.Loader = (loadModule, location, context) => {
-  const controller = loadModule(location, context)
-  return getModule(controller)
+  return (<CA.LoadController>loadModule)(location, context)
 }
 
 /**
@@ -24,7 +20,7 @@ const commonjsLoader: CA.Loader = (loadModule, location, context) => {
  */
 const createElement = React.createElement
 
-const renderToNodeStream: CA.ViewEngineRender = (view, controller) => {
+const renderToNodeStream: RIMVC.RenderToNodeStream = (view: React.ReactElement, controller: Controller | undefined) => {
   return new Promise((resolve, reject) => {
     let stream = ReactDOMServer.renderToNodeStream(<React.ReactElement>view)
     let buffers: Uint8Array[] = []
@@ -54,7 +50,7 @@ const renderToNodeStream: CA.ViewEngineRender = (view, controller) => {
   })
 }
 
-const renderToString: CA.ViewEngineRender = (view, _, controller) => {
+const renderToString: RIMVC.RenderToString = (view: React.ReactElement, controller: Controller | undefined) => {
   try {
     return ReactDOMServer.renderToString(<React.ReactElement>view)
   } catch (error) {
@@ -76,15 +72,14 @@ const renderToString: CA.ViewEngineRender = (view, _, controller) => {
 }
 
 const renderers: {
-  renderToNodeStream: CA.ViewEngineRender,
-  renderToString: CA.ViewEngineRender,
-  [propName: string]: CA.ViewEngineRender
+  renderToNodeStream: RIMVC.RenderToNodeStream,
+  renderToString: RIMVC.RenderToString
 } = {
   renderToNodeStream,
   renderToString
 }
 
-export default function createPageRouter(options: Config) {
+export default function createPageRouter(options: RIMVC.Config) {
   let config = Object.assign({}, options)
   let routes: CA.Route[] = []
 
@@ -100,8 +95,8 @@ export default function createPageRouter(options: Config) {
   routes = getFlatList(routes)
 
   let router = Router()
-  let render = renderers[config.renderMode] || renderToNodeStream
-  let serverAppSettings: AppSettings = {
+  let render: CA.RenderTo = renderers[config.renderMode] || renderToNodeStream
+  let serverAppSettings: RIMVC.AppSettings = {
     loader: commonjsLoader,
     routes: routes,
     viewEngine: { render }
@@ -132,7 +127,7 @@ export default function createPageRouter(options: Config) {
   }
 
   // handle page
-  router.all('*', async (req: Req, res, next) => {
+  router.all('*', async (req: RIMVC.Req, res, next) => {
     let { basename, serverPublicPath, publicPath } = req
     let context = {
       basename,
@@ -148,7 +143,7 @@ export default function createPageRouter(options: Config) {
     }
 
     try {
-      let { content, controller } = await app.render(req.url, context) as 
+      let { content, controller } = await (app.render as CA.ServerRender)(req.url, context) as 
       { content: any, controller: Controller }
 
       /**
@@ -162,8 +157,8 @@ export default function createPageRouter(options: Config) {
       // content 可能是异步渲染的
       content = await content
 
-      let initialState: State | undefined = controller.store
-        ? controller.store.getState()
+      let initialState: RIMVC.State | undefined = controller.store
+        ? (controller.store.getState as Function)()
         : undefined
       let htmlConfigs = initialState ? initialState.html : undefined
       let data = {

@@ -1,8 +1,7 @@
 import useCtrl from './useCtrl'
-import Controller from '../controller'
-import { Actions } from '../controller/types'
+import RIMVC from '../index'
 
-export default ():Actions => {
+export default (): RIMVC.Actions | undefined => {
   let ctrl = useCtrl()
   return ctrl.store.actions
 }

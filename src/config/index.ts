@@ -2,16 +2,19 @@
  * 获取配置
  */
 import path from 'path'
-import defaultConfig, { Config } from'./config.defaults'
+import defaultConfig from'./config.defaults'
+import RIMVC from '../index'
 
 export interface Options {
-	config?: Config
+	config: RIMVC.Config | string
 	[x: string]: unknown
 	_?: string[]
 	$0?: string;
 }
 
-type GetConfig = (options: Options) => Config
+interface GetConfig {
+	(options: Options): RIMVC.Config
+}
 
 const getConfig: GetConfig = (options) => {
 	let config = Object.assign({}, defaultConfig)
@@ -24,7 +27,7 @@ const getConfig: GetConfig = (options) => {
 			customConfig = options.config
 			break
 		case 'string':
-			customConfig = require(path.resolve(options.config))
+			customConfig = require(path.resolve(options.config as string))
 			customConfig = customConfig.default || customConfig
 			break
 	}

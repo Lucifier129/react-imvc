@@ -1,7 +1,7 @@
 import path from 'path'
-import { Config } from '../config'
+import RIMVC from '../index'
 
-type GetExternals = (config: Config) => string[]
+type GetExternals = (config: RIMVC.Config) => string[]
 
 export const getExternals: GetExternals = config => {
   let dependencies: string[] = []

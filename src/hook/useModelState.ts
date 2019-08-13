@@ -1,8 +1,8 @@
 import useCtrl from './useCtrl'
 import Controller from '../controller'
-import { State } from '../controller/types'
+import RIMVC from '../index'
 
-export default ():State => {
+export default (): RIMVC.State => {
   let ctrl = useCtrl()
-  return ctrl.store.getState()
+  return (ctrl.store.getState as Function)()
 }

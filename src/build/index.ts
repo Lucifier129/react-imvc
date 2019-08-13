@@ -4,9 +4,10 @@ import path from 'path'
 import webpack from 'webpack'
 import del from 'del'
 import start from '../start'
-import getConfig, { Config, Options, AppSettings } from '../config'
+import getConfig from '../config'
 import createGulpTask from './createGulpTask'
 import createWebpackConfig from './createWebpackConfig'
+import RIMVC from '../index'
 
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
@@ -14,7 +15,7 @@ import 'regenerator-runtime/runtime'
 process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
 
-export default (options: Options): Promise<Config> => {
+export default (options: RIMVC.Options): Promise<RIMVC.Config> => {
   let config = getConfig(options)
   let delPublicPgs = () => delPublish(path.join(config.root, config.publish))
   let startGulpPgs = () => startGulp(config)
@@ -47,9 +48,9 @@ const delPublish: DelPublish = (folder) => {
   return del(folder)
 }
 
-type StartType<T> = (config: Config) => Promise<T>
+type StartType<T> = (config: RIMVC.Config) => Promise<T>
 
-const startWebpackForClient: StartType<Config | boolean> = (config) => {
+const startWebpackForClient: StartType<RIMVC.Config | boolean> = (config) => {
   let webpackConfig = createWebpackConfig(config, false)
   return new Promise((resolve, reject) => {
     webpack(webpackConfig, (error, stats) => {
@@ -68,7 +69,7 @@ const startWebpackForClient: StartType<Config | boolean> = (config) => {
   })
 }
 
-const startWebpackForServer: StartType<Config> = (config) => {
+const startWebpackForServer: StartType<RIMVC.Config> = (config) => {
   let webpackConfig = createWebpackConfig(config, true)
   return new Promise((resolve, reject) => {
     webpack(webpackConfig, (error, stats) => {
@@ -87,7 +88,7 @@ const startWebpackForServer: StartType<Config> = (config) => {
   })
 }
 
-const startGulp: StartType<Config> = (config) => {
+const startGulp: StartType<RIMVC.Config> = (config) => {
   return new Promise((resolve, reject) => {
     gulp.task('default', createGulpTask(config))
 
@@ -102,17 +103,17 @@ const startGulp: StartType<Config> = (config) => {
   })
 }
 
-const startStaticEntry: StartType<Config> = async (config) => {
+const startStaticEntry: StartType<RIMVC.Config> = async (config) => {
   if (config.staticEntry === '') {
-    return new Promise<Config>((resolve) => { resolve() })
+    return new Promise<RIMVC.Config>((resolve) => { resolve() })
   }
   console.log(`start generating static entry file`)
 
-  let appSettings: AppSettings = {
+  let appSettings: RIMVC.AppSettings = {
     ...config.appSettings,
     type: 'createHashHistory'
   }
-  let staticEntryconfig: Config = {
+  let staticEntryconfig: RIMVC.Config = {
     ...config,
     root: path.join(config.root, config.publish),
     publicPath: config.publicPath || '',
@@ -137,7 +138,7 @@ const startStaticEntry: StartType<Config> = async (config) => {
 
   server.close(() => console.log('finish generating static entry file'))
 
-  return new Promise((resolve, reject) => {
+  return new Promise<RIMVC.Config>((resolve, reject) => {
 
     type ErrorCallback = (err: NodeJS.ErrnoException | null) => void
 

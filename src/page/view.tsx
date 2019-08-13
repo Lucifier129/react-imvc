@@ -1,6 +1,6 @@
 import React from 'react'
 import Script from '../component/Script'
-import { AppSettings } from '../config'
+import RIMVC from '../index'
 
 interface Props {
 	description?: string
@@ -8,7 +8,7 @@ interface Props {
 	title?: string
 	content: string
 	initialState?: object
-	appSettings: AppSettings
+	appSettings: RIMVC.AppSettings
 	publicPath: string
 	assets: {
 		vendor: string

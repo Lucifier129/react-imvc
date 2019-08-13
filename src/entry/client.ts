@@ -3,34 +3,33 @@ import 'regenerator-runtime/runtime'
 import '../polyfill'
 import 'whatwg-fetch'
 import ReactDOM from 'react-dom'
-// @ts-ignore
 import CA from 'create-app'
 import util from '../util'
 // @ts-ignore
 import $routes from '@routes'
-import { Global, WindowNative as Window, NativeModule } from '../types'
 import Controller from '../controller'
-import { Preload } from '../controller/types'
-import { AppSettingContext, AppSettingLoader, AppSettingController, AppSettings, Render } from '../config'
+import RIMVC from '../index'
 
-(global as Global).__webpack_public_path__ = (window as Window).__PUBLIC_PATH__ + '/'
-const __APP_SETTINGS__: AppSettings = (window as Window).__APP_SETTINGS__ || {}
-
-const getModule = (module: any) => module.default || module
+(global as RIMVC.Global).__webpack_public_path__ = (window as RIMVC.WindowNative).__PUBLIC_PATH__ + '/'
+const __APP_SETTINGS__: RIMVC.AppSettings = (window as RIMVC.WindowNative).__APP_SETTINGS__ || {}
 
 const webpackLoader: CA.Loader = (loadModule, location, context) => {
-  return loadModule(location, context).then(getModule)
+  return (<CA.LoadController>loadModule)(location, context)
 }
 
-let shouldHydrate = !!(window as Window).__INITIAL_STATE__
+let shouldHydrate = !!(window as RIMVC.WindowNative).__INITIAL_STATE__
 
-const render: CA.ViewEngineRender = (view, container, controller) => {
+const render: RIMVC.Render = (
+  view: React.ReactElement,
+  container: Element | null,
+  controller?: Controller
+) => {
   try {
     if (shouldHydrate) {
       shouldHydrate = false
-      ReactDOM.hydrate(view, container)
+      ReactDOM.hydrate(<React.ReactElement>view, container)
     } else {
-      ReactDOM.render(view, container)
+      ReactDOM.render(<React.ReactElement>view, container)
     }
   } catch (error) {
     if (!controller) throw error
@@ -52,7 +51,7 @@ const routes = util.getFlatList(
   Array.isArray($routes) ? $routes : Object.values($routes)
 )
 
-const appSettings: AppSettings = {
+const appSettings: RIMVC.AppSettings = {
   hashType: 'hashbang',
   container: '#root',
   ...__APP_SETTINGS__,
@@ -70,7 +69,7 @@ const appSettings: AppSettings = {
 /**
  * 动态收集服务端预加载的内容
  */
-const preload: Preload = {}
+const preload: RIMVC.Preload = {}
 Array.from(document.querySelectorAll('[data-preload]')).forEach(elem => {
   let name = elem.getAttribute('data-preload')
   let content = elem.textContent || elem.innerHTML
@@ -81,14 +80,13 @@ Array.from(document.querySelectorAll('[data-preload]')).forEach(elem => {
 if(typeof appSettings.context !== 'undefined')
   appSettings.context.preload = preload
 
-const app = CA.client(appSettings)
-
-app.start()
+const app = CA.client(appSettings);
+(app.start as CA.Start)()
 
 // 热更新
-if (typeof module !== 'undefined' && (module as NativeModule).hot) {
-  if ((module as NativeModule).hot) {
-    let hot = (module as NativeModule).hot
+if (typeof module !== 'undefined' && (module as RIMVC.NativeModule).hot) {
+  if ((module as RIMVC.NativeModule).hot) {
+    let hot = (module as RIMVC.NativeModule).hot
     if (hot && hot.accept) {
       hot.accept()
     }

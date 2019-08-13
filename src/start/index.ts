@@ -14,9 +14,9 @@ import fetch, * as nodeFetch from 'node-fetch'
 import express from 'express'
 import debug from 'debug'
 import createExpressApp from '../entry/server'
-import getConfig, { Options, Config } from '../config'
+import getConfig, { Options } from '../config'
 import createPageRouter from '../page/createPageRouter'
-import { Global, RequestHandler  } from '../types'
+import RIMVC from '../index'
 
 type StartFunc = (options: Options) => Promise<{server: http.Server, app: express.Express}>
 
@@ -39,7 +39,7 @@ const start: StartFunc = (options) => {
 		}
 		return fetch(url, options)
   }
-  (global as Global).fetch = fetchNative  
+  (global as RIMVC.Global).fetch = fetchNative  
 
 	/**
 	 * set port from environment and store in Express.
@@ -55,7 +55,7 @@ const start: StartFunc = (options) => {
 	let pageRouter = createPageRouter(config)
 
 	// 添加 renderPage 方法，让自定义的 routes 里可以手动调用，走 IMVC 的渲染流程
-	let addRenderPage: RequestHandler = (req, res, next) => {
+	let addRenderPage: RIMVC.RequestHandler = (req, res, next) => {
 		res.renderPage = pageRouter
 		next()
 	}
@@ -78,7 +78,7 @@ const start: StartFunc = (options) => {
 	app.use(pageRouter)
 
 	// catch 404 and forward to error handler
-	let catch404: RequestHandler = function(req, res, next) {
+	let catch404: RIMVC.RequestHandler = function(req, res, next) {
 		const err: any = new Error('Not Found')
 		err.status = 404
 		res.render('404', err)

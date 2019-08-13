@@ -1,7 +1,7 @@
 import React from 'react'
 import Controller from '../controller'
 
-type Props = {
+export interface Props {
   controller: Controller
 }
 
@@ -13,7 +13,7 @@ export default class ControllerProxy extends React.Component<Props> {
   static ignoreErrors = true
   updateDocumentTitle() {
     let { controller } = this.props
-    let { html } = controller.store.getState()
+    let { html } = (controller.store.getState as Function)()
 
     if (html && html.title !== document.title) {
       document.title = html.title

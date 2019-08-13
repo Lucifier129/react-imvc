@@ -1,6 +1,10 @@
-import { Store } from './types'
+import RIMVC from '../index'
 
-export default function attachDevToolsIfPossible(store:Store) {
+interface AttachDevToolsIfPossible {
+  (store: RIMVC.Store): void
+}
+
+const attachDevToolsIfPossible: AttachDevToolsIfPossible = (store) => {
   if (process.env.NODE_ENV === "production") {
     return;
   }
@@ -13,16 +17,16 @@ export default function attachDevToolsIfPossible(store:Store) {
 
   let options = {
     name: window.location.pathname + window.location.search,
-    actionsWhitelist: Object.keys(store.actions)
+    actionsWhitelist: Object.keys(store.actions as RIMVC.Actions)
   };
   // @ts-ignore
   let reduxStore:Store = __REDUX_DEVTOOLS_EXTENSION__(
     store.getState,
-    store.getState(),
+    (store.getState as Function)(),
     options
   );
   let isSync = false;
-  store.subscribe((data: Record<string, string>) => {
+  (store.subscribe as Function)((data: Record<string, string>) => {
     if (!data || data.actionType === __FROM_REDUX_DEVTOOLS_EXTENSION__) {
       return;
     }
@@ -36,11 +40,13 @@ export default function attachDevToolsIfPossible(store:Store) {
 
   reduxStore.subscribe(() => {
     if (!isSync) {
-      store.replaceState(reduxStore.getState(), {
+      (store.replaceState as Function)(reduxStore.getState(), {
         actionType: __FROM_REDUX_DEVTOOLS_EXTENSION__,
-        previousState: store.getState(),
+        previousState: (store.getState as Function)(),
         currentState: reduxStore.getState()
       });
     }
   });
 }
+
+export default attachDevToolsIfPossible

@@ -1,7 +1,7 @@
 import React, { Component, Children } from 'react'
 import { findDOMNode } from 'react-dom'
 
-type Props = {
+interface Props {
   onClick?: Function
   children?: React.ReactNode
 }
@@ -26,7 +26,7 @@ export default class OuterClickWrapper extends Component<Props> {
     }
   }
   // 结点是否包含结点
-  contains(rootNode: Element | Text, node: Node | null) {
+  contains(rootNode: Element | Text, node: Node) {
     if (typeof rootNode.contains === 'function') {
       return rootNode.contains(node)
     }
@@ -34,7 +34,7 @@ export default class OuterClickWrapper extends Component<Props> {
       if (node === rootNode) {
         return true
       }
-      node = node.parentNode
+      node = <Node>node.parentNode
     }
     return false
   }
@@ -44,7 +44,7 @@ export default class OuterClickWrapper extends Component<Props> {
       return
     }
     let root = findDOMNode(this)
-    let isContains = this.contains(root as Element | Text, (event.target || event.srcElement) as Node | null)
+    let isContains = this.contains(root as Element | Text, (event.target || event.srcElement) as Node)
     if (!isContains) {
       onClick(event)
     }
