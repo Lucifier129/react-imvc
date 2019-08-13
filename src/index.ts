@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
 import compression from 'compression'
 import Controller from './controller'
+import yargs from 'yargs';
 
 export { default as start } from './start'
 export { default as buuld } from './build'
@@ -92,7 +93,7 @@ namespace RIMVC {
   export interface RenderToString extends CA.RenderTo {
     (
       view: React.ReactElement,
-      controller: Controller
+      controller?: Controller
     ): void
   }
 
@@ -165,12 +166,11 @@ namespace RIMVC {
     [propName: string]: string
   }
 
-  export interface Options {
-    [x: string]: unknown
-    _: string[]
-    $0: string
+  interface OptionsMore {
     config?: string
   }
+
+  export type Options = OptionsMore & yargs.Argv
 
   export interface BabelConfig  {
     filename?: string,

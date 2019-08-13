@@ -20,7 +20,7 @@ const commonjsLoader: CA.Loader = (loadModule, location, context) => {
  */
 const createElement = React.createElement
 
-const renderToNodeStream: RIMVC.RenderToNodeStream = (view: React.ReactElement, controller: Controller | undefined) => {
+const renderToNodeStream: RIMVC.RenderToNodeStream = (view: React.ReactElement, controller?: Controller) => {
   return new Promise((resolve, reject) => {
     let stream = ReactDOMServer.renderToNodeStream(<React.ReactElement>view)
     let buffers: Uint8Array[] = []
@@ -50,7 +50,7 @@ const renderToNodeStream: RIMVC.RenderToNodeStream = (view: React.ReactElement, 
   })
 }
 
-const renderToString: RIMVC.RenderToString = (view: React.ReactElement, controller: Controller | undefined) => {
+const renderToString: RIMVC.RenderToString = (view: React.ReactElement, controller?: Controller) => {
   try {
     return ReactDOMServer.renderToString(<React.ReactElement>view)
   } catch (error) {

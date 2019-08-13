@@ -5,15 +5,8 @@ import path from 'path'
 import defaultConfig from'./config.defaults'
 import RIMVC from '../index'
 
-export interface Options {
-	config: RIMVC.Config | string
-	[x: string]: unknown
-	_?: string[]
-	$0?: string;
-}
-
 interface GetConfig {
-	(options: Options): RIMVC.Config
+	(options: RIMVC.Options): RIMVC.Config
 }
 
 const getConfig: GetConfig = (options) => {
