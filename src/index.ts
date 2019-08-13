@@ -530,6 +530,7 @@ namespace RIMVC {
       env?: string
       preload?: Payload
       publicPath?: string
+      location?: Location
       restapi?: string
       userInfo?: object
       [propName: string]: any
