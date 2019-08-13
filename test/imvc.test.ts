@@ -4,6 +4,7 @@ import http from 'http'
 import express from 'express'
 import puppeteer from 'puppeteer'
 import RIMVC from '../src'
+import start from '../src/start'
 
 interface Server extends http.Server {
 	isTouched?: boolean
@@ -13,7 +14,6 @@ interface App extends express.Express {
 }
 
 process.env.NODE_ENV = 'development'
-const start = require('../start')
 let PORT = 3333
 const ROOT = path.join(__dirname, 'project')
 const config: Partial<RIMVC.Config> = {

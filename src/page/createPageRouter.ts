@@ -21,7 +21,7 @@ const commonjsLoader: CA.Loader = (loadModule, location, context) => {
 const createElement = React.createElement
 
 const renderToNodeStream: RIMVC.RenderToNodeStream = (view: React.ReactElement, controller?: Controller) => {
-  return new Promise((resolve, reject) => {
+  return new Promise<{}>((resolve, reject) => {
     let stream = ReactDOMServer.renderToNodeStream(<React.ReactElement>view)
     let buffers: Uint8Array[] = []
     stream.on('data', chunk => buffers.push(chunk))

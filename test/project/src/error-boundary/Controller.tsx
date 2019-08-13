@@ -2,7 +2,7 @@ import ErrorBoundary from '../../../../src/component/ErrorBoundary'
 import React, { useState, useEffect } from 'react'
 import RIMVC from '../../../../src';
 
-export default class extends RIMVC.Controller {
+class Controller extends RIMVC.Controller {
   SSR = true // enable server side rendering
   View = View
   actions = {
@@ -13,13 +13,13 @@ export default class extends RIMVC.Controller {
   // componentWillCreate() {
   //   throw new Error('componentWillCreate')
   // }
-  getComponentFallback(displayName) {
+  getComponentFallback(displayName: string) {
     return `component-fallback: ${displayName}`
   }
   getViewFallback() {
     return 'view-fallback'
   }
-  errorDidCatch(error, type) {
+  errorDidCatch(error: Error, type: string) {
     console.log('error-did-catch', type, error)
   }
   componentDidMount() {
@@ -29,6 +29,8 @@ export default class extends RIMVC.Controller {
     
   }
 }
+
+export default Controller
 
 function View() {
   return (

@@ -34,7 +34,7 @@ interface BaseViewClass extends React.ComponentClass<RIMVC.ViewProps> {
   viewId?: any
 }
 type UdfFuncType = {
-  (...args: any[]):any
+  (...args: any[]): any
 }
 
 interface InitailState {
@@ -57,27 +57,27 @@ export default class Controller implements CA.Controller {
   context: RIMVC.Context
   handlers: RIMVC.Handlers
   meta: RIMVC.Meta
-  errorDidCatch: { (error:Error, str: string):void } | undefined
-  getComponentFallback: { (displayName: string, InputComponent: React.ComponentType):void } | undefined
   proxyHandler: any
   resetScrollOnMount?: boolean
   [propName: string]: any
-
-  Loading: BaseViewFC | BaseViewClass = (...args) => null
   matcher?: CA.Matcher
   loader: RIMVC.Loader | undefined
-  getViewFallback:UdfFuncType | undefined
-  getInitialState:UdfFuncType | undefined
-  stateDidReuse:UdfFuncType | undefined
-  getFinalActions:UdfFuncType | undefined
-  shouldComponentCreate:UdfFuncType | undefined
-  componentWillCreate:UdfFuncType | undefined
-  refreshView:UdfFuncType | undefined
-  stateDidChange:UdfFuncType | undefined
-  saveToCache:UdfFuncType | undefined
-  pageWillLeave:UdfFuncType | undefined
-  windowWillUnload:UdfFuncType | undefined
-  pageDidBack:UdfFuncType | undefined
+  Loading: BaseViewFC | BaseViewClass = (...args) => null
+
+  errorDidCatch?(error:Error, str: string): void
+  getComponentFallback?(displayName: string, InputComponent: React.ComponentType):void
+  getViewFallback?(...args: any[]): any
+  getInitialState?(...args: any[]): any
+  stateDidReuse?(...args: any[]): any
+  getFinalActions?(...args: any[]): any
+  shouldComponentCreate?(...args: any[]): any
+  componentWillCreate?(...args: any[]): any
+  refreshView?(...args: any[]): any
+  stateDidChange?(...args: any[]): any
+  saveToCache?(...args: any[]): any
+  pageWillLeave?(...args: any[]): any
+  windowWillUnload?(...args: any[]): any
+  pageDidBack?(...args: any[]): any
 
   constructor(location: RIMVC.Location, context: RIMVC.Context) {
     this.meta = {
