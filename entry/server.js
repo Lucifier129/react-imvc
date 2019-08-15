@@ -61,7 +61,8 @@ export default function createExpressApp(config) {
 
 	// handle cookieParser
 	if (config.cookieParser) {
-		app.use(cookieParser(config.cookieParser))
+		let { secret = true, ...options } = config.cookieParser
+		app.use(cookieParser(secret, options))
 	}
 
 	app.use('/mock', (req, res, next) => {
