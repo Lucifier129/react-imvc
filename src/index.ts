@@ -1,6 +1,6 @@
 import express from 'express'
 import yargs from 'yargs';
-import CA from 'create-app'
+import createApp from 'create-app/client'
 import webpack from 'webpack'
 import serveStatic from 'serve-static'
 import cookieParser from 'cookie-parser'
@@ -114,7 +114,7 @@ namespace RIMVC {
     [propName: string]: GulpConfigItem
   }
   
-  export interface Render extends CA.RenderTo {
+  export interface Render extends createApp.RenderTo {
     (
       view: React.ReactElement,
       container?: Element | null,
@@ -122,21 +122,21 @@ namespace RIMVC {
     ): void
   }
 
-  export interface RenderToNodeStream extends CA.RenderTo {
+  export interface RenderToNodeStream extends createApp.RenderTo {
     (
       view: React.ReactElement,
       controller?: Controller
     ): Promise<{}>
   }
 
-  export interface RenderToString extends CA.RenderTo {
+  export interface RenderToString extends createApp.RenderTo {
     (
       view: React.ReactElement,
       controller?: Controller
     ): void
   }
 
-  export interface ViewEngine extends CA.ViewEngine {
+  export interface ViewEngine extends createApp.ViewEngine {
     render: Render
   }
 
@@ -161,7 +161,7 @@ namespace RIMVC {
     [propName: string]: any
   }
   
-  export interface AppSettings extends CA.Settings {
+  export interface AppSettings extends createApp.Settings {
     hashType?: string, // hash history 显示的起点缀，默认是 !
     container?: string // react 组件渲染的容器
     cacheAmount?: number
@@ -560,7 +560,7 @@ namespace RIMVC {
       [propName: string]: any
   }
 
-  export interface Context extends CA.Context {
+  export interface Context extends createApp.Context {
       basename?: string
       env?: string
       preload?: Payload

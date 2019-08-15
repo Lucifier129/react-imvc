@@ -1,4 +1,4 @@
-import CA from 'create-app'
+import createApp from 'create-app/client'
 
 export default {
   toJSON,
@@ -13,7 +13,7 @@ export default {
 }
 
 
-export type RouteList = CA.Route[]
+export type RouteList = createApp.Route[]
 
 function getFlatList(list: RouteList): RouteList {
   let result: RouteList = []
