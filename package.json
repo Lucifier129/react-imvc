@@ -9,8 +9,8 @@
   },
   "homepage": "https://github.com/Lucifier129/react-imvc",
   "scripts": {
-    "build": "gulp",
-    "prebuild": "rimraf ./publish",
+    "build": "tsc",
+    "prebuild": "rimraf ./dist",
     "test": "node mocha-runner",
     "test:jest": "jest --watchAll",
     "publish-imvc": "npm publish ./publish",

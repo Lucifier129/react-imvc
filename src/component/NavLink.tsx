@@ -6,7 +6,7 @@ import RIMVC from '../index'
 
 const withLocation = connect(({ state }: ConnectProps) => {
   return {
-    location: state.location
+    location: (state as RIMVC.State).location
   }
 })
 

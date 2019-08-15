@@ -10,7 +10,7 @@ export interface ConnectProps {
 
 export type ComponentProps = {
   isActive: { (...args: any[]): boolean };
-  location: Location;
+  location: RIMVC.Location;
   className: string;
   activeClassName: string;
   style: object;

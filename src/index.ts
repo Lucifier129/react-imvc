@@ -5,19 +5,21 @@ import serveStatic from 'serve-static'
 import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
 import compression from 'compression'
-import Controller from './controller'
+import _Controller from './controller'
 import yargs from 'yargs';
 
 export { default as start } from './start'
 export { default as buuld } from './build'
 
 const RIMVC = {
-  Controller
+  Controller: _Controller
 }
 
 export default RIMVC
 
 namespace RIMVC {
+
+  export type Controller = _Controller
   export interface Global extends NodeJS.Global {
     controller: Controller
     __webpack_public_path__: string
@@ -57,7 +59,7 @@ namespace RIMVC {
   export interface BaseViewFC extends React.FC<RIMVC.ViewProps> {
     viewId?: any
   }
-  
+
   export interface BaseViewClass extends React.ComponentClass<RIMVC.ViewProps> {
     viewId?: any
   }
@@ -88,7 +90,7 @@ namespace RIMVC {
     [propName: string]: GulpConfigItem
   }
   
-  export interface Render extends CA.ViewEngineRender {
+  export interface Render extends CA.RenderTo {
     (
       view: React.ReactElement,
       container: Element | null,

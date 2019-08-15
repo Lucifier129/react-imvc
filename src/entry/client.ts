@@ -3,18 +3,17 @@ import 'regenerator-runtime/runtime'
 import '../polyfill'
 import 'whatwg-fetch'
 import ReactDOM from 'react-dom'
-import CA from 'create-app'
+import createApp from 'create-app/client'
 import util from '../util'
 // @ts-ignore
 import $routes from '@routes'
-import Controller from '../controller'
 import RIMVC from '../index'
 
 (global as RIMVC.Global).__webpack_public_path__ = (window as RIMVC.WindowNative).__PUBLIC_PATH__ + '/'
 const __APP_SETTINGS__: RIMVC.AppSettings = (window as RIMVC.WindowNative).__APP_SETTINGS__ || {}
 
-const webpackLoader: CA.Loader = (loadModule, location, context) => {
-  return (<CA.LoadController>loadModule)(location, context)
+const webpackLoader: createApp.Loader = (loadModule, location, context) => {
+  return (<createApp.LoadController>loadModule)(location, context)
 }
 
 let shouldHydrate = !!(window as RIMVC.WindowNative).__INITIAL_STATE__
@@ -22,14 +21,14 @@ let shouldHydrate = !!(window as RIMVC.WindowNative).__INITIAL_STATE__
 const render: RIMVC.Render = (
   view: React.ReactElement,
   container: Element | null,
-  controller?: Controller
+  controller?: RIMVC.Controller
 ) => {
   try {
     if (shouldHydrate) {
       shouldHydrate = false
-      ReactDOM.hydrate(<React.ReactElement>view, container)
+      ReactDOM.hydrate(view, container)
     } else {
-      ReactDOM.render(<React.ReactElement>view, container)
+      ReactDOM.render(view, container)
     }
   } catch (error) {
     if (!controller) throw error
@@ -80,8 +79,8 @@ Array.from(document.querySelectorAll('[data-preload]')).forEach(elem => {
 if(typeof appSettings.context !== 'undefined')
   appSettings.context.preload = preload
 
-const app = CA.client(appSettings);
-(app.start as CA.Start)()
+const app = createApp(appSettings);
+(app.start as createApp.Start)()
 
 // 热更新
 if (typeof module !== 'undefined' && (module as RIMVC.NativeModule).hot) {
