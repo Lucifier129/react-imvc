@@ -1,6 +1,6 @@
 import React from 'react'
 import Script from '../../../src/component/Script'
-import RIMVC from '../../../src'
+import RIMVC from '../../../'
 
 
 export default function Page(props: RIMVC.RenderProps) {

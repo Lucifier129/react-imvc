@@ -20,15 +20,15 @@ let shouldHydrate = !!(window as RIMVC.WindowNative).__INITIAL_STATE__
 
 const render: RIMVC.Render = (
   view: React.ReactElement,
-  container: Element | null,
+  container?: Element | null,
   controller?: RIMVC.Controller
 ) => {
   try {
     if (shouldHydrate) {
       shouldHydrate = false
-      ReactDOM.hydrate(view, container)
+      ReactDOM.hydrate([view as React.ReactElement], container as Element | null)
     } else {
-      ReactDOM.render(view, container)
+      ReactDOM.render([view as React.ReactElement], container as Element | null)
     }
   } catch (error) {
     if (!controller) throw error

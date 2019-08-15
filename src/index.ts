@@ -1,18 +1,42 @@
 import express from 'express'
+import yargs from 'yargs';
 import CA from 'create-app'
 import webpack from 'webpack'
 import serveStatic from 'serve-static'
 import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
 import compression from 'compression'
-import _Controller from './controller'
-import yargs from 'yargs';
 
-export { default as start } from './start'
-export { default as buuld } from './build'
+import _build from './build'
+import _start from './start'
+import _Controller from './controller'
+import * as _Component from './component'
+import * as _Config from './config'
+import _Context from './context'
+import _connect from './hoc/connect'
+import {
+  useCtrl as _useCtrl,
+  useModel as _useModel,
+  useModelActions as _useModelAction,
+  useModelState as _useModelState
+} from './hook'
+
+export const start = _start
+export const build = _build
+export const Controller = _Controller
+export const Component = _Component
+export const Config = _Config
+export const Context = _Context
+export const connect = _connect
 
 const RIMVC = {
-  Controller: _Controller
+  Controller: _Controller,
+  build: _build,
+  start: _start,
+  Component: _Component,
+  Config: _Config,
+  Context: _Context,
+  connect: _connect
 }
 
 export default RIMVC
@@ -93,7 +117,7 @@ namespace RIMVC {
   export interface Render extends CA.RenderTo {
     (
       view: React.ReactElement,
-      container: Element | null,
+      container?: Element | null,
       controller?: Controller
     ): void
   }

@@ -3,14 +3,14 @@ import path from 'path'
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 // @ts-ignore
-import CA from 'create-app'
+import createApp from 'create-app/server'
 import util from '../util'
 import RIMVC from '../index'
 import Controller from '../controller'
 
 const { getFlatList } = util
-const commonjsLoader: CA.Loader = (loadModule, location, context) => {
-  return (<CA.LoadController>loadModule)(location, context)
+const commonjsLoader: createApp.Loader = (loadModule, location, context) => {
+  return (<createApp.LoadController>loadModule)(location, context)
 }
 
 /**
@@ -81,7 +81,7 @@ const renderers: {
 
 export default function createPageRouter(options: RIMVC.Config) {
   let config = Object.assign({}, options)
-  let routes: CA.Route[] = []
+  let routes: createApp.Route[] = []
 
   if (config.useServerBundle) {
     routes = require(path.join(config.root, config.serverBundleName))
@@ -95,14 +95,14 @@ export default function createPageRouter(options: RIMVC.Config) {
   routes = getFlatList(routes)
 
   let router = Router()
-  let render: CA.RenderTo = renderers[config.renderMode] || renderToNodeStream
+  let render: createApp.RenderTo = renderers[config.renderMode] || renderToNodeStream
   let serverAppSettings: RIMVC.AppSettings = {
     loader: commonjsLoader,
     routes: routes,
     viewEngine: { render }
   }
 
-  let app = CA.server(serverAppSettings)
+  let app = createApp(serverAppSettings)
   let layoutView = config.layout || path.join(__dirname, 'view')
 
   // 纯浏览器端渲染模式，用前置中间件拦截所有请求
@@ -118,7 +118,7 @@ export default function createPageRouter(options: RIMVC.Config) {
         const routes = getFlatList(
           Array.isArray($routes) ? $routes : Object.values($routes)
         )
-        app = CA.server({
+        app = createApp({
           ...serverAppSettings,
           routes
         })
@@ -143,7 +143,7 @@ export default function createPageRouter(options: RIMVC.Config) {
     }
 
     try {
-      let { content, controller } = await (app.render as CA.ServerRender)(req.url, context) as 
+      let { content, controller } = await (app.render as createApp.ServerRender)(req.url, context) as 
       { content: any, controller: Controller }
 
       /**

@@ -6,7 +6,6 @@
       "dom.iterable",
       "esnext"
     ],
-    "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -15,11 +14,10 @@
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "noEmit": true,
-    "jsx": "preserve",
+    "jsx": "react",
     "declaration": true,
-    "declarationDir": "dist/types",
-    "outDir": "dist/lib",
+    "declarationDir": "./dist/types",
+    "outDir": "./dist/lib",
     "typeRoots": [
       "node_modules/@types"
     ]
