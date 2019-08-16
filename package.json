@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsc",
     "prebuild": "rimraf ./dist",
-    "test": "jest --coverage",
+    "test": "jest --coverage --detectOpenHandles",
     "publish-imvc": "npm publish ./publish",
     "prepublish-imvc": "npm run build"
   },
