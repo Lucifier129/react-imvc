@@ -1,4 +1,4 @@
-import CA from 'create-app'
+import CA from 'create-app/client'
 
 export default {
   toJSON,

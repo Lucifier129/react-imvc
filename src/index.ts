@@ -1,6 +1,6 @@
 import express from 'express'
 import yargs from 'yargs';
-import CA from 'create-app'
+import CA from 'create-app/client'
 import webpack from 'webpack'
 import serveStatic from 'serve-static'
 import cookieParser from 'cookie-parser'
@@ -139,34 +139,12 @@ namespace RIMVC {
   export interface ViewEngine extends CA.ViewEngine {
     render: Render
   }
-
-  export interface AppSettingLoader {
-    (
-      module: AppSettingController,
-      location: string,
-      context: AppSettingContext
-    ): Promise<any>
-  }
-  export interface AppSettingContext {
-    isServer: boolean
-    isClient: boolean
-    preload: Preload
-  }
-  export interface AppSettingController {
-    (...args: any[]): any
-    render: () => Element
-    init?: (...args: any[]) => any
-    update?: (...args: any[]) => any
-    destroy?: (...args: any[]) => any
-    [propName: string]: any
-  }
   
   export interface AppSettings extends CA.Settings {
     hashType?: string, // hash history 显示的起点缀，默认是 !
     container?: string // react 组件渲染的容器
     cacheAmount?: number
     basename?: string
-    context?: AppSettingContext
   }
   
   interface GulpConfig {
