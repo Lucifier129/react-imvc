@@ -3,8 +3,8 @@ import fetch from 'node-fetch'
 import http from 'http'
 import express from 'express'
 import puppeteer from 'puppeteer'
-import RIMVC from '../src'
-import start from '../src/start'
+import RIMVC from '../'
+import start from '../start'
 
 interface Server extends http.Server {
 	isTouched?: boolean

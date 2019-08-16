@@ -11,8 +11,7 @@
   "scripts": {
     "build": "tsc",
     "prebuild": "rimraf ./dist",
-    "test": "node mocha-runner",
-    "test:jest": "jest",
+    "test": "jest --coverage",
     "publish-imvc": "npm publish ./publish",
     "prepublish-imvc": "npm run build"
   },
@@ -132,8 +131,11 @@
     "react-dom": "^16.8.0"
   },
   "devDependencies": {
+    "@types/fetch-mock": "^7.3.1",
     "@types/jest": "^24.0.16",
+    "fetch-mock": "^7.3.9",
     "jest": "^24.8.0",
+    "puppeteer": "^4.3.0",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
     "rimraf": "^2.6.1",

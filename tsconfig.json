@@ -22,5 +22,24 @@
       "node_modules/@types"
     ]
   },
-  "include": ["./src"]
+  "include": [
+    "./bin",
+    "./build",
+    "./component",
+    "./config",
+    "./context",
+    "./controller",
+    "./entry",
+    "./hoc",
+    "./hook",
+    "./middleware",
+    "./page",
+    "./polyfill",
+    "./scripts",
+    "./start",
+    "./util"
+  ],
+  "exclude": [
+    "dist"
+  ]
 }
