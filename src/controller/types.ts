@@ -1,2 +1,0 @@
-import Controller from './index'
-

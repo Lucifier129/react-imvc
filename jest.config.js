@@ -8,7 +8,7 @@ module.exports = {
       ".(ts|tsx)": "ts-jest"
     },
     "testEnvironment": "jsdom",
-    "testRegex": "(/test/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "testRegex": "test/[a-zA-Z]+.test.ts$",
     "moduleFileExtensions": [
       "ts",
       "tsx",

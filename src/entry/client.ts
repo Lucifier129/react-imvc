@@ -18,7 +18,7 @@ const webpackLoader: createApp.Loader = (loadModule, location, context) => {
 
 let shouldHydrate = !!(window as RIMVC.WindowNative).__INITIAL_STATE__
 
-const render: RIMVC.Render = (
+const render: RIMVC.Render<React.ReactElement> = (
   view: React.ReactElement,
   container?: Element | null,
   controller?: RIMVC.Controller

@@ -114,7 +114,7 @@ namespace RIMVC {
     [propName: string]: GulpConfigItem
   }
   
-  export interface Render extends createApp.RenderTo {
+  export interface Render<E = string> extends createApp.RenderTo<E> {
     (
       view: React.ReactElement,
       container?: Element | null,
@@ -122,16 +122,16 @@ namespace RIMVC {
     ): void
   }
 
-  export interface RenderToNodeStream extends createApp.RenderTo {
+  export interface RenderToNodeStream<E = string> extends createApp.RenderTo<E> {
     (
-      view: React.ReactElement,
+      view: E,
       controller?: Controller
     ): Promise<{}>
   }
 
-  export interface RenderToString extends createApp.RenderTo {
+  export interface RenderToString<E = string> extends createApp.RenderTo<E> {
     (
-      view: React.ReactElement,
+      view: E,
       controller?: Controller
     ): void
   }

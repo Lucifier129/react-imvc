@@ -20,7 +20,7 @@ const commonjsLoader: createApp.Loader = (loadModule, location, context) => {
  */
 const createElement = React.createElement
 
-const renderToNodeStream: RIMVC.RenderToNodeStream = (view: React.ReactElement, controller?: Controller) => {
+const renderToNodeStream: RIMVC.RenderToNodeStream<React.ReactElement> = (view: React.ReactElement, controller?: Controller) => {
   return new Promise<{}>((resolve, reject) => {
     let stream = ReactDOMServer.renderToNodeStream(<React.ReactElement>view)
     let buffers: Uint8Array[] = []
@@ -50,7 +50,7 @@ const renderToNodeStream: RIMVC.RenderToNodeStream = (view: React.ReactElement, 
   })
 }
 
-const renderToString: RIMVC.RenderToString = (view: React.ReactElement, controller?: Controller) => {
+const renderToString: RIMVC.RenderToString<React.ReactElement> = (view: React.ReactElement, controller?: Controller) => {
   try {
     return ReactDOMServer.renderToString(<React.ReactElement>view)
   } catch (error) {
@@ -72,8 +72,8 @@ const renderToString: RIMVC.RenderToString = (view: React.ReactElement, controll
 }
 
 const renderers: {
-  renderToNodeStream: RIMVC.RenderToNodeStream,
-  renderToString: RIMVC.RenderToString
+  renderToNodeStream: RIMVC.RenderToNodeStream<React.ReactElement>,
+  renderToString: RIMVC.RenderToString<React.ReactElement>
 } = {
   renderToNodeStream,
   renderToString
@@ -95,7 +95,7 @@ export default function createPageRouter(options: RIMVC.Config) {
   routes = getFlatList(routes)
 
   let router = Router()
-  let render: createApp.RenderTo = renderers[config.renderMode] || renderToNodeStream
+  let render: createApp.RenderTo<React.ReactElement> = renderers[config.renderMode] || renderToNodeStream
   let serverAppSettings: RIMVC.AppSettings = {
     loader: commonjsLoader,
     routes: routes,
@@ -143,7 +143,7 @@ export default function createPageRouter(options: RIMVC.Config) {
     }
 
     try {
-      let { content, controller } = await (app.render as createApp.ServerRender)(req.url, context) as 
+      let { content, controller } = await (app.render as createApp.Render)(req.url, context) as 
       { content: any, controller: Controller }
 
       /**

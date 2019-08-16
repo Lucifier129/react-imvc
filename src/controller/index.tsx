@@ -6,7 +6,7 @@ import createStore from 'relite'
 // @ts-ignore
 import Cookie from 'js-cookie'
 import querystring, { stringify } from 'querystring'
-import CA from 'create-app'
+import CA from 'create-app/client'
 import CH from 'create-history'
 import _ from '../util'
 import ViewManager from '../component/ViewManager'
