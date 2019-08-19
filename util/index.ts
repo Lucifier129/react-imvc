@@ -13,9 +13,10 @@ export default {
 }
 
 
-export type RouteList = createApp.Route[]
+type RouteList = createApp.Route[]
+type inputList = RouteList | RouteList[]
 
-function getFlatList(list: RouteList): RouteList {
+function getFlatList(list: inputList): RouteList {
   let result: RouteList = []
   for (let i = 0; i < list.length; i++) {
     let item = list[i]
@@ -86,10 +87,11 @@ const getPath = (path: string | string[]) => {
   return path.split(path_separator_regexp)
 }
 
-export type objectOrArray = {
+interface objectOrArray {
   [key: string]: any
   [key: number]: any
 }
+
 type setValue = (
   obj: objectOrArray,
   keys: string[],
