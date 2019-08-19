@@ -100,33 +100,37 @@ describe('util test', () => {
           expect(callback).toBeCalled()
         }, 1000)
       })
+
+      jest.advanceTimersByTime(1000)
       
-      return Promise.all([pro, timer])
+      return Promise.race([pro, timer])
     })
 
     it('timeoutReject reject in time with promise info when reject time greater then promise time passed in', () => {
-      const callback = jest.fn();
+      const callback = jest.fn()
       const promise = new Promise((_, reject) => {
-        setTimeout(reject, 100, 'promise')
+        setTimeout(reject, 5000, 'promise')
       }).catch()
-      util.timeoutReject(promise, 1000, '')
+      let pro = util.timeoutReject(promise, 10000, '')
       .catch((value) => {
         expect(value).toMatch('promise')
         callback()
       })
-
-      expect(callback).not.toBeCalled();
-
-      const timer = new Promise((resolve) => {
-        setTimeout(resolve, 200);
-      })
-
-      jest.advanceTimersByTime(100)
-
-      return timer.then(() => {
+      .then(() => {
         expect(callback).toBeCalled();
-        expect(callback).toHaveBeenCalledTimes(1);
       })
+
+      jest.advanceTimersByTime(5000)
+
+      let timer = new Promise((resolve) => {
+        setTimeout(() => {
+          expect(callback).toBeCalled()
+        }, 1000)
+      })
+
+      jest.advanceTimersByTime(1000)
+      
+      return Promise.race([pro, timer])
     })
   })
   
