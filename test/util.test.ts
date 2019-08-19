@@ -74,12 +74,14 @@ describe('util test', () => {
         reject()
       })
       util
-      .timeoutReject(promise, 3, null)
+      .timeoutReject(promise, 300, null)
       .catch(() => callback())
       .then(() => callback())
 
-      jest.advanceTimersByTime(1000);
-      expect(callback).toHaveBeenLastCalledWith(expect.any(Function), 10000);
+      expect(callback).not.toBeCalled()
+
+      expect(setTimeout).toBeCalled()
+      expect(callback).toHaveBeenCalledTimes(1);
     })
   })
   
