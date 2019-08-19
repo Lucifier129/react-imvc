@@ -15,7 +15,7 @@ export let UPDATE_STATE = (state: RIMVC.State, newState: RIMVC.State): RIMVC.Sta
   }
 }
 
-export let __PAGE_DID_BACK__ = (state: RIMVC.State, location: Location): RIMVC.State => {
+export let __PAGE_DID_BACK__ = (state: RIMVC.State, location: Partial<RIMVC.Location>): RIMVC.State => {
   return {
     ...state,
     location,
