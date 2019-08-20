@@ -69,19 +69,7 @@ describe('util test', () => {
 
   describe('timeoutReject', () => {
     it('timeoutReject reject in time', () => {
-      const callback = jest.fn()
-      const promise = new Promise((resolve, reject) => {
-        reject()
-      })
-      util
-      .timeoutReject(promise, 300, null)
-      .catch(() => callback())
-      .then(() => callback())
-
-      expect(callback).not.toBeCalled()
-
-      expect(setTimeout).toBeCalled()
-      expect(callback).toHaveBeenCalledTimes(1);
+    
     })
   })
   
