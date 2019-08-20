@@ -53,3 +53,5 @@ const consolePolyfill: ConsolePolyfill = (window) => {
 }
 
 consolePolyfill(typeof window !== 'undefined' ? window : {})
+
+export default consolePolyfill
