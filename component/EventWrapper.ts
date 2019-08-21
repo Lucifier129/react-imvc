@@ -9,14 +9,13 @@ interface Props {
 }
 
 export default class EventWrapper extends React.Component<Props> {
-	static contextType: React.Context<any> = GlobalContext
+	static contextType: React.Context<{}> = GlobalContext
 	static defaultProps: Props = {
 		as: 'div'
 	}
 	render() {
-		const { children, as, ...RestProps } = this.props
-		let tag = as
-		let props: Record<string, any> = RestProps
+		const { children, as: tag, ...restProps } = this.props
+		let props: Record<string, any> = restProps
 		const { handlers } = this.context as { handlers: RIMVC.Handlers }
 		for (let key in props) {
 			if (isHandler(key)) {
@@ -27,9 +26,9 @@ export default class EventWrapper extends React.Component<Props> {
 			}
 		}
 		return React.createElement(
-			tag as keyof HTMLElementTagNameMap,
+			tag ? tag : 'div',
 			props,
 			children
-		  )
+		)
 	}
 }

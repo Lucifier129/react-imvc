@@ -2,7 +2,6 @@ import { Router } from 'express'
 import path from 'path'
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
-// @ts-ignore
 import createApp from 'create-app/server'
 import util from '../util'
 import RIMVC from '../index'
@@ -143,8 +142,7 @@ export default function createPageRouter(options: RIMVC.Config) {
     }
 
     try {
-      let { content, controller } = await (app.render as createApp.Render)(req.url, context) as 
-      { content: any, controller: Controller }
+      let { content, controller } = await (app.render as createApp.Render)(req.url, context)
 
       /**
        * 如果没有返回 content

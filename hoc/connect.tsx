@@ -1,6 +1,6 @@
 import React from "react";
 import GlobalContext from "../context";
-import RIMVC from "..";
+import RIMVC from "../index";
 
 export interface ConnectProps {
   state?: RIMVC.State;

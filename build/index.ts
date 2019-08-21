@@ -15,7 +15,7 @@ import 'regenerator-runtime/runtime'
 process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
 
-export default (options: RIMVC.Options): Promise<RIMVC.Config> => {
+export default (options: RIMVC.Options): Promise<RIMVC.Config | void> => {
   let config = getConfig(options)
   let delPublicPgs = () => delPublish(path.join(config.root, config.publish))
   let startGulpPgs = () => startGulp(config)
@@ -41,14 +41,18 @@ export default (options: RIMVC.Options): Promise<RIMVC.Config> => {
     .catch(errorHandler)
 }
 
-type DelPublish = (folder: string) => Promise<string[]>
+interface DelPublish {
+  (folder: string): Promise<string[]>
+}
 
 const delPublish: DelPublish = (folder) => {
   console.log(`delete publish folder: ${folder}`)
   return del(folder)
 }
 
-type StartType<T> = (config: RIMVC.Config) => Promise<T>
+interface StartType<T> {
+  (config: RIMVC.Config): Promise<T>
+}
 
 const startWebpackForClient: StartType<RIMVC.Config | boolean> = (config) => {
   let webpackConfig = createWebpackConfig(config, false)
@@ -103,9 +107,13 @@ const startGulp: StartType<RIMVC.Config> = (config) => {
   })
 }
 
-const startStaticEntry: StartType<RIMVC.Config> = async (config) => {
-  if (config.staticEntry === '') {
-    return new Promise<RIMVC.Config>((resolve) => { resolve() })
+interface StartStaticEntry<T> {
+  (config: RIMVC.Config): Promise<T | void>
+}
+
+const startStaticEntry: StartStaticEntry<RIMVC.Config> = async (config) => {
+  if (!config.staticEntry) {
+    return
   }
   console.log(`start generating static entry file`)
 
@@ -118,7 +126,7 @@ const startStaticEntry: StartType<RIMVC.Config> = async (config) => {
     root: path.join(config.root, config.publish),
     publicPath: config.publicPath || '',
     appSettings,
-    SSR: true
+    SSR: false
   }
 
   let { server } = await start({

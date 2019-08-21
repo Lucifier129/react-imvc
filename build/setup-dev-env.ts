@@ -50,6 +50,7 @@ export const setupServer: SetupServer = (config, options) => {
 	serverConfig.entry = {
 		routes: path.join(config.root, config.src)
 	}
+	let externals = (serverConfig.externals = getExternals(config))
 	if (!serverConfig.output) {
 		serverConfig.output = {
 			filename: 'routes.js',
@@ -59,7 +60,6 @@ export const setupServer: SetupServer = (config, options) => {
 		serverConfig.output.filename = 'routes.js'
 		serverConfig.output.libraryTarget = 'commonjs2'
 	}
-	let externals = (serverConfig.externals = getExternals(config))
 	delete serverConfig.optimization
 	let serverCompiler = webpack(serverConfig)
 	let mfs = new MFS()

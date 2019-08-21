@@ -12,7 +12,7 @@ import _ from '../util'
 import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
 import attachDevToolsIfPossible from './attachDevToolsIfPossible'
-import RIMVC from '..'
+import RIMVC from '../index'
 
 const REDIRECT =
   typeof Symbol === 'function'
@@ -293,7 +293,7 @@ export default class Controller implements CA.Controller {
   get(url: string, params: object, options: object) {
     let { API } = this
     /**
-     * RIMVC.API shortcut，方便 fetch(name, options) 代替 url
+     * API shortcut，方便 fetch(name, options) 代替 url
      */
     if (API && Object.prototype.hasOwnProperty.call(API, url)) {
       url = API[url]
@@ -426,7 +426,7 @@ export default class Controller implements CA.Controller {
     this.fetch = this.fetch.bind(this)
     this.prefetch = this.prefetch.bind(this)
 
-    // 如果 RIMVC.Model 存在，且 initialState 和 actions 不存在，从 RIMVC.Model 里解构出来
+    // 如果 Model 存在，且 initialState 和 actions 不存在，从 Model 里解构出来
     if (Model && initialState === undefined && actions === undefined) {
       let { initialState: $initialState, ...$actions } = Model
       initialState = this.initialState = $initialState
@@ -692,7 +692,7 @@ const proxyReactCreateElement: ProxyReactCreateElement = ctrl => {
       static displayName = `ErrorBoundary(${displayName})`
       static isErrorBoundary = true
 
-      state:RIMVC.State = {
+      state: RIMVC.State = {
         hasError: false
       }
 

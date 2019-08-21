@@ -11,7 +11,7 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "esnext",
+    "module": "commonjs",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "jsx": "react",
@@ -40,6 +40,7 @@
     "./util"
   ],
   "exclude": [
-    "dist"
+    "dist",
+    "node_modules"
   ]
 }

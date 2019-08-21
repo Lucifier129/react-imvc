@@ -214,12 +214,12 @@ const createWebpackConfig: CreateWebpackConfig = (options, isServer = false) => 
 		babelrc: false,
 		configFile: false,
 		cacheDirectory: true,
-		...(config.babel)(isServer),
+		...config.babel(isServer),
 		// Save disk space when time isn't as important
 		cacheCompression: isProd,
 		compact: isProd
   }
-  const moduleRulesConfig: webpack.Rule[] = [
+  let moduleRulesConfig: webpack.Rule[] = [
     // Disable require.ensure as it's not a standard language feature.
     { parser: { requireEnsure: false } },
     // Process application JS with Babel.
@@ -231,7 +231,7 @@ const createWebpackConfig: CreateWebpackConfig = (options, isServer = false) => 
       options: babelOptions
     }
   ]
-  moduleRulesConfig.concat(config.webpackLoaders, postLoaders)
+  moduleRulesConfig = moduleRulesConfig.concat(config.webpackLoaders, postLoaders)
   const moduleConfig: webpack.Module = {
     // makes missing exports an error instead of warning
     strictExportPresence: true,

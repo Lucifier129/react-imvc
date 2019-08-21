@@ -8,11 +8,7 @@ let args = process.argv.slice(3)
 let [script, paramsStr=''] = command.split('?')
 let query = querystring.parse(paramsStr)
 let params = Object.keys(query).map(key => {
-  if (query[key] !== undefined) {
-    return query[key] ? `--${key}=${query[key]}` : `--${key}`
-  } else {
-    return ''
-  }
+  return query[key] ? `--${key}=${query[key]}` : `--${key}`
 })
 let result: SpawnSyncReturns<Buffer> | undefined = undefined
 
@@ -29,7 +25,7 @@ switch (script) {
     break
 }
 
-if (result !== undefined) {
+if (result) {
   switch (result.signal) {
     case 'SIGKILL':
       console.log(

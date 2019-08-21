@@ -3,7 +3,7 @@ process.env.NODE_ENV = 'production'
 const gulp = require('gulp')
 const plumber = require('gulp-plumber')
 const gulpBabel = require('gulp-babel')
-const babelConfig = require('./src/config/babel')
+const babelConfig = require('./config/babel')
 
 const dest = './publish'
 

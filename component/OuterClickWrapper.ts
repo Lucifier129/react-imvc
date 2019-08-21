@@ -1,5 +1,6 @@
 import React, { Component, Children } from 'react'
 import { findDOMNode } from 'react-dom'
+import RIMVC from '../index'
 
 interface Props {
   onClick?: Function
@@ -10,19 +11,15 @@ export default class OuterClickWrapper extends Component<Props> {
   componentDidMount() {
     if (document.addEventListener) {
       document.addEventListener('click', this.handleOutterClick)
-      //@ts-ignore
-    } else if (document.attachEvent) {
-      //@ts-ignore
-      document.attachEvent('onclick', this.handleOutterClick)
+    } else if ((document as RIMVC.DocumentNative).attachEvent) {
+      (document as RIMVC.DocumentNative).attachEvent('onclick', this.handleOutterClick)
     }
   }
   componentWillUnmount() {
     if (document.removeEventListener) {
       document.removeEventListener('click', this.handleOutterClick)
-      //@ts-ignore
-    } else if (document.detachEvent) {
-      //@ts-ignore
-      document.detachEvent('onclick', this.handleOutterClick)
+    } else if ((document as RIMVC.DocumentNative).detachEvent) {
+      (document as RIMVC.DocumentNative).detachEvent('onclick', this.handleOutterClick)
     }
   }
   // 结点是否包含结点

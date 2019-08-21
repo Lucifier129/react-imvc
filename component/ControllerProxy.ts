@@ -10,7 +10,7 @@ export interface Props {
  * 根据 state 更新 document.title
  */
 export default class ControllerProxy extends React.Component<Props> {
-  static ignoreErrors = true
+  static ignoreErrors: boolean = true
   updateDocumentTitle() {
     let { controller } = this.props
     let { html } = (controller.store.getState as Function)()
@@ -19,7 +19,7 @@ export default class ControllerProxy extends React.Component<Props> {
       document.title = html.title
     }
   }
-  emit(method:string) {
+  emit(method: string) {
     let { controller } = this.props
     try {
       if (typeof controller[method] === 'function') {

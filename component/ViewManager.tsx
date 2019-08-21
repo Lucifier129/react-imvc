@@ -113,8 +113,8 @@ type ItemProps = {
 
 class ViewItem extends React.Component<ItemProps> {
 	static ignoreErrors = true
-	container: any
-	getContainer = (container: any) => {
+	container: HTMLElement | string | null = null
+	getContainer = (container: HTMLElement | string | null) => {
 		this.container = container
 	}
 	getResetScrollOnMount = () => {
@@ -123,10 +123,10 @@ class ViewItem extends React.Component<ItemProps> {
 	}
 	shouldComponentUpdate(nextProps: ItemProps) {
 		if (!nextProps.isActive) {
-			this.container.style.display = 'none'
+			(this.container as HTMLElement).style.display = 'none'
 		} else {
 			if (!this.props.isActive) {
-				this.container.style.display = ''
+				(this.container as HTMLElement).style.display = ''
 				window.scroll(0, this.props.scrollY)
 			}
 		}

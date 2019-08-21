@@ -6,7 +6,7 @@ type GetExternals = (config: RIMVC.Config) => string[]
 export const getExternals: GetExternals = config => {
   let dependencies: string[] = []
 
-  let list = [
+  let list: string[] = [
     path.resolve('package.json'),
     path.join(__dirname, '../package.json'),
     path.join(config.root, '../package.json')

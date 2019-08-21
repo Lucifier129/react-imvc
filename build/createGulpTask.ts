@@ -65,7 +65,7 @@ const createConfig: CreateGulpTaskConfig = options => {
   }
 
   for (let key in options.gulp) {
-    if (config.hasOwnProperty(key) && options.gulp[key] !== undefined) {
+    if (config.hasOwnProperty(key) && options.gulp[key]) {
       config[key].src = config[key].src.concat(options.gulp[key] as string[])
     }
   }
@@ -139,7 +139,7 @@ const createGulpTask: CreateGulpTask = (options) => {
     return gulp
     .src(config.js.src)
     .pipe(plumber())
-    .pipe(babel(options.babel(false)))
+    .pipe(babel(options.babel(false))) // , { babelrc: false }
     .pipe(uglify())
     .pipe(gulp.dest(config.js.dest))
   }

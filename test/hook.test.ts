@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   useCtrl,
   useModel,
@@ -7,7 +8,13 @@ import {
 
 describe('hook', () => {
   describe('useCtrl', () => {
+    it('it work well', () => {
+      let context = React.createContext({
+        a: test
+      })
+      let ctrl = useCtrl()
 
+    })
   })
   
   describe('useModel', () => {

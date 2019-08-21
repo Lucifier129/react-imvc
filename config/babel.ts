@@ -11,13 +11,13 @@ const Babel: GetBabelFunc = (isServer = true) => ({
     // typescript
     // 
     // typescript 中配置不生效
-    // [
-    //   '@babel/preset-typescript',
-    //   {
-    //     isTSX: true,
-    //     allExtensions: true
-    //   }
-    // ]
+    [
+      '@babel/preset-typescript',
+      {
+        isTSX: true,
+        allExtensions: true
+      }
+    ],
     '@babel/preset-typescript'
   ],
   plugins: [

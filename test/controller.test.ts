@@ -95,17 +95,18 @@ describe('controller test', () => {
       it('new location will cover old location attribute', () => {
         let oldState = {
           location: {
-            a: 1
+            basename: 'test1'
           }
         }
         let location = {
-          a: 2
+          basename: 'test1'
         }
         let result = Actions.__PAGE_DID_BACK__(oldState, location)
+        console.log(result)
 
         expect(typeof result).toBe('object')
         expect(typeof result.location).toBe('object')
-        expect(result.location.a).toBe(2)
+        expect(result.location.basename).toBe('test2')
       })
     })
   

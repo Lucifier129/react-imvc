@@ -1,5 +1,6 @@
 import React from 'react'
 import GlobalContext from '../context'
+import RIMVC from '../index'
 
 // fixed: webpack rebuild lost original React.createElement
 // @ts-ignore
@@ -9,29 +10,25 @@ interface Props {
   fallback: object | string | null
 }
 
-type State = {
-  hasError: boolean
-}
-
-export default class ErrorBoundary extends React.Component<Props, State> {
-  static ignoreErrors = true
-  static contextType = GlobalContext
+export default class ErrorBoundary extends React.Component<Props, RIMVC.State> {
+  static ignoreErrors: boolean = true
+  static contextType: React.Context<{}> = GlobalContext
   static getDerivedStateFromError() {
     return { hasError: true }
   }
   static defaultProps: Props = {
     fallback: null
   }
-  state:State = {
+  state: RIMVC.State = {
     hasError: false
   }
-  catchError(error:Error) {
+  catchError(error: Error) {
     let { ctrl } = this.context
     if (ctrl.errorDidCatch) {
       ctrl.errorDidCatch(error, 'view')
     }
   }
-  componentDidCatch(error:Error) {
+  componentDidCatch(error: Error) {
     this.catchError(error)
   }
   render() {
@@ -41,7 +38,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
     let prevCreateElement = React.createElement
     React.createElement = createElement
     try {
-      return this.props.children as React.ReactChildren
+      return this.props.children
     } catch (error) {
       this.catchError(error)
       return this.props.fallback
@@ -58,9 +55,9 @@ export const withFallback = (fallback: object) => (InputComponent: React.Compone
     )
   }
 
-  // const displayName = InputComponent.name || InputComponent.displayName
+  const displayName = InputComponent.name || InputComponent.displayName
 
-  // Component.name = `ErrorBoundary(${displayName})`
+  Component.name = `ErrorBoundary(${displayName})`
 
   return Component
 }

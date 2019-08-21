@@ -17,7 +17,7 @@ interface Props {
 }
 
 export default class Input extends React.Component<Props> {
-	static contextType = GlobalContext
+	static contextType: React.Context<RIMVC.Context> = GlobalContext
 	static defaultProps: Props = {
 		as: 'input',
 		type: 'text',
@@ -52,9 +52,9 @@ export default class Input extends React.Component<Props> {
 		}
 
 		return React.createElement(
-			tag as keyof HTMLElementTagNameMap,
+			tag ? tag : 'input',
 			subProps
-		  )
+		)
 	}
 	getAction() {
 		return this.context.actions[this.props.actionType]
@@ -65,9 +65,9 @@ export default class Input extends React.Component<Props> {
 	handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		let { state, handleInputChange } = this.context
 		let { name, onChange, check, transformer } = this.props
-		let currentValue = event.currentTarget.value
-		let path = check ? `${name}.value` : name
-		let oldValue = getValueByPath(state, path)
+		let currentValue: string = event.currentTarget.value
+		let path: string = check ? `${name}.value` : name
+		let oldValue: string = getValueByPath(state, path)
 
 		if (typeof transformer === 'function') {
 			currentValue = transformer(currentValue, oldValue)
@@ -86,8 +86,8 @@ export default class Input extends React.Component<Props> {
 	handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
 		let { state } = this.context
 		let { name, onFocus } = this.props
-		let path = `${name}.isWarn`
-		let isWarn = getValueByPath(state, path)
+		let path: string = `${name}.isWarn`
+		let isWarn: boolean = getValueByPath(state, path)
 		if (!isWarn) {
 			onFocus && onFocus(event)
 			return
@@ -99,9 +99,9 @@ export default class Input extends React.Component<Props> {
 	}
 	handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
 		let { name, onBlur, check } = this.props
-		let pathOfValidState = `${name}.isValid`
-		let pathOfWarnState = `${name}.isWarn`
-		let isValidValue = (check as { (value:string):boolean })(event.currentTarget.value)
+		let pathOfValidState: string = `${name}.isValid`
+		let pathOfWarnState: string = `${name}.isWarn`
+		let isValidValue: boolean = (check as { (value:string): boolean })(event.currentTarget.value)
 		this.callAction({
 			[pathOfValidState]: isValidValue,
 			[pathOfWarnState]: !isValidValue

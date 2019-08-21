@@ -20,6 +20,7 @@ import {
   useModelActions as _useModelAction,
   useModelState as _useModelState
 } from './hook'
+import CA from 'create-app/dist/types/share/types';
 
 export const start = _start
 export const build = _build
@@ -56,6 +57,11 @@ namespace RIMVC {
     __PUBLIC_PATH__: string
     __APP_SETTINGS__: object
     __INITIAL_STATE__: object
+  }
+
+  export interface DocumentNative extends Document {
+    attachEvent: typeof document.addEventListener
+    detachEvent: typeof document.removeEventListener
   }
   
   export interface Req extends express.Request {
@@ -499,6 +505,11 @@ namespace RIMVC {
   }
 
   export interface State {
+    location?: CA.Location
+    basename?: string
+    publicPath?: string
+    restapi?: string
+    hasError?: boolean
     [propName:string]: any
   }
 

@@ -14,14 +14,14 @@ const getConfig: GetConfig = (options) => {
 
 	options = options || {}
 
-	let customConfig: any = {}
+	let customConfig: Partial<RIMVC.Config> = {}
 	switch (typeof options.config) {
 		case 'object':
 			customConfig = options.config as object
 			break
 		case 'string':
-			customConfig = require(path.resolve(options.config as string))
-			customConfig = customConfig.default as object || customConfig
+			let customConfigModule = require(path.resolve(options.config as string))
+			customConfig = customConfigModule.default as object || customConfig
 			break
 	}
 	Object.assign(config, customConfig)

@@ -136,7 +136,7 @@
     "fetch-mock": "^7.3.9",
     "jest": "^24.8.0",
     "lodash": "^4.17.15",
-    "puppeteer": "^4.3.0",
+    "puppeteer": "^1.19.0",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
     "rimraf": "^2.6.1",
