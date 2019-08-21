@@ -132,8 +132,10 @@
   "devDependencies": {
     "@types/fetch-mock": "^7.3.1",
     "@types/jest": "^24.0.16",
+    "@types/lodash": "^4.14.137",
     "fetch-mock": "^7.3.9",
     "jest": "^24.8.0",
+    "lodash": "^4.17.15",
     "puppeteer": "^4.3.0",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",

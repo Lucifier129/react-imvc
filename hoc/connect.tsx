@@ -6,6 +6,9 @@ export interface ConnectProps {
   state?: RIMVC.State;
   handlers?: RIMVC.Actions;
   actions?: RIMVC.Handlers;
+  props?: {
+    [propName: string]: any
+  }
 }
 
 export type ComponentProps = {
@@ -18,7 +21,7 @@ export type ComponentProps = {
   to: string;
 };
 
-const returnNull: (...args: any[]) => any = () => null;
+const returnNull: (props: ConnectProps) => any = () => null;
 export default (selector = returnNull) => (
   InputComponent: React.ComponentType<ComponentProps>
 ) => {

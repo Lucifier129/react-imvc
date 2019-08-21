@@ -11,7 +11,7 @@ const shareRoot: ShareRoot = (rootPath) => {
     rootPath = rootPath.substr(0, rootPath.length - 1)
   }
 
-  var ROOT_RE = new RegExp('^' + rootPath, 'i')
+  const ROOT_RE = new RegExp('^' + rootPath, 'i')
   const handler: RIMVC.RequestHandler = (req: RIMVC.Req, res: RIMVC.Res, next: express.NextFunction) => {
     if (ROOT_RE.test(req.url)) {
       req.url = req.url.replace(ROOT_RE, '')

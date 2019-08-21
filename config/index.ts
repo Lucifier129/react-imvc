@@ -6,7 +6,7 @@ import defaultConfig from'./config.defaults'
 import RIMVC from '../index'
 
 interface GetConfig {
-	(options: RIMVC.Options): RIMVC.Config
+	(options?: RIMVC.Options): RIMVC.Config
 }
 
 const getConfig: GetConfig = (options) => {
@@ -14,14 +14,14 @@ const getConfig: GetConfig = (options) => {
 
 	options = options || {}
 
-	let customConfig: any
+	let customConfig: any = {}
 	switch (typeof options.config) {
 		case 'object':
-			customConfig = options.config
+			customConfig = options.config as object
 			break
 		case 'string':
 			customConfig = require(path.resolve(options.config as string))
-			customConfig = customConfig.default || customConfig
+			customConfig = customConfig.default as object || customConfig
 			break
 	}
 	Object.assign(config, customConfig)
@@ -30,5 +30,5 @@ const getConfig: GetConfig = (options) => {
 }
 
 export default getConfig
-export * from './config.defaults'
-export * from './babel'
+export { default as defaultConfig } from './config.defaults'
+export { default as babel } from './babel'

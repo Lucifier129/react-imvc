@@ -1,5 +1,5 @@
-import build from '../../src/build/babel'
-import RIMVC from '../../src'
+import build from '../../build/babel'
+import RIMVC from '../../index'
 let PORT = 3333
 const ROOT = __dirname
 const config: Partial<RIMVC.Config> = {

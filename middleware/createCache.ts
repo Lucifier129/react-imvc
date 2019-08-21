@@ -4,8 +4,8 @@
  * 我们的需求是，每次调用，产生一个独立的实例
  */
 
-export interface Result {
-  put: (key: string, value: any, time: number, timeoutCallback?: (...props: any[]) => any) => any
+export interface Cache {
+  put: (key: string, value: any, time?: number, timeoutCallback?: (...props: any[]) => any) => any
   del: (key: string) => boolean
   clear: () => void
   get: (key: string) => any
@@ -19,15 +19,15 @@ export interface Result {
 export interface Record {
   value: any,
   expire: number,
-  timeout?: NodeJS.Timeout
+  timeout?: NodeJS.Timeout | number
 }
 export default () => {
-  var result: Result
-  var cache: { [propName: string]: any } = Object.create(null)
-  var debug = false
-  var hitCount = 0
-  var missCount = 0
-  var size = 0
+  let result: Cache
+  let cache: { [propName: string]: any } = Object.create(null)
+  let debug = false
+  let hitCount = 0
+  let missCount = 0
+  let size = 0
 
   function _del (key: string) {
     size--
@@ -52,16 +52,16 @@ export default () => {
         throw new Error('Cache timeout callback must be a function')
       }
 
-      var oldRecord = cache[key]
+      let oldRecord = cache[key]
       if (oldRecord) {
         clearTimeout(oldRecord.timeout)
       } else {
         size++
       }
 
-      var record: Record = {
+      let record: Record = {
         value: value,
-        expire: time + Date.now()
+        expire: (time || 0) + Date.now()
       }
 
       if (!isNaN(record.expire)) {
@@ -82,9 +82,9 @@ export default () => {
     },
 
     del: function (key) {
-      var canDelete = true
+      let canDelete = true
 
-      var oldRecord: Record = cache[key]
+      let oldRecord: Record = cache[key]
       if (oldRecord) {
         clearTimeout(<NodeJS.Timeout>oldRecord.timeout)
         if (!isNaN(oldRecord.expire) && oldRecord.expire < Date.now()) {
@@ -104,7 +104,7 @@ export default () => {
     
 
     clear: function () {
-      for (var key in cache) {
+      for (let key in cache) {
         clearTimeout(cache[key].timeout)
       }
       size = 0
@@ -116,7 +116,7 @@ export default () => {
     },
 
     get: function (key) {
-      var data = cache[key]
+      let data = cache[key]
       if (typeof data !== 'undefined') {
         if (isNaN(data.expire) || data.expire >= Date.now()) {
           if (debug) hitCount++
@@ -138,8 +138,8 @@ export default () => {
     },
 
     memsize: function () {
-      var size = 0, key
-      for (key in cache) {
+      let size = 0
+      for (let _ in cache) {
         size++
       }
       return size
