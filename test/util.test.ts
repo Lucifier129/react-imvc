@@ -80,57 +80,19 @@ describe('util test', () => {
     })
 
     it('timeoutReject reject in time with reject info when promise time greater then reject time passed in', () => {
-      const callback = jest.fn()
       const promise = new Promise((_, reject) => {
-        setTimeout(reject, 10000, 'promise')
-      }).catch()
-      let pro = util.timeoutReject(promise, 5000, '')
-      .catch((value) => {
-        expect(value.toString()).toMatch('Error')
-        callback()
-      })
-      .then(() => {
-        expect(callback).toBeCalled();
+        setTimeout(reject, 100, 'promise')
       })
 
-      jest.advanceTimersByTime(5000)
-
-      let timer = new Promise((resolve) => {
-        setTimeout(() => {
-          expect(callback).toBeCalled()
-        }, 1000)
-      })
-
-      jest.advanceTimersByTime(1000)
-      
-      return Promise.race([pro, timer])
+      expect(util.timeoutReject(promise, 500, '')).resolves.toMatch('promise')
     })
 
     it('timeoutReject reject in time with promise info when reject time greater then promise time passed in', () => {
-      const callback = jest.fn()
       const promise = new Promise((_, reject) => {
-        setTimeout(reject, 5000, 'promise')
-      }).catch()
-      let pro = util.timeoutReject(promise, 10000, '')
-      .catch((value) => {
-        expect(value).toMatch('promise')
-        callback()
-      })
-      .then(() => {
-        expect(callback).toBeCalled();
+        setTimeout(reject, 500, 'promise')
       })
 
-      jest.advanceTimersByTime(5000)
-
-      let timer = new Promise((resolve) => {
-        setTimeout(() => {
-          expect(callback).toBeCalled()
-        }, 1000)
-      })
-
-      jest.advanceTimersByTime(1000)
-      
-      return Promise.race([pro, timer])
+      expect(util.timeoutReject(promise, 100, '')).rejects.toMatch(/error/i)
     })
   })
   
