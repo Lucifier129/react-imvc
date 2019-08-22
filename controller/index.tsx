@@ -434,6 +434,17 @@ export default class Controller implements CA.Controller {
     let globalInitialState: IMVC.State | undefined
 
     // 服务端把 initialState 吐在 html 里的全局变量 __INITIAL_STATE__ 里
+    if (typeof window === 'undefined') {
+      if (typeof (global as IMVC.Global).__INITIAL_STATE__ !== 'undefined') {
+        globalInitialState = (global as IMVC.Global).__INITIAL_STATE__
+        (global as IMVC.Global).__INITIAL_STATE__ = undefined
+      }
+    } else {
+      if (typeof (window as IMVC.WindowNative).__INITIAL_STATE__ !== 'undefined') {
+        globalInitialState = (window as IMVC.WindowNative).__INITIAL_STATE__
+        (window as IMVC.WindowNative).__INITIAL_STATE__ = undefined
+      }
+    }
     if (typeof __INITIAL_STATE__ !== 'undefined') {
       globalInitialState = __INITIAL_STATE__
       __INITIAL_STATE__ = undefined

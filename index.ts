@@ -48,6 +48,7 @@ namespace IMVC {
   export interface Global extends NodeJS.Global {
     controller: Controller
     __webpack_public_path__: string
+    __INITIAL_STATE__: State
     fetch: any
   }
   
@@ -55,8 +56,9 @@ namespace IMVC {
     controller: Controller
     __CUSTOM_LAYOUT__: string
     __PUBLIC_PATH__: string
-    __APP_SETTINGS__: object
-    __INITIAL_STATE__: object
+    __APP_SETTINGS__: AppSettings
+    __INITIAL_STATE__: State
+    __REDUX_DEVTOOLS_EXTENSION__: any
   }
 
   export interface DocumentNative extends Document {
