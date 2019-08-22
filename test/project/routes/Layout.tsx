@@ -1,9 +1,9 @@
 import React from 'react'
 import Script from '../../../src/component/Script'
-import RIMVC from '../../../'
+import IMVC from '../../../'
 
 
-export default function Page(props: RIMVC.RenderProps) {
+export default function Page(props: IMVC.RenderProps) {
 	return (
 		<html>
 			<head>

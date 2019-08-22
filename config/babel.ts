@@ -1,7 +1,7 @@
-import RIMVC from '../index'
+import IMVC from '../index'
 
 export interface GetBabelFunc {
-  (isServer: boolean): RIMVC.BabelConfig 
+  (isServer: boolean): IMVC.BabelConfig 
 }
 
 const Babel: GetBabelFunc = (isServer = true) => ({

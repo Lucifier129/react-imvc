@@ -1,11 +1,11 @@
 import React from "react";
 import GlobalContext from "../context";
-import RIMVC from "../index";
+import IMVC from "../index";
 
 export interface ConnectProps {
-  state?: RIMVC.State;
-  handlers?: RIMVC.Actions;
-  actions?: RIMVC.Handlers;
+  state?: IMVC.State;
+  handlers?: IMVC.Actions;
+  actions?: IMVC.Handlers;
   props?: {
     [propName: string]: any
   }
@@ -13,7 +13,7 @@ export interface ConnectProps {
 
 export type ComponentProps = {
   isActive: { (...args: any[]): boolean };
-  location: RIMVC.Location;
+  location: IMVC.Location;
   className: string;
   activeClassName: string;
   style: object;

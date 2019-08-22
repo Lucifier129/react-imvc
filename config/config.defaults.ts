@@ -4,9 +4,9 @@ let port = process.env.PORT || 3000
 let NODE_ENV = process.env.NODE_ENV || 'development'
 let isDev = NODE_ENV === 'development'
 let isProd = NODE_ENV === 'production'
-import RIMVC from '../index'
+import IMVC from '../index'
 
-const defaultConfig: RIMVC.Config = {
+const defaultConfig: IMVC.Config = {
 	basename: '',
 	title: 'react-imvc',
 	description: 'An Isomorphic-MVC Framework',

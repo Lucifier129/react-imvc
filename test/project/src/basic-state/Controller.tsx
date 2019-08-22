@@ -1,19 +1,19 @@
-import RIMVC from '../../../../src'
+import IMVC from '../../../../index'
 import React from 'react'
 
-export default class extends RIMVC.Controller {
+export default class extends IMVC.Controller {
     View = View;
-    constructor(location: RIMVC.Location, context: RIMVC.Context) {
+    constructor(location: IMVC.Location, context: IMVC.Context) {
         super(location, context)
         if (context.isClient) {
-            (window as RIMVC.WindowNative).controller = this
+            (window as IMVC.WindowNative).controller = this
         } else if (context.isServer) {
-            (global as RIMVC.Global).controller = this
+            (global as IMVC.Global).controller = this
         }
     }
 }
 
 
-function View({ state }: RIMVC.ViewProps) {
+function View({ state }: IMVC.ViewProps) {
     return <pre id="basic_state">{JSON.stringify(state, null, 2)}</pre>
 }

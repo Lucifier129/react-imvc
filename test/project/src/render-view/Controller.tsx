@@ -1,19 +1,19 @@
 import React from 'react'
-import RIMVC from '../../.././../src'
+import IMVC from '../../.././../index'
 
 const delay = (time: number) => new Promise(resolve => {
   setTimeout(resolve, time)
 })
 
-export default class extends RIMVC.Controller {
+export default class extends IMVC.Controller {
   SSR = false
   View = View
-  constructor(location: RIMVC.Location, context: RIMVC.Context) {
+  constructor(location: IMVC.Location, context: IMVC.Context) {
     super(location, context)
     if (context.isClient) {
-      (window as RIMVC.WindowNative).controller = this
+      (window as IMVC.WindowNative).controller = this
     } else if (context.isServer) {
-      (global as RIMVC.Global).controller = this
+      (global as IMVC.Global).controller = this
     }
   }
   async componentWillCreate() {
@@ -22,7 +22,7 @@ export default class extends RIMVC.Controller {
   }
   componentDidMount() {
     let count: number = 0
-    let View: RIMVC.BaseViewFC = () => <div>{count}</div>
+    let View: IMVC.BaseViewFC = () => <div>{count}</div>
     setInterval(() => {
       this.renderView(View)
       count += 1
@@ -30,6 +30,6 @@ export default class extends RIMVC.Controller {
   }
 }
 
-function View({ state }: RIMVC.ViewProps) {
+function View({ state }: IMVC.ViewProps) {
   return <pre id="basic_state">{JSON.stringify(state, null, 2)}</pre>
 }

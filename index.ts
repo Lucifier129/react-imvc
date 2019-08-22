@@ -30,7 +30,7 @@ export const Config = _Config
 export const Context = _Context
 export const connect = _connect
 
-const RIMVC = {
+const IMVC = {
   Controller: _Controller,
   build: _build,
   start: _start,
@@ -40,9 +40,9 @@ const RIMVC = {
   connect: _connect
 }
 
-export default RIMVC
+export default IMVC
 
-namespace RIMVC {
+namespace IMVC {
 
   export type Controller = _Controller
   export interface Global extends NodeJS.Global {
@@ -86,11 +86,11 @@ namespace RIMVC {
   }
 
 
-  export interface BaseViewFC extends React.FC<RIMVC.ViewProps> {
+  export interface BaseViewFC extends React.FC<IMVC.ViewProps> {
     viewId?: any
   }
 
-  export interface BaseViewClass extends React.ComponentClass<RIMVC.ViewProps> {
+  export interface BaseViewClass extends React.ComponentClass<IMVC.ViewProps> {
     viewId?: any
   }
 
@@ -236,7 +236,7 @@ namespace RIMVC {
     title?: string
     content: string
     initialState?: object
-    appSettings: RIMVC.AppSettings
+    appSettings: IMVC.AppSettings
     publicPath: string
     assets: {
       vendor: string
@@ -247,9 +247,9 @@ namespace RIMVC {
 
   export interface ViewProps {
     key?: string
-    state?: RIMVC.State
-    handlers?: RIMVC.Handlers
-    actions?: RIMVC.Actions
+    state?: IMVC.State
+    handlers?: IMVC.Handlers
+    actions?: IMVC.Actions
   }
   
   export interface Config {
@@ -514,8 +514,12 @@ namespace RIMVC {
   }
 
   export interface Actions {
-    __PAGE_DID_BACK__?: { (...args: any[]): State }
-    [propName:string]: { (...args: any[]): State } | State | undefined
+    __PAGE_DID_BACK__?(state: State, location: Location): State
+    INDENTITY?(state: State): State
+    UPDATE_STATE?(state: State, newState: State): State
+    UPDATE_STATE_BY_PATH?(state: State, payload: Payload): State
+    UPDATE_INPUT_VALUE?(state: State, payload: Payload): State
+    [propName:string]: { (state: State, ...args: any[]): State } | State | undefined
   }
 
   export interface Model {

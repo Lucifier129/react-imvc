@@ -6,9 +6,7 @@ const router = Router()
 
 export default function(app: express.Express, server: http.Server) {
     app.use('/my_router', router)
-    // @ts-ignore
     server.isTouched = true
-    // @ts-ignore
     app.isTouched = true
 }
 

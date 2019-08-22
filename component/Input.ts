@@ -1,7 +1,7 @@
 import React from 'react'
 import GlobalContext from '../context'
 import _ from '../util'
-import RIMVC from '../index'
+import IMVC from '../index'
 
 const { getValueByPath } = _
 
@@ -17,7 +17,7 @@ interface Props {
 }
 
 export default class Input extends React.Component<Props> {
-	static contextType: React.Context<RIMVC.Context> = GlobalContext
+	static contextType: React.Context<{}> = GlobalContext
 	static defaultProps: Props = {
 		as: 'input',
 		type: 'text',
@@ -59,7 +59,7 @@ export default class Input extends React.Component<Props> {
 	getAction() {
 		return this.context.actions[this.props.actionType]
 	}
-	callAction(actionPayload: RIMVC.Payload) {
+	callAction(actionPayload: IMVC.Payload) {
 		this.getAction()(actionPayload)
 	}
 	handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

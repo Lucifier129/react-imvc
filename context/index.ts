@@ -1,7 +1,3 @@
 import React from 'react'
 
-export default React.createContext<{
-  ctrl: any
-}>({
-  ctrl: null
-})
+export default React.createContext<{}>({})

@@ -3,7 +3,7 @@
  */
 import express from "express";
 import createCache, { Cache } from "./createCache";
-import RIMVC from "../index";
+import IMVC from "../index";
 
 interface Settings {
   timeout: number;
@@ -24,7 +24,7 @@ let defaults: Settings = {
   debug: false
 };
 
-var callNext: RIMVC.RequestHandler = (req, res, next) => next();
+var callNext: IMVC.RequestHandler = (req, res, next) => next();
 
 export default (settings: Settings) => {
   // 只在生产环境，或者开启了 debug = true 的情况下，做缓存
@@ -35,7 +35,7 @@ export default (settings: Settings) => {
 
   var cache: Cache = createCache();
 
-  return function(req: RIMVC.Req, res: RIMVC.Res, next: express.NextFunction) {
+  return function(req: IMVC.Req, res: IMVC.Res, next: express.NextFunction) {
     var cacheKey: string = settings.key(req.originalUrl, req);
     var cacheContent: any;
     if (cache.get) {

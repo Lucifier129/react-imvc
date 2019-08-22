@@ -1,6 +1,6 @@
 import React from 'react'
 import GlobalContext from '../context'
-import RIMVC from '../index'
+import IMVC from '../index'
 
 const isHandler = (key: string) => /^on[A-Z]+/.test(key)
 
@@ -16,7 +16,7 @@ export default class EventWrapper extends React.Component<Props> {
 	render() {
 		const { children, as: tag, ...restProps } = this.props
 		let props: Record<string, any> = restProps
-		const { handlers } = this.context as { handlers: RIMVC.Handlers }
+		const { handlers } = this.context as { handlers: IMVC.Handlers }
 		for (let key in props) {
 			if (isHandler(key)) {
 				const handler = handlers[props[key]]

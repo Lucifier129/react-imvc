@@ -3,10 +3,10 @@
  */
 import path from 'path'
 import defaultConfig from'./config.defaults'
-import RIMVC from '../index'
+import IMVC from '../index'
 
 interface GetConfig {
-	(options?: RIMVC.Options): RIMVC.Config
+	(options?: IMVC.Options): IMVC.Config
 }
 
 const getConfig: GetConfig = (options) => {
@@ -14,7 +14,7 @@ const getConfig: GetConfig = (options) => {
 
 	options = options || {}
 
-	let customConfig: Partial<RIMVC.Config> = {}
+	let customConfig: Partial<IMVC.Config> = {}
 	switch (typeof options.config) {
 		case 'object':
 			customConfig = options.config as object

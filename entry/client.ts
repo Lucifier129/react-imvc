@@ -7,21 +7,21 @@ import createApp from 'create-app/client'
 import util from '../util'
 // @ts-ignore
 import $routes from '@routes'
-import RIMVC from '../index'
+import IMVC from '../index'
 
-(global as RIMVC.Global).__webpack_public_path__ = (window as RIMVC.WindowNative).__PUBLIC_PATH__ + '/'
-const __APP_SETTINGS__: RIMVC.AppSettings = (window as RIMVC.WindowNative).__APP_SETTINGS__ || {}
+(global as IMVC.Global).__webpack_public_path__ = (window as IMVC.WindowNative).__PUBLIC_PATH__ + '/'
+const __APP_SETTINGS__: IMVC.AppSettings = (window as IMVC.WindowNative).__APP_SETTINGS__ || {}
 
 const webpackLoader: createApp.Loader = (loadModule, location, context) => {
   return (<createApp.LoadController>loadModule)(location, context)
 }
 
-let shouldHydrate = !!(window as RIMVC.WindowNative).__INITIAL_STATE__
+let shouldHydrate = !!(window as IMVC.WindowNative).__INITIAL_STATE__
 
-const render: RIMVC.Render<React.ReactElement> = (
+const render: IMVC.Render<React.ReactElement> = (
   view: React.ReactElement,
   container?: Element | null,
-  controller?: RIMVC.Controller
+  controller?: IMVC.Controller
 ) => {
   try {
     if (shouldHydrate) {
@@ -50,7 +50,7 @@ const routes = util.getFlatList(
   Array.isArray($routes) ? $routes : Object.values($routes)
 )
 
-const appSettings: RIMVC.AppSettings = {
+const appSettings: IMVC.AppSettings = {
   hashType: 'hashbang',
   container: '#root',
   ...__APP_SETTINGS__,
@@ -68,7 +68,7 @@ const appSettings: RIMVC.AppSettings = {
 /**
  * 动态收集服务端预加载的内容
  */
-const preload: RIMVC.Preload = {}
+const preload: IMVC.Preload = {}
 Array.from(document.querySelectorAll('[data-preload]')).forEach(elem => {
   let name = elem.getAttribute('data-preload')
   let content = elem.textContent || elem.innerHTML
@@ -83,9 +83,9 @@ const app = createApp(appSettings);
 (app.start as createApp.Start)()
 
 // 热更新
-if (typeof module !== 'undefined' && (module as RIMVC.NativeModule).hot) {
-  if ((module as RIMVC.NativeModule).hot) {
-    let hot = (module as RIMVC.NativeModule).hot
+if (typeof module !== 'undefined' && (module as IMVC.NativeModule).hot) {
+  if ((module as IMVC.NativeModule).hot) {
+    let hot = (module as IMVC.NativeModule).hot
     if (hot && hot.accept) {
       hot.accept()
     }

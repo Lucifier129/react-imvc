@@ -1,8 +1,8 @@
 import ErrorBoundary from '../../../../src/component/ErrorBoundary'
 import React, { useState, useEffect } from 'react'
-import RIMVC from '../../../../src';
+import IMVC from '../../../../src';
 
-class Controller extends RIMVC.Controller {
+class Controller extends IMVC.Controller {
   SSR = true // enable server side rendering
   View = View
   actions = {
@@ -24,7 +24,7 @@ class Controller extends RIMVC.Controller {
   }
   componentDidMount() {
     setTimeout(() => {
-      ((this.store.actions as RIMVC.Actions).TEST as Function)()
+      ((this.store.actions as IMVC.Actions).TEST as Function)()
     })
     
   }

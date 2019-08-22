@@ -1,9 +1,9 @@
 process.env.NODE_ENV = 'development'
 import start from '../../start/babel'
-import RIMVC from '../../index'
+import IMVC from '../../index'
 const PORT: number = 3333
 const ROOT = __dirname
-const config: Partial<RIMVC.Config> = {
+const config: Partial<IMVC.Config> = {
 	root: ROOT, // 项目根目录
 	port: PORT, // server 端口号
 	routes: 'routes', // 服务端路由目录

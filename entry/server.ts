@@ -10,9 +10,9 @@ import helmet from 'helmet'
 // @ts-ignore
 import ReactViews from 'express-react-views'
 import shareRoot from '../middleware/shareRoot'
-import RIMVC from '../index'
+import IMVC from '../index'
 
-export default function createExpressApp(config: RIMVC.Config) {
+export default function createExpressApp(config: IMVC.Config) {
 	const app: express.Express = express()
 
 	// handle basename
@@ -135,7 +135,7 @@ export default function createExpressApp(config: RIMVC.Config) {
 	}
 
 	// handle publicPath and default props
-	app.use((req: RIMVC.Req, res, next) => {
+	app.use((req: IMVC.Req, res, next) => {
 		let basename = req.basename // from shareRoot
 		let serverPublicPath = basename + config.staticPath
 		let publicPath = config.publicPath || serverPublicPath
@@ -152,7 +152,7 @@ export default function createExpressApp(config: RIMVC.Config) {
 	})
 
 	// attach appSettings for client
-	app.use((req: RIMVC.Req, res, next) => {
+	app.use((req: IMVC.Req, res, next) => {
 		let { basename, publicPath } = req
 		let context = {
 			basename,
@@ -183,7 +183,7 @@ function getAssets(stats: Record<string, any>) {
 	}, {})
 }
 
-function readAssets(config: RIMVC.Config) {
+function readAssets(config: IMVC.Config) {
 	let result
 	// 生产模式直接用编译好的资源表
 	let assetsPathList = [

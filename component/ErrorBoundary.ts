@@ -1,6 +1,6 @@
 import React from 'react'
 import GlobalContext from '../context'
-import RIMVC from '../index'
+import IMVC from '../index'
 
 // fixed: webpack rebuild lost original React.createElement
 // @ts-ignore
@@ -10,7 +10,7 @@ interface Props {
   fallback: object | string | null
 }
 
-export default class ErrorBoundary extends React.Component<Props, RIMVC.State> {
+export default class ErrorBoundary extends React.Component<Props, IMVC.State> {
   static ignoreErrors: boolean = true
   static contextType: React.Context<{}> = GlobalContext
   static getDerivedStateFromError() {
@@ -19,7 +19,7 @@ export default class ErrorBoundary extends React.Component<Props, RIMVC.State> {
   static defaultProps: Props = {
     fallback: null
   }
-  state: RIMVC.State = {
+  state: IMVC.State = {
     hasError: false
   }
   catchError(error: Error) {

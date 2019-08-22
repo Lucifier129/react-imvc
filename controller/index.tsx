@@ -1,9 +1,7 @@
 // base controller class
 import 'whatwg-fetch'
 import React from 'react'
-// @ts-ignore
-import createStore from 'relite'
-// @ts-ignore
+import { createStore } from 'relite'
 import Cookie from 'js-cookie'
 import querystring, { stringify } from 'querystring'
 import CA from 'create-app/client'
@@ -12,7 +10,7 @@ import _ from '../util'
 import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
 import attachDevToolsIfPossible from './attachDevToolsIfPossible'
-import RIMVC from '../index'
+import IMVC from '../index'
 
 const REDIRECT =
   typeof Symbol === 'function'
@@ -22,9 +20,9 @@ const REDIRECT =
 const EmptyView = () => null
 let uid = 0 // seed of controller id
 /**
- * 绑定 RIMVC.Store 到 View
+ * 绑定 IMVC.Store 到 View
  * 提供 Controller 的生命周期钩子
- * 组装事件处理器 Event RIMVC.Handlers
+ * 组装事件处理器 Event IMVC.Handlers
  * 提供 fetch 方法
  */
 type UdfFuncType = {
@@ -32,31 +30,31 @@ type UdfFuncType = {
 }
 
 interface InitailState {
-  (location: RIMVC.Location, context: RIMVC.Context): RIMVC.State
+  (location: IMVC.Location, context: IMVC.Context): IMVC.State
 }
 
 export default class Controller implements CA.Controller {
-  View: RIMVC.BaseViewFC | RIMVC.BaseViewClass = EmptyView
+  View: IMVC.BaseViewFC | IMVC.BaseViewClass = EmptyView
   restapi: string = ''
-  preload: RIMVC.Preload
-  API: RIMVC.API
-  Model: RIMVC.Model
-  initialState: RIMVC.State | InitailState | undefined
-  actions: RIMVC.Actions | undefined
-  SSR: boolean | { (location:RIMVC.Location, context: RIMVC.Context):boolean } | undefined
+  preload: IMVC.Preload
+  API: IMVC.API
+  Model: IMVC.Model
+  initialState: IMVC.State | InitailState | undefined
+  actions: IMVC.Actions | undefined
+  SSR: boolean | { (location:IMVC.Location, context: IMVC.Context):boolean } | undefined
   KeepAliveOnPush: boolean | undefined
   history: CH.NativeHistory
-  store: RIMVC.Store
-  location: RIMVC.Location
-  context: RIMVC.Context
-  handlers: RIMVC.Handlers
-  meta: RIMVC.Meta
+  store: IMVC.Store
+  location: IMVC.Location
+  context: IMVC.Context
+  handlers: IMVC.Handlers
+  meta: IMVC.Meta
   proxyHandler: any
   resetScrollOnMount?: boolean
   [propName: string]: any
   matcher?: CA.Matcher
-  loader: RIMVC.Loader | undefined
-  Loading: RIMVC.BaseViewFC | RIMVC.BaseViewClass = (...args) => null
+  loader: IMVC.Loader | undefined
+  Loading: IMVC.BaseViewFC | IMVC.BaseViewClass = (...args) => null
 
   errorDidCatch?(error:Error, str: string): void
   getComponentFallback?(displayName: string, InputComponent: React.ComponentType):void
@@ -73,7 +71,7 @@ export default class Controller implements CA.Controller {
   windowWillUnload?(...args: any[]): any
   pageDidBack?(...args: any[]): any
 
-  constructor(location: RIMVC.Location, context: RIMVC.Context) {
+  constructor(location: IMVC.Location, context: IMVC.Context) {
     this.meta = {
       id: uid++,
       isDestroyed: false,
@@ -234,7 +232,7 @@ export default class Controller implements CA.Controller {
     let { context, API } = this
 
     /**
-     * RIMVC.API shortcut，方便 fetch(name, options) 代替 url
+     * IMVC.API shortcut，方便 fetch(name, options) 代替 url
      */
     if (API && Object.prototype.hasOwnProperty.call(API, url)) {
       url = API[url]
@@ -323,7 +321,7 @@ export default class Controller implements CA.Controller {
   /**
    * 预加载 css 样式等资源
    */
-  fetchPreload(preload?: RIMVC.Preload) {
+  fetchPreload(preload?: IMVC.Preload) {
     preload = preload || this.preload
     let keys = Object.keys(preload)
 
@@ -333,10 +331,10 @@ export default class Controller implements CA.Controller {
 
     let { context } = this
     let list = keys.map(name => {
-      if ((context.preload as RIMVC.Payload)[name]) {
+      if ((context.preload as IMVC.Payload)[name]) {
         return
       }
-      let url = (preload as RIMVC.Preload)[name]
+      let url = (preload as IMVC.Preload)[name]
 
       if (!_.isAbsoluteUrl(url)) {
         if (context.isServer) {
@@ -357,7 +355,7 @@ export default class Controller implements CA.Controller {
              */
             content = content.replace(/\r+/g, '')
           }
-          (context.preload as RIMVC.Payload)[name] = content
+          (context.preload as IMVC.Payload)[name] = content
         })
     })
     return Promise.all(list)
@@ -370,7 +368,7 @@ export default class Controller implements CA.Controller {
     if (!url || typeof url !== 'string') return null
     let matches = (this.matcher as CA.Matcher)(url)
     if (!matches) return null
-    return (this.loader as RIMVC.Loader)(matches.controller)
+    return (this.loader as IMVC.Loader)(matches.controller)
   }
 
   async init() {
@@ -416,7 +414,7 @@ export default class Controller implements CA.Controller {
         SSR = await this.SSR(location, context)
       }
       if (SSR === false) {
-        let View: RIMVC.BaseViewFC | RIMVC.BaseViewClass = Loading || EmptyView
+        let View: IMVC.BaseViewFC | IMVC.BaseViewClass = Loading || EmptyView
         return <View />
       }
     }
@@ -433,14 +431,11 @@ export default class Controller implements CA.Controller {
       actions = this.actions = $actions
     }
 
-    let globalInitialState: RIMVC.State | undefined
+    let globalInitialState: IMVC.State | undefined
 
     // 服务端把 initialState 吐在 html 里的全局变量 __INITIAL_STATE__ 里
-    // @ts-ignore
     if (typeof __INITIAL_STATE__ !== 'undefined') {
-      // @ts-ignore
       globalInitialState = __INITIAL_STATE__
-      // @ts-ignore
       __INITIAL_STATE__ = undefined
     }
 
@@ -453,7 +448,7 @@ export default class Controller implements CA.Controller {
       initialState = JSON.parse(JSON.stringify(initialState))
     }
 
-    let finalInitialState: RIMVC.State = {
+    let finalInitialState: IMVC.State = {
       ...initialState,
       ...globalInitialState,
       location,
@@ -486,7 +481,7 @@ export default class Controller implements CA.Controller {
     /**
      * 创建 store
      */
-    let finalActions: RIMVC.Actions = { ...actions, ...shareActions }
+    let finalActions: IMVC.Actions = { ...actions, ...shareActions }
     this.store = createStore(finalActions, finalInitialState)
     attachDevToolsIfPossible(this.store)
 
@@ -569,7 +564,7 @@ export default class Controller implements CA.Controller {
 
     // 判断是否缓存
     {
-      let unlisten = history.listenBefore((location: RIMVC.Location) => {
+      let unlisten = history.listenBefore((location: IMVC.Location) => {
         if (!this.KeepAliveOnPush) return
         if (location.action === 'PUSH') {
           (this.saveToCache as UdfFuncType)()
@@ -597,9 +592,9 @@ export default class Controller implements CA.Controller {
     }
   }
 
-  restore(location: RIMVC.Location, context: RIMVC.Context) {
+  restore(location: IMVC.Location, context: IMVC.Context) {
     let { meta, store } = this
-    let { __PAGE_DID_BACK__ } = store.actions as RIMVC.Actions
+    let { __PAGE_DID_BACK__ } = store.actions as IMVC.Actions
 
     if (this.proxyHandler) {
       // detach first, and re-attach
@@ -692,7 +687,7 @@ const proxyReactCreateElement: ProxyReactCreateElement = ctrl => {
       static displayName = `ErrorBoundary(${displayName})`
       static isErrorBoundary = true
 
-      state: RIMVC.State = {
+      state: IMVC.State = {
         hasError: false
       }
 
@@ -735,13 +730,13 @@ const proxyReactCreateElement: ProxyReactCreateElement = ctrl => {
 }
 
 const proxyStoreActions = (ctrl: Controller) => {
-  let actions: RIMVC.Actions = {}
+  let actions: IMVC.Actions = {}
 
-  for (let key in ctrl.store.actions as RIMVC.Actions) {
-    let action = (ctrl.store.actions as RIMVC.Actions)[key]
-    actions[key] = (payload: RIMVC.Payload) => {
+  for (let key in ctrl.store.actions as IMVC.Actions) {
+    let action = (ctrl.store.actions as IMVC.Actions)[key]
+    actions[key] = (payload: IMVC.Payload) => {
       try {
-        return (action as { (...args: any[]): RIMVC.State })(payload)
+        return (action as { (...args: any[]): IMVC.State })(payload)
       } catch (error) {
         (ctrl.errorDidCatch as { (error: Error, str: string):void})(error, 'model')
         throw error

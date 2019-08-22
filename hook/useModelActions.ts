@@ -1,7 +1,7 @@
 import useCtrl from './useCtrl'
-import RIMVC from '../index'
+import IMVC from '../index'
 
-export default (): RIMVC.Actions | undefined => {
+export default (): IMVC.Actions | undefined => {
   let ctrl = useCtrl()
   return ctrl.store.actions
 }

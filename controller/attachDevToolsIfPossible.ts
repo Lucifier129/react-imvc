@@ -1,14 +1,13 @@
-import RIMVC from '../index'
+import IMVC from '../index'
 
 interface AttachDevToolsIfPossible {
-  (store: RIMVC.Store): void
+  (store: IMVC.Store): void
 }
 
 const attachDevToolsIfPossible: AttachDevToolsIfPossible = (store) => {
   if (process.env.NODE_ENV === "production") {
     return;
   }
-  // @ts-ignore
   if (typeof window === "undefined" || !window.__REDUX_DEVTOOLS_EXTENSION__) {
     return;
   }
@@ -17,7 +16,7 @@ const attachDevToolsIfPossible: AttachDevToolsIfPossible = (store) => {
 
   let options = {
     name: window.location.pathname + window.location.search,
-    actionsWhitelist: Object.keys(store.actions as RIMVC.Actions)
+    actionsWhitelist: Object.keys(store.actions as IMVC.Actions)
   };
   // @ts-ignore
   let reduxStore:Store = __REDUX_DEVTOOLS_EXTENSION__(
