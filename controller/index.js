@@ -33,7 +33,7 @@ export default class Controller {
     }
     /**
      * 将 location.key 赋值给 this.meta 并在 location 里删除
-     * 避免 SSR 时，因为 initialState 里总有 locaiton.key 这个随机字符串
+     * 避免 SSR 时，因为 initialState 里总有 location.key 这个随机字符串
      * 而导致服务端的 Etag 不断变化，无法 304 。
      */
     if (location) {
