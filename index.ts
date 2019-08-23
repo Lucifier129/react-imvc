@@ -6,6 +6,7 @@ import serveStatic from 'serve-static'
 import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
 import compression from 'compression'
+import * as Relite from 'relite'
 
 import _build from './build'
 import _start from './start'
@@ -506,7 +507,7 @@ namespace IMVC {
     entry?: string | string[] | webpack.Entry | webpack.EntryFunc
   }
 
-  export interface State {
+  export interface State extends Relite.State {
     location?: CA.Location
     basename?: string
     publicPath?: string
@@ -515,13 +516,28 @@ namespace IMVC {
     [propName:string]: any
   }
 
-  export interface Actions {
+  export interface Action extends Relite.Action {}
+
+  export interface Actions extends Partial<Relite.Actions> {
     __PAGE_DID_BACK__?(state: State, location: Location): State
     INDENTITY?(state: State): State
     UPDATE_STATE?(state: State, newState: State): State
     UPDATE_STATE_BY_PATH?(state: State, payload: Payload): State
     UPDATE_INPUT_VALUE?(state: State, payload: Payload): State
-    [propName:string]: { (state: State, ...args: any[]): State } | State | undefined
+    [actionType: string]: Action | undefined
+  }
+
+  export interface CurryingAction extends Relite.CurryingAction {
+    (payload?: Payload): State | Promise<State>
+  }
+
+  export interface CurryingActions extends Partial<Relite.CurryingActions> {
+    UPDATE_STATE?(newState: Payload): State
+    UPDATE_STATE_BY_PATH?(payload: Payload): State
+    UPDATE_INPUT_VALUE?(payload: Payload): State
+    __PAGE_DID_BACK__?(payload: Payload): State
+    INDENTITY?(): State
+    [actionType: string]: CurryingAction | undefined
   }
 
   export interface Model {
@@ -595,12 +611,15 @@ namespace IMVC {
       controller: Controller
   }
 
-  export interface Store {
-      actions?: Actions
-      dispatch?(...args: any[]): void
+  export interface Store extends Partial<Relite.Store> {
+      actions?: CurryingActions
+      dispatch?(actionType: string, payload: any): State
       getState?(): State
-      publish?(...args: any[]): void
-      replaceState?(...args: any[]): void
-      subscribe?(callback:(...args: any[])=>any): object
+      replaceState?(
+        nextState: State,
+        data?: Relite.Data,
+        slient?: boolean
+      ): void
+      subscribe?(listener: Relite.Listener): () => void
   }
 }
