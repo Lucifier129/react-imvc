@@ -7,8 +7,6 @@ import cookieParser from 'cookie-parser'
 import bodyParser from 'body-parser'
 import favicon from 'serve-favicon'
 import helmet from 'helmet'
-// @ts-ignore
-import ReactViews from 'express-react-views'
 import shareRoot from '../middleware/shareRoot'
 import IMVC from '../index'
 
@@ -40,7 +38,7 @@ export default function createExpressApp(config: IMVC.Config) {
 	}
 
 	// handle view engine
-	app.engine('js', ReactViews.createEngine(config.ReactViews))
+	app.engine('js', require('express-react-views').createEngine(config.ReactViews))
 
 	// view engine setup
 	app.set('views', path.join(config.root, config.routes))

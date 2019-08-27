@@ -11,9 +11,11 @@
   "scripts": {
     "build": "tsc",
     "prebuild": "rimraf ./dist",
-    "test": "jest",
+    "test": "jest --coverage",
+    "test:watch": "jest --coverage --watch",
     "publish-imvc": "npm publish ./publish",
-    "prepublish-imvc": "npm run build"
+    "prepublish-imvc": "npm run build",
+    "script:test": "ts-node ./scripts/test.ts"
   },
   "repository": {
     "type": "git",

@@ -93,7 +93,7 @@ export default class Controller implements CA.Controller {
     this.handlers = {}
     this.preload = {}
     this.history = CH.createHistory()
-    this.store = {}
+    this.store = createStore({})
     this.API = {}
     this.Model = {}
   }

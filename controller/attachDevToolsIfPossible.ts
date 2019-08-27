@@ -18,8 +18,7 @@ const attachDevToolsIfPossible: AttachDevToolsIfPossible = (store) => {
     name: window.location.pathname + window.location.search,
     actionsWhitelist: Object.keys(store.actions as IMVC.Actions)
   };
-  // @ts-ignore
-  let reduxStore:Store = __REDUX_DEVTOOLS_EXTENSION__(
+  let reduxStore: IMVC.Store = __REDUX_DEVTOOLS_EXTENSION__(
     store.getState,
     (store.getState as Function)(),
     options
@@ -30,10 +29,10 @@ const attachDevToolsIfPossible: AttachDevToolsIfPossible = (store) => {
       return;
     }
     isSync = true;
-    reduxStore.dispatch({
-      type: data.actionType,
-      payload: data.actionPayload
-    });
+    reduxStore.dispatch(
+      data.actionType,
+      data.actionPayload
+    );
     isSync = false;
   });
 

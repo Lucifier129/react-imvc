@@ -60,6 +60,7 @@ declare global {
     attachEvent: typeof document.addEventListener
     detachEvent: typeof document.removeEventListener
   }
+  const __REDUX_DEVTOOLS_EXTENSION__: any 
 }
 
 export default IMVC
@@ -593,6 +594,6 @@ namespace IMVC {
       controller: Controller
   }
 
-  export interface Store extends Partial<Relite.Store<object, Record<string, Relite.Action<object>>>> {
+  export interface Store extends Relite.Store<object, Record<string, Relite.Action<object>>> {
   }
 }

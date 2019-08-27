@@ -48,26 +48,27 @@ describe('React-IMVC', () => {
 	})
 })
 function mainTest(config: Partial<IMVC.Config>) {
-	let app: App, server: Server, browser: puppeteer.Browser
-
-	beforeAll(async () => {
-		try {
-			let result = await start({ config })
-			app = result.app
-			server = result.server
-			browser = await puppeteer.launch()
-		} catch (error) {
-			console.log('error', error)
-		}
-	})
-
-	afterAll(() => {
-		browser.close()
-		server.close()
-	})
 
 	describe('static view', () => {
 		let renderCondition = config.SSR ? 'render' : 'NOT render'
+		
+		let app: App, server: Server, browser: puppeteer.Browser
+
+		beforeEach(async () => {
+			try {
+				let result = await start({ config })
+				app = result.app
+				server = result.server
+				browser = await puppeteer.launch()
+			} catch (error) {
+				console.log('error', error)
+			}
+		})
+
+		afterEach(() => {
+			browser.close()
+			server.close()
+		})
 		it(`should ${renderCondition} view in server side`, async () => {
 			let page = await browser.newPage()
 			let url = `http://localhost:${config.port}/static_view`
@@ -106,6 +107,24 @@ function mainTest(config: Partial<IMVC.Config>) {
 	})
 
 	describe('server side', () => {
+		
+	let app: App, server: Server, browser: puppeteer.Browser
+
+		beforeEach(async () => {
+			try {
+				let result = await start({ config })
+				app = result.app
+				server = result.server
+				browser = await puppeteer.launch()
+			} catch (error) {
+				console.log('error', error)
+			}
+		})
+
+		afterEach(() => {
+			browser.close()
+			server.close()
+		})
 		it('should pass server and app instance to every route handler', () => {
 			expect(app.isTouched).toBe(true)
 			expect(server.isTouched).toBe(true)
@@ -143,6 +162,24 @@ function mainTest(config: Partial<IMVC.Config>) {
 	})
 
 	describe('controller', () => {
+		
+		let app: App, server: Server, browser: puppeteer.Browser
+
+		beforeEach(async () => {
+			try {
+				let result = await start({ config })
+				app = result.app
+				server = result.server
+				browser = await puppeteer.launch()
+			} catch (error) {
+				console.log('error', error)
+			}
+		})
+
+		afterEach(() => {
+			browser.close()
+			server.close()
+		})
 		it('should have location and context properties in controller instance both server side and client side', async () => {
 			let url = `http://localhost:${config.port}/basic_state?a=1&b=2`
 			let page = await browser.newPage()

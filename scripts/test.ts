@@ -16,15 +16,16 @@ import getConfig from '../config'
 // ignoring them. In the future, promise rejections that are not handled will
 // terminate the Node.js process with a non-zero exit code.
 const project = fs.readdirSync(process.cwd()).forEach(file => {
-jest.runCLI(yargs.argv, [
-	process.cwd()
-])
-.then((success) => {
-	console.log(success);
+	jest.runCLI(yargs.argv, [
+		process.cwd()
+	])
+	.then((success) => {
+		console.log(success);
+	})
+	.catch((failure) => {
+		console.error(failure);
+	});
 })
-.catch((failure) => {
-	console.error(failure);
-});
 // process.on('unhandledRejection', error => {
 // 	throw error
 // })
