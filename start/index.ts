@@ -39,7 +39,7 @@ const start: StartFunc = (options) => {
 		}
 		return fetch(url, options)
   }
-  (global as IMVC.Global).fetch = fetchNative  
+  global.fetch = fetchNative  
 
 	/**
 	 * set port from environment and store in Express.

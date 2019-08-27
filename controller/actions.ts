@@ -6,23 +6,23 @@ import IMVC from '../index'
 
 const { setValueByPath } = _
 
-export let INDENTITY: IMVC.Action = (state) => state
+export let INDENTITY = (state: any) => state
 
-export let UPDATE_STATE: IMVC.Action = (state, newState) => {
+export let UPDATE_STATE = (state: any, newState: any) => {
   return {
     ...state,
     ...newState
   }
 }
 
-export let __PAGE_DID_BACK__: IMVC.Action = (state, location) => {
+export let __PAGE_DID_BACK__ = (state: any, location: any) => {
   return {
     ...state,
     location,
   }
 }
 
-export let UPDATE_STATE_BY_PATH: IMVC.Action = (state, payload) => {
+export let UPDATE_STATE_BY_PATH = (state: any, payload: { [x: string]: any; }) => {
 	return Object.keys(payload).reduce(
 		(state, path) => setValueByPath(state, path, payload[path]),
 		state

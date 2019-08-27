@@ -15,17 +15,20 @@ import getConfig from '../config'
 // Makes the script crash on unhandled rejections instead of silently
 // ignoring them. In the future, promise rejections that are not handled will
 // terminate the Node.js process with a non-zero exit code.
-const project = fs.readdirSync(process.cwd()).forEach(file => {
-	jest.runCLI(yargs.argv, [
-		process.cwd()
-	])
-	.then((success) => {
-		console.log(success);
-	})
-	.catch((failure) => {
-		console.error(failure);
-	});
+const config = Object.assign(yargs.argv, {
+	roots: [process.cwd()],
+	testRegex: "test/[a-zA-Z]+.test.ts$"
 })
+
+jest.runCLI(config, [
+	process.cwd()
+])
+.then((success) => {
+	console.log("test done");
+})
+.catch((failure) => {
+	console.error(failure);
+});
 // process.on('unhandledRejection', error => {
 // 	throw error
 // })

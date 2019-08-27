@@ -70,6 +70,7 @@ describe('controller test', () => {
     describe('__PAGE_DID_BACK__', () => {
       it('add new attribute \'location\' into state', () => {
         let oldState = {
+          basename: 'test',
           a: 1,
           b: 'a',
           c: () => {
@@ -102,13 +103,10 @@ describe('controller test', () => {
           basename: 'test2'
         }
         let state = Actions.__PAGE_DID_BACK__(oldState, location)
-        console.log(state)
-        console.log(state.location)
-        // console.log(state.location.basename)
 
         expect(state).not.toBeUndefined()
         expect(state.location).not.toBeUndefined()
-        // expect(result.location.basename).toBe('test2')
+        expect(state.location.basename).toBe('test2')
       })
     })
   

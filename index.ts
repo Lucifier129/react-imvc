@@ -45,6 +45,7 @@ declare global {
     interface Global {
       __INITIAL_STATE__?: IMVC.State
       __webpack_public_path__?: string
+      fetch?: Function
     }
   }
 
