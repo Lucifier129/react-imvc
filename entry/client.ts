@@ -9,14 +9,14 @@ import util from '../util'
 import $routes from '@routes'
 import IMVC from '../index'
 
-(global as IMVC.Global).__webpack_public_path__ = (window as IMVC.WindowNative).__PUBLIC_PATH__ + '/'
-const __APP_SETTINGS__: IMVC.AppSettings = (window as IMVC.WindowNative).__APP_SETTINGS__ || {}
+global.__webpack_public_path__ = window.__PUBLIC_PATH__ + '/'
+const __APP_SETTINGS__: IMVC.AppSettings = window.__APP_SETTINGS__ || {}
 
 const webpackLoader: createApp.Loader = (loadModule, location, context) => {
   return (<createApp.LoadController>loadModule)(location, context)
 }
 
-let shouldHydrate = !!(window as IMVC.WindowNative).__INITIAL_STATE__
+let shouldHydrate = !!window.__INITIAL_STATE__
 
 const render: IMVC.Render<React.ReactElement> = (
   view: React.ReactElement,

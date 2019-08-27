@@ -42,5 +42,8 @@
   "exclude": [
     "dist",
     "node_modules"
+  ],
+  "files": [
+    "index.ts"
   ]
 }

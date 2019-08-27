@@ -8,7 +8,7 @@ const attachDevToolsIfPossible: AttachDevToolsIfPossible = (store) => {
   if (process.env.NODE_ENV === "production") {
     return;
   }
-  if (typeof window === "undefined" || !(window as IMVC.WindowNative).__REDUX_DEVTOOLS_EXTENSION__) {
+  if (typeof window === "undefined" || !window.__REDUX_DEVTOOLS_EXTENSION__) {
     return;
   }
 

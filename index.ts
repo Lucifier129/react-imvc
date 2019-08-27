@@ -40,35 +40,36 @@ const IMVC = {
   Context: _Context,
   connect: _connect
 }
+declare global {
+  namespace NodeJS {
+    interface Global {
+      __INITIAL_STATE__?: IMVC.State
+      __webpack_public_path__?: string
+    }
+  }
+
+  interface Window {
+    __INITIAL_STATE__?: IMVC.State
+    __REDUX_DEVTOOLS_EXTENSION__?: any
+    __PUBLIC_PATH__?: string
+    __APP_SETTINGS__?: IMVC.AppSettings
+  }
+
+  var __INITIAL_STATE__: IMVC.State | undefined
+  interface Document {
+    attachEvent: typeof document.addEventListener
+    detachEvent: typeof document.removeEventListener
+  }
+}
 
 export default IMVC
 
 namespace IMVC {
 
   export type Controller = _Controller
-  export type Action = Relite.Action<object>
-  export type Actions = Record<string, Action>
-
-  export interface Global extends NodeJS.Global {
-    controller: Controller
-    __webpack_public_path__: string
-    __INITIAL_STATE__: State
-    fetch: any
-  }
-  
-  export interface WindowNative extends Window {
-    controller: Controller
-    __CUSTOM_LAYOUT__: string
-    __PUBLIC_PATH__: string
-    __APP_SETTINGS__: AppSettings
-    __INITIAL_STATE__: State
-    __REDUX_DEVTOOLS_EXTENSION__: any
-  }
-
-  export interface DocumentNative extends Document {
-    attachEvent: typeof document.addEventListener
-    detachEvent: typeof document.removeEventListener
-  }
+  export type Action = Relite.Action<State>
+  export type Actions = Relite.Actions<State>
+  export type CurryingActions = Relite.CurringActions<State, Actions>
   
   export interface Req extends express.Request {
     basename?: string
@@ -255,7 +256,7 @@ namespace IMVC {
     key?: string
     state?: State
     handlers?: Handlers
-    actions?: Actions
+    actions?: CurryingActions
   }
   
   export interface Config {
@@ -510,13 +511,15 @@ namespace IMVC {
     entry?: string | string[] | webpack.Entry | webpack.EntryFunc
   }
 
-  export interface State {
+  type ObjectAlias = object;
+
+  export interface State extends ObjectAlias {
     location?: CA.Location
     basename?: string
     publicPath?: string
     restapi?: string
     hasError?: boolean
-    [propName:string]: any
+    html?: object
   }
 
   export interface Model {
@@ -590,6 +593,6 @@ namespace IMVC {
       controller: Controller
   }
 
-  export interface Store extends Partial<Store> {
+  export interface Store extends Partial<Relite.Store<object, Record<string, Relite.Action<object>>>> {
   }
 }
