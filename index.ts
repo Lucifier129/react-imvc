@@ -46,6 +46,9 @@ export default IMVC
 namespace IMVC {
 
   export type Controller = _Controller
+  export type Action = Relite.Action<object>
+  export type Actions = Record<string, Action>
+
   export interface Global extends NodeJS.Global {
     controller: Controller
     __webpack_public_path__: string
@@ -89,11 +92,11 @@ namespace IMVC {
   }
 
 
-  export interface BaseViewFC extends React.FC<IMVC.ViewProps> {
+  export interface BaseViewFC extends React.FC<ViewProps> {
     viewId?: any
   }
 
-  export interface BaseViewClass extends React.ComponentClass<IMVC.ViewProps> {
+  export interface BaseViewClass extends React.ComponentClass<ViewProps> {
     viewId?: any
   }
 
@@ -239,7 +242,7 @@ namespace IMVC {
     title?: string
     content: string
     initialState?: object
-    appSettings: IMVC.AppSettings
+    appSettings: AppSettings
     publicPath: string
     assets: {
       vendor: string
@@ -250,9 +253,9 @@ namespace IMVC {
 
   export interface ViewProps {
     key?: string
-    state?: IMVC.State
-    handlers?: IMVC.Handlers
-    actions?: IMVC.Actions
+    state?: State
+    handlers?: Handlers
+    actions?: Actions
   }
   
   export interface Config {
@@ -507,37 +510,13 @@ namespace IMVC {
     entry?: string | string[] | webpack.Entry | webpack.EntryFunc
   }
 
-  export interface State extends Relite.State {
+  export interface State {
     location?: CA.Location
     basename?: string
     publicPath?: string
     restapi?: string
     hasError?: boolean
     [propName:string]: any
-  }
-
-  export interface Action extends Relite.Action {}
-
-  export interface Actions extends Partial<Relite.Actions> {
-    __PAGE_DID_BACK__?(state: State, location: Location): State
-    INDENTITY?(state: State): State
-    UPDATE_STATE?(state: State, newState: State): State
-    UPDATE_STATE_BY_PATH?(state: State, payload: Payload): State
-    UPDATE_INPUT_VALUE?(state: State, payload: Payload): State
-    [actionType: string]: Action | undefined
-  }
-
-  export interface CurryingAction extends Relite.CurryingAction {
-    (payload?: Payload): State | Promise<State>
-  }
-
-  export interface CurryingActions extends Partial<Relite.CurryingActions> {
-    UPDATE_STATE?(newState: Payload): State
-    UPDATE_STATE_BY_PATH?(payload: Payload): State
-    UPDATE_INPUT_VALUE?(payload: Payload): State
-    __PAGE_DID_BACK__?(payload: Payload): State
-    INDENTITY?(): State
-    [actionType: string]: CurryingAction | undefined
   }
 
   export interface Model {
@@ -611,15 +590,6 @@ namespace IMVC {
       controller: Controller
   }
 
-  export interface Store extends Partial<Relite.Store> {
-      actions?: CurryingActions
-      dispatch?(actionType: string, payload: any): State
-      getState?(): State
-      replaceState?(
-        nextState: State,
-        data?: Relite.Data,
-        slient?: boolean
-      ): void
-      subscribe?(listener: Relite.Listener): () => void
+  export interface Store extends Partial<Store> {
   }
 }
