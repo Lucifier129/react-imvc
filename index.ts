@@ -21,7 +21,6 @@ import {
   useModelActions as _useModelAction,
   useModelState as _useModelState
 } from './hook'
-import CA from 'create-app/dist/types/share/types';
 
 export const start = _start
 export const build = _build
@@ -519,7 +518,7 @@ namespace IMVC {
   type ObjectAlias = object;
 
   export interface State extends ObjectAlias {
-    location?: CA.Location
+    location?: createApp.Location
     basename?: string
     publicPath?: string
     restapi?: string

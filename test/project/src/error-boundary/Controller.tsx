@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react'
 import IMVC from '../../../../index';
 
 class Controller extends IMVC.Controller {
+  constructor(location: IMVC.Location, context: IMVC.Context) {
+    super(location, context)
+  }
   SSR = true // enable server side rendering
   View = View
   actions = {

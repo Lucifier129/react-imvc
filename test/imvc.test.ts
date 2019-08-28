@@ -90,6 +90,8 @@ function mainTest(config: Partial<IMVC.Config>) {
 			let page = await browser.newPage()
 			let url = `http://localhost:${config.port}/static_view_csr`
 			await page.goto(url)
+			const content = await page.content()
+			console.log(content)
 			await page.waitFor('#static_view_csr')
 			let serverContent = await fetchContent(url)
 			let clientContent = await page.evaluate(

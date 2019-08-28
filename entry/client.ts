@@ -13,7 +13,7 @@ global.__webpack_public_path__ = window.__PUBLIC_PATH__ + '/'
 const __APP_SETTINGS__: IMVC.AppSettings = window.__APP_SETTINGS__ || {}
 
 const webpackLoader: createApp.Loader = (loadModule, location, context) => {
-  return (<createApp.LoadController>loadModule)(location, context)
+  return (loadModule as createApp.LoadController)(location, context)
 }
 
 let shouldHydrate = !!window.__INITIAL_STATE__
@@ -80,7 +80,7 @@ if(typeof appSettings.context !== 'undefined')
   appSettings.context.preload = preload
 
 const app = createApp(appSettings);
-(app.start as createApp.Start)()
+app.start()
 
 // 热更新
 if (typeof module !== 'undefined' && (module as IMVC.NativeModule).hot) {

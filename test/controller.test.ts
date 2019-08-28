@@ -1,6 +1,8 @@
 import Controller from '../controller'
 import * as Actions from '../controller/actions'
 import attachDevToolsIfPossible from '../controller/attachDevToolsIfPossible'
+import { createStore } from 'relite'
+import IMVC from '../index';
 
 describe('controller test', () => {
   describe('Actions', () => {
@@ -145,8 +147,15 @@ describe('controller test', () => {
   
   describe('attachDevToolIfPossible', () => {
     it('production env. return void without doing any thing', () => {
-      let store = {}
-      let result = attachDevToolsIfPossible(store)
+      let actions = {
+        AAAA: (state) => {
+          return state
+        }
+      }
+      
+      let store: IMVC.Store = createStore(actions)
+      console.log(store)
+      attachDevToolsIfPossible(store)
 
     })
 

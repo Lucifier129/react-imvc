@@ -142,7 +142,7 @@ export default function createPageRouter(options: IMVC.Config) {
     }
 
     try {
-      let { content, controller } = await (app.render as createApp.Render)(req.url, context)
+      let { content, controller } = await app.render(req.url, context)
 
       /**
        * 如果没有返回 content
