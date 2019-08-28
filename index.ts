@@ -46,6 +46,7 @@ declare global {
       __INITIAL_STATE__?: IMVC.State
       __webpack_public_path__?: string
       fetch?: Function
+      [x: string]: any
     }
   }
 
@@ -54,6 +55,7 @@ declare global {
     __REDUX_DEVTOOLS_EXTENSION__?: any
     __PUBLIC_PATH__?: string
     __APP_SETTINGS__?: IMVC.AppSettings
+    [x: string]: any
   }
 
   var __INITIAL_STATE__: IMVC.State | undefined
@@ -61,7 +63,8 @@ declare global {
     attachEvent: typeof document.addEventListener
     detachEvent: typeof document.removeEventListener
   }
-  const __REDUX_DEVTOOLS_EXTENSION__: any 
+  const __REDUX_DEVTOOLS_EXTENSION__: any
+  const controller: _Controller
 }
 
 export default IMVC

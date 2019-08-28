@@ -1,4 +1,4 @@
-import Controller from '../../../../src/controller'
+import Controller from '../../../../controller'
 import React from 'react'
 export default class extends Controller {
     SSR = false // disable server side rendering

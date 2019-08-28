@@ -1,6 +1,6 @@
-import ErrorBoundary from '../../../../src/component/ErrorBoundary'
+import ErrorBoundary from '../../../../component/ErrorBoundary'
 import React, { useState, useEffect } from 'react'
-import IMVC from '../../../../src';
+import IMVC from '../../../../index';
 
 class Controller extends IMVC.Controller {
   SSR = true // enable server side rendering

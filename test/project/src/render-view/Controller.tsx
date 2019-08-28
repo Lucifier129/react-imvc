@@ -11,9 +11,9 @@ export default class extends IMVC.Controller {
   constructor(location: IMVC.Location, context: IMVC.Context) {
     super(location, context)
     if (context.isClient) {
-      (window as IMVC.WindowNative).controller = this
+      window.controller = this
     } else if (context.isServer) {
-      (global as IMVC.Global).controller = this
+      global.controller = this
     }
   }
   async componentWillCreate() {

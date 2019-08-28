@@ -145,7 +145,7 @@ function mainTest(config: Partial<IMVC.Config>) {
 			await page.waitFor('#static_view')
 			let serverContent = await fetchContent(url)
 			let __CUSTOM_LAYOUT__ = await page.evaluate(
-				() => (<IMVC.WindowNative>window).__CUSTOM_LAYOUT__
+				() => window.__CUSTOM_LAYOUT__
 			)
 
 			expect(serverContent.includes('window.__CUSTOM_LAYOUT__')).toBe(true)

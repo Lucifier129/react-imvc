@@ -3,7 +3,6 @@ import chalk from 'chalk'
 import gulp from 'gulp'
 import log from 'fancy-log'
 import plumber from 'gulp-plumber'
-// @ts-ignore
 import cleanCSS from 'gulp-clean-css'
 import htmlmin from 'gulp-htmlmin'
 import imagemin from 'gulp-imagemin'
