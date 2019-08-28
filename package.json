@@ -15,7 +15,7 @@
     "test:watch": "jest --coverage --watch",
     "publish-imvc": "npm publish ./publish",
     "prepublish-imvc": "npm run build",
-    "script:test": "ts-node ./scripts/test.ts"
+    "script:test": "node ./scripts/test.js"
   },
   "repository": {
     "type": "git",
