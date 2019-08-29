@@ -1,5 +1,5 @@
 import React from 'react'
-import Script from '../../../src/component/Script'
+import Script from '../../../component/Script'
 import IMVC from '../../../'
 
 

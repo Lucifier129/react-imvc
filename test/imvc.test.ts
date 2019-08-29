@@ -84,19 +84,21 @@ function mainTest(config: Partial<IMVC.Config>) {
 			expect(clientContent.includes('static view content')).toBe(true)
 
 			await page.close()
-		})
+		}) 
 
 		it('should not render view in server side when controller.SSR is false', async () => {
 			let page = await browser.newPage()
 			let url = `http://localhost:${config.port}/static_view_csr`
 			await page.goto(url)
+			await page.waitFor('#static_view_csr')
 			const content = await page.content()
 			console.log(content)
-			await page.waitFor('#static_view_csr')
 			let serverContent = await fetchContent(url)
 			let clientContent = await page.evaluate(
 				() => document.documentElement.outerHTML
 			)
+			console.log(serverContent)
+			console.log(clientContent)
 			expect(
 				serverContent.includes('static view content by client side rendering')
 			).toBe(false)

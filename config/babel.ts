@@ -9,8 +9,6 @@ const Babel: GetBabelFunc = (isServer = true) => ({
     '@babel/preset-env',
     '@babel/preset-react',
     // typescript
-    // 
-    // typescript 中配置不生效
     [
       '@babel/preset-typescript',
       {
@@ -18,7 +16,6 @@ const Babel: GetBabelFunc = (isServer = true) => ({
         allExtensions: true
       }
     ],
-    '@babel/preset-typescript'
   ],
   plugins: [
     // Stage 0

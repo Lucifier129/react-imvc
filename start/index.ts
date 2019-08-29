@@ -62,7 +62,6 @@ const start: StartFunc = (options) => {
 	app.use(addRenderPage as express.RequestHandler)
 
 	let routePath = path.join(config.root, config.routes)
-	console.log(routePath)
 
 	if (hasModuleFile(routePath)) {
 		// get server routes
@@ -70,7 +69,6 @@ const start: StartFunc = (options) => {
 		routes = routes.default || routes
 		Object.keys(routes).forEach(key => {
 			let route = routes[key]
-			console.log(route)
 			if (typeof route === 'function') {
 				route(app, server)
 			}

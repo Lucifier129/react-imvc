@@ -2,14 +2,16 @@ import { Router } from 'express'
 import path from 'path'
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
-import createApp from 'create-app/server'
+import createApp from '../../create-app/src/server'
 import util from '../util'
 import IMVC from '../index'
 import Controller from '../controller'
 
 const { getFlatList } = util
+const getModule = module => module.default || module
 const commonjsLoader: createApp.Loader = (loadModule, location, context) => {
-  return (<createApp.LoadController>loadModule)(location, context)
+  return ((<createApp.LoadController>loadModule)(location, context) as 
+    Promise<createApp.ControllerConstructor>).then(getModule)
 }
 
 /**
@@ -21,7 +23,7 @@ const createElement = React.createElement
 
 const renderToNodeStream: IMVC.RenderToNodeStream<React.ReactElement> = (view: React.ReactElement, controller?: Controller) => {
   return new Promise<{}>((resolve, reject) => {
-    let stream = ReactDOMServer.renderToNodeStream(<React.ReactElement>view)
+    let stream = ReactDOMServer.renderToNodeStream(view)
     let buffers: Uint8Array[] = []
     stream.on('data', chunk => buffers.push(chunk))
     stream.on('end', () => {

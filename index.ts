@@ -1,12 +1,13 @@
 import express from 'express'
 import yargs from 'yargs';
-import createApp from 'create-app/client'
+import createApp from '../create-app/src/client'
 import webpack from 'webpack'
 import serveStatic from 'serve-static'
 import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
 import compression from 'compression'
 import * as Relite from 'relite'
+import babelCore from 'babel-core'
 
 import _build from './build'
 import _start from './start'
@@ -134,8 +135,8 @@ namespace IMVC {
   export interface Render<E = string> extends createApp.RenderTo<E> {
     (
       view: React.ReactElement,
-      container?: Element | null,
-      controller?: Controller
+      controller?: Controller,
+      container?: Element | null
     ): void
   }
 
@@ -186,8 +187,9 @@ namespace IMVC {
   }
   
   export interface Views {
-    beautify: boolean // 是否美化 html 响应内容
-    transformViews: boolean // 默认不转换 view，已经有 babel 做处理
+    beautify?: boolean // 是否美化 html 响应内容
+    transformViews?: boolean // 默认不转换 view，已经有 babel 做处理
+    babel?: babelCore.TransformOptions
   }
   
   export interface BodyParseOptions {

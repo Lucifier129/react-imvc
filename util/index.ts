@@ -1,4 +1,4 @@
-import createApp from 'create-app/client'
+import createApp from '../../create-app/src/client'
 
 export default {
   toJSON,

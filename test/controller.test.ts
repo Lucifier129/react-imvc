@@ -154,14 +154,11 @@ describe('controller test', () => {
       }
       
       let store: IMVC.Store = createStore(actions)
-      console.log(store)
       attachDevToolsIfPossible(store)
 
     })
 
     it('Not progress in browser. return void without doing any thing', () => {
-      let store = {}
-      let result = attachDevToolsIfPossible(store)
 
     })
   })

@@ -12,7 +12,9 @@ import ViewManager from '../component/ViewManager'
 
 describe('component test', () => {
   describe('ControllerProxy', () => {
-
+    it('', () => {
+      
+    })
   })
   
   describe('ErrorBoundary', () => {

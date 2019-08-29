@@ -7,8 +7,10 @@ import cookieParser from 'cookie-parser'
 import bodyParser from 'body-parser'
 import favicon from 'serve-favicon'
 import helmet from 'helmet'
+
 import shareRoot from '../middleware/shareRoot'
 import IMVC from '../index'
+import configBabel from '../config/babel'
 
 export default function createExpressApp(config: IMVC.Config) {
 	const app: express.Express = express()
@@ -38,11 +40,23 @@ export default function createExpressApp(config: IMVC.Config) {
 	}
 
 	// handle view engine
-	app.engine('js', require('express-react-views').createEngine(config.ReactViews))
+	const viewsConfig = {
+		...config.ReactViews,
+		babel: {
+			...configBabel,
+			extensions: ['.es6', '.es', '.jsx', '.js', '.mjs', '.ts', '.tsx']
+		}
+	}
+	app.engine('js', require('express-react-views').createEngine(viewsConfig))
+	app.engine('jsx', require('express-react-views').createEngine(viewsConfig))
+	app.engine('ts', require('express-react-views').createEngine(viewsConfig))
+	app.engine('tsx', require('express-react-views').createEngine(viewsConfig))
 
 	// view engine setup
 	app.set('views', path.join(config.root, config.routes))
-	app.set('view engine', 'js')
+	app.set('view engine', 'ts')
+	app.set('view engine', 'jsx')
+	app.set('view engine', 'tsx')
 
 	// handle logger
 	if (config.logger) {

@@ -3,7 +3,7 @@ import 'regenerator-runtime/runtime'
 import '../polyfill'
 import 'whatwg-fetch'
 import ReactDOM from 'react-dom'
-import createApp from 'create-app/client'
+import createApp from '../../create-app/src/client'
 import util from '../util'
 // @ts-ignore
 import $routes from '@routes'
@@ -20,15 +20,15 @@ let shouldHydrate = !!window.__INITIAL_STATE__
 
 const render: IMVC.Render<React.ReactElement> = (
   view: React.ReactElement,
-  container?: Element | null,
-  controller?: IMVC.Controller
+  controller?: IMVC.Controller,
+  container?: Element | null
 ) => {
   try {
     if (shouldHydrate) {
       shouldHydrate = false
-      ReactDOM.hydrate([view as React.ReactElement], container as Element | null)
+      ReactDOM.hydrate([view], container)
     } else {
-      ReactDOM.render([view as React.ReactElement], container as Element | null)
+      ReactDOM.render([view], container)
     }
   } catch (error) {
     if (!controller) throw error
@@ -38,7 +38,7 @@ const render: IMVC.Render<React.ReactElement> = (
     }
 
     if (controller.getViewFallback) {
-      render(controller.getViewFallback(), container)
+      render(controller.getViewFallback(), undefined, container)
     } else {
       throw error
     }
