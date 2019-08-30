@@ -276,7 +276,7 @@ controller.get 方法是基于 controller.fetch 封装的方法，更简便地�
 
 url 参数的处理，跟 controller.fetch 方法一致。
 
-params 参数将在内部被 querystring.stringify ，拼接在 url 后面。
+params 参数将在内部被 querystringify.stringify ，拼接在 url 后面。
 
 options 参数将作为 fetch 的 options 传递。
 
@@ -691,7 +691,7 @@ NavLink 组件，跟 Link 类似，可以用来实现页面的单页路由跳转
 
 ### Script
 
-Script 组件，用来防范 querystring 的 XSS 风险，放置 window.\_\_INITIAL_STATE 里执行恶意代码。
+Script 组件，用来防范 querystringify 的 XSS 风险，放置 window.\_\_INITIAL_STATE 里执行恶意代码。
 
 ```javascript
 import React from 'react'
@@ -964,7 +964,7 @@ react-imvc 可以作为 npm scripts 里的命令来使用，总共有三个
 {
     // 最简用法
     "start": "react-imvc start",
-    // 使用 querystring 将 start?{search} 的参数传递给 node 启动命令里
+    // 使用 querystringify 将 start?{search} 的参数传递给 node 启动命令里
     "start:inspect": "react-imvc start?inspect",
     // 使用 chrome dev tool 来 inspect 你的应用，并且在执行你的代码之前就自动断点
     "start:inspect-brk": "react-imvc start?inspect-brk",

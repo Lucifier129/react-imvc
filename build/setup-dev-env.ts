@@ -141,18 +141,19 @@ export type Reporter = (
 export const reporter: Reporter = (middlewareOptions, options) => {
 	const { log, state, stats } = options
 
-	if (state && stats !== undefined) {
+	if (state) {
 		const displayStats = middlewareOptions.stats !== false
+		const statsString = stats.toString(middlewareOptions.stats);
 
-		if (displayStats) {
-			if (stats.hasErrors()) {
-				log.error(stats.toString(middlewareOptions.stats))
-			} else if (stats.hasWarnings()) {
-				log.warn(stats.toString(middlewareOptions.stats))
-			} else {
-				log.info(stats.toString(middlewareOptions.stats))
-			}
-		}
+		if (displayStats && statsString.trim().length) {
+      if (stats.hasErrors()) {
+        log.error(statsString);
+      } else if (stats.hasWarnings()) {
+        log.warn(statsString);
+      } else {
+        log.info(statsString);
+      }
+    }
 
 		let message = 'Compiled successfully.'
 

@@ -4,7 +4,7 @@ import 'whatwg-fetch'
 import React from 'react'
 import { createStore } from 'relite'
 import Cookie from 'js-cookie'
-import querystring, { stringify } from 'querystring'
+import querystringify, { stringify } from 'querystringify'
 import CA from 'create-app/client'
 import CH from 'create-history'
 import _ from '../util'
@@ -299,7 +299,7 @@ export default class Controller implements CA.Controller {
     }
     if (params) {
       let prefix = url.includes('?') ? '&' : '?'
-      url += prefix + querystring.stringify(params)
+      url += prefix + querystringify.stringify(params)
     }
     options = {
       ...options,

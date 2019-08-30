@@ -7,10 +7,13 @@ import cookieParser from 'cookie-parser'
 import bodyParser from 'body-parser'
 import favicon from 'serve-favicon'
 import helmet from 'helmet'
+import webpackHotMiddleware from 'webpack-hot-middleware'
+
 
 import shareRoot from '../middleware/shareRoot'
 import IMVC from '../index'
 import configBabel from '../config/babel'
+import * as setupDevEnv from '../build/setup-dev-env'
 
 export default function createExpressApp(config: IMVC.Config) {
 	const app: express.Express = express()
@@ -91,18 +94,19 @@ export default function createExpressApp(config: IMVC.Config) {
 
 	if (config.webpackDevMiddleware) {
 		// 开发模式用 webpack-dev-middleware 代理 js 文件
-		let setupDevEnv  = require('../build/setup-dev-env')
 		let { compiler, middleware } = setupDevEnv.setupClient(config)
+		// @ts-ignore
 		app.use(middleware)
 
 		// 添加热更新中间件
 		if (config.hot) {
-			let webpackHotMiddleware = require('webpack-hot-middleware')
+			const whmConfig = {
+				quiet: true,
+				noInfo: true,
+			}
 			app.use(
 				webpackHotMiddleware(compiler, {
-					quiet: true,
-					noInfo: true,
-					log: false,
+					log: false
 				})
 			)
 		}
