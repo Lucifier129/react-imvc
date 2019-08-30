@@ -1,6 +1,6 @@
 import express from 'express'
 import yargs from 'yargs';
-import createApp from '../create-app/src/client'
+import createApp from 'create-app/client'
 import webpack from 'webpack'
 import serveStatic from 'serve-static'
 import cookieParser from 'cookie-parser'

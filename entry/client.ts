@@ -3,7 +3,7 @@ import 'regenerator-runtime/runtime'
 import '../polyfill'
 import 'whatwg-fetch'
 import ReactDOM from 'react-dom'
-import createApp from '../../create-app/src/client'
+import createApp from 'create-app/client'
 import util from '../util'
 // @ts-ignore
 import $routes from '@routes'
