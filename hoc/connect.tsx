@@ -26,15 +26,17 @@ export default (selector = returnNull) => (
   InputComponent: React.ComponentType<ComponentProps>
 ) => {
   return function Connector(props: object) {
-    <GlobalContext.Consumer>
-      {({ state, handlers, actions }: ConnectProps) => {
-        return (
-          <InputComponent
-            {...props}
-            {...selector({ state, handlers, actions, props })}
-          />
-        );
-      }}
-    </GlobalContext.Consumer>;
+    return (
+      <GlobalContext.Consumer>
+        {({ state, handlers, actions }: ConnectProps) => {
+          return (
+            <InputComponent
+              {...props}
+              {...selector({ state, handlers, actions, props })}
+            />
+          );
+        }}
+      </GlobalContext.Consumer>
+    )
   };
 };

@@ -52,7 +52,9 @@ function mainTest(config: Partial<IMVC.Config>) {
 	describe('static view', () => {
 		let renderCondition = config.SSR ? 'render' : 'NOT render'
 		
-		let app: App, server: Server, browser: puppeteer.Browser
+		let app: App
+		let server: Server
+		let browser: puppeteer.Browser
 
 		beforeEach(async () => {
 			try {
@@ -112,7 +114,9 @@ function mainTest(config: Partial<IMVC.Config>) {
 
 	describe('server side', () => {
 		
-	let app: App, server: Server, browser: puppeteer.Browser
+	let app: App
+	let server: Server
+	let browser: puppeteer.Browser
 
 		beforeEach(async () => {
 			try {
@@ -167,7 +171,9 @@ function mainTest(config: Partial<IMVC.Config>) {
 
 	describe('controller', () => {
 		
-		let app: App, server: Server, browser: puppeteer.Browser
+		let app: App
+		let server: Server
+		let browser: puppeteer.Browser
 
 		beforeEach(async () => {
 			try {
@@ -191,10 +197,10 @@ function mainTest(config: Partial<IMVC.Config>) {
 			await page.goto(url)
 			await page.waitFor('#basic_state')
 
-			let clientController = await page.evaluate(() => (<IMVC.WindowNative>window).controller)
+			let clientController = await page.evaluate(() => window.controller)
 
 			if (config.SSR) {
-				let serverController = (<IMVC.Global>global).controller
+				let serverController = global.controller
 
 				let locationKeys = [
 					'params',

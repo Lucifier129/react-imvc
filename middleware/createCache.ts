@@ -86,7 +86,7 @@ export default () => {
 
       let oldRecord: Record = cache[key]
       if (oldRecord) {
-        clearTimeout(<NodeJS.Timeout>oldRecord.timeout)
+        clearTimeout(oldRecord.timeout as NodeJS.Timeout)
         if (!isNaN(oldRecord.expire) && oldRecord.expire < Date.now()) {
           canDelete = false
         }

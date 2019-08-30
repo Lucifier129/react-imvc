@@ -19,7 +19,7 @@ export const getExternals: GetExternals = config => {
     }
 
     try {
-      var pkg = require(item)
+      let pkg = require(item)
       if (pkg.dependencies) {
         dependencies = dependencies.concat(Object.keys(pkg.dependencies))
       }
@@ -31,7 +31,7 @@ export const getExternals: GetExternals = config => {
     }
   }
 
-  var map: Record<string, boolean> = {}
+  let map: Record<string, boolean> = {}
   dependencies = dependencies.filter(name => {
     if (map[name]) {
       return false

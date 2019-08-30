@@ -23,7 +23,7 @@ type StartFunc = (options: IMVC.Options) => Promise<{server: http.Server, app: e
 const start: StartFunc = (options) => {
 	let config = getConfig(options)
 	let app = createExpressApp(config)
-	let port = normalizePort(<string>config.port)
+	let port = normalizePort(config.port as string)
 
 	/**
 	 * make fetch works like in browser
@@ -104,9 +104,9 @@ const start: StartFunc = (options) => {
 	} as express.ErrorRequestHandler)
 
 	return new Promise<{server: http.Server, app: express.Express}>((resolve, reject) => {
-    /**
-	 * Event listener for HTTP server "listening" event.
-	 */
+		/**
+		 * Event listener for HTTP server "listening" event.
+		 */
 
     const onListening = () => {
       let addr = server.address()

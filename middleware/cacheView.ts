@@ -24,7 +24,7 @@ let defaults: Settings = {
   debug: false
 };
 
-var callNext: IMVC.RequestHandler = (req, res, next) => next();
+let callNext: IMVC.RequestHandler = (req, res, next) => next();
 
 export default (settings: Settings) => {
   // 只在生产环境，或者开启了 debug = true 的情况下，做缓存
@@ -33,11 +33,11 @@ export default (settings: Settings) => {
   }
   settings = Object.assign({}, defaults, settings);
 
-  var cache: Cache = createCache();
+  let cache: Cache = createCache();
 
   return function(req: IMVC.Req, res: IMVC.Res, next: express.NextFunction) {
-    var cacheKey: string = settings.key(req.originalUrl, req);
-    var cacheContent: any;
+    let cacheKey: string = settings.key(req.originalUrl, req);
+    let cacheContent: any;
     if (cache.get) {
       cacheContent = cache.get(cacheKey);
     }

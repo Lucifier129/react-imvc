@@ -119,7 +119,7 @@ class ViewItem extends React.Component<ItemProps> {
 	}
 	getResetScrollOnMount = () => {
 		let { resetScrollOnMount } = this.props
-		return resetScrollOnMount == undefined ? true : !!resetScrollOnMount
+		return resetScrollOnMount === undefined ? true : !!resetScrollOnMount
 	}
 	shouldComponentUpdate(nextProps: ItemProps) {
 		if (!nextProps.isActive) {

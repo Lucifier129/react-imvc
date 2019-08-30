@@ -445,7 +445,7 @@ export default class Controller implements CA.Controller {
     }
 
     if (typeof initialState === 'object') {
-      //保护性复制初始化状态，避免运行中修改引用导致其他实例初始化数据不对
+      // 保护性复制初始化状态，避免运行中修改引用导致其他实例初始化数据不对
       initialState = JSON.parse(JSON.stringify(initialState))
     }
 
@@ -633,7 +633,9 @@ export default class Controller implements CA.Controller {
       ...this.meta,
       id: View.viewId
     }
-    if (this.proxyHandler) this.proxyHandler.attach()
+    if (this.proxyHandler) {
+      this.proxyHandler.attach()
+    }
     (this.refreshView as UdfFuncType)(<ViewManager controller={ctrl} />)
   }
 

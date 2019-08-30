@@ -93,11 +93,11 @@ const createGulpTask: CreateGulpTask = (options) => {
             debug: true
           },
           (details: Record<string, any>) => {
-            var percent = (
+            let percent = (
               (details.stats.minifiedSize / details.stats.originalSize) *
               100
             ).toFixed(2)
-            var message = `${details.name}(${chalk.green(percent)}%)`
+            let message = `${details.name}(${chalk.green(percent)}%)`
             log('gulp-clean-css:', message)
           }
         )

@@ -76,8 +76,9 @@ Array.from(document.querySelectorAll('[data-preload]')).forEach(elem => {
     preload[name] = content
   }
 });
-if(typeof appSettings.context !== 'undefined')
+if(typeof appSettings.context !== 'undefined') {
   appSettings.context.preload = preload
+}
 
 const app = createApp(appSettings);
 app.start()

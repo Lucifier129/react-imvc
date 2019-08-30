@@ -10,7 +10,7 @@ import Controller from '../controller'
 const { getFlatList } = util
 const getModule = module => module.default || module
 const commonjsLoader: createApp.Loader = (loadModule, location, context) => {
-  return ((<createApp.LoadController>loadModule)(location, context) as 
+  return ((loadModule as createApp.LoadController)(location, context) as 
     Promise<createApp.ControllerConstructor>).then(getModule)
 }
 
@@ -53,7 +53,7 @@ const renderToNodeStream: IMVC.RenderToNodeStream<React.ReactElement> = (view: R
 
 const renderToString: IMVC.RenderToString<React.ReactElement> = (view: React.ReactElement, controller?: Controller) => {
   try {
-    return ReactDOMServer.renderToString(<React.ReactElement>view)
+    return ReactDOMServer.renderToString(view)
   } catch (error) {
     if (!controller) throw error
 
@@ -113,7 +113,7 @@ export default function createPageRouter(options: IMVC.Config) {
     })
   } else if (config.NODE_ENV === 'development') {
     // 带服务端渲染模式的开发环境，需要动态编译 src/routes
-    var setupDevEnv = require('../build/setup-dev-env')
+    let setupDevEnv = require('../build/setup-dev-env')
     setupDevEnv.setupServer(config, {
       handleHotModule: ($routes: any[] | object) => {
         const routes = getFlatList(

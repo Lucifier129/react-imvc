@@ -31,7 +31,7 @@ export default class OuterClickWrapper extends Component<Props> {
       if (node === rootNode) {
         return true
       }
-      node = <Node>node.parentNode
+      node = node.parentNode
     }
     return false
   }
