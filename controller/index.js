@@ -207,6 +207,9 @@ export default class Controller {
     if (context.isServer && finalOptions.credentials === 'include') {
       finalOptions.headers['Cookie'] = context.req.headers.cookie || ''
     }
+    
+    // 支持使用方手动传入自定义fetch方法
+    let fetch = typeof options.fetch === 'function' ? options.fetch : fetch
 
     let fetchData = fetch(url, finalOptions)
 
