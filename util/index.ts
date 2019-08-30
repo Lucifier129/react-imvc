@@ -81,22 +81,22 @@ function isThenable(obj: any) {
   return obj != null && typeof obj.then === 'function'
 }
 
-const path_separator_regexp = /\.|\/|:/
+const PATH_SEPARATOR_REGEXP = /\.|\/|:/
 const getPath = (path: string | string[]) => {
   if (Array.isArray(path)) return path
-  return path.split(path_separator_regexp)
+  return path.split(PATH_SEPARATOR_REGEXP)
 }
 
-interface objectOrArray {
+interface ObjectOrArray {
   [key: string]: any
   [key: number]: any
 }
 
 type setValue = (
-  obj: objectOrArray,
+  obj: ObjectOrArray,
   keys: string[],
   value: any
-) => objectOrArray
+) => ObjectOrArray
 
 const setValue: setValue = (obj, [key, ...rest], value) => {
   obj = Array.isArray(obj)
@@ -109,16 +109,16 @@ const setValue: setValue = (obj, [key, ...rest], value) => {
 }
 
 function setValueByPath(
-  obj: objectOrArray,
+  obj: ObjectOrArray,
   path: string | string[],
   value: any
-): objectOrArray {
+): ObjectOrArray {
   return setValue(obj, getPath(path), value)
 }
 
-type getValue = (ret: objectOrArray, key: string | number) => any
+type getValue = (ret: ObjectOrArray, key: string | number) => any
 const getValue: getValue = (ret, key) => ret[key]
 
-function getValueByPath(obj: objectOrArray, path: string | string[]): any {
+function getValueByPath(obj: ObjectOrArray, path: string | string[]): any {
   return getPath(path).reduce(getValue, obj)
 }

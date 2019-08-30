@@ -23,7 +23,7 @@ type StartFunc = (options: IMVC.Options) => Promise<{server: http.Server, app: e
 const start: StartFunc = (options) => {
 	let config = getConfig(options)
 	let app = createExpressApp(config)
-	let port = normalizePort(config.port as string)
+	let port = normalizePort(config.port)
 
 	/**
 	 * make fetch works like in browser
@@ -53,13 +53,7 @@ const start: StartFunc = (options) => {
 	let server = http.createServer(app)
 
 	let pageRouter = createPageRouter(config)
-
-	// 添加 renderPage 方法，让自定义的 routes 里可以手动调用，走 IMVC 的渲染流程
-	let addRenderPage: IMVC.RequestHandler = (req, res, next) => {
-		res.renderPage = pageRouter
-		next()
-	}
-	app.use(addRenderPage as express.RequestHandler)
+	
 
 	let routePath = path.join(config.root, config.routes)
 
@@ -75,35 +69,42 @@ const start: StartFunc = (options) => {
 		})
 	}
 
-	app.use(pageRouter)
-
+	// 添加 renderPage 方法，让自定义的 routes 里可以手动调用，走 IMVC 的渲染流程
+	let addRenderPage: IMVC.RequestHandler = (req, res, next) => {
+		res.renderPage = pageRouter
+		next()
+	}
+	
 	// catch 404 and forward to error handler
 	let catch404: IMVC.RequestHandler = function(req, res, next) {
 		const err: any = new Error('Not Found')
 		err.status = 404
 		res.render('404', err)
 	}
-	app.use(catch404 as express.RequestHandler)
 
 	// error handlers
-
 	// development error handler
-	// will print stacktrace
-	if (app.get('env') === 'development') {
-		app.use(function(err: any, req, res, next) {
-			res.status(err.status || 500)
-			res.send(err.stack)
-		} as express.ErrorRequestHandler)
+	let devErrorHandler: express.ErrorRequestHandler = function(err: any, req, res, next) {
+		res.status(err.status || 500)
+		res.send(err.stack)
 	}
-
+	
 	// production error handler
-	// no stacktraces leaked to user
-	app.use(function(err: any, req, res, next) {
+	let prodErrorHandler: express.ErrorRequestHandler = function(err: any, req, res, next) {
 		res.status(err.status || 500)
 		res.json(err.message)
-	} as express.ErrorRequestHandler)
+	}
 
-	return new Promise<{server: http.Server, app: express.Express}>((resolve, reject) => {
+	app.use(addRenderPage)
+	app.use(pageRouter)
+	app.use(catch404)
+	// will print stacktrace
+	if (app.get('env') === 'development') {
+		app.use(devErrorHandler)
+	}
+	app.use(prodErrorHandler)
+
+	let promise = new Promise<{server: http.Server, app: express.Express}>((resolve, reject) => {
 		/**
 		 * Event listener for HTTP server "listening" event.
 		 */
@@ -150,14 +151,16 @@ const start: StartFunc = (options) => {
 		server.on('error', reject)
 		server.on('listening', () => resolve({ server, app }))
 	})
+
+	return promise
 }
 
 /**
  * Normalize a port into a number, string, or false.
  */
 
-const normalizePort = (val: string) => {
-	let port = parseInt(val, 10)
+const normalizePort = (val: string | number) => {
+	let port = parseInt(String(val), 10)
 
 	if (isNaN(port)) {
 		// named pipe
