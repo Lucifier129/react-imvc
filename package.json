@@ -13,6 +13,7 @@
     "prebuild": "rimraf ./dist",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
+    "test:single": "jest test/single.test.ts",
     "publish-imvc": "npm publish ./publish",
     "prepublish-imvc": "npm run build",
     "script:test": "node ./scripts/test.js"
@@ -67,7 +68,6 @@
     "@types/node": "^10.12.24",
     "@types/node-fetch": "^2.5.0",
     "@types/node-notifier": "^5.4.0",
-    "@types/puppeteer": "^1.19.0",
     "@types/querystringify": "^2.0.0",
     "@types/raf": "^3.4.0",
     "@types/react": "^16.8.2",
@@ -134,11 +134,16 @@
     "react-dom": "^16.8.0"
   },
   "devDependencies": {
+    "@types/expect-puppeteer": "^3.3.1",
     "@types/fetch-mock": "^7.3.1",
     "@types/jest": "^24.0.16",
+    "@types/jest-environment-puppeteer": "^4.3.1",
     "@types/lodash": "^4.14.137",
+    "@types/puppeteer": "^1.19.1",
     "fetch-mock": "^7.3.9",
     "jest": "^24.8.0",
+    "jest-environment-puppeteer": "^4.3.0",
+    "jest-puppeteer": "^4.3.0",
     "lodash": "^4.17.15",
     "puppeteer": "^1.19.0",
     "react": "^16.8.0",

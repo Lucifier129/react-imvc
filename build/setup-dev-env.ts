@@ -18,6 +18,7 @@ export interface SetupClient {
 export const setupClient: SetupClient = (config: IMVC.Config) => {
 	let clientConfig = createWebpackConfig(config)
 	let compiler = webpack(clientConfig)
+	console.log(JSON.stringify(clientConfig))
 	let middleware = webpackDevMiddleware(compiler, {
 		publicPath: config.staticPath,
 		stats: config.webpackLogger,
