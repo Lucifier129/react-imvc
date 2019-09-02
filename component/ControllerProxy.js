@@ -14,11 +14,11 @@ export default class ControllerProxy extends React.Component {
       document.title = html.title
     }
   }
-  emit(method) {
+  async emit(method) {
     let { controller } = this.props
     try {
       if (typeof controller[method] === 'function') {
-        controller[method]()
+        await controller[method]()
       }
     } catch (error) {
       if (controller.errorDidCatch) {

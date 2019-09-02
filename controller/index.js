@@ -43,6 +43,7 @@ export default class Controller {
     this.location = location
     this.context = context
     this.handlers = {}
+    this.deepCloneInitialState = true
   }
   // 绑定 handler 的 this 值为 controller 实例
   combineHandlers(source) {
@@ -391,7 +392,8 @@ export default class Controller {
       initialState = initialState(location, context)
     }
 
-    if (typeof initialState === 'object') {
+    // 增加开关。兼容在initialState中放函数的用法
+    if (typeof initialState === 'object' && this.deepCloneInitialState) {
       //保护性复制初始化状态，避免运行中修改引用导致其他实例初始化数据不对
       initialState = JSON.parse(JSON.stringify(initialState))
     }
