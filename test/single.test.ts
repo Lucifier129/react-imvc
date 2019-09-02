@@ -18,7 +18,7 @@ const config: Partial<IMVC.Config> = {
     transformViews: false // 已有转换，无须再做
   },
   routes: "routes", // 服务端路由目录
-  layout: "Layout", // 自定义 Layout
+  layout: "Layout", // 自定义 Layoutclear
   webpackLogger: false, // 关闭 webpack logger
   webpackDevMiddleware: true // 在内存里编译
 };
@@ -27,7 +27,7 @@ describe("test", () => {
   let app: express.Express;
   let server: http.Server;
 
-  beforeAll(async (done) => {
+  beforeEach(async () => {
     try {
       let result = await start({ config });
       app = result.app;
@@ -35,20 +35,30 @@ describe("test", () => {
     } catch (error) {
       console.log("error", error);
     }
-    done()
   });
 
-  afterAll(async (done) => {
+  afterEach( () => {
     if (server) {
       server.close();
     }
-    done()
   });
 
-  it("test", async (done) => {
-    let url = `http://localhost:${config.port}/basic_state`;
-    await page.goto(url)
-    await page.waitFor('#basic_state')
-    done()
+  it("test", async () => {
+    let url = `http://localhost:${config.port}/static_view`;
+    try {
+      await page.goto(url),
+      await page.waitFor("#static_view")
+      // let serverContent = await fetchContent(url)
+      // let clientContent = await page.evaluate(() => document.documentElement.outerHTML)
+      // console.log(clientContent)
+    } catch (e) {
+      console.log(e)
+    }
   });
 });
+
+async function fetchContent(url: string): Promise<string> {
+  let response = await fetch(url);
+  let content = await response.text();
+  return content;
+}

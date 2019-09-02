@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "module": "commonjs",
+    "diagnostics": true,
     "lib": [
       "dom",
       "dom.iterable",
@@ -11,8 +13,6 @@
     "allowSyntheticDefaultImports": true,
     "strict": false,
     "forceConsistentCasingInFileNames": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
     "resolveJsonModule": true,
     "jsx": "react",
     "declaration": true,
@@ -44,6 +44,6 @@
     "node_modules"
   ],
   "files": [
-    "index.ts"
+    "index.d.ts"
   ]
 }

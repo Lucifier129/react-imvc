@@ -94,20 +94,19 @@ export default function createExpressApp(config: IMVC.Config) {
 	if (config.webpackDevMiddleware) {
 		// 开发模式用 webpack-dev-middleware 代理 js 文件
 		let { compiler, middleware } = setupDevEnv.setupClient(config)
-		// @ts-ignore
 		app.use(middleware)
 
 		// 添加热更新中间件
 		if (config.hot) {
 			const whmConfig = {
-				quiet: true,
-				noInfo: true,
+				// quiet: true,
+				// noInfo: true,
 			}
 			app.use(
-				require(`webpackHotMiddleware?${
+				require(`webpack-hot-middleware?${
 					querystringify.stringify(whmConfig)
 				}`)(compiler, {
-					log: false
+					// log: false
 				})
 			)
 		}

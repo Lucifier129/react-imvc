@@ -40,7 +40,9 @@ const createWebpackConfig: CreateWebpackConfig = (options, isServer = false) => 
 		// Add /* filename */ comments to generated require()s in the output.
 		pathinfo: !isProd,
 		// Point sourcemap entries to original disk location (format as URL on Windows)
-		devtoolModuleFilenameTemplate
+		devtoolModuleFilenameTemplate,
+		// Link the env to dom
+		globalObject: 'this'
 	}
 
 	if (isServer) {
@@ -63,8 +65,8 @@ const createWebpackConfig: CreateWebpackConfig = (options, isServer = false) => 
   
   let ManifestPluginMap = (file: ManifestPlugin.FileDescriptor) => {
     // 删除 .js 后缀，方便直接使用 obj.name 来访问
-    if (/\.js$/.test(file.name as string)) {
-      file.name = (file.name as string).slice(0, -3)
+    if (/\.js$/.test(file.name)) {
+      file.name = file.name.slice(0, -3)
     }
     return file
   }
@@ -226,7 +228,7 @@ const createWebpackConfig: CreateWebpackConfig = (options, isServer = false) => 
     // The preset includes JSX, Flow, TypeScript and some ESnext features.
     {
       test: /\.(js|mjs|jsx|ts|tsx)$/,
-      exclude: /(node_modules|bower_components)/,
+      exclude: '/node_modules/',
       loader: 'babel-loader',
       options: babelOptions
     }

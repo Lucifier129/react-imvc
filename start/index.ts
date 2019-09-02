@@ -18,9 +18,7 @@ import getConfig from '../config'
 import createPageRouter from '../page/createPageRouter'
 import IMVC from '../index'
 
-type StartFunc = (options: IMVC.Options) => Promise<{server: http.Server, app: express.Express}>
-
-const start: StartFunc = (options) => {
+const start: IMVC.Start = (options) => {
 	let config = getConfig(options)
 	let app = createExpressApp(config)
 	let port = normalizePort(config.port)

@@ -2,8 +2,10 @@ import path from 'path'
 import vm from 'vm'
 import webpack from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
+import { NextHandleFunction } from 'connect';
 import MFS from 'memory-fs'
 import notifier from 'node-notifier'
+
 import createWebpackConfig from './createWebpackConfig'
 import { getExternals, matchExternals } from './util'
 import IMVC from '../index'
@@ -11,14 +13,13 @@ import IMVC from '../index'
 export interface SetupClient {
 	(config: IMVC.Config): {
 		compiler: webpack.Compiler,
-		middleware: webpackDevMiddleware.WebpackDevMiddleware 
+		middleware: webpackDevMiddleware.WebpackDevMiddleware & NextHandleFunction
 	}
 }
 
 export const setupClient: SetupClient = (config: IMVC.Config) => {
 	let clientConfig = createWebpackConfig(config)
 	let compiler = webpack(clientConfig)
-	console.log(JSON.stringify(clientConfig))
 	let middleware = webpackDevMiddleware(compiler, {
 		publicPath: config.staticPath,
 		stats: config.webpackLogger,
@@ -63,6 +64,7 @@ export const setupServer: SetupServer = (config, options) => {
 	}
 	delete serverConfig.optimization
 	let serverCompiler = webpack(serverConfig)
+	console.log('server', serverConfig)
 	let mfs = new MFS()
 	let outputPath = path.join(
 		serverConfig.output.path as string,
@@ -107,6 +109,8 @@ export const setupServer: SetupServer = (config, options) => {
 
 			return moduleResult
 		}
+		
+		console.log(sourceCode)
 		let runCode = (sourceCode: string) => {
 			return vm.runInThisContext(`
 				(function(require) {
@@ -125,6 +129,8 @@ export const setupServer: SetupServer = (config, options) => {
 			`)(virtualRequire)
 		}
 
+		console.log(sourceCode)
+
 		// 构造一个 commonjs 的模块加载函数，拿到 newModule
 		let newModule = runCode(sourceCode)
 
@@ -141,6 +147,8 @@ export type Reporter = (
 
 export const reporter: Reporter = (middlewareOptions, options) => {
 	const { log, state, stats } = options
+
+	require('fs').createWriteStream('../log.json').write(JSON.stringify(stats.toJson()))
 
 	if (state) {
 		const displayStats = middlewareOptions.stats !== false

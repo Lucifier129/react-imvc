@@ -14,8 +14,7 @@ import 'regenerator-runtime/runtime'
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
-
-export default (options: IMVC.Options): Promise<IMVC.Config | void> => {
+const build: IMVC.Build = (options) => {
   let config = getConfig(options)
   let delPublicPgs = () => delPublish(path.join(config.root, config.publish))
   let startGulpPgs = () => startGulp(config)

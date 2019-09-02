@@ -13,7 +13,8 @@ const Babel: GetBabelFunc = (isServer = true) => ({
       '@babel/preset-typescript',
       {
         isTSX: true,
-        allExtensions: true
+        allExtensions: true,
+        allowNamespaces: true
       }
     ],
   ],
@@ -41,7 +42,7 @@ const Babel: GetBabelFunc = (isServer = true) => ({
     '@babel/plugin-syntax-import-meta',
     ['@babel/plugin-proposal-class-properties', { loose: false }],
     '@babel/plugin-proposal-json-strings',
-    isServer && 'dynamic-import-node'
+    isServer && 'dynamic-import-node',
   ].filter(Boolean)
 })
 

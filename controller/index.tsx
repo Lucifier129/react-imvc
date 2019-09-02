@@ -1,5 +1,5 @@
 // base controller class
-/// <reference path="../index.ts" />
+/// <reference path="../index.d.ts" />
 import 'whatwg-fetch'
 import React from 'react'
 import { createStore } from 'relite'
@@ -92,10 +92,6 @@ export default class Controller implements CA.Controller {
     this.context = context
     this.handlers = {}
     this.preload = {}
-    this.history = CH.createHistory()
-    this.store = createStore({})
-    this.API = {}
-    this.Model = {}
   }
   // 绑定 handler 的 this 值为 controller 实例
   combineHandlers(source: Controller) {
