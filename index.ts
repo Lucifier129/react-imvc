@@ -6,7 +6,7 @@ import serveStatic from 'serve-static'
 import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
 import compression from 'compression'
-import * as Relite from 'relite'
+import Relite from 'relite'
 import babelCore from 'babel-core'
 
 import _build from './build'
