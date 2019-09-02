@@ -6,6 +6,8 @@ export default class extends Controller {
 	View = View
   constructor(location: IMVC.Location, context: IMVC.Context) {
     super(location, context)
+    console.log(context.isClient)
+    console.log(context.isServer)
   }
 }
 

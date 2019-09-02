@@ -2,8 +2,10 @@ import path from 'path'
 import vm from 'vm'
 import webpack from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
+import { NextHandleFunction } from 'connect';
 import MFS from 'memory-fs'
 import notifier from 'node-notifier'
+
 import createWebpackConfig from './createWebpackConfig'
 import { getExternals, matchExternals } from './util'
 import IMVC from '../index'
@@ -11,12 +13,15 @@ import IMVC from '../index'
 export interface SetupClient {
 	(config: IMVC.Config): {
 		compiler: webpack.Compiler,
-		middleware: webpackDevMiddleware.WebpackDevMiddleware 
+		middleware: webpackDevMiddleware.WebpackDevMiddleware & NextHandleFunction
 	}
 }
 
 export const setupClient: SetupClient = (config: IMVC.Config) => {
+	console.log(config.context.isServer)
 	let clientConfig = createWebpackConfig(config)
+	console.log(clientConfig.entry)
+	console.log(clientConfig)
 	let compiler = webpack(clientConfig)
 	let middleware = webpackDevMiddleware(compiler, {
 		publicPath: config.staticPath,
@@ -45,6 +50,7 @@ interface SetupServerOptions {
 export type SetupServer = (config: IMVC.Config, options: SetupServerOptions) => void
 
 export const setupServer: SetupServer = (config, options) => {
+	console.log(config.context.isServer)
 	let serverConfig = createWebpackConfig(config, true)
 	serverConfig.target = 'node'
 	serverConfig.entry = {
@@ -106,6 +112,7 @@ export const setupServer: SetupServer = (config, options) => {
 
 			return moduleResult
 		}
+
 		let runCode = (sourceCode: string) => {
 			return vm.runInThisContext(`
 				(function(require) {
@@ -116,7 +123,6 @@ export const setupServer: SetupServer = (config, options) => {
 									try {
 											factory(require, module, module.exports)
 									} catch(error) {
-											console.log(error)
 											return null
 									}
 									return module.exports
@@ -140,20 +146,19 @@ export type Reporter = (
 
 export const reporter: Reporter = (middlewareOptions, options) => {
 	const { log, state, stats } = options
-
 	if (state) {
 		const displayStats = middlewareOptions.stats !== false
 		const statsString = stats.toString(middlewareOptions.stats);
 
 		if (displayStats && statsString.trim().length) {
-      if (stats.hasErrors()) {
-        log.error(statsString);
-      } else if (stats.hasWarnings()) {
-        log.warn(statsString);
-      } else {
-        log.info(statsString);
-      }
-    }
+			if (stats.hasErrors()) {
+				log.error(statsString);
+			} else if (stats.hasWarnings()) {
+				log.warn(statsString);
+			} else {
+				log.info(statsString);
+			}
+		}
 
 		let message = 'Compiled successfully.'
 

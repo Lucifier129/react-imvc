@@ -68,8 +68,12 @@ function mainTest(config: Partial<IMVC.Config>) {
 		})
 
 		afterEach(() => {
-			browser.close()
-			server.close()
+			if(browser) {
+				browser.close()
+			}
+			if (server) {
+				server.close()
+			}
 		})
 		it(`should ${renderCondition} view in server side`, async () => {
 			let page = await browser.newPage()
@@ -94,13 +98,10 @@ function mainTest(config: Partial<IMVC.Config>) {
 			await page.goto(url)
 			await page.waitFor('#static_view_csr')
 			const content = await page.content()
-			console.log(content)
 			let serverContent = await fetchContent(url)
 			let clientContent = await page.evaluate(
 				() => document.documentElement.outerHTML
 			)
-			console.log(serverContent)
-			console.log(clientContent)
 			expect(
 				serverContent.includes('static view content by client side rendering')
 			).toBe(false)
@@ -130,8 +131,12 @@ function mainTest(config: Partial<IMVC.Config>) {
 		})
 
 		afterEach(() => {
-			browser.close()
-			server.close()
+			if(browser) {
+				browser.close()
+			}
+			if (server) {
+				server.close()
+			}
 		})
 		it('should pass server and app instance to every route handler', () => {
 			expect(app.isTouched).toBe(true)
@@ -187,8 +192,12 @@ function mainTest(config: Partial<IMVC.Config>) {
 		})
 
 		afterEach(() => {
-			browser.close()
-			server.close()
+			if(browser) {
+				browser.close()
+			}
+			if (server) {
+				server.close()
+			}
 		})
 		it('should have location and context properties in controller instance both server side and client side', async () => {
 			let url = `http://localhost:${config.port}/basic_state?a=1&b=2`

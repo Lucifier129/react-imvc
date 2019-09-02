@@ -100,9 +100,12 @@ export default function createPageRouter(options: IMVC.Config) {
   let serverAppSettings: IMVC.AppSettings = {
     loader: commonjsLoader,
     routes: routes,
-    viewEngine: { render }
+    viewEngine: { render },
+    context: {
+      isClient: false,
+      isServer: true
+    }
   }
-
   let app = createApp(serverAppSettings)
   let layoutView = config.layout || path.join(__dirname, 'view')
 
