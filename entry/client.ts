@@ -80,6 +80,7 @@ if(typeof appSettings.context !== 'undefined') {
   appSettings.context.preload = preload
 }
 
+console.log('isServer', appSettings.context.isServer)
 const app = createApp(appSettings);
 app.start()
 

@@ -18,7 +18,10 @@ export interface SetupClient {
 }
 
 export const setupClient: SetupClient = (config: IMVC.Config) => {
+	console.log(config.context.isServer)
 	let clientConfig = createWebpackConfig(config)
+	console.log(clientConfig.entry)
+	console.log(clientConfig)
 	let compiler = webpack(clientConfig)
 	let middleware = webpackDevMiddleware(compiler, {
 		publicPath: config.staticPath,
@@ -47,6 +50,7 @@ interface SetupServerOptions {
 export type SetupServer = (config: IMVC.Config, options: SetupServerOptions) => void
 
 export const setupServer: SetupServer = (config, options) => {
+	console.log(config.context.isServer)
 	let serverConfig = createWebpackConfig(config, true)
 	serverConfig.target = 'node'
 	serverConfig.entry = {
@@ -64,7 +68,6 @@ export const setupServer: SetupServer = (config, options) => {
 	}
 	delete serverConfig.optimization
 	let serverCompiler = webpack(serverConfig)
-	console.log('server', serverConfig)
 	let mfs = new MFS()
 	let outputPath = path.join(
 		serverConfig.output.path as string,
@@ -109,8 +112,7 @@ export const setupServer: SetupServer = (config, options) => {
 
 			return moduleResult
 		}
-		
-		console.log(sourceCode)
+
 		let runCode = (sourceCode: string) => {
 			return vm.runInThisContext(`
 				(function(require) {
@@ -121,15 +123,12 @@ export const setupServer: SetupServer = (config, options) => {
 									try {
 											factory(require, module, module.exports)
 									} catch(error) {
-											console.log(error)
 											return null
 									}
 									return module.exports
 				})
 			`)(virtualRequire)
 		}
-
-		console.log(sourceCode)
 
 		// 构造一个 commonjs 的模块加载函数，拿到 newModule
 		let newModule = runCode(sourceCode)
@@ -147,22 +146,19 @@ export type Reporter = (
 
 export const reporter: Reporter = (middlewareOptions, options) => {
 	const { log, state, stats } = options
-
-	require('fs').createWriteStream('../log.json').write(JSON.stringify(stats.toJson()))
-
 	if (state) {
 		const displayStats = middlewareOptions.stats !== false
 		const statsString = stats.toString(middlewareOptions.stats);
 
 		if (displayStats && statsString.trim().length) {
-      if (stats.hasErrors()) {
-        log.error(statsString);
-      } else if (stats.hasWarnings()) {
-        log.warn(statsString);
-      } else {
-        log.info(statsString);
-      }
-    }
+			if (stats.hasErrors()) {
+				log.error(statsString);
+			} else if (stats.hasWarnings()) {
+				log.warn(statsString);
+			} else {
+				log.info(statsString);
+			}
+		}
 
 		let message = 'Compiled successfully.'
 

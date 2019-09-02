@@ -2,6 +2,7 @@ import path from "path";
 import fetch from "node-fetch";
 import http from "http";
 import express from "express";
+import puppeteer from 'puppeteer'
 import IMVC from "../";
 import start from "../start";
 
@@ -24,36 +25,49 @@ const config: Partial<IMVC.Config> = {
 };
 
 describe("test", () => {
-  let app: express.Express;
-  let server: http.Server;
+  let app: express.Express
+  let server: http.Server
+  let browser: puppeteer.Browser
 
   beforeEach(async () => {
     try {
       let result = await start({ config });
       app = result.app;
       server = result.server;
+      browser = await puppeteer.launch()
     } catch (error) {
       console.log("error", error);
     }
   });
 
-  afterEach( () => {
-    if (server) {
-      server.close();
-    }
+  afterEach(() => {
+    server.close();
   });
 
   it("test", async () => {
+    let page = await browser.newPage()
     let url = `http://localhost:${config.port}/static_view`;
+    let clientContent
+    let serverContent
     try {
-      await page.goto(url),
+      console.log('static_view')
+      await page.goto(url)
+      console.log('static_view')
       await page.waitFor("#static_view")
-      // let serverContent = await fetchContent(url)
-      // let clientContent = await page.evaluate(() => document.documentElement.outerHTML)
-      // console.log(clientContent)
+      console.log('static_view')
+      serverContent = await fetchContent(url)
+      clientContent = await page.evaluate(() => document.documentElement.outerHTML)
     } catch (e) {
-      console.log(e)
+      throw e
     }
+    console.log(clientContent)
+    expect(
+      serverContent.includes('static view content')
+    ).toBe(true)
+    expect(
+      clientContent.includes('static view content')
+    ).toBe(true)
+    page.close()
   });
 });
 

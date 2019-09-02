@@ -98,13 +98,10 @@ function mainTest(config: Partial<IMVC.Config>) {
 			await page.goto(url)
 			await page.waitFor('#static_view_csr')
 			const content = await page.content()
-			console.log(content)
 			let serverContent = await fetchContent(url)
 			let clientContent = await page.evaluate(
 				() => document.documentElement.outerHTML
 			)
-			console.log(serverContent)
-			console.log(clientContent)
 			expect(
 				serverContent.includes('static view content by client side rendering')
 			).toBe(false)
