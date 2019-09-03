@@ -56,7 +56,7 @@ function mainTest(config: Partial<IMVC.Config>) {
 		let server: Server
 		let browser: puppeteer.Browser
 
-		beforeEach(async () => {
+		beforeAll(async () => {
 			try {
 				let result = await start({ config })
 				app = result.app
@@ -67,7 +67,7 @@ function mainTest(config: Partial<IMVC.Config>) {
 			}
 		})
 
-		afterEach(() => {
+		afterAll(() => {
 			if(browser) {
 				browser.close()
 			}
@@ -119,7 +119,7 @@ function mainTest(config: Partial<IMVC.Config>) {
 	let server: Server
 	let browser: puppeteer.Browser
 
-		beforeEach(async () => {
+		beforeAll(async () => {
 			try {
 				let result = await start({ config })
 				app = result.app
@@ -130,7 +130,7 @@ function mainTest(config: Partial<IMVC.Config>) {
 			}
 		})
 
-		afterEach(() => {
+		afterAll(() => {
 			if(browser) {
 				browser.close()
 			}
@@ -180,7 +180,7 @@ function mainTest(config: Partial<IMVC.Config>) {
 		let server: Server
 		let browser: puppeteer.Browser
 
-		beforeEach(async () => {
+		beforeAll(async () => {
 			try {
 				let result = await start({ config })
 				app = result.app
@@ -191,7 +191,7 @@ function mainTest(config: Partial<IMVC.Config>) {
 			}
 		})
 
-		afterEach(() => {
+		afterAll(() => {
 			browser.close()
 			server.close()
 		})
