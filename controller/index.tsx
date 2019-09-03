@@ -91,6 +91,9 @@ export default class Controller implements CA.Controller {
     this.location = location
     this.context = context
     console.log(context.isServer)
+    console.log(context.publicPath)
+    console.log(location)
+    console.log((new Error('test')).stack)
     this.handlers = {}
     this.preload = {}
   }
@@ -407,7 +410,7 @@ export default class Controller implements CA.Controller {
      * 关闭 SSR 后，不执行 componentWillCreate 和 shouldComponentCreate，直接返回 Loading 界面
      * SSR 如果是个方法，则执行并等待它完成
      */
-    console.log(context.isServer)
+    console.log(context.isServer, SSR)
     if (context.isServer) {
       if (typeof this.SSR === 'function') {
         SSR = await this.SSR(location, context)
@@ -432,7 +435,7 @@ export default class Controller implements CA.Controller {
       actions = this.actions = $actions
     }
 
-    console.log('clientContent0')
+    
 
     let globalInitialState: IMVC.State | undefined
 
@@ -442,20 +445,18 @@ export default class Controller implements CA.Controller {
       __INITIAL_STATE__ = undefined
     }
 
-    console.log('clientContent0')
+    
 
     if (typeof initialState === 'function') {
       initialState = initialState(location, context)
     }
 
-    console.log('clientContent0')
+    
 
     if (typeof initialState === 'object') {
       // 保护性复制初始化状态，避免运行中修改引用导致其他实例初始化数据不对
       initialState = JSON.parse(JSON.stringify(initialState))
     }
-
-    console.log('clientContent0')
 
     let finalInitialState: IMVC.State = {
       ...initialState,
@@ -466,8 +467,6 @@ export default class Controller implements CA.Controller {
       restapi: context.restapi
     }
 
-    console.log('clientContent0')
-
     /**
      * 动态获取初始化的 initialState
      */
@@ -475,16 +474,12 @@ export default class Controller implements CA.Controller {
       finalInitialState = await this.getInitialState(finalInitialState)
     }
 
-    console.log('clientContent0')
-
     /**
      * 复用了 server side 的 state 数据之后执行
      */
     if (globalInitialState && this.stateDidReuse) {
       this.stateDidReuse(finalInitialState)
     }
-
-    console.log('clientContent0')
 
     /**
      * 动态获取最终的 actions
@@ -502,16 +497,12 @@ export default class Controller implements CA.Controller {
 
     // proxy store.actions for handling error
     if (this.errorDidCatch) proxyStoreActions(this)
-
-
-    console.log('clientContent0')
+    
     /**
      * 将 handle 开头的方法，合并到 this.handlers 中
      */
     this.combineHandlers(this)
 
-
-    console.log('clientContent0')
     /**
      * 如果存在 globalInitialState
      * 说明服务端渲染了 html 和 intitialState
@@ -533,8 +524,6 @@ export default class Controller implements CA.Controller {
 
     let promiseList:(Promise<any> | undefined)[] = []
 
-
-    console.log('clientContent0')
     /**
      * 如果 shouldComponentCreate 返回 false，不创建和渲染 React Component
      * 可以在 shouldComponentCreate 里重定向到别的 Url
@@ -546,8 +535,6 @@ export default class Controller implements CA.Controller {
       }
     }
 
-
-    console.log('clientContent0')
     // 在 React Component 创建前调用，可以发 ajax 请求获取数据
     if (this.componentWillCreate) {
       promiseList.push(this.componentWillCreate())
@@ -561,15 +548,17 @@ export default class Controller implements CA.Controller {
     }
 
 
-    console.log('clientContent0')
+    
     if (promiseList.length) {
       await Promise.all(promiseList)
     }
 
-    console.log('clientContent0')
+    
 
     this.bindStoreWithView()
-    return this.render()
+    let view = this.render()
+    console.log(view)
+    return view
   }
   bindStoreWithView() {
     let { context, store, history, meta } = this

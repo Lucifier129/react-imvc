@@ -9,11 +9,12 @@ import util from '../util'
 import $routes from '@routes'
 import IMVC from '../index'
 
-global.__webpack_public_path__ = window.__PUBLIC_PATH__ + '/'
+__webpack_public_path__ = window.__PUBLIC_PATH__ + '/'
 const __APP_SETTINGS__: IMVC.AppSettings = window.__APP_SETTINGS__ || {}
 
+const getModule = module => module.default || module
 const webpackLoader: createApp.Loader = (loadModule, location, context) => {
-  return (loadModule as createApp.LoadController)(location, context)
+  return ((loadModule as createApp.LoadController)(location, context) as Promise<createApp.ControllerConstructor>).then(getModule)
 }
 
 let shouldHydrate = !!window.__INITIAL_STATE__

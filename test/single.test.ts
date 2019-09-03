@@ -46,26 +46,27 @@ describe("test", () => {
 
   it("test", async () => {
     let page = await browser.newPage()
-    let url = `http://localhost:${config.port}/static_view`;
+    let url = `http://localhost:${config.port}/static_view_csr`;
     let clientContent
     let serverContent
     try {
-      console.log('static_view')
+      console.log('static_view_csr')
       await page.goto(url)
-      console.log('static_view')
-      await page.waitFor("#static_view")
-      console.log('static_view')
+      console.log('static_view_scr')
+      // await page.waitFor("#static_view_csr")
+      console.log('static_view_scr')
       serverContent = await fetchContent(url)
       clientContent = await page.evaluate(() => document.documentElement.outerHTML)
     } catch (e) {
       throw e
     }
     console.log(clientContent)
+    console.log(serverContent)
     expect(
-      serverContent.includes('static view content')
-    ).toBe(true)
+      serverContent.includes('static view content by client side rendering')
+    ).toBe(false)
     expect(
-      clientContent.includes('static view content')
+      clientContent.includes('static view content by client side rendering')
     ).toBe(true)
     page.close()
   });

@@ -18,6 +18,7 @@ import {
 
 export = IMVC;
 
+
 declare global {
   namespace NodeJS {
     interface Global {
@@ -41,8 +42,9 @@ declare global {
     attachEvent: typeof document.addEventListener;
     detachEvent: typeof document.removeEventListener;
   }
-  const __REDUX_DEVTOOLS_EXTENSION__: any;
-  const controller: _Controller;
+  var __REDUX_DEVTOOLS_EXTENSION__: any;
+  var controller: _Controller;
+  var __webpack_public_path__: any
 }
 
 declare namespace IMVC {
