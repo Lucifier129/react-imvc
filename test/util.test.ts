@@ -140,7 +140,7 @@ describe('util test', () => {
   
   describe('isThenable', () => {
     it('success test', () => {
-      let promise = new Promise(() => {})
+      let promise = new Promise(new Function())
 
       expect(util.isThenable(promise)).toBeTruthy()
       expect(util.isThenable(Promise.all([]))).toBeTruthy()
