@@ -255,6 +255,10 @@ fetch 方法用来跟服务端进行 http 或 https 通讯，它的用法和参�
   - 内部会对 url 进行转换 `url = config.restapi + url`
   - 当 options.raw === true 时，不做上述转换，直接使用 url
 
+- 当options.fetch存在，且时function类型时
+  - 框架使用自定义的options.fetch方法替换原本的fetch方法
+  - 建议自定义的options.fetch方法的interface与浏览器自带的fetch保持一致
+
 - 当 options.timeout 为数字时，controller.fetch 将有以下行为
 
   - options.timeout 时间内，服务端没有响应，则 reject 一个 timeout error
@@ -1286,3 +1290,11 @@ module.exports = {
 这是一个逃生出口，只在必要的情况下使用。
 
 设置组件的 ignoreErrors 属性为 true，它将不被全局监控。
+
+### 为什么initialState中的方法丢失了?
+
+首先，不建议在globalState中存放函数。
+
+目前框架在init阶段默认有以下行为：```JSON.parse(JSON.stringify(initialState))```，目的是防止篡改原数据
+
+此外，我们提供了开关 ```controller.deepCloneInitialState: Boolean```, 设为false即可跳过这个默认行为
