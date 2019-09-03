@@ -40,6 +40,8 @@ const build: IMVC.Build = (options) => {
     .catch(errorHandler)
 }
 
+export default build
+
 interface DelPublish {
   (folder: string): Promise<string[]>
 }

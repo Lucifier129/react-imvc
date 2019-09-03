@@ -9,7 +9,7 @@ describe('middleware', () => {
     it('cached view will be used next time', () => {
 
     })
-    
+
     it('set `debug = true` when env is production', () => {
 
     })
@@ -26,7 +26,7 @@ describe('middleware', () => {
 
     })
   })
-  
+
   describe('createCache', () => {
     let cache: Cache
     beforeEach(() => {
@@ -353,11 +353,11 @@ describe('middleware', () => {
       expect(cache.misses()).toBe(0)
 
       cache.debug(true)
-      
+
       list.forEach((item) => {
         cache.put(item.key, item.value, item.time)
       })
-      
+
       cache.get('a')
       cache.get('b')
       cache.get('c')
@@ -423,7 +423,7 @@ describe('middleware', () => {
       expect(callback).toBeCalled()
     })
   })
-  
+
   describe('shareRoot', () => {
     it('rootPath will be set in req.basename', () => {
 

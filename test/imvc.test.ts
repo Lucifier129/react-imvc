@@ -192,21 +192,25 @@ function mainTest(config: Partial<IMVC.Config>) {
 		})
 
 		afterEach(() => {
-			if(browser) {
-				browser.close()
-			}
-			if (server) {
-				server.close()
-			}
+			browser.close()
+			server.close()
 		})
 		it('should have location and context properties in controller instance both server side and client side', async () => {
 			let url = `http://localhost:${config.port}/basic_state?a=1&b=2`
-			let page = await browser.newPage()
+			let page
+			let clientController
+			try {
+				page = await browser.newPage()
 
-			await page.goto(url)
-			await page.waitFor('#basic_state')
-
-			let clientController = await page.evaluate(() => window.controller)
+				await page.goto(url)
+				await page.waitFor('#basic_state')
+	
+				clientController = await page.evaluate(() => window.controller)
+			} catch (e) {
+				console.log(e.message)
+				console.log(e.stack)
+			}
+			
 
 			if (config.SSR) {
 				let serverController = global.controller

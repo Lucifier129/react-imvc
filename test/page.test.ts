@@ -32,50 +32,33 @@ describe('page test', () => {
   let app: express.Express
   let server: http.Server
 
-  // beforeEach(async () => {
-  //   try {
-  //     app = express()
-  //     server = http.createServer(app)
-  //     server.listen(PORT)
-  //     browser = await puppeteer.launch()
-  //   } catch (error) {
-  //     console.log('error', error)
-  //   }
-  // })
+  beforeEach(async () => {
+    try {
+      app = express()
+      server = http.createServer(app)
+      server.listen(PORT)
+      browser = await puppeteer.launch()
+    } catch (error) {
+      console.log('error', error)
+    }
+  })
 
-  // afterEach(() => {
-  //   browser.close()
-  //   server.close()
-  // })
+  afterEach(() => {
+    browser.close()
+    server.close()
+  })
   describe('createPageRouter', () => {
     it('shoule create router correctly', async () => {
-      // let page = await browser.newPage()
-      // let config = getConfig(options)
-      // let router = createPageRouter(config)
-      // app.use(router)
-      // let url = `http://localhost:${config.port}/static_view`
-      // await page.goto(url)
-      // let content = await page.content()
-      // console.log(content)
-			// // await page.waitFor('#static_view')
-			// // let serverContent = await fetchContent(url)
-			// // let clientContent = await page.evaluate(
-			// // 	() => document.documentElement.outerHTML
-			// // )
-			// // expect(content.includes('static view content')).toBeTruthy()
-			// // expect(clientContent.includes('static view content')).toBeTruthy()
-
-			// await page.close()
     })
   })
-  
-  describe('View', () => {
-    
-  })
+
+  // describe('View', () => {
+
+  // })
 })
 
 async function fetchContent(url: string): Promise<string> {
-	let response = await fetch(url)
-	let content = await response.text()
-	return content
+  let response = await fetch(url)
+  let content = await response.text()
+  return content
 }

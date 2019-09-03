@@ -50,18 +50,13 @@ describe("test", () => {
     let clientContent
     let serverContent
     try {
-      console.log('static_view_csr')
       await page.goto(url)
-      console.log('static_view_scr')
-      // await page.waitFor("#static_view_csr")
-      console.log('static_view_scr')
+      await page.waitFor("#static_view_csr")
       serverContent = await fetchContent(url)
       clientContent = await page.evaluate(() => document.documentElement.outerHTML)
     } catch (e) {
       throw e
     }
-    console.log(clientContent)
-    console.log(serverContent)
     expect(
       serverContent.includes('static view content by client side rendering')
     ).toBe(false)

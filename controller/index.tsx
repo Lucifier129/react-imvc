@@ -42,7 +42,7 @@ export default class Controller implements CA.Controller {
   Model: IMVC.Model
   initialState: IMVC.State | InitailState | undefined
   actions: IMVC.Actions | undefined
-  SSR: boolean | { (location:IMVC.Location, context: IMVC.Context):boolean } | undefined
+  SSR: boolean | { (location: IMVC.Location, context: IMVC.Context): boolean } | undefined
   KeepAliveOnPush: boolean | undefined
   history: CH.NativeHistory
   store: IMVC.Store
@@ -57,8 +57,8 @@ export default class Controller implements CA.Controller {
   loader: IMVC.Loader | undefined
   Loading: IMVC.BaseViewFC | IMVC.BaseViewClass = (...args) => null
 
-  errorDidCatch?(error:Error, str: string): void
-  getComponentFallback?(displayName: string, InputComponent: React.ComponentType):void
+  errorDidCatch?(error: Error, str: string): void
+  getComponentFallback?(displayName: string, InputComponent: React.ComponentType): void
   getViewFallback?(...args: any[]): any
   getInitialState?(...args: any[]): any
   stateDidReuse?(...args: any[]): any
@@ -90,10 +90,6 @@ export default class Controller implements CA.Controller {
     }
     this.location = location
     this.context = context
-    console.log(context.isServer)
-    console.log(context.publicPath)
-    console.log(location)
-    console.log((new Error('test')).stack)
     this.handlers = {}
     this.preload = {}
   }
@@ -198,7 +194,7 @@ export default class Controller implements CA.Controller {
       if (!isDateInstance) {
         throw new Error(
           `cookie 的过期时间 expires 必须为 Date 的实例，而不是 ${
-            options.expires
+          options.expires
           }`
         )
       }
@@ -410,7 +406,6 @@ export default class Controller implements CA.Controller {
      * 关闭 SSR 后，不执行 componentWillCreate 和 shouldComponentCreate，直接返回 Loading 界面
      * SSR 如果是个方法，则执行并等待它完成
      */
-    console.log(context.isServer, SSR)
     if (context.isServer) {
       if (typeof this.SSR === 'function') {
         SSR = await this.SSR(location, context)
@@ -420,8 +415,6 @@ export default class Controller implements CA.Controller {
         return <View />
       }
     }
-
-    console.log('clientContent1')
 
     // 在 init 方法里 bind this，这样 fetch 可以支持继承
     // 如果用 fetch = (url, option = {}) => {} 的写法，它不是原型方法，无法继承
@@ -435,7 +428,7 @@ export default class Controller implements CA.Controller {
       actions = this.actions = $actions
     }
 
-    
+
 
     let globalInitialState: IMVC.State | undefined
 
@@ -445,13 +438,13 @@ export default class Controller implements CA.Controller {
       __INITIAL_STATE__ = undefined
     }
 
-    
+
 
     if (typeof initialState === 'function') {
       initialState = initialState(location, context)
     }
 
-    
+
 
     if (typeof initialState === 'object') {
       // 保护性复制初始化状态，避免运行中修改引用导致其他实例初始化数据不对
@@ -497,7 +490,7 @@ export default class Controller implements CA.Controller {
 
     // proxy store.actions for handling error
     if (this.errorDidCatch) proxyStoreActions(this)
-    
+
     /**
      * 将 handle 开头的方法，合并到 this.handlers 中
      */
@@ -513,8 +506,8 @@ export default class Controller implements CA.Controller {
       this.bindStoreWithView()
 
       // 如果 preload 未收集到或者加载成功，重新加载一次
-      let preloadedKeys:string[] = Object.keys(this.context.preload || {})
-      let isPreload:boolean = Object.keys(this.preload || {}).every(key =>
+      let preloadedKeys: string[] = Object.keys(this.context.preload || {})
+      let isPreload: boolean = Object.keys(this.preload || {}).every(key =>
         preloadedKeys.includes(key)
       )
 
@@ -522,7 +515,7 @@ export default class Controller implements CA.Controller {
       return this.render()
     }
 
-    let promiseList:(Promise<any> | undefined)[] = []
+    let promiseList: (Promise<any> | undefined)[] = []
 
     /**
      * 如果 shouldComponentCreate 返回 false，不创建和渲染 React Component
@@ -548,17 +541,15 @@ export default class Controller implements CA.Controller {
     }
 
 
-    
+
     if (promiseList.length) {
       await Promise.all(promiseList)
     }
 
-    
+
 
     this.bindStoreWithView()
-    let view = this.render()
-    console.log(view)
-    return view
+    return this.render()
   }
   bindStoreWithView() {
     let { context, store, history, meta } = this
@@ -639,7 +630,7 @@ export default class Controller implements CA.Controller {
     if (View && !View.viewId) {
       View.viewId = Date.now()
     }
-    let ctrl:Controller = Object.create(this)
+    let ctrl: Controller = Object.create(this)
     ctrl.View = View
     ctrl.componentDidFirstMount = null
     ctrl.componentDidMount = null
@@ -664,7 +655,7 @@ export default class Controller implements CA.Controller {
 // @ts-ignore
 let createElement = React.originalCreateElement || React.createElement
 
-type ProxyReactCreateElement = (ctrl: Controller) => { attach:object, detach:object }
+type ProxyReactCreateElement = (ctrl: Controller) => { attach: object, detach: object }
 
 const proxyReactCreateElement: ProxyReactCreateElement = ctrl => {
   let isAttach = false
@@ -756,7 +747,7 @@ const proxyStoreActions = (ctrl: Controller) => {
       try {
         return (action as { (...args: any[]): IMVC.State })(payload)
       } catch (error) {
-        (ctrl.errorDidCatch as { (error: Error, str: string):void})(error, 'model')
+        (ctrl.errorDidCatch as { (error: Error, str: string): void })(error, 'model')
         throw error
       }
     }

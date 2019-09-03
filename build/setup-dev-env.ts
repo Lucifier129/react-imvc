@@ -18,10 +18,7 @@ export interface SetupClient {
 }
 
 export const setupClient: SetupClient = (config: IMVC.Config) => {
-	console.log(config.context.isServer)
 	let clientConfig = createWebpackConfig(config)
-	console.log(clientConfig.entry)
-	console.log(clientConfig)
 	let compiler = webpack(clientConfig)
 	let middleware = webpackDevMiddleware(compiler, {
 		publicPath: config.staticPath,
@@ -50,7 +47,6 @@ interface SetupServerOptions {
 export type SetupServer = (config: IMVC.Config, options: SetupServerOptions) => void
 
 export const setupServer: SetupServer = (config, options) => {
-	console.log(config.context.isServer)
 	let serverConfig = createWebpackConfig(config, true)
 	serverConfig.target = 'node'
 	serverConfig.entry = {
