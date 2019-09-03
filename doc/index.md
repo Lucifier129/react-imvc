@@ -255,8 +255,8 @@ fetch 方法用来跟服务端进行 http 或 https 通讯，它的用法和参�
   - 内部会对 url 进行转换 `url = config.restapi + url`
   - 当 options.raw === true 时，不做上述转换，直接使用 url
 
-- 当options.fetch存在，且时function类型时，将有以下行为
-  - 使用自定义的options.fetch方法替换原本的fetch方法
+- 当options.fetch存在，且时function类型时
+  - 框架使用自定义的options.fetch方法替换原本的fetch方法
   - 建议自定义的options.fetch方法的interface与浏览器自带的fetch保持一致
 
 - 当 options.timeout 为数字时，controller.fetch 将有以下行为
