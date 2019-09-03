@@ -1,7 +1,28 @@
+import path from 'path'
 import * as util from '../build/util'
+import build from '../build'
+import IMVC from '../index'
 import * as setupDevEnv from '../build/setup-dev-env'
-import pkg from '../package.json'
 import defaultConfig from '../config/config.defaults'
+const pkg = require('../package.json')
+
+process.env.NODE_ENV = "production"
+let PORT = 3333
+const ROOT = path.join(__dirname, "project")
+const config: Partial<IMVC.Config> = {
+  root: ROOT, // 项目根目录
+  port: PORT, // server 端口号
+  logger: null, // 不出 log
+  devtool: "", // 不出 source-map
+  ReactViews: {
+    beautify: false, // 不美化
+    transformViews: false // 已有转换，无须再做
+  },
+  routes: "routes", // 服务端路由目录
+  layout: "Layout", // 自定义 Layoutclear
+  webpackLogger: false, // 关闭 webpack logger
+  webpackDevMiddleware: true // 在内存里编译
+}
 
 describe('build test', () => {
   describe('util', () => {
@@ -42,11 +63,21 @@ describe('build test', () => {
     })
   })
 
-  describe('setupDevEnv', () => {
+  // describe('setupDevEnv', () => {
     
-  })
+  // })
 
   describe('index', () => {
-    
+    it('file after building should run as same as start', async () => {
+      try {
+        build({ config }).then(() => {
+          return import('../test/project/publish/start')
+        }).then(() => {
+          console.log('start')
+        })
+      } catch (e) {
+        console.log(e)
+      }
+    })
   })
 })

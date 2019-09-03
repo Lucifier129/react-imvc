@@ -1,8 +1,9 @@
 import ErrorBoundary from '../../../../component/ErrorBoundary'
+import Controller from '../../../../controller'
 import React, { useState, useEffect } from 'react'
-import IMVC from '../../../../index';
+import IMVC from '../../../../index'
 
-class Controller extends IMVC.Controller {
+export default class extends Controller {
   constructor(location: IMVC.Location, context: IMVC.Context) {
     super(location, context)
   }
@@ -32,8 +33,6 @@ class Controller extends IMVC.Controller {
     
   }
 }
-
-export default Controller
 
 function View() {
   return (

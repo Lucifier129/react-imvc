@@ -49,7 +49,7 @@ export default class ErrorBoundary extends React.Component<Props, IMVC.State> {
 }
 
 export const withFallback = (fallback: object) => (InputComponent: React.ComponentType) => {
-  function Component(props:object) {
+  function Component(props: object) {
     return createElement(ErrorBoundary, { fallback }, () =>
       createElement(InputComponent, props)
     )

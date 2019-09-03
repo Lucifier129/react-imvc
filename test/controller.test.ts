@@ -2,7 +2,7 @@ import Controller from '../controller'
 import * as Actions from '../controller/actions'
 import attachDevToolsIfPossible from '../controller/attachDevToolsIfPossible'
 import { createStore } from 'relite'
-import IMVC from '../index';
+import IMVC from '../index'
 
 describe('controller test', () => {
   describe('Actions', () => {

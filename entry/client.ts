@@ -1,20 +1,23 @@
-import 'core-js/stable'
-import 'regenerator-runtime/runtime'
-import '../polyfill'
-import 'whatwg-fetch'
-import ReactDOM from 'react-dom'
-import createApp from 'create-app/client'
-import util from '../util'
+import "core-js/stable"
+import "regenerator-runtime/runtime"
+import "../polyfill"
+import "whatwg-fetch"
+import ReactDOM from "react-dom"
+import createApp from "create-app/client"
+import util from "../util"
 // @ts-ignore
-import $routes from '@routes'
-import IMVC from '../index'
+import $routes from "@routes"
+import IMVC from "../index"
 
-__webpack_public_path__ = window.__PUBLIC_PATH__ + '/'
+__webpack_public_path__ = window.__PUBLIC_PATH__ + "/"
 const __APP_SETTINGS__: IMVC.AppSettings = window.__APP_SETTINGS__ || {}
 
 const getModule = module => module.default || module
 const webpackLoader: createApp.Loader = (loadModule, location, context) => {
-  return ((loadModule as createApp.LoadController)(location, context) as Promise<createApp.ControllerConstructor>).then(getModule)
+  return ((loadModule as createApp.LoadController)(
+    location,
+    context
+  ) as Promise<createApp.ControllerConstructor>).then(getModule)
 }
 
 let shouldHydrate = !!window.__INITIAL_STATE__
@@ -35,7 +38,7 @@ const render: IMVC.Render<React.ReactElement> = (
     if (!controller) throw error
 
     if (controller.errorDidCatch) {
-      controller.errorDidCatch(error, 'view')
+      controller.errorDidCatch(error, "view")
     }
 
     if (controller.getViewFallback) {
@@ -52,8 +55,8 @@ const routes = util.getFlatList(
 )
 
 const appSettings: IMVC.AppSettings = {
-  hashType: 'hashbang',
-  container: '#root',
+  hashType: "hashbang",
+  container: "#root",
   ...__APP_SETTINGS__,
   context: {
     preload: {},
@@ -70,22 +73,22 @@ const appSettings: IMVC.AppSettings = {
  * 动态收集服务端预加载的内容
  */
 const preload: IMVC.Preload = {}
-Array.from(document.querySelectorAll('[data-preload]')).forEach(elem => {
-  let name = elem.getAttribute('data-preload')
+Array.from(document.querySelectorAll("[data-preload]")).forEach(elem => {
+  let name = elem.getAttribute("data-preload")
   let content = elem.textContent || elem.innerHTML
   if (name) {
     preload[name] = content
   }
-});
-if(typeof appSettings.context !== 'undefined') {
+})
+if (typeof appSettings.context !== "undefined") {
   appSettings.context.preload = preload
 }
 
-const app = createApp(appSettings);
+const app = createApp(appSettings)
 app.start()
 
 // 热更新
-if (typeof module !== 'undefined' && (module as IMVC.NativeModule).hot) {
+if (typeof module !== "undefined" && (module as IMVC.NativeModule).hot) {
   if ((module as IMVC.NativeModule).hot) {
     let hot = (module as IMVC.NativeModule).hot
     if (hot && hot.accept) {

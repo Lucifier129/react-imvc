@@ -13,6 +13,7 @@
     "prebuild": "rimraf ./dist",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
+    "test:single": "jest",
     "publish-imvc": "npm publish ./publish",
     "prepublish-imvc": "npm run build",
     "script:test": "node ./scripts/test.js"

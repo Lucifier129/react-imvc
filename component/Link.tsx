@@ -1,7 +1,7 @@
 import React from 'react'
 import GlobalContext from '../context'
 import IMVC from '../index'
-import CH from 'create-history';
+import CH from 'create-history'
 
 interface Props {
 	as?: keyof HTMLElementTagNameMap
@@ -57,7 +57,7 @@ export default class Link extends React.Component<Props> {
 			tag as keyof HTMLElementTagNameMap,
 			Object.assign({}, others, { onClick: this.handleClick }),
 			children
-		  )
+		)
 	}
 	handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		let { onClick, replace, back, forward, go, to } = this.props

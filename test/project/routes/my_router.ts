@@ -1,14 +1,13 @@
-import { Router } from 'express'
-import express from 'express';
-import http from 'http';
+import express, { Router } from 'express'
+import http from 'http'
 
 const router = Router()
 
-export default function(app: express.Express, server: http.Server) {
+export default function (app: express.Express, server: http.Server) {
     app.use('/my_router', router)
-    //@ts-ignore
+    // @ts-ignore
     server.isTouched = true
-    //@ts-ignore
+    // @ts-ignore
     app.isTouched = true
 }
 

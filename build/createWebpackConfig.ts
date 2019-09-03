@@ -1,4 +1,4 @@
-import webpack from'webpack'
+import webpack from 'webpack'
 import path from 'path'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import ManifestPlugin from 'webpack-manifest-plugin'
@@ -32,9 +32,9 @@ const createWebpackConfig: CreateWebpackConfig = (options, isServer = false) => 
 		index: [!!config.hot && !isServer && 'webpack-hot-middleware/client', indexEntry].filter(
 			Boolean
 		)
-  })
-  let devtoolModuleFilenameTemplate = (info: webpack.DevtoolModuleFilenameTemplateInfo) => 
-  	path.relative(root, info.absoluteResourcePath).replace(/\\/g, '/')
+	})
+	let devtoolModuleFilenameTemplate = (info: webpack.DevtoolModuleFilenameTemplateInfo) =>
+		path.relative(root, info.absoluteResourcePath).replace(/\\/g, '/')
 
 	let defaultOutput: webpack.Output = {
 		// Add /* filename */ comments to generated require()s in the output.
@@ -61,19 +61,19 @@ const createWebpackConfig: CreateWebpackConfig = (options, isServer = false) => 
 		}
 	}
 
-  let output = Object.assign(defaultOutput, config.output)
-  
-  let ManifestPluginMap = (file: ManifestPlugin.FileDescriptor) => {
-    // 删除 .js 后缀，方便直接使用 obj.name 来访问
-    if (/\.js$/.test(file.name)) {
-      file.name = file.name.slice(0, -3)
-    }
-    return file
-  }
-  let ManifestPluginOption: ManifestPlugin.Options = {
-    fileName: config.assetsPath,
-    map: ManifestPluginMap
-  }
+	let output = Object.assign(defaultOutput, config.output)
+
+	let ManifestPluginMap = (file: ManifestPlugin.FileDescriptor) => {
+		// 删除 .js 后缀，方便直接使用 obj.name 来访问
+		if (/\.js$/.test(file.name)) {
+			file.name = file.name.slice(0, -3)
+		}
+		return file
+	}
+	let ManifestPluginOption: ManifestPlugin.Options = {
+		fileName: config.assetsPath,
+		map: ManifestPluginMap
+	}
 	let plugins = [
 		!isServer && new ManifestPlugin(ManifestPluginOption),
 		// Moment.js is an extremely popular library that bundles large locale files
@@ -81,30 +81,30 @@ const createWebpackConfig: CreateWebpackConfig = (options, isServer = false) => 
 		// solution that requires the user to opt into importing specific locales.
 		// https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
 		// You can remove this if you don't use Moment.js:
-		!isServer && new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+		!isServer && new webpack.IgnorePlugin({ resourceRegExp: /^\.\/locale$/, contentRegExp: /moment$/ }),
 		new webpack.DefinePlugin({
 			'process.env.NODE_ENV': JSON.stringify(NODE_ENV)
 		}),
-		
+
 		// TypeScript type checking
 		config.useTypeCheck && new ForkTsCheckerWebpackPlugin({
-			 typescript: resolve.sync('typescript', {
-				 basedir: path.join(config.root, 'node_modules'),
-			 }),
-			 async: !isProd,
-			 useTypescriptIncrementalApi: true,
-			 checkSyntacticErrors: true,
-			 tsconfig: path.join(config.root, 'tsconfig.json'),
-			 reportFiles: [
-				 '**',
-				 '!**/*.json',
-				 '!**/__tests__/**',
-				 '!**/?(*.)(spec|test).*',
-				 '!**/src/setupProxy.*',
-				 '!**/src/setupTests.*',
-			 ],
-			 watch: config.root
-		 })
+			typescript: resolve.sync('typescript', {
+				basedir: path.join(config.root, 'node_modules'),
+			}),
+			async: !isProd,
+			useTypescriptIncrementalApi: true,
+			checkSyntacticErrors: true,
+			tsconfig: path.join(config.root, 'tsconfig.json'),
+			reportFiles: [
+				'**',
+				'!**/*.json',
+				'!**/__tests__/**',
+				'!**/?(*.)(spec|test).*',
+				'!**/src/setupProxy.*',
+				'!**/src/setupTests.*',
+			],
+			watch: config.root
+		})
 	].filter(Boolean)
 
 	// 添加热更新插件
@@ -129,7 +129,7 @@ const createWebpackConfig: CreateWebpackConfig = (options, isServer = false) => 
 	}
 
 	if (isProd) {
-    
+
 		output = Object.assign(
 			defaultOutput,
 			!isServer && {
@@ -220,51 +220,51 @@ const createWebpackConfig: CreateWebpackConfig = (options, isServer = false) => 
 		// Save disk space when time isn't as important
 		cacheCompression: isProd,
 		compact: isProd
-  }
-  let moduleRulesConfig: webpack.Rule[] = [
-    // Disable require.ensure as it's not a standard language feature.
-    { parser: { requireEnsure: false } },
-    // Process application JS with Babel.
-    // The preset includes JSX, Flow, TypeScript and some ESnext features.
-    {
-      test: /\.(js|mjs|jsx|ts|tsx)$/,
-      exclude: '/node_modules/',
-      loader: 'babel-loader',
-      options: babelOptions
-    }
-  ]
-  moduleRulesConfig = moduleRulesConfig.concat(config.webpackLoaders, postLoaders)
-  const moduleConfig: webpack.Module = {
-    // makes missing exports an error instead of warning
-    strictExportPresence: true,
-    rules: moduleRulesConfig
-  }
-  const performanceConfig = {
-    hints: false,
-    maxEntrypointSize: 400000,
-    ...config.performance
-  }
-  const resolveConfig = {
-    modules: [
-      path.resolve('node_modules'),
-      path.join(config.root, 'node_modules'),
-      path.join(__dirname, '../node_modules')
-    ],
-    extensions: ['.js', '.jsx', '.json', '.mjs', '.ts', '.tsx'],
-    alias: alias,
-    plugins: [
-      // Adds support for installing with Plug'n'Play, leading to faster installs and adding
-      // guards against forgotten dependencies and such.
-      PnpWebpackPlugin
-    ]
-  }
-  const resolveLoaderConfig: webpack.ResolveLoader = {
-    plugins: [
-      // Also related to Plug'n'Play, but this time it tells Webpack to load its loaders
-      // from the current package.
-      PnpWebpackPlugin.moduleLoader(module)
-    ]
-  }
+	}
+	let moduleRulesConfig: webpack.Rule[] = [
+		// Disable require.ensure as it's not a standard language feature.
+		{ parser: { requireEnsure: false } },
+		// Process application JS with Babel.
+		// The preset includes JSX, Flow, TypeScript and some ESnext features.
+		{
+			test: /\.(js|mjs|jsx|ts|tsx)$/,
+			exclude: '/node_modules/',
+			loader: 'babel-loader',
+			options: babelOptions
+		}
+	]
+	moduleRulesConfig = moduleRulesConfig.concat(config.webpackLoaders, postLoaders)
+	const moduleConfig: webpack.Module = {
+		// makes missing exports an error instead of warning
+		strictExportPresence: true,
+		rules: moduleRulesConfig
+	}
+	const performanceConfig = {
+		hints: false,
+		maxEntrypointSize: 400000,
+		...config.performance
+	}
+	const resolveConfig = {
+		modules: [
+			path.resolve('node_modules'),
+			path.join(config.root, 'node_modules'),
+			path.join(__dirname, '../node_modules')
+		],
+		extensions: ['.js', '.jsx', '.json', '.mjs', '.ts', '.tsx'],
+		alias: alias,
+		plugins: [
+			// Adds support for installing with Plug'n'Play, leading to faster installs and adding
+			// guards against forgotten dependencies and such.
+			PnpWebpackPlugin
+		]
+	}
+	const resolveLoaderConfig: webpack.ResolveLoader = {
+		plugins: [
+			// Also related to Plug'n'Play, but this time it tells Webpack to load its loaders
+			// from the current package.
+			PnpWebpackPlugin.moduleLoader(module)
+		]
+	}
 	result = Object.assign(result, {
 		target: isServer ? 'node' : 'web',
 		mode: mode,

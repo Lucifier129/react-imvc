@@ -4,5 +4,5 @@ import IMVC from '../index'
 
 export default (): IMVC.State => {
   let ctrl = useCtrl()
-  return (ctrl.store.getState as Function)()
+  return ctrl.store.getState()
 }

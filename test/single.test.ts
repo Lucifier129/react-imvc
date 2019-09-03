@@ -1,14 +1,14 @@
-import path from "path";
-import fetch from "node-fetch";
-import http from "http";
-import express from "express";
+import path from "path"
+import fetch from "node-fetch"
+import http from "http"
+import express from "express"
 import puppeteer from 'puppeteer'
-import IMVC from "../";
-import start from "../start";
+import IMVC from "../"
+import start from "../start"
 
-process.env.NODE_ENV = "development";
-let PORT = 3333;
-const ROOT = path.join(__dirname, "project");
+process.env.NODE_ENV = "development"
+let PORT = 3333
+const ROOT = path.join(__dirname, "project")
 const config: Partial<IMVC.Config> = {
   root: ROOT, // 项目根目录
   port: PORT, // server 端口号
@@ -22,7 +22,7 @@ const config: Partial<IMVC.Config> = {
   layout: "Layout", // 自定义 Layoutclear
   webpackLogger: false, // 关闭 webpack logger
   webpackDevMiddleware: true // 在内存里编译
-};
+}
 
 describe("test", () => {
   let app: express.Express
@@ -31,22 +31,23 @@ describe("test", () => {
 
   beforeEach(async () => {
     try {
-      let result = await start({ config });
-      app = result.app;
-      server = result.server;
+      let result = await start({ config })
+      app = result.app
+      server = result.server
       browser = await puppeteer.launch()
     } catch (error) {
-      console.log("error", error);
+      console.log("error", error)
     }
-  });
+  })
 
   afterEach(() => {
-    server.close();
-  });
+    server.close()
+    browser.close()
+  })
 
   it("test", async () => {
     let page = await browser.newPage()
-    let url = `http://localhost:${config.port}/static_view_csr`;
+    let url = `http://localhost:${config.port}/static_view_csr`
     let clientContent
     let serverContent
     try {
@@ -64,11 +65,11 @@ describe("test", () => {
       clientContent.includes('static view content by client side rendering')
     ).toBe(true)
     page.close()
-  });
-});
+  })
+})
 
 async function fetchContent(url: string): Promise<string> {
-  let response = await fetch(url);
-  let content = await response.text();
-  return content;
+  let response = await fetch(url)
+  let content = await response.text()
+  return content
 }

@@ -11,8 +11,8 @@ interface Props {
 	name: string
 	actionType: string
 	value?: string
-	check?: { (value:string):boolean } | boolean
-	transformer?: { (currentValue:string, oldValue:string):string}
+	check?: { (value: string): boolean } | boolean
+	transformer?: { (currentValue: string, oldValue: string): string }
 	[propName: string]: any
 }
 
@@ -35,7 +35,7 @@ export default class Input extends React.Component<Props> {
 			transformer,
 			...restSubProps
 		} = this.props
-		let subProps:Record<string, any> = restSubProps
+		let subProps: Record<string, any> = restSubProps
 
 		let path = check ? `${name}.value` : name
 
@@ -101,7 +101,7 @@ export default class Input extends React.Component<Props> {
 		let { name, onBlur, check } = this.props
 		let pathOfValidState: string = `${name}.isValid`
 		let pathOfWarnState: string = `${name}.isWarn`
-		let isValidValue: boolean = (check as { (value:string): boolean })(event.currentTarget.value)
+		let isValidValue: boolean = (check as { (value: string): boolean })(event.currentTarget.value)
 		this.callAction({
 			[pathOfValidState]: isValidValue,
 			[pathOfWarnState]: !isValidValue

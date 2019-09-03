@@ -2,7 +2,7 @@
  * 获取配置
  */
 import path from 'path'
-import defaultConfig from'./config.defaults'
+import defaultConfig from './config.defaults'
 import IMVC from '../index'
 
 interface GetConfig {

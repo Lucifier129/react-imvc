@@ -57,8 +57,8 @@ jest.runCLI(options, [
 	process.cwd()
 ])
 .then((success) => {
-	console.log("test done");
+	console.log("test done")
 })
 .catch((failure) => {
-	console.error(failure);
-});
+	console.error(failure)
+})

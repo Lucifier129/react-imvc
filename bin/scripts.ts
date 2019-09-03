@@ -2,10 +2,10 @@
 
 import querystringify from 'querystringify'
 import spawn from 'cross-spawn'
-import { SpawnSyncReturns } from 'child_process';
+import { SpawnSyncReturns } from 'child_process'
 let command = process.argv[2]
 let args = process.argv.slice(3)
-let [script, paramsStr=''] = command.split('?')
+let [script, paramsStr = ''] = command.split('?')
 let query = querystringify.parse(paramsStr)
 let params = Object.keys(query).map(key => {
   return query[key] ? `--${key}=${query[key]}` : `--${key}`

@@ -11,7 +11,7 @@ type ConsolePolyfill = (window: NativeWindow) => void
 const consolePolyfill: ConsolePolyfill = (window) => {
   // Avoid `console` errors in browsers that lack a console.
   let method
-  let noop = function() {}
+  let noop = function () { }
   let methods = [
     'assert',
     'clear',

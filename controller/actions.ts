@@ -21,11 +21,11 @@ export let __PAGE_DID_BACK__ = (state: any, location: any) => {
   }
 }
 
-export let UPDATE_STATE_BY_PATH = (state: any, payload: { [x: string]: any; }) => {
-	return Object.keys(payload).reduce(
-		(state, path) => setValueByPath(state, path, payload[path]),
-		state
-	)
+export let UPDATE_STATE_BY_PATH = (state: any, payload: { [x: string]: any }) => {
+  return Object.keys(payload).reduce(
+    (state, path) => setValueByPath(state, path, payload[path]),
+    state
+  )
 }
 
 export let UPDATE_INPUT_VALUE = UPDATE_STATE_BY_PATH

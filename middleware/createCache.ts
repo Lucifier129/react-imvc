@@ -29,7 +29,7 @@ export default () => {
   let missCount = 0
   let size = 0
 
-  function _del (key: string) {
+  function _del(key: string) {
     size--
     delete cache[key]
   }
@@ -101,7 +101,7 @@ export default () => {
       return canDelete
     },
 
-    
+
 
     clear: function () {
       for (let key in cache) {

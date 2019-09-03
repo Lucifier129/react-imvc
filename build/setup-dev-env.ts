@@ -2,7 +2,7 @@ import path from 'path'
 import vm from 'vm'
 import webpack from 'webpack'
 import webpackDevMiddleware from 'webpack-dev-middleware'
-import { NextHandleFunction } from 'connect';
+import { NextHandleFunction } from 'connect'
 import MFS from 'memory-fs'
 import notifier from 'node-notifier'
 
@@ -144,15 +144,15 @@ export const reporter: Reporter = (middlewareOptions, options) => {
 	const { log, state, stats } = options
 	if (state) {
 		const displayStats = middlewareOptions.stats !== false
-		const statsString = stats.toString(middlewareOptions.stats);
+		const statsString = stats.toString(middlewareOptions.stats)
 
 		if (displayStats && statsString.trim().length) {
 			if (stats.hasErrors()) {
-				log.error(statsString);
+				log.error(statsString)
 			} else if (stats.hasWarnings()) {
-				log.warn(statsString);
+				log.warn(statsString)
 			} else {
-				log.info(statsString);
+				log.info(statsString)
 			}
 		}
 

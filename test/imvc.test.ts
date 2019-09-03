@@ -207,8 +207,7 @@ function mainTest(config: Partial<IMVC.Config>) {
 	
 				clientController = await page.evaluate(() => window.controller)
 			} catch (e) {
-				console.log(e.message)
-				console.log(e.stack)
+				throw e
 			}
 			
 
@@ -258,8 +257,8 @@ function mainTest(config: Partial<IMVC.Config>) {
 		})
 
 		// it('should share history and context properties in all controller instances', async () => {
-		//   let url = `http://localhost:${config.port}/basic_state?a=1&b=2`;
-		//   let page = await browser.newPage();
+		//   let url = `http://localhost:${config.port}/basic_state?a=1&b=2`
+		//   let page = await browser.newPage()
 
 		//   await page.goto(url)
 		//   await page.waitFor('#basic_state')

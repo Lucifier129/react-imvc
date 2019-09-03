@@ -1,6 +1,6 @@
 import React from 'react'
 import classnames from 'classnames'
-import connect, { ConnectProps , ComponentProps } from '../hoc/connect'
+import connect, { ConnectProps, ComponentProps } from '../hoc/connect'
 import Link from './Link'
 import IMVC from '../index'
 

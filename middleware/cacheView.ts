@@ -1,16 +1,16 @@
 /**
  * 缓存视图-中间件
  */
-import express from "express";
-import createCache, { Cache } from "./createCache";
-import IMVC from "../index";
+import express from "express"
+import createCache, { Cache } from "./createCache"
+import IMVC from "../index"
 
 interface Settings {
-  timeout: number;
-  max: number;
-  headers: Record<string, string>;
-  key: (url: string, req: express.Request) => string;
-  debug: boolean;
+  timeout: number
+  max: number
+  headers: Record<string, string>
+  key: (url: string, req: express.Request) => string
+  debug: boolean
 }
 
 let defaults: Settings = {
@@ -22,46 +22,46 @@ let defaults: Settings = {
   },
   key: (url, req) => url,
   debug: false
-};
+}
 
-let callNext: IMVC.RequestHandler = (req, res, next) => next();
+let callNext: IMVC.RequestHandler = (req, res, next) => next()
 
 export default (settings: Settings) => {
   // 只在生产环境，或者开启了 debug = true 的情况下，做缓存
   if (process.env.NODE_ENV !== "production" && !(settings && settings.debug)) {
-    return callNext;
+    return callNext
   }
-  settings = Object.assign({}, defaults, settings);
+  settings = Object.assign({}, defaults, settings)
 
-  let cache: Cache = createCache();
+  let cache: Cache = createCache()
 
-  return function(req: IMVC.Req, res: IMVC.Res, next: express.NextFunction) {
-    let cacheKey: string = settings.key(req.originalUrl, req);
-    let cacheContent: any;
+  return function (req: IMVC.Req, res: IMVC.Res, next: express.NextFunction) {
+    let cacheKey: string = settings.key(req.originalUrl, req)
+    let cacheContent: any
     if (cache.get) {
-      cacheContent = cache.get(cacheKey);
+      cacheContent = cache.get(cacheKey)
     }
 
     // 命中缓存，直接返回结果
     if (cacheContent) {
-      res.set(settings.headers);
-      res.send(cacheContent);
-      return;
+      res.set(settings.headers)
+      res.send(cacheContent)
+      return
     }
 
     // 劫持 res.render，缓存其结果
-    res.sendResponse = res.send;
+    res.sendResponse = res.send
     res.send = (body: any) => {
-      res.sendResponse(body);
-      if (cache) cache.put(cacheKey, body, settings.timeout);
+      res.sendResponse(body)
+      if (cache) cache.put(cacheKey, body, settings.timeout)
       if (settings.max && cache.size() > settings.max) {
         // 如果缓存数大于最大值，删除第一个缓存
-        cache.del(cache.keys()[0]);
+        cache.del(cache.keys()[0])
       }
-      return res;
-    };
+      return res
+    }
 
     // 调用下一个中间件
-    next();
-  };
-};
+    next()
+  }
+}

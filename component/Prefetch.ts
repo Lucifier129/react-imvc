@@ -2,7 +2,7 @@ import React from 'react'
 import GlobalContext from '../context'
 
 interface Props {
-	src?:string
+	src?: string
 }
 
 export default class Prefetch extends React.Component<Props> {

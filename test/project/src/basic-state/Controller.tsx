@@ -1,8 +1,9 @@
 import IMVC from '../../../../index'
+import Controller from '../../../../controller'
 import React from 'react'
 
-export default class extends IMVC.Controller {
-    View = View;
+export default class extends Controller {
+    View = View
     constructor(location: IMVC.Location, context: IMVC.Context) {
         super(location, context)
         if (context.isClient) {

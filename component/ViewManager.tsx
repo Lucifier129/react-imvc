@@ -9,7 +9,7 @@ interface Props {
 
 export default class ViewManager extends React.Component<Props> {
 	static ignoreErrors = true
- 	views: Record<string, any> = {}
+	views: Record<string, any> = {}
 	scrollMap: Record<string, any> = {}
 	constructor(props: Props, context: React.Context<any>) {
 		super(props, context)

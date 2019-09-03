@@ -1,7 +1,7 @@
 import IMVC from '../index'
 
 export interface GetBabelFunc {
-  (isServer: boolean): IMVC.BabelConfig 
+  (isServer: boolean): IMVC.BabelConfig
 }
 
 const Babel: GetBabelFunc = (isServer = true) => ({

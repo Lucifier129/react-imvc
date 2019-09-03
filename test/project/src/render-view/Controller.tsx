@@ -1,11 +1,12 @@
 import React from 'react'
 import IMVC from '../../.././../index'
+import Controller from '../../../../controller'
 
 const delay = (time: number) => new Promise(resolve => {
   setTimeout(resolve, time)
 })
 
-export default class extends IMVC.Controller {
+export default class extends Controller {
   SSR = false
   View = View
   constructor(location: IMVC.Location, context: IMVC.Context) {

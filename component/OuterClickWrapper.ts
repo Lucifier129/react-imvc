@@ -45,8 +45,8 @@ export default class OuterClickWrapper extends Component<Props> {
     if (!isContains) {
       onClick(event)
     }
-  };
-  render () {
+  }
+  render() {
     return Children.only(this.props.children)
   }
 }

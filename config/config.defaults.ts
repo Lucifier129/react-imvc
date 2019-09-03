@@ -1,34 +1,34 @@
-import Babel from './babel'
+import Babel from "./babel"
 let cwd = process.cwd()
 let port = process.env.PORT || 3000
-let NODE_ENV = process.env.NODE_ENV || 'development'
-let isDev = NODE_ENV === 'development'
-let isProd = NODE_ENV === 'production'
-import IMVC from '../index'
+let NODE_ENV = process.env.NODE_ENV || "development"
+let isDev = NODE_ENV === "development"
+let isProd = NODE_ENV === "production"
+import IMVC from "../index"
 
 const defaultConfig: IMVC.Config = {
-	basename: '',
-	title: 'react-imvc',
-	description: 'An Isomorphic-MVC Framework',
-	keywords: 'react mvc isomorphic server-side-rendering',
-	content: '',
+	basename: "",
+	title: "react-imvc",
+	description: "An Isomorphic-MVC Framework",
+	keywords: "react mvc isomorphic server-side-rendering",
+	content: "",
 	initialState: undefined,
 	appSettings: undefined,
 	root: cwd,
-	src: 'src',
-	routes: 'routes',
-	publish: 'publish',
-	static: 'static',
-	staticPath: '/static',
-	staticEntry: '', // 'index.html'
+	src: "src",
+	routes: "routes",
+	publish: "publish",
+	static: "static",
+	staticPath: "/static",
+	staticEntry: "", // 'index.html'
 	staticOptions: {},
-	publicPath: '',
-	restapi: '',
-	assetsPath: '../assets.json',
+	publicPath: "",
+	restapi: "",
+	assetsPath: "../assets.json",
 	output: {},
 	productionOutput: {},
 	alias: {},
-	devtool: isDev ? 'cheap-module-eval-source-map' : '',
+	devtool: isDev ? "cheap-module-eval-source-map" : "",
 	bundleAnalyzer: false,
 	webpackDevMiddleware: isDev,
 	webpackPlugins: [],
@@ -68,25 +68,25 @@ const defaultConfig: IMVC.Config = {
 	},
 	bodyParser: {
 		json: {
-			limit: '10MB'
+			limit: "10MB"
 		},
 		urlencoded: {
 			extended: false
 		}
 	},
-	logger: isDev ? 'dev' : null,
-	favicon: '',
+	logger: isDev ? "dev" : null,
+	favicon: "",
 	SSR: true,
 	port: port,
 	NODE_ENV: NODE_ENV,
-	layout: '',
-	renderMode: 'renderToNodeStream',
+	layout: "",
+	renderMode: "renderToNodeStream",
 	context: {},
 	notifier: false,
 	hot: false,
 	useServerBundle: false,
 	useTypeCheck: false,
-	serverBundleName: 'server.bundle.js'
+	serverBundleName: "server.bundle.js"
 }
 
 export default defaultConfig

@@ -10,7 +10,7 @@ import uglify from 'gulp-uglify'
 import babel from 'gulp-babel'
 import IMVC from '../index'
 
-interface  CreateGulpTaskConfig {
+interface CreateGulpTaskConfig {
   (options: IMVC.Config): IMVC.GulpTaskConfig
 }
 
@@ -54,9 +54,9 @@ const createConfig: CreateGulpTaskConfig = options => {
     publishBabel: {
       src: [
         root +
-          `/!(node_modules|${
-            options.publish
-          }|buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
+        `/!(node_modules|${
+        options.publish
+        }|buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
         publish + '/*.@(js|ts|jsx|tsx)'
       ],
       dest: publish
@@ -136,11 +136,11 @@ const createGulpTask: CreateGulpTask = (options) => {
       return
     }
     return gulp
-    .src(config.js.src)
-    .pipe(plumber())
-    .pipe(babel(options.babel(false))) // , { babelrc: false }
-    .pipe(uglify())
-    .pipe(gulp.dest(config.js.dest))
+      .src(config.js.src)
+      .pipe(plumber())
+      .pipe(babel(options.babel(false))) // , { babelrc: false }
+      .pipe(uglify())
+      .pipe(gulp.dest(config.js.dest))
   }
 
   let minifyES5 = () => {

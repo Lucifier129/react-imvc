@@ -72,7 +72,7 @@ describe('util test', () => {
 
   describe('timeoutReject', () => {
     beforeAll(() => {
-      jest.useFakeTimers();
+      jest.useFakeTimers()
     })
 
     afterAll(() => {
