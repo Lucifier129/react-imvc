@@ -1,6 +1,6 @@
 {
   "name": "react-imvc",
-  "version": "2.6.6",
+  "version": "2.6.7",
   "description": "An Isomorphic MVC Framework",
   "main": "./index",
   "bin": {
