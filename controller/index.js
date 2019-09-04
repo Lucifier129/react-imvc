@@ -210,9 +210,10 @@ export default class Controller {
     }
     
     // 支持使用方手动传入自定义fetch方法
-    let fetch = typeof options.fetch === 'function' ? options.fetch : fetch
+    let rawFetch = context.isServer ? global.fetch : window.fetch
+    let finalFetch = typeof options.fetch === 'function' ? options.fetch : rawFetch
 
-    let fetchData = fetch(url, finalOptions)
+    let fetchData = finalFetch(url, finalOptions)
 
     /**
      * 拓展字段，如果手动设置 options.json 为 false
