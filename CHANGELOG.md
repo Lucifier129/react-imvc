@@ -1,6 +1,9 @@
 # CHANGELOG
 
-## 2.6.6
+## 2.6.7
+- fix: 'fetch is not a function' Error
+
+## 2.6.6（不稳定）
 
 - Error Handling 支持异步生命周期的处理
 - 为 保护性复制功能加开关
