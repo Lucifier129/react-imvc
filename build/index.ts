@@ -134,7 +134,7 @@ const startStaticEntry: StartStaticEntry<IMVC.Config> = async (config) => {
     config: staticEntryconfig
   })
 
-  let url = `heep://localhost:${config.port}/__CREATE_STATIC_ENTRY__`
+  let url = `http://localhost:${config.port}/__CREATE_STATIC_ENTRY__`
   console.log(`fetching url:${url}`)
   let response = await fetch(url)
   let html = await response.text()

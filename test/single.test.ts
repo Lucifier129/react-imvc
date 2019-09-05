@@ -6,6 +6,8 @@ import puppeteer from 'puppeteer'
 import IMVC from "../"
 import start from "../start"
 
+jest.setTimeout(20000)
+
 process.env.NODE_ENV = "development"
 let PORT = 3333
 const ROOT = path.join(__dirname, "project")
@@ -29,32 +31,33 @@ describe("test", () => {
   let server: http.Server
   let browser: puppeteer.Browser
 
-  beforeEach(async () => {
-    try {
-      let result = await start({ config })
+  beforeAll(() => {
+    jest.resetModules();
+    return start({ config }).then((result) => {
       app = result.app
       server = result.server
-      browser = await puppeteer.launch()
-    } catch (error) {
-      console.log("error", error)
-    }
+      return puppeteer.launch()
+    }).then((brws) => {
+      browser = brws
+    })
   })
 
-  afterEach(() => {
+  afterAll(() => {
     server.close()
-    browser.close()
+    return browser.close()
   })
 
   it("test", async () => {
-    let page = await browser.newPage()
     let url = `http://localhost:${config.port}/static_view_csr`
     let clientContent
     let serverContent
     try {
+      let page = await browser.newPage()
       await page.goto(url)
       await page.waitFor("#static_view_csr")
       serverContent = await fetchContent(url)
       clientContent = await page.evaluate(() => document.documentElement.outerHTML)
+      await page.close()
     } catch (e) {
       throw e
     }
@@ -64,7 +67,6 @@ describe("test", () => {
     expect(
       clientContent.includes('static view content by client side rendering')
     ).toBe(true)
-    page.close()
   })
 })
 

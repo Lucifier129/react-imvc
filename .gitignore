@@ -17,3 +17,4 @@ mock/test.json
 dist
 *-lock.json
 coverage
+.npmrc

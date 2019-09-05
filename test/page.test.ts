@@ -7,6 +7,8 @@ import puppeteer from 'puppeteer'
 import IMVC from '../index'
 import getConfig from '../config'
 
+jest.setTimeout(20000)
+
 process.env.NODE_ENV = 'test'
 let PORT = 3333
 const ROOT = path.join(__dirname, 'project')
@@ -44,8 +46,8 @@ describe('page test', () => {
   })
 
   afterEach(() => {
-    browser.close()
     server.close()
+    return browser && browser.close()
   })
   describe('createPageRouter', () => {
     it('shoule create router correctly', async () => {

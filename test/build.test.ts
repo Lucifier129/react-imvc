@@ -3,6 +3,7 @@ import * as util from '../build/util'
 import build from '../build'
 import IMVC from '../index'
 import * as setupDevEnv from '../build/setup-dev-env'
+import puppeteer from 'puppeteer'
 import defaultConfig from '../config/config.defaults'
 const pkg = require('../package.json')
 
@@ -68,16 +69,43 @@ describe('build test', () => {
   // })
 
   describe('index', () => {
+		let browser: puppeteer.Browser
+    beforeAll(() => {
+      return build({ config }).then(() => {
+        return puppeteer.launch()
+      }).then((brws) => {
+        browser = brws
+      })
+    })
+
+    afterAll(() => {
+			return browser.close()
+		})
+
     it('file after building should run as same as start', async () => {
-      try {
-        build({ config }).then(() => {
-          return import('../test/project/publish/start')
-        }).then(() => {
-          console.log('start')
-        })
-      } catch (e) {
-        console.log(e)
-      }
+      await import('../project/publish/start.js')
+
+      let page = await browser.newPage()
+			let url = `http://localhost:${config.port}/static_view_csr`
+			await page.goto(url)
+			await page.waitFor('#static_view_csr')
+			let serverContent = await fetchContent(url)
+			let clientContent = await page.evaluate(
+				() => document.documentElement.outerHTML
+			)
+			expect(
+				serverContent.includes('static view content by client side rendering')
+			).toBe(false)
+			expect(
+				clientContent.includes('static view content by client side rendering')
+			).toBe(true)
+			await page.close()
     })
   })
 })
+
+async function fetchContent(url: string): Promise<string> {
+	let response = await fetch(url)
+	let content = await response.text()
+	return content
+}

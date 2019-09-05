@@ -15,7 +15,7 @@ module.exports = {
   // cacheDirectory: "/private/var/folders/yh/7lfb0_0d7b393gp4b46t588w0000gn/T/jest_dx",
 
   // Automatically clear mock calls and instances between every test
-  clearMocks: true,
+  // clearMocks: true,
 
   // Indicates whether the coverage information should be collected while executing the test
   // collectCoverage: false,
@@ -33,7 +33,6 @@ module.exports = {
     "hook/*.{js,ts}",
     "middleware/*.{js,ts}",
     "page/*.{js,ts}",
-    "polyfill/*.{js,ts}",
     "script/*.{js,ts}",
     "start/*.{js,ts}",
     "util/*.{js,ts}"
@@ -85,25 +84,24 @@ module.exports = {
   // globals: {},
 
   // An array of directory names to be searched recursively up from the requiring module's location
-  moduleDirectories: [
-    "node_modules"
-  ],
+  // moduleDirectories: [
+  //   "node_modules"
+  // ],
 
   // An array of file extensions your modules use
-  moduleFileExtensions: [
-    "js",
-    "json",
-    "jsx",
-    "ts",
-    "tsx",
-    "node"
-  ],
+  // moduleFileExtensions: [
+  //   "js",
+  //   "json",
+  //   "jsx",
+  //   "ts",
+  //   "tsx",
+  // ],
 
   // A map from regular expressions to module names that allow to stub out resources with a single module
   // moduleNameMapper: {},
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
-  modulePathIgnorePatterns: [],
+  // modulePathIgnorePatterns: [],
 
   // Activates notifications for test results
   // notify: false,
@@ -153,7 +151,7 @@ module.exports = {
   // snapshotSerializers: [],
 
   // The test environment that will be used for testing
-  testEnvironment: "jest-environment-jsdom",
+  testEnvironment: "node",
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},

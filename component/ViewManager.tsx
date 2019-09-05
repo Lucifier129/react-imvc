@@ -158,7 +158,7 @@ function getContextByController(ctrl: Controller) {
 		prefetch,
 		handleInputChange
 	} = ctrl
-	let state = (store.getState as Function)()
+	let state = store.getState()
 	return {
 		ctrl,
 		location,

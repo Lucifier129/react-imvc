@@ -1,8 +1,6 @@
 // base controller class
-/// <reference path="../index.d.ts" />
 import 'whatwg-fetch'
 import React from 'react'
-import { createStore } from 'relite'
 import Cookie from 'js-cookie'
 import querystringify, { stringify } from 'querystringify'
 import CA from 'create-app/client'
@@ -12,6 +10,7 @@ import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
 import attachDevToolsIfPossible from './attachDevToolsIfPossible'
 import IMVC from '../index'
+import { createStore, Actions, Currings, AnyAction } from 'relite'
 
 const REDIRECT =
   typeof Symbol === 'function'
@@ -363,9 +362,9 @@ export default class Controller implements CA.Controller {
    */
   prefetch(url: string) {
     if (!url || typeof url !== 'string') return null
-    let matches = (this.matcher as CA.Matcher)(url)
+    let matches = this.matcher(url)
     if (!matches) return null
-    return (this.loader as IMVC.Loader)(matches.controller)
+    return this.loader(matches.controller)
   }
 
   async init() {
@@ -560,7 +559,7 @@ export default class Controller implements CA.Controller {
     }
 
     if (store) {
-      let unsubscribe = (store.subscribe as Function)((data: any) => {
+      let unsubscribe = store.subscribe((data: any) => {
         (this.refreshView as UdfFuncType)()
         if (this.stateDidChange) {
           this.stateDidChange(data)
@@ -592,7 +591,7 @@ export default class Controller implements CA.Controller {
 
     // 监听浏览器窗口关闭
     if (this.windowWillUnload) {
-      let unlisten = (history.listenBeforeUnload as CH.ListenBeforeUnload)(
+      let unlisten = history.listenBeforeUnload(
         this.windowWillUnload.bind(this)
       )
       meta.unsubscribeList.push(unlisten)
@@ -601,7 +600,7 @@ export default class Controller implements CA.Controller {
 
   restore(location: IMVC.Location, context: IMVC.Context) {
     let { meta, store } = this
-    let { __PAGE_DID_BACK__ } = store.actions as IMVC.Actions
+    let { __PAGE_DID_BACK__ } = store.actions
 
     if (this.proxyHandler) {
       // detach first, and re-attach
@@ -610,7 +609,7 @@ export default class Controller implements CA.Controller {
     }
 
     meta.isDestroyed = false;
-    (__PAGE_DID_BACK__ as Function)(location)
+    __PAGE_DID_BACK__(location)
 
     if (this.pageDidBack) {
       this.pageDidBack(location, context)
@@ -739,19 +738,19 @@ const proxyReactCreateElement: ProxyReactCreateElement = ctrl => {
 }
 
 const proxyStoreActions = (ctrl: Controller) => {
-  let actions: IMVC.Actions = {}
+  let actions: Actions<IMVC.State> = {}
 
-  for (let key in ctrl.store.actions as IMVC.Actions) {
-    let action = (ctrl.store.actions as IMVC.Actions)[key]
+  for (let key in ctrl.store.actions) {
+    let action = (ctrl.store.actions)[key]
     actions[key] = (payload: IMVC.Payload) => {
       try {
-        return (action as { (...args: any[]): IMVC.State })(payload)
+        return action(payload)
       } catch (error) {
-        (ctrl.errorDidCatch as { (error: Error, str: string): void })(error, 'model')
+        ctrl.errorDidCatch(error, 'model')
         throw error
       }
     }
   }
 
-  ctrl.store.actions = actions
+  ctrl.store.actions = actions as Partial<Currings<object, Record<string, AnyAction<object, unknown, object>>>>
 }

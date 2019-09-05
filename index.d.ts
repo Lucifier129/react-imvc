@@ -6,7 +6,7 @@ import serveStatic from "serve-static"
 import cookieParser from "cookie-parser"
 import helmet from "helmet"
 import compression from "compression"
-import * as Relite from "relite"
+import { Store as ReliteStore, Action as ReliteAction } from "relite"
 import babelCore from "babel-core"
 
 import {
@@ -569,7 +569,7 @@ declare namespace IMVC {
   }
 
   export interface Store
-    extends Relite.Store<object, Record<string, Relite.Action<object>>> {}
+    extends ReliteStore<object, Record<string, ReliteAction<object>>> {}
 
   export interface Build {
     (options: IMVC.Options): Promise<IMVC.Config | void>
