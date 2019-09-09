@@ -1,16 +1,27 @@
 import React from 'react'
 import classnames from 'classnames'
-import connect, { ConnectProps, ComponentProps } from '../hoc/connect'
+import connect from '../hoc/connect'
 import Link from './Link'
 import IMVC from '../index'
 
-const withLocation = connect(({ state }: ConnectProps) => {
+const withLocation = connect(({ state }) => {
   return {
     location: (state as IMVC.State).location
   }
 })
 
 export default withLocation(NavLink)
+
+interface Props {
+  isActive?: { (...args: any[]): boolean }
+  location?: IMVC.Location
+  className?: string
+  activeClassName?: string
+  style?: object
+  activeStyle?: object
+  to: string
+  [x: string]: any
+}
 
 function NavLink({
   isActive: getIsActive,
@@ -21,7 +32,7 @@ function NavLink({
   activeStyle,
   to,
   ...rest
-}: ComponentProps) {
+}: Props) {
   let isActive = checkActive(getIsActive, to, location)
   let finalClassName = classnames(className, isActive && activeClassName)
   let finalStyle = isActive ? { ...style, ...activeStyle } : style

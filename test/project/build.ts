@@ -1,5 +1,7 @@
+import path from 'path'
 import build from '../../build/babel'
 import IMVC from '../../index'
+
 let PORT = 3333
 const ROOT = __dirname
 const config: Partial<IMVC.Config> = {
@@ -8,7 +10,11 @@ const config: Partial<IMVC.Config> = {
 	routes: 'routes', // 服务端路由目录
 	layout: 'Layout', // 自定义 Layout
 	// bundleAnalyzer: true,
-	staticEntry: 'index.html'
+	staticEntry: 'index.html',
+	publish: '../publish',
+	output: {
+		path: path.resolve(ROOT, '../publish/static')
+	}
 }
 
 async function main() {

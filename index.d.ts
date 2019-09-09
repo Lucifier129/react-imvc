@@ -495,6 +495,7 @@ declare namespace IMVC {
     restapi?: string
     hasError?: boolean
     html?: object
+    [x: string]: any
   }
 
   export interface Model {
@@ -577,5 +578,26 @@ declare namespace IMVC {
 
   export interface Start {
     (options: IMVC.Options): Promise<{server: http.Server, app: express.Express}>
+  }
+
+  export interface ConnectProps {
+    state?: IMVC.State
+    handlers?: IMVC.Actions
+    actions?: IMVC.Handlers
+    props?: {
+      [propName: string]: any
+    }
+  }
+  
+  export interface Selector {
+    (props: ConnectProps): any
+  }
+
+  export interface Connect {
+    (selector: Selector): With
+  }
+
+  export interface With {
+    <P>(inputComponent: React.ComponentType<P>): (props: P) => React.ReactElement
   }
 }

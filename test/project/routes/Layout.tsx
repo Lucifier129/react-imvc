@@ -1,6 +1,6 @@
 import React from 'react'
 import Script from '../../../component/Script'
-import IMVC from '../../../'
+import IMVC from '../../../index'
 
 
 export default function Page(props: IMVC.RenderProps) {

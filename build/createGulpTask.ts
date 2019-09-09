@@ -46,8 +46,10 @@ const createConfig: CreateGulpTaskConfig = options => {
     },
     publishCopy: {
       src: [
-        root + `/!(node_modules|${options.publish}|buildportal-script)/**/*`,
-        root + `/!(node_modules|${options.publish}|buildportal-script)`
+        root + (/^[a-zA-Z]+$/.test(options.publish) ? `/!(node_modules|${options.publish}|buildportal-script)/**/*`
+          : `/!(node_modules|buildportal-script)/**/*`),
+        root + (/^[a-zA-Z]+$/.test(options.publish) ? `/!(node_modules|${options.publish}|buildportal-script)`
+          : `/!(node_modules|buildportal-script)`)
       ],
       dest: publish
     },
@@ -55,8 +57,8 @@ const createConfig: CreateGulpTaskConfig = options => {
       src: [
         root +
         `/!(node_modules|${
-        options.publish
-        }|buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
+          /^[a-zA-Z]+$/.test(options.publish) ? options.publish + '|' : ''
+        }buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
         publish + '/*.@(js|ts|jsx|tsx)'
       ],
       dest: publish
@@ -165,6 +167,7 @@ const createGulpTask: CreateGulpTask = (options) => {
   }
 
   let publishBabel = () => {
+    console.log(config.publishBabel)
     if (!config.publishBabel) {
       return
     }
@@ -186,9 +189,9 @@ const createGulpTask: CreateGulpTask = (options) => {
   }
 
   return gulp.series(
-    publishCopy,
+    // publishCopy,
     publishBabel,
-    copy,
+    // copy,
     gulp.parallel(minifyHTML, minifyCSS, minifyES5, minifyES6, minifyImage)
   )
 }

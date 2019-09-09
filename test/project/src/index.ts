@@ -18,5 +18,17 @@ export default [
 	{
 		path: '/render_view',
 		controller: () => import('./render-view/Controller')
+	},
+	{
+		path: '/link_from',
+		controller: () => import('./link-from/Controller')
+	},
+	{
+		path: '/link_to',
+		controller: () => import('./link-to/Controller')
+	},
+	{
+		path: '/input',
+		controller: () => import('./input/Controller')
 	}
 ]

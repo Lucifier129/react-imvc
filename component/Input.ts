@@ -5,14 +5,18 @@ import IMVC from '../index'
 
 const { getValueByPath } = _
 
-interface Props {
+export interface Transformer {
+	<T>(currentValue?: T, oldValue?: T): T
+}
+
+export interface Props {
 	as?: keyof HTMLElementTagNameMap
-	type: string
+	type?: string
 	name: string
-	actionType: string
+	actionType?: string
 	value?: string
-	check?: { (value: string): boolean } | boolean
-	transformer?: { (currentValue: string, oldValue: string): string }
+	check?: ((value: string) => boolean) | boolean
+	transformer?: Transformer
 	[propName: string]: any
 }
 

@@ -71,6 +71,7 @@ describe('build test', () => {
   describe('index', () => {
 		let browser: puppeteer.Browser
     beforeAll(() => {
+      jest.resetModules();
       return build({ config }).then(() => {
         return puppeteer.launch()
       }).then((brws) => {
@@ -79,11 +80,11 @@ describe('build test', () => {
     })
 
     afterAll(() => {
-			return browser.close()
+			browser.close()
 		})
 
     it('file after building should run as same as start', async () => {
-      await import('../project/publish/start.js')
+      await import('./publish/start.js')
 
       let page = await browser.newPage()
 			let url = `http://localhost:${config.port}/static_view_csr`
