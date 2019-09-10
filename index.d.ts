@@ -51,6 +51,7 @@ declare namespace IMVC {
   export type Action = Relite.Action<State>
   export type Actions = Relite.Actions<State>
   export type CurryingActions = Relite.CurringActions<State, Actions>
+  export type Data = Relite.Data<State>
 
   export interface Req extends express.Request {
     basename?: string

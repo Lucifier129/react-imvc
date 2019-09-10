@@ -37,7 +37,7 @@ export default class extends Controller {
 }
 
 function isValidPhone(value) {
-  return true
+  return /^[0-9]+$/ig.test(value)
 }
 
 function View({ state }) {
@@ -46,9 +46,6 @@ function View({ state }) {
       input page
       <div>
         firstname: <Input name="user.name.first" id="first-name-input" />
-        lastname: <Input name="user:name:last" id="last-name-input" />
-        email: <Input name="user/email" id="email-input" />
-        age: <Input name="user.age" transformer={Number as Transformer} id="age-input" />
         friends: {
           state.friends.map((friend, index) => {
             return (
@@ -59,24 +56,19 @@ function View({ state }) {
           })
         }
         phone: <Input name="phone" check={isValidPhone} id="phone-input"/>
-        content: <Input as="textarea" name="content" id="content-input" />
       </div>
       <div>
         firstname: <p id="first-name-value">{state.user.name.first}</p>
-        lastname: <p id="last-name-value">{state.user.name.last}</p>
-        email: <p id="email-value" >{state.user.email}</p>
-        age: <p id="age-value">{state.user.age}</p>
         friends: {
           state.friends.map((friend, index) => {
             return (
               <div key={index}>
-                name: <p id={`friend-${index}-value`}></p>
+                name: <p id={`friend-${index}-value`}>{friend.name}</p>
               </div>
             )
           })
         }
-        phone: <p id="phone-value">{state.phone}</p>
-        content: <p id="content-value">{state.content}</p>
+        phone: <p id="phone-value">{state.phone.value} {state.phone.isValid} {state.phone.isWarn}</p>
       </div>
     </div>
   )

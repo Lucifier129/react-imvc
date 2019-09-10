@@ -16,29 +16,35 @@ const attachDevToolsIfPossible: AttachDevToolsIfPossible = store => {
 
   let options = {
     name: window.location.pathname + window.location.search,
-    actionsWhitelist: Object.keys(store.actions as IMVC.Actions)
+    actionsWhitelist: Object.keys(store.actions)
   }
-  let reduxStore: IMVC.Store = __REDUX_DEVTOOLS_EXTENSION__(
+  let reduxStore = __REDUX_DEVTOOLS_EXTENSION__(
     store.getState,
-    (store.getState as Function)(),
+    store.getState(),
     options
   )
   let isSync = false;
-  (store.subscribe as Function)((data: Record<string, string>) => {
+  store.subscribe((data: IMVC.Data) => {
     if (!data || data.actionType === __FROM_REDUX_DEVTOOLS_EXTENSION__) {
       return
     }
     isSync = true
-    reduxStore.dispatch(data.actionType, data.actionPayload)
+    reduxStore.dispatch({
+      type: data.actionType, 
+      payload: data.actionPayload
+    })
     isSync = false
   })
 
   reduxStore.subscribe(() => {
     if (!isSync) {
-      (store.replaceState as Function)(reduxStore.getState(), {
+      store.replaceState(reduxStore.getState(), {
         actionType: __FROM_REDUX_DEVTOOLS_EXTENSION__,
-        previousState: (store.getState as Function)(),
-        currentState: reduxStore.getState()
+        actionPayload: {},
+        previousState: store.getState(),
+        currentState: reduxStore.getState(),
+        start: new Date(),
+        end: new Date()
       })
     }
   })

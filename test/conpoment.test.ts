@@ -8,10 +8,12 @@ import start from '../start'
 
 jest.setTimeout(30000)
 
-
 process.env.NODE_ENV = 'development'
-let PORT = 3333
-const ROOT = path.join(__dirname, 'project')
+
+let PORT: number = 3333
+
+const ROOT: string = path.join(__dirname, 'project')
+
 const config: Partial<IMVC.Config> = {
 	root: ROOT, // 项目根目录
 	port: PORT, // server 端口号
@@ -60,13 +62,16 @@ describe('component test', () => {
   })
   
   describe('Input', () => {
-    it('global state should change when the input has changed', async () => {
+    it('global state should change when the input has been changed', async () => {
       let page = await browser.newPage()
       let url = `http://localhost:${config.port}/input`
       await page.goto(url)
       await page.waitFor('#input')
 
-      
+      await page.$eval('#first-name-input', (e: HTMLInputElement) => e.value = 'test')
+      let content = await page.$eval('first-name-value', (e) => e.innerHTML)
+
+      expect(content).toBe('test')
     })
   })
   
