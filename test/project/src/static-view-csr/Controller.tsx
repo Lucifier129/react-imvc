@@ -1,14 +1,13 @@
 import Controller from '../../../../controller'
 import React from 'react'
 import IMVC from '../../../../index'
-export default class extends Controller {
+export default class extends Controller<{}, {}> {
     SSR = false // disable server side rendering
     View = View
     constructor(location: IMVC.Location, context: IMVC.Context) {
-      super(location, context)
+        super(location, context)
     }
 }
-
 
 function View() {
     return (

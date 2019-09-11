@@ -6,7 +6,7 @@ const delay = (time: number) => new Promise(resolve => {
   setTimeout(resolve, time)
 })
 
-export default class extends Controller {
+export default class extends Controller<{}, {}> {
   SSR = false
   View = View
   constructor(location: IMVC.Location, context: IMVC.Context) {

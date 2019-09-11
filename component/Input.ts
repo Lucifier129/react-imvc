@@ -28,6 +28,7 @@ export default class Input extends React.Component<Props> {
 		name: '',
 		actionType: 'UPDATE_INPUT_VALUE'
 	}
+
 	render() {
 		let { state } = this.context
 		let {
@@ -60,6 +61,7 @@ export default class Input extends React.Component<Props> {
 			subProps
 		)
 	}
+
 	handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		let { state, handleInputChange } = this.context
 		let { name, onChange, check, transformer } = this.props
@@ -81,6 +83,7 @@ export default class Input extends React.Component<Props> {
 
 		onChange && onChange(event)
 	}
+
 	handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
 		let { state } = this.context
 		let { name, onFocus } = this.props
@@ -95,6 +98,7 @@ export default class Input extends React.Component<Props> {
 		})
 		onFocus && onFocus(event)
 	}
+	
 	handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
 		let { name, onBlur, check } = this.props
 		let pathOfValidState: string = `${name}.isValid`

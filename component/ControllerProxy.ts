@@ -12,6 +12,7 @@ export interface Props<S extends object, AS extends Actions<S & StateFromAS<AS>>
  */
 export default class ControllerProxy<S extends object, AS extends Actions<S & StateFromAS<AS>>> extends React.Component<Props<S, AS>> {
   static ignoreErrors: boolean = true
+
   updateDocumentTitle() {
     let { controller } = this.props
     let { html } = (controller.store.getState as Function)()
@@ -20,6 +21,7 @@ export default class ControllerProxy<S extends object, AS extends Actions<S & St
       document.title = html.title
     }
   }
+
   emit(method: string) {
     let { controller } = this.props
     try {
@@ -34,6 +36,7 @@ export default class ControllerProxy<S extends object, AS extends Actions<S & St
       }
     }
   }
+
   componentDidMount() {
     let { controller } = this.props
     this.updateDocumentTitle()
@@ -43,12 +46,15 @@ export default class ControllerProxy<S extends object, AS extends Actions<S & St
     }
     this.emit('componentDidMount')
   }
+
   componentWillUnmount() {
     this.emit('componentWillUnmount')
   }
+
   componentDidUpdate() {
     this.updateDocumentTitle()
   }
+
   render() {
     return null
   }

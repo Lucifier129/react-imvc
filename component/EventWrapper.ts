@@ -13,6 +13,7 @@ export default class EventWrapper extends React.Component<Props> {
 	static defaultProps: Props = {
 		as: 'div'
 	}
+	
 	render() {
 		const { children, as: tag, ...restProps } = this.props
 		let props: Record<string, any> = restProps

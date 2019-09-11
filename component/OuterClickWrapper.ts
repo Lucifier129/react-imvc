@@ -14,6 +14,7 @@ export default class OuterClickWrapper extends Component<Props> {
       document.attachEvent('onclick', this.handleOutterClick)
     }
   }
+
   componentWillUnmount() {
     if (document.removeEventListener) {
       document.removeEventListener('click', this.handleOutterClick)
@@ -21,6 +22,7 @@ export default class OuterClickWrapper extends Component<Props> {
       document.detachEvent('onclick', this.handleOutterClick)
     }
   }
+
   // 结点是否包含结点
   contains(rootNode: Element | Text, node: Node) {
     if (typeof rootNode.contains === 'function') {
@@ -34,6 +36,7 @@ export default class OuterClickWrapper extends Component<Props> {
     }
     return false
   }
+
   handleOutterClick = (event: Event) => {
     let { onClick } = this.props
     if (!onClick) {
@@ -45,6 +48,7 @@ export default class OuterClickWrapper extends Component<Props> {
       onClick(event)
     }
   }
+  
   render() {
     return Children.only(this.props.children)
   }

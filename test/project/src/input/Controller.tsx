@@ -3,33 +3,35 @@ import IMVC from '../../../../index'
 import Controller from '../../../../controller'
 import { Input } from '../../../../component'
 
-export default class extends Controller {
+const initialState = {
+  // 多层次对象
+  user: {
+    name: {
+      first: '',
+      last: '',
+    },
+    email: '',
+    age: 0
+  },
+  // 数组对象
+  friends: [{
+    name: 'friendA',
+  }, {
+    name: 'friendB',
+  }],
+  // 复合对象
+  phone: {
+    value: '',
+    isValid: false,
+    isWarn: false,
+  },
+  content: ''
+}
+
+export default class extends Controller<typeof initialState, {}> {
   SSR = true // enable server side rendering
   View = View
-  initialState = {
-    // 多层次对象
-    user: {
-      name: {
-        first: '',
-        last: '',
-      },
-      email: '',
-      age: 0
-    },
-    // 数组对象
-    friends: [{
-      name: 'friendA',
-    }, {
-      name: 'friendB',
-    }],
-    // 复合对象
-    phone: {
-      value: '',
-      isValid: false,
-      isWarn: false,
-    },
-    content: ''
-  }
+  initialState = initialState
   constructor(location: IMVC.Location, context: IMVC.Context) {
     super(location, context)
   }

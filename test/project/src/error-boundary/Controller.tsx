@@ -1,19 +1,21 @@
 import ErrorBoundary from '../../../../component/ErrorBoundary'
 import Controller from '../../../../controller'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import IMVC from '../../../../index'
 
-export default class extends Controller {
+const actions = {
+  TEST: () => {
+    throw new Error('action-test')
+  }
+}
+
+export default class extends Controller<{}, typeof actions> {
   constructor(location: IMVC.Location, context: IMVC.Context) {
     super(location, context)
   }
   SSR = true // enable server side rendering
   View = View
-  actions = {
-    TEST: () => {
-      throw new Error('action-test')
-    }
-  }
+  actions = actions
   // componentWillCreate() {
   //   throw new Error('componentWillCreate')
   // }
@@ -28,7 +30,7 @@ export default class extends Controller {
   }
   componentDidMount() {
     setTimeout(() => {
-      ((this.store.actions as IMVC.Actions).TEST as Function)()
+      this.store.actions.TEST()
     })
     
   }

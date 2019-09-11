@@ -21,11 +21,13 @@ export default class Link extends React.Component<Props> {
 	static defaultProps: Props = {
 		as: 'a'
 	}
+
 	componentDidMount() {
 		if (this.props.prefetch) {
 			this.context.prefetch(this.props.to || this.props.href)
 		}
 	}
+
 	render() {
 		let { basename = '' } = this.context.state as { basename: string }
 		let {
@@ -59,6 +61,7 @@ export default class Link extends React.Component<Props> {
 			children
 		)
 	}
+	
 	handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		let { onClick, replace, back, forward, go, to } = this.props
 		let { history, location } = this.context as { history: CH.NativeHistory, location: IMVC.Location }

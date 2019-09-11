@@ -16,11 +16,13 @@ export default class ViewManager<S extends object, AS extends Actions<S & StateF
 		super(props, context)
 		this.addItemIfNeed(props.controller.location.raw)
 	}
+
 	addItemIfNeed(key: string) {
 		if (!this.views.hasOwnProperty(key)) {
 			this.views[key] = null
 		}
 	}
+
 	clearItemIfNeed() {
 		let { views, scrollMap } = this
 		let { controller } = this.props
@@ -38,6 +40,7 @@ export default class ViewManager<S extends object, AS extends Actions<S & StateF
 			}
 		}
 	}
+
 	componentWillReceiveProps(nextProps: Props<S, AS>) {
 		let currentPath = this.props.controller.location.raw
 		let nextPath = nextProps.controller.location.raw
@@ -47,6 +50,7 @@ export default class ViewManager<S extends object, AS extends Actions<S & StateF
 		this.addItemIfNeed(nextPath)
 		this.clearItemIfNeed()
 	}
+
 	renderView(path: string) {
 		let { controller } = this.props
 		let {
@@ -103,6 +107,7 @@ export default class ViewManager<S extends object, AS extends Actions<S & StateF
 
 		return view
 	}
+
 	render() {
 		let { controller } = this.props
 		return (
@@ -140,13 +145,16 @@ type ItemProps = {
 class ViewItem extends React.Component<ItemProps> {
 	static ignoreErrors = true
 	container: HTMLElement | string | null = null
+
 	getContainer = (container: HTMLElement | string | null) => {
 		this.container = container
 	}
+
 	getResetScrollOnMount = () => {
 		let { resetScrollOnMount } = this.props
 		return resetScrollOnMount === undefined ? true : !!resetScrollOnMount
 	}
+
 	shouldComponentUpdate(nextProps: ItemProps) {
 		if (!nextProps.isActive) {
 			(this.container as HTMLElement).style.display = 'none'
@@ -158,11 +166,13 @@ class ViewItem extends React.Component<ItemProps> {
 		}
 		return nextProps.isActive
 	}
+
 	componentDidMount() {
 		if (this.getResetScrollOnMount()) {
 			window.scroll(0, 0)
 		}
 	}
+	
 	render() {
 		return (
 			<div className="imvc-view-item" ref={this.getContainer}>

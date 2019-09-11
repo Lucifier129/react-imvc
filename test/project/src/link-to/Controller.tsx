@@ -2,7 +2,7 @@ import React from 'react'
 import IMVC from '../../../../index'
 import Controller from '../../../../controller'
 
-export default class extends Controller {
+export default class extends Controller<{}, {}> {
 	SSR = true // enable server side rendering
 	View = View
   constructor(location: IMVC.Location, context: IMVC.Context) {

@@ -22,15 +22,18 @@ export default class ErrorBoundary extends React.Component<Props, IMVC.State> {
   state: IMVC.State = {
     hasError: false
   }
+
   catchError(error: Error) {
     let { ctrl } = this.context
     if (ctrl.errorDidCatch) {
       ctrl.errorDidCatch(error, 'view')
     }
   }
+
   componentDidCatch(error: Error) {
     this.catchError(error)
   }
+  
   render() {
     if (this.state.hasError) {
       return this.props.fallback
