@@ -2,7 +2,6 @@ import React from 'react'
 import IMVC from '../../../../index'
 import Controller from '../../../../controller'
 import { Input } from '../../../../component'
-import { Transformer } from '../../../../component/Input'
 
 export default class extends Controller {
   SSR = true // enable server side rendering

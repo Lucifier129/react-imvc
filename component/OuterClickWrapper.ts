@@ -1,6 +1,5 @@
 import React, { Component, Children } from 'react'
 import { findDOMNode } from 'react-dom'
-import IMVC from '../index'
 
 interface Props {
   onClick?: Function

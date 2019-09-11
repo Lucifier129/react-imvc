@@ -6,7 +6,7 @@ import serveStatic from "serve-static"
 import cookieParser from "cookie-parser"
 import helmet from "helmet"
 import compression from "compression"
-import { Store as ReliteStore, Action as ReliteAction } from "relite"
+import * as Relite from "relite"
 import babelCore from "babel-core"
 
 import {
@@ -47,12 +47,102 @@ declare global {
 }
 
 declare namespace IMVC {
-  export type Controller = _Controller
-  export type Action = Relite.Action<State>
-  export type Actions = Relite.Actions<State>
-  export type CurryingActions = Relite.CurringActions<State, Actions>
-  export type Data = Relite.Data<State>
+  // Controller
+  type ObjectAlias = object
 
+  export interface State extends ObjectAlias {
+    location?: createApp.Location
+    basename?: string
+    publicPath?: string
+    restapi?: string
+    hasError?: boolean
+    html?: object
+    [x: string]: any
+  }
+
+  export interface Model {
+    initialState?: State
+    [propName: string]: Relite.Action<State>
+  }
+
+  export type Preload = Record<string, string>
+
+  export type API = Record<string, string>
+
+  export interface Location {
+    key?: string
+    action: string
+    basename: string
+    hash: string
+    params: object
+    pathname: string
+    pattern: string
+    query: object
+    raw: string
+    search: string
+    state: any
+    [propName: string]: any
+  }
+
+  export interface Context extends createApp.Context {
+    basename?: string
+    env?: string
+    preload?: Payload
+    publicPath?: string
+    location?: Location
+    restapi?: string
+    userInfo?: object
+    [propName: string]: any
+  }
+
+  export interface Handlers {
+    [handleName: string]: Handler
+  }
+
+  interface Handler {
+    (...args: any[]): any
+  }
+
+  export interface Meta {
+    key?: string | null
+    hadMounted: boolean
+    id: number
+    isDestroyed: boolean
+    unsubscribeList: any
+  }
+
+  export interface BaseViewFC extends React.FC<ViewProps> {
+    viewId?: any
+  }
+
+  export interface BaseViewClass extends React.ComponentClass<ViewProps> {
+    viewId?: any
+  }
+  
+
+  // Render view
+  export interface Render<E = string> extends createApp.RenderTo<E> {
+    (
+      view: React.ReactElement,
+      controller?: Controller,
+      container?: Element | null
+    ): void
+  }
+
+  export interface RenderToNodeStream<E = string>
+    extends createApp.RenderTo<E> {
+    (view: E, controller?: Controller): Promise<{}>
+  }
+
+  export interface RenderToString<E = string> extends createApp.RenderTo<E> {
+    (view: E, controller?: Controller): void
+  }
+
+  export interface ViewEngine extends createApp.ViewEngine {
+    render: Render
+  }
+
+  // Server
   export interface Req extends express.Request {
     basename?: string
     serverPublicPath?: string
@@ -74,12 +164,12 @@ declare namespace IMVC {
     }
   }
 
-  export interface BaseViewFC extends React.FC<ViewProps> {
-    viewId?: any
-  }
-
-  export interface BaseViewClass extends React.ComponentClass<ViewProps> {
-    viewId?: any
+  // Compile config
+  export interface AppSettings extends createApp.Settings {
+    hashType?: string // hash history 显示的起点缀，默认是 !
+    container?: string // react 组件渲染的容器
+    cacheAmount?: number
+    basename?: string
   }
 
   export interface GulpConfigItem {
@@ -106,34 +196,6 @@ declare namespace IMVC {
     publishBabel: GulpConfigItem
 
     [propName: string]: GulpConfigItem
-  }
-
-  export interface Render<E = string> extends createApp.RenderTo<E> {
-    (
-      view: React.ReactElement,
-      controller?: Controller,
-      container?: Element | null
-    ): void
-  }
-
-  export interface RenderToNodeStream<E = string>
-    extends createApp.RenderTo<E> {
-    (view: E, controller?: Controller): Promise<{}>
-  }
-
-  export interface RenderToString<E = string> extends createApp.RenderTo<E> {
-    (view: E, controller?: Controller): void
-  }
-
-  export interface ViewEngine extends createApp.ViewEngine {
-    render: Render
-  }
-
-  export interface AppSettings extends createApp.Settings {
-    hashType?: string // hash history 显示的起点缀，默认是 !
-    container?: string // react 组件渲染的容器
-    cacheAmount?: number
-    basename?: string
   }
 
   interface GulpConfig {
@@ -487,92 +549,8 @@ declare namespace IMVC {
     entry?: string | string[] | webpack.Entry | webpack.EntryFunc
   }
 
-  type ObjectAlias = object
-
-  export interface State extends ObjectAlias {
-    location?: createApp.Location
-    basename?: string
-    publicPath?: string
-    restapi?: string
-    hasError?: boolean
-    html?: object
-    [x: string]: any
-  }
-
-  export interface Model {
-    initialState?: State
-    [propName: string]: any
-  }
-
-  export interface Preload {
-    [propName: string]: string
-  }
-
-  export type API = Record<string, string>
-
-  export interface Payload {
-    [propName: string]: any
-  }
-
-  export interface Location {
-    // path?: any
-    key?: string
-    action: string
-    basename: string
-    hash: string
-    params: object
-    pathname: string
-    pattern: string
-    query: object
-    raw: string
-    search: string
-    state: any
-    [propName: string]: any
-  }
-
-  export interface Context extends createApp.Context {
-    basename?: string
-    env?: string
-    preload?: Payload
-    publicPath?: string
-    location?: Location
-    restapi?: string
-    userInfo?: object
-    [propName: string]: any
-  }
-
-  export interface Handlers {
-    [handleName: string]: Handler
-  }
-
-  interface Handler {
-    (...args: any[]): any
-  }
-
-  export interface Meta {
-    key?: string | null
-    hadMounted: boolean
-    id: number
-    isDestroyed: boolean
-    unsubscribeList: any
-  }
-
-  export interface Loader {
-    (...args: any[]): any
-  }
-
-  export interface Routes {
-    [index: number]: Route
-  }
-
-  export interface Route {
-    path: string
-    controller: Controller
-  }
-
-  export interface Store
-    extends ReliteStore<object, Record<string, ReliteAction<object>>> {}
-
+  
+  // Util function
   export interface Build {
     (options: IMVC.Options): Promise<IMVC.Config | void>
   }

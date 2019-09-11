@@ -1,15 +1,16 @@
 import React from 'react'
 import Controller from '../controller'
+import { Actions, StateFromAS } from 'relite'
 
-export interface Props {
-  controller: Controller
+export interface Props<S extends object, AS extends Actions<S & StateFromAS<AS>>> {
+  controller: Controller<S, AS>
 }
 
 /**
  * ViewProxy 把 react 组件生命周期同步到 controller 里
  * 根据 state 更新 document.title
  */
-export default class ControllerProxy extends React.Component<Props> {
+export default class ControllerProxy<S extends object, AS extends Actions<S & StateFromAS<AS>>> extends React.Component<Props<S, AS>> {
   static ignoreErrors: boolean = true
   updateDocumentTitle() {
     let { controller } = this.props

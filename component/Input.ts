@@ -60,12 +60,6 @@ export default class Input extends React.Component<Props> {
 			subProps
 		)
 	}
-	getAction() {
-		return this.context.actions[this.props.actionType]
-	}
-	callAction(actionPayload: IMVC.Payload) {
-		this.getAction()(actionPayload)
-	}
 	handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		let { state, handleInputChange } = this.context
 		let { name, onChange, check, transformer } = this.props
@@ -81,7 +75,7 @@ export default class Input extends React.Component<Props> {
 			currentValue = handleInputChange(path, currentValue, oldValue)
 		}
 
-		this.callAction({
+		this.context.actions[this.props.actionType]({
 			[path]: currentValue
 		})
 
@@ -96,7 +90,7 @@ export default class Input extends React.Component<Props> {
 			onFocus && onFocus(event)
 			return
 		}
-		this.callAction({
+		this.context.actions[this.props.actionType]({
 			[path]: false
 		})
 		onFocus && onFocus(event)
@@ -106,7 +100,7 @@ export default class Input extends React.Component<Props> {
 		let pathOfValidState: string = `${name}.isValid`
 		let pathOfWarnState: string = `${name}.isWarn`
 		let isValidValue: boolean = (check as { (value: string): boolean })(event.currentTarget.value)
-		this.callAction({
+		this.context.actions[this.props.actionType]({
 			[pathOfValidState]: isValidValue,
 			[pathOfWarnState]: !isValidValue
 		})

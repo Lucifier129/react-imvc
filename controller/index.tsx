@@ -2,15 +2,15 @@
 import 'whatwg-fetch'
 import React from 'react'
 import Cookie from 'js-cookie'
-import querystringify, { stringify } from 'querystringify'
+import querystringify from 'querystringify'
 import CA from 'create-app/client'
+import { createStore, Actions, StateFromAS, Store } from 'relite'
 import CH from 'create-history'
 import _ from '../util'
 import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
 import attachDevToolsIfPossible from './attachDevToolsIfPossible'
 import IMVC from '../index'
-import { createStore, Actions, Currings, AnyAction } from 'relite'
 
 const REDIRECT =
   typeof Symbol === 'function'
@@ -19,42 +19,40 @@ const REDIRECT =
 
 const EmptyView = () => null
 let uid = 0 // seed of controller id
+// fixed: webpack rebuild lost original React.createElement
+// @ts-ignore
+let createElement = React.originalCreateElement || React.createElement
+
 /**
  * 绑定 IMVC.Store 到 View
  * 提供 Controller 的生命周期钩子
  * 组装事件处理器 Event IMVC.Handlers
  * 提供 fetch 方法
  */
-type UdfFuncType = {
-  (...args: any[]): any
-}
-
-interface InitailState {
-  (location: IMVC.Location, context: IMVC.Context): IMVC.State
-}
-
-export default class Controller implements CA.Controller {
+export default class Controller<
+  S extends object,
+  AS extends Actions<S & StateFromAS<AS>>
+  > implements CA.Controller {
   View: IMVC.BaseViewFC | IMVC.BaseViewClass = EmptyView
-  restapi: string = ''
-  preload: IMVC.Preload
-  API: IMVC.API
-  Model: IMVC.Model
-  initialState: IMVC.State | InitailState | undefined
-  actions: IMVC.Actions | undefined
-  SSR: boolean | { (location: IMVC.Location, context: IMVC.Context): boolean } | undefined
-  KeepAliveOnPush: boolean | undefined
-  history: CH.NativeHistory
-  store: IMVC.Store
-  location: IMVC.Location
-  context: IMVC.Context
-  handlers: IMVC.Handlers
-  meta: IMVC.Meta
-  proxyHandler: any
+  restapi?: string = ''
+  preload?: IMVC.Preload
+  API?: IMVC.API
+  Model?: { initialState: S } & AS
+  initialState?
+  actions?
+  SSR?: boolean | { (location: IMVC.Location, context: IMVC.Context): boolean } | undefined
+  KeepAliveOnPush?: boolean | undefined
+  history?: CH.NativeHistory
+  store?: Store<S & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions>
+  location?: IMVC.Location
+  context?: IMVC.Context
+  handlers?: IMVC.Handlers
+  meta?: IMVC.Meta
+  proxyHandler?: any
   resetScrollOnMount?: boolean
-  [propName: string]: any
   matcher?: CA.Matcher
-  loader: IMVC.Loader | undefined
-  Loading: IMVC.BaseViewFC | IMVC.BaseViewClass = (...args) => null
+  loader: CA.Loader
+  Loading: IMVC.BaseViewFC | IMVC.BaseViewClass = () => null
 
   errorDidCatch?(error: Error, str: string): void
   getComponentFallback?(displayName: string, InputComponent: React.ComponentType): void
@@ -70,6 +68,8 @@ export default class Controller implements CA.Controller {
   pageWillLeave?(...args: any[]): any
   windowWillUnload?(...args: any[]): any
   pageDidBack?(...args: any[]): any
+
+  [propName: string]: any
 
   constructor(location: IMVC.Location, context: IMVC.Context) {
     this.meta = {
@@ -93,7 +93,7 @@ export default class Controller implements CA.Controller {
     this.preload = {}
   }
   // 绑定 handler 的 this 值为 controller 实例
-  combineHandlers(source: Controller) {
+  combineHandlers(source: Controller<S, AS>) {
     let { handlers } = this
     Object.keys(source).forEach(key => {
       let value = source[key]
@@ -327,7 +327,7 @@ export default class Controller implements CA.Controller {
 
     let { context } = this
     let list = keys.map(name => {
-      if ((context.preload as IMVC.Payload)[name]) {
+      if ((context.preload as IMVC.Preload)[name]) {
         return
       }
       let url = (preload as IMVC.Preload)[name]
@@ -351,7 +351,7 @@ export default class Controller implements CA.Controller {
              */
             content = content.replace(/\r+/g, '')
           }
-          (context.preload as IMVC.Payload)[name] = content
+          (context.preload as IMVC.Preload)[name] = content
         })
     })
     return Promise.all(list)
@@ -369,7 +369,85 @@ export default class Controller implements CA.Controller {
 
   async init() {
     if (this.errorDidCatch || this.getComponentFallback) {
-      this.proxyHandler = proxyReactCreateElement(this)
+      let self = this
+      let isAttach = false
+      let attach = () => {
+        if (isAttach) return
+        isAttach = true
+        React.createElement = (type: any, ...args: any[]) => {
+          if (typeof type === 'function') {
+            if (!type.isErrorBoundary) {
+              type = createErrorBoundary(type)
+            }
+          }
+          return createElement(type, ...args)
+        }
+        // @ts-ignore
+        React.originalCreateElement = createElement
+      }
+      let detach = () => {
+        isAttach = false
+        React.createElement = createElement
+      }
+      let map = new Map()
+      let createErrorBoundary = (InputComponent: React.ComponentType & { ignoreErrors: boolean }) => {
+        if (!InputComponent) return InputComponent
+
+        if (InputComponent.ignoreErrors) return InputComponent
+
+        if (map.has(InputComponent)) {
+          return map.get(InputComponent)
+        }
+
+        const displayName = InputComponent.name || InputComponent.displayName
+
+        interface ErrorBoundaryProps {
+          forwardedRef?: any
+        }
+        class ErrorBoundary extends React.Component<ErrorBoundaryProps> {
+          static displayName = `ErrorBoundary(${displayName})`
+          static isErrorBoundary = true
+
+          state: IMVC.State = {
+            hasError: false
+          }
+
+          static getDerivedStateFromError() {
+            return { hasError: true }
+          }
+
+          componentDidCatch(error: Error) {
+            if (typeof self.errorDidCatch === 'function') {
+              self.errorDidCatch(error, 'view')
+            }
+          }
+          render() {
+            if (self.state.hasError) {
+              if (self.getComponentFallback) {
+                let result = self.getComponentFallback(displayName as string, InputComponent)
+                if (result !== undefined) return result
+              }
+              return null
+            }
+            let { forwardedRef, ...rest } = this.props
+            return createElement(InputComponent, { ...rest, ref: forwardedRef })
+          }
+        }
+
+        let Forwarder: {
+          isErrorBoundary?: boolean
+          [propName: string]: any
+        } = React.forwardRef((props, ref) => {
+          return createElement(ErrorBoundary, { ...props, forwardedRef: ref })
+        })
+
+        Forwarder.isErrorBoundary = true
+        map.set(InputComponent, Forwarder)
+
+        return Forwarder
+      }
+
+      this.proxyHandler = { attach, detach }
     }
     try {
       return await this.initialize()
@@ -450,7 +528,7 @@ export default class Controller implements CA.Controller {
       initialState = JSON.parse(JSON.stringify(initialState))
     }
 
-    let finalInitialState: IMVC.State = {
+    let finalInitialState = {
       ...initialState,
       ...globalInitialState,
       location,
@@ -483,12 +561,28 @@ export default class Controller implements CA.Controller {
     /**
      * 创建 store
      */
-    let finalActions: IMVC.Actions = { ...actions, ...shareActions }
+    let finalActions = { ...actions, ...shareActions }
     this.store = createStore(finalActions, finalInitialState)
     attachDevToolsIfPossible(this.store)
 
     // proxy store.actions for handling error
-    if (this.errorDidCatch) proxyStoreActions(this)
+    if (this.errorDidCatch) {
+      let actions = {}
+
+      for (let key in this.store.actions) {
+        let action = (this.store.actions)[key]
+        actions[key] = (payload) => {
+          try {
+            return action(payload)
+          } catch (error) {
+            this.errorDidCatch(error, 'model')
+            throw error
+          }
+        }
+      }
+
+      this.store.actions = actions
+    }
 
     /**
      * 将 handle 开头的方法，合并到 this.handlers 中
@@ -560,7 +654,7 @@ export default class Controller implements CA.Controller {
 
     if (store) {
       let unsubscribe = store.subscribe((data: any) => {
-        (this.refreshView as UdfFuncType)()
+        this.refreshView()
         if (this.stateDidChange) {
           this.stateDidChange(data)
         }
@@ -573,7 +667,7 @@ export default class Controller implements CA.Controller {
       let unlisten = history.listenBefore((location: IMVC.Location) => {
         if (!this.KeepAliveOnPush) return
         if (location.action === 'PUSH') {
-          (this.saveToCache as UdfFuncType)()
+          this.saveToCache()
         } else {
           this.removeFromCache()
         }
@@ -629,7 +723,7 @@ export default class Controller implements CA.Controller {
     if (View && !View.viewId) {
       View.viewId = Date.now()
     }
-    let ctrl: Controller = Object.create(this)
+    let ctrl: Controller<S, AS> = Object.create(this)
     ctrl.View = View
     ctrl.componentDidFirstMount = null
     ctrl.componentDidMount = null
@@ -641,116 +735,11 @@ export default class Controller implements CA.Controller {
     if (this.proxyHandler) {
       this.proxyHandler.attach()
     }
-    (this.refreshView as UdfFuncType)(<ViewManager controller={ctrl} />)
+    this.refreshView(<ViewManager controller={ctrl} />)
   }
 
   render() {
     if (this.proxyHandler) this.proxyHandler.attach()
     return <ViewManager controller={this} />
   }
-}
-
-// fixed: webpack rebuild lost original React.createElement
-// @ts-ignore
-let createElement = React.originalCreateElement || React.createElement
-
-type ProxyReactCreateElement = (ctrl: Controller) => { attach: object, detach: object }
-
-const proxyReactCreateElement: ProxyReactCreateElement = ctrl => {
-  let isAttach = false
-  let attach = () => {
-    if (isAttach) return
-    isAttach = true
-    React.createElement = (type: any, ...args: any[]) => {
-      if (typeof type === 'function') {
-        if (!type.isErrorBoundary) {
-          type = createErrorBoundary(type)
-        }
-      }
-      return createElement(type, ...args)
-    }
-    // @ts-ignore
-    React.originalCreateElement = createElement
-  }
-  let detach = () => {
-    isAttach = false
-    React.createElement = createElement
-  }
-  let map = new Map()
-  let createErrorBoundary = (InputComponent: React.ComponentType & { ignoreErrors: boolean }) => {
-    if (!InputComponent) return InputComponent
-
-    if (InputComponent.ignoreErrors) return InputComponent
-
-    if (map.has(InputComponent)) {
-      return map.get(InputComponent)
-    }
-
-    const displayName = InputComponent.name || InputComponent.displayName
-
-    interface ErrorBoundaryProps {
-      forwardedRef?: any
-    }
-    class ErrorBoundary extends React.Component<ErrorBoundaryProps> {
-      static displayName = `ErrorBoundary(${displayName})`
-      static isErrorBoundary = true
-
-      state: IMVC.State = {
-        hasError: false
-      }
-
-      static getDerivedStateFromError() {
-        return { hasError: true }
-      }
-
-      componentDidCatch(error: Error) {
-        if (typeof ctrl.errorDidCatch === 'function') {
-          ctrl.errorDidCatch(error, 'view')
-        }
-      }
-      render() {
-        if (this.state.hasError) {
-          if (ctrl.getComponentFallback) {
-            let result = ctrl.getComponentFallback(displayName as string, InputComponent)
-            if (result !== undefined) return result
-          }
-          return null
-        }
-        let { forwardedRef, ...rest } = this.props
-        return createElement(InputComponent, { ...rest, ref: forwardedRef })
-      }
-    }
-
-    let Forwarder: {
-      isErrorBoundary?: boolean
-      [propName: string]: any
-    } = React.forwardRef((props, ref) => {
-      return createElement(ErrorBoundary, { ...props, forwardedRef: ref })
-    })
-
-    Forwarder.isErrorBoundary = true
-    map.set(InputComponent, Forwarder)
-
-    return Forwarder
-  }
-
-  return { attach, detach }
-}
-
-const proxyStoreActions = (ctrl: Controller) => {
-  let actions: Actions<IMVC.State> = {}
-
-  for (let key in ctrl.store.actions) {
-    let action = (ctrl.store.actions)[key]
-    actions[key] = (payload: IMVC.Payload) => {
-      try {
-        return action(payload)
-      } catch (error) {
-        ctrl.errorDidCatch(error, 'model')
-        throw error
-      }
-    }
-  }
-
-  ctrl.store.actions = actions as Partial<Currings<object, Record<string, AnyAction<object, unknown, object>>>>
 }

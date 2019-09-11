@@ -1,17 +1,18 @@
 import React from 'react'
+import { Actions, StateFromAS } from 'relite'
 import GlobalContext from '../context'
 import ControllerProxy from './ControllerProxy'
 import Controller from '../controller'
 
-interface Props {
-	controller: Controller
+interface Props<S extends object, AS extends Actions<S & StateFromAS<AS>>> {
+	controller: Controller<S, AS>
 }
 
-export default class ViewManager extends React.Component<Props> {
+export default class ViewManager<S extends object, AS extends Actions<S & StateFromAS<AS>>> extends React.Component<Props<S, AS>> {
 	static ignoreErrors = true
 	views: Record<string, any> = {}
 	scrollMap: Record<string, any> = {}
-	constructor(props: Props, context: React.Context<any>) {
+	constructor(props: Props<S, AS>, context: React.Context<any>) {
 		super(props, context)
 		this.addItemIfNeed(props.controller.location.raw)
 	}
@@ -37,7 +38,7 @@ export default class ViewManager extends React.Component<Props> {
 			}
 		}
 	}
-	componentWillReceiveProps(nextProps: Props) {
+	componentWillReceiveProps(nextProps: Props<S, AS>) {
 		let currentPath = this.props.controller.location.raw
 		let nextPath = nextProps.controller.location.raw
 		if (currentPath !== nextPath) {
@@ -48,18 +49,43 @@ export default class ViewManager extends React.Component<Props> {
 	}
 	renderView(path: string) {
 		let { controller } = this.props
+		let {
+			View,
+			store,
+			handlers,
+			location,
+			history,
+			context,
+			matcher,
+			loader,
+			prefetch,
+			handleInputChange,
+			meta
+		} = controller
 		let currentPath = controller.location.raw
 
 		if (currentPath !== path) {
 			return this.views[path]
 		}
 
-		let { meta, store, handlers, View } = controller
 		let state = (store.getState as Function)()
 		let actions = store.actions
+		let globalContext = {
+			ctrl: controller,
+			location,
+			history,
+			state,
+			actions,
+			preload: context.preload,
+			handleInputChange,
+			handlers,
+			matcher,
+			loader,
+			prefetch
+		}
 
 		let view = (
-			<GlobalContext.Provider value={getContextByController(controller)}>
+			<GlobalContext.Provider value={globalContext}>
 				<View
 					key={`${meta.id}_${currentPath}`}
 					state={state}
@@ -143,33 +169,5 @@ class ViewItem extends React.Component<ItemProps> {
 				{this.props.view}
 			</div>
 		)
-	}
-}
-
-function getContextByController(ctrl: Controller) {
-	let {
-		store,
-		handlers,
-		location,
-		history,
-		context,
-		matcher,
-		loader,
-		prefetch,
-		handleInputChange
-	} = ctrl
-	let state = store.getState()
-	return {
-		ctrl,
-		location,
-		history,
-		state,
-		actions: store.actions,
-		preload: context.preload,
-		handleInputChange,
-		handlers,
-		matcher,
-		loader,
-		prefetch
 	}
 }
