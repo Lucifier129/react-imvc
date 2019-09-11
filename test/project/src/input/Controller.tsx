@@ -68,7 +68,7 @@ function View({ state }) {
             )
           })
         }
-        phone: <p id="phone-value">{state.phone.value} {state.phone.isValid} {state.phone.isWarn}</p>
+        phone: <p id="phone-value">{`${state.phone.value} ${state.phone.isWarn ? 'true' : 'false'} ${state.phone.isValid ? 'true' : 'false'}`}</p>
       </div>
     </div>
   )

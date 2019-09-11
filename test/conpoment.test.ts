@@ -39,7 +39,10 @@ describe('component test', () => {
     return start({ config }).then((result) => {
       app = result.app
       server = result.server
-      return puppeteer.launch()
+      return puppeteer.launch({
+        headless: false,
+        slowMo: 50
+      })
     }).then((brws) => {
       browser = brws
     })
@@ -68,10 +71,56 @@ describe('component test', () => {
       await page.goto(url)
       await page.waitFor('#input')
 
-      await page.$eval('#first-name-input', (e: HTMLInputElement) => e.value = 'test')
-      let content = await page.$eval('first-name-value', (e) => e.innerHTML)
+      await page.focus('#first-name-input')
+      await page.keyboard.type('test')
+      let content = await page.$eval('#first-name-value', (e) => e.innerHTML)
 
       expect(content).toBe('test')
+    })
+
+    it('global state should change when the input with deep level has been changed', async () => {
+      let page = await browser.newPage()
+      let url = `http://localhost:${config.port}/input`
+      await page.goto(url)
+      await page.waitFor('#input')
+
+      await page.focus('#firend-0-input')
+      await page.keyboard.type('test')
+      let content = await page.$eval('#first-name-value', (e) => e.innerHTML)
+
+      expect(content).toBe('friendAtest')
+    })
+
+    it('global state and it `isWarn` and `isValid` should change when the input with check attribute has been changed', async () => {
+      let page = await browser.newPage()
+      let url = `http://localhost:${config.port}/input`
+      await page.goto(url)
+      await page.waitFor('#input')
+
+      const inputHandler = await page.$('#phone-input')
+      await inputHandler.focus()
+      await page.keyboard.type('test')
+      let content = await page.$eval('#phone-value', (e) => e.innerHTML)
+
+      expect(content).toBe('test false false')
+
+      await page.click('#first-name-input')
+      content = await page.$eval('#phone-value', (e) => e.innerHTML)
+
+      expect(content).toBe('test true false')
+
+      await page.focus('#phone-input')
+      inputHandler.click({ clickCount: 3 })
+      await page.keyboard.press('Backspace')
+      await page.keyboard.type('1312456456')
+      content = await page.$eval('#phone-value', (e) => e.innerHTML)
+      
+      expect(content).toBe('1312456456 false false')
+
+      await page.click('#first-name-input')
+      content = await page.$eval('#phone-value', (e) => e.innerHTML)
+
+      expect(content).toBe('1312456456 false true')
     })
   })
   
