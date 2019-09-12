@@ -8,6 +8,7 @@ import util from "../util"
 // @ts-ignore
 import $routes from "@routes"
 import IMVC from "../index"
+import Controller from '../controller'
 
 __webpack_public_path__ = window.__PUBLIC_PATH__ + "/"
 const __APP_SETTINGS__: IMVC.AppSettings = window.__APP_SETTINGS__ || {}
@@ -24,7 +25,7 @@ let shouldHydrate = !!window.__INITIAL_STATE__
 
 const render: IMVC.Render<React.ReactElement> = (
   view: React.ReactElement,
-  controller?: IMVC.Controller,
+  controller?: Controller<any, any>,
   container?: Element | null
 ) => {
   try {

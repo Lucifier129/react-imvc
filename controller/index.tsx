@@ -40,7 +40,7 @@ export default class Controller<
   Model?: { initialState: S } & AS
   initialState?: S
   actions?: Partial<Currings<S, AS & typeof shareActions>>
-  SSR?: boolean | { (location: IMVC.Location, context: IMVC.Context): boolean } | undefined
+  SSR?: boolean | { (location: IMVC.Location, context: IMVC.Context): Promise<boolean> } | undefined
   KeepAliveOnPush?: boolean | undefined
   history?: CH.NativeHistory
   store?: Store<S & IMVC.State, AS & typeof shareActions>
@@ -502,7 +502,8 @@ export default class Controller<
     // 如果 Model 存在，且 initialState 和 actions 不存在，从 Model 里解构出来
     if (this.Model && this.initialState === undefined && this.actions === undefined) {
       let $initialState = this.Model.initialState
-      let $actions
+      let $actions: AS = this.Model
+      delete $actions.initialState
       initialState = this.initialState = $initialState
       actions = this.actions = $actions
     }
@@ -644,6 +645,7 @@ export default class Controller<
 
 
     this.bindStoreWithView()
+    console.log('testa')
     return this.render()
   }
   bindStoreWithView() {

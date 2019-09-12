@@ -23,7 +23,7 @@ const config: Partial<IMVC.Config> = {
   routes: "routes", // 服务端路由目录
   layout: "Layout", // 自定义 Layoutclear
   webpackLogger: false, // 关闭 webpack logger
-  webpackDevMiddleware: true // 在内存里编译
+  webpackDevMiddleware: true, // 在内存里编译
 }
 
 describe("test", () => {
@@ -47,27 +47,26 @@ describe("test", () => {
     return browser.close()
   })
 
-  it("test", async () => {
-    let url = `http://localhost:${config.port}/static_view_csr`
-    let clientContent
-    let serverContent
-    try {
-      let page = await browser.newPage()
-      await page.goto(url)
-      await page.waitFor("#static_view_csr")
-      serverContent = await fetchContent(url)
-      clientContent = await page.evaluate(() => document.documentElement.outerHTML)
-      await page.close()
-    } catch (e) {
-      throw e
-    }
-    expect(
-      serverContent.includes('static view content by client side rendering')
-    ).toBe(false)
-    expect(
-      clientContent.includes('static view content by client side rendering')
-    ).toBe(true)
-  })
+  it(`should render view in server side`, async () => {
+    let page = await browser.newPage()
+    let url = `http://localhost:${config.port}/static_view`
+    await page.goto(url)
+    console.log('render')
+    await page.waitFor('#static_view')
+    console.log('render')
+    let serverContent = await fetchContent(url)
+    console.log('render')
+    let clientContent = await page.evaluate(
+      () => document.documentElement.outerHTML
+    )
+    console.log('render')
+    expect(serverContent.includes('static view content')).toBe(
+      config.SSR ? true : false
+    )
+    expect(clientContent.includes('static view content')).toBe(true)
+
+    await page.close()
+  }) 
 })
 
 async function fetchContent(url: string): Promise<string> {

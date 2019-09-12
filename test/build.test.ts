@@ -84,23 +84,7 @@ describe('build test', () => {
 		})
 
     it('file after building should run as same as start', async () => {
-      await import('./publish/start.js')
 
-      let page = await browser.newPage()
-			let url = `http://localhost:${config.port}/static_view_csr`
-			await page.goto(url)
-			await page.waitFor('#static_view_csr')
-			let serverContent = await fetchContent(url)
-			let clientContent = await page.evaluate(
-				() => document.documentElement.outerHTML
-			)
-			expect(
-				serverContent.includes('static view content by client side rendering')
-			).toBe(false)
-			expect(
-				clientContent.includes('static view content by client side rendering')
-			).toBe(true)
-			await page.close()
     })
   })
 })

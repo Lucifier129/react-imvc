@@ -9,9 +9,9 @@ import Controller from '../controller'
 
 const { getFlatList } = util
 const getModule = module => module.default || module
-const commonjsLoader: createApp.Loader = (loadModule, location, context) => {
-  return ((loadModule as createApp.LoadController)(location, context) as
-    Promise<createApp.ControllerConstructor>).then(getModule)
+const commonjsLoader: createApp.Loader = async (loadModule, location, context) => {
+  return await ((loadModule as createApp.LoadController)(location, context) as
+    Promise<createApp.ControllerConstructor>).then(getModule) as Promise<createApp.ControllerConstructor>
 }
 
 /**
@@ -21,7 +21,7 @@ const commonjsLoader: createApp.Loader = (loadModule, location, context) => {
  */
 const createElement = React.createElement
 
-const renderToNodeStream: IMVC.RenderToNodeStream<React.ReactElement> = (view: React.ReactElement, controller?: Controller) => {
+const renderToNodeStream: IMVC.RenderToNodeStream<React.ReactElement> = (view: React.ReactElement, controller?: Controller<any, any>) => {
   return new Promise<{}>((resolve, reject) => {
     let stream = ReactDOMServer.renderToNodeStream(view)
     let buffers: Uint8Array[] = []
@@ -51,7 +51,7 @@ const renderToNodeStream: IMVC.RenderToNodeStream<React.ReactElement> = (view: R
   })
 }
 
-const renderToString: IMVC.RenderToString<React.ReactElement> = (view: React.ReactElement, controller?: Controller) => {
+const renderToString: IMVC.RenderToString<React.ReactElement> = (view: React.ReactElement, controller?: Controller<any, any>) => {
   try {
     return ReactDOMServer.renderToString(view)
   } catch (error) {
