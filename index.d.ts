@@ -51,13 +51,17 @@ declare namespace IMVC {
   type ObjectAlias = object
 
   export interface State extends ObjectAlias {
-    location?: createApp.Location
-    basename?: string
-    publicPath?: string
-    restapi?: string
+    location: createApp.Location
+    basename: string
+    publicPath: string
+    restapi: string
     hasError?: boolean
     html?: object
     [x: string]: any
+  }
+
+  export interface InitialStateFunc<S extends object> {
+    (location: Location, context: Context): S
   }
 
   export interface Model {

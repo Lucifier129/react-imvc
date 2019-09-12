@@ -4,7 +4,7 @@ import React from 'react'
 import Cookie from 'js-cookie'
 import querystringify from 'querystringify'
 import CA from 'create-app/client'
-import { createStore, Actions, StateFromAS, Store } from 'relite'
+import { createStore, Actions, StateFromAS, Store, Currings } from 'relite'
 import CH from 'create-history'
 import _ from '../util'
 import ViewManager from '../component/ViewManager'
@@ -38,12 +38,12 @@ export default class Controller<
   preload?: IMVC.Preload
   API?: IMVC.API
   Model?: { initialState: S } & AS
-  initialState?
-  actions?
+  initialState?: S
+  actions?: Partial<Currings<S, AS & typeof shareActions>>
   SSR?: boolean | { (location: IMVC.Location, context: IMVC.Context): boolean } | undefined
   KeepAliveOnPush?: boolean | undefined
   history?: CH.NativeHistory
-  store?: Store<S & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions>
+  store?: Store<S & IMVC.State, AS & typeof shareActions>
   location?: IMVC.Location
   context?: IMVC.Context
   handlers?: IMVC.Handlers
@@ -408,7 +408,7 @@ export default class Controller<
           static displayName = `ErrorBoundary(${displayName})`
           static isErrorBoundary = true
 
-          state: IMVC.State = {
+          state: Partial<IMVC.State> = {
             hasError: false
           }
 
@@ -477,18 +477,16 @@ export default class Controller<
   }
 
   async initialize() {
-    let { Model, initialState, actions, context, location, SSR, Loading } = this
-
     /**
      * 关闭 SSR 后，不执行 componentWillCreate 和 shouldComponentCreate，直接返回 Loading 界面
      * SSR 如果是个方法，则执行并等待它完成
      */
-    if (context.isServer) {
+    if (this.context.isServer) {
       if (typeof this.SSR === 'function') {
-        SSR = await this.SSR(location, context)
+        this.SSR = await this.SSR(this.location, this.context)
       }
-      if (SSR === false) {
-        let View: IMVC.BaseViewFC | IMVC.BaseViewClass = Loading || EmptyView
+      if (this.SSR === false) {
+        let View: IMVC.BaseViewFC | IMVC.BaseViewClass = this.Loading || EmptyView
         return <View />
       }
     }
@@ -498,16 +496,18 @@ export default class Controller<
     this.fetch = this.fetch.bind(this)
     this.prefetch = this.prefetch.bind(this)
 
+    let actions: AS
+    let initialState: S
+
     // 如果 Model 存在，且 initialState 和 actions 不存在，从 Model 里解构出来
-    if (Model && initialState === undefined && actions === undefined) {
-      let { initialState: $initialState, ...$actions } = Model
+    if (this.Model && this.initialState === undefined && this.actions === undefined) {
+      let $initialState = this.Model.initialState
+      let $actions
       initialState = this.initialState = $initialState
       actions = this.actions = $actions
     }
 
-
-
-    let globalInitialState: IMVC.State | undefined
+    let globalInitialState: IMVC.State
 
     // 服务端把 initialState 吐在 html 里的全局变量 __INITIAL_STATE__ 里
     if (typeof __INITIAL_STATE__ !== 'undefined') {
@@ -528,13 +528,16 @@ export default class Controller<
       initialState = JSON.parse(JSON.stringify(initialState))
     }
 
-    let finalInitialState = {
+    let baseState: IMVC.State = {
+      location: this.location,
+      basename: this.context.basename,
+      publicPath: this.context.publicPath,
+      restapi: this.context.restapi
+    }
+    let finalInitialState: S & IMVC.State = {
       ...initialState,
       ...globalInitialState,
-      location,
-      basename: context.basename,
-      publicPath: context.publicPath,
-      restapi: context.restapi
+      ...baseState
     }
 
     /**
@@ -561,17 +564,15 @@ export default class Controller<
     /**
      * 创建 store
      */
-    let finalActions = { ...actions, ...shareActions }
+    let finalActions: AS & typeof shareActions = { ...actions, ...shareActions }
     this.store = createStore(finalActions, finalInitialState)
     attachDevToolsIfPossible(this.store)
 
     // proxy store.actions for handling error
     if (this.errorDidCatch) {
-      let actions = {}
-
-      for (let key in this.store.actions) {
-        let action = (this.store.actions)[key]
-        actions[key] = (payload) => {
+      let actions: Currings<S, AS> = getKeys(this.store.actions).reduce((obj, key) => {
+        let action = this.store.actions[key]
+        obj[key] = payload => {
           try {
             return action(payload)
           } catch (error) {
@@ -579,7 +580,8 @@ export default class Controller<
             throw error
           }
         }
-      }
+        return obj
+      }, {} as Currings<S, AS>)
 
       this.store.actions = actions
     }
@@ -743,3 +745,5 @@ export default class Controller<
     return <ViewManager controller={this} />
   }
 }
+
+const getKeys = <T extends {}>(o: T) => Object.keys(o) as Array<keyof T>
