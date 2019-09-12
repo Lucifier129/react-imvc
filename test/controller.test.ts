@@ -84,7 +84,7 @@ describe('controller test', () => {
           e: true
         }
         let location = {}
-        let result = Actions.__PAGE_DID_BACK__(oldState, location)
+        let result = Actions.__PAGE_DID_BACK__(oldState, location as IMVC.Location)
     
         expect(typeof result).toBe('object')
         expect(result.a).toBe(1)
@@ -104,7 +104,7 @@ describe('controller test', () => {
         let location = {
           basename: 'test2'
         }
-        let state = Actions.__PAGE_DID_BACK__(oldState, location)
+        let state = Actions.__PAGE_DID_BACK__(oldState, location as IMVC.Location)
 
         expect(state).not.toBeUndefined()
         expect(state.location).not.toBeUndefined()
@@ -153,7 +153,7 @@ describe('controller test', () => {
         }
       }
       
-      let store: IMVC.Store = createStore(actions)
+      let store = createStore(actions)
       attachDevToolsIfPossible(store)
 
     })

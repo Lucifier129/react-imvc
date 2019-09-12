@@ -1,7 +1,7 @@
 import useCtrl from './useCtrl'
 import IMVC from '../index'
 
-export default (): IMVC.Actions | undefined => {
+export default () => {
   let ctrl = useCtrl()
   return ctrl.store.actions
 }

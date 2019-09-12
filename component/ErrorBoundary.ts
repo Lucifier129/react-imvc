@@ -10,7 +10,7 @@ interface Props {
   fallback: object | string | null
 }
 
-export default class ErrorBoundary extends React.Component<Props, IMVC.State> {
+export default class ErrorBoundary extends React.Component<Props, Partial<IMVC.State>> {
   static ignoreErrors: boolean = true
   static contextType: React.Context<{}> = GlobalContext
   static getDerivedStateFromError() {
@@ -19,7 +19,7 @@ export default class ErrorBoundary extends React.Component<Props, IMVC.State> {
   static defaultProps: Props = {
     fallback: null
   }
-  state: IMVC.State = {
+  state: Readonly<Partial<IMVC.State>> = {
     hasError: false
   }
 
