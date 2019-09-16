@@ -72,7 +72,7 @@ export default class ViewManager<S extends object, AS extends Actions<S & StateF
 			return this.views[path]
 		}
 
-		let state = (store.getState as Function)()
+		let state = store.getState()
 		let actions = store.actions
 		let globalContext = {
 			ctrl: controller,

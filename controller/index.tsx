@@ -4,7 +4,7 @@ import React from 'react'
 import Cookie from 'js-cookie'
 import querystringify from 'querystringify'
 import CA from 'create-app/client'
-import { createStore, Actions, StateFromAS, Store, Currings } from 'relite'
+import { createStore, Actions, StateFromAS, Store } from 'relite'
 import CH from 'create-history'
 import _ from '../util'
 import ViewManager from '../component/ViewManager'
@@ -39,7 +39,7 @@ export default class Controller<
   API?: IMVC.API
   Model?: { initialState: S } & AS
   initialState?: S
-  actions?: Partial<Currings<S, AS & typeof shareActions>>
+  actions?: AS
   SSR?: boolean | { (location: IMVC.Location, context: IMVC.Context): Promise<boolean> } | undefined
   KeepAliveOnPush?: boolean | undefined
   history?: CH.NativeHistory
@@ -481,11 +481,12 @@ export default class Controller<
      * 关闭 SSR 后，不执行 componentWillCreate 和 shouldComponentCreate，直接返回 Loading 界面
      * SSR 如果是个方法，则执行并等待它完成
      */
+    let SSR: boolean
     if (this.context.isServer) {
       if (typeof this.SSR === 'function') {
-        this.SSR = await this.SSR(this.location, this.context)
+        SSR = await this.SSR(this.location, this.context)
       }
-      if (this.SSR === false) {
+      if (SSR === false) {
         let View: IMVC.BaseViewFC | IMVC.BaseViewClass = this.Loading || EmptyView
         return <View />
       }
@@ -496,16 +497,13 @@ export default class Controller<
     this.fetch = this.fetch.bind(this)
     this.prefetch = this.prefetch.bind(this)
 
-    let actions: AS
-    let initialState: S
+    let actions: AS = this.actions
+    let initialState: S = this.initialState
 
     // 如果 Model 存在，且 initialState 和 actions 不存在，从 Model 里解构出来
     if (this.Model && this.initialState === undefined && this.actions === undefined) {
-      let $initialState = this.Model.initialState
-      let $actions: AS = this.Model
-      delete $actions.initialState
-      initialState = this.initialState = $initialState
-      actions = this.actions = $actions
+      initialState = this.initialState = this.Model.initialState
+      actions = this.actions = this.Model
     }
 
     let globalInitialState: IMVC.State
@@ -570,22 +568,24 @@ export default class Controller<
     attachDevToolsIfPossible(this.store)
 
     // proxy store.actions for handling error
-    if (this.errorDidCatch) {
-      let actions: Currings<S, AS> = getKeys(this.store.actions).reduce((obj, key) => {
-        let action = this.store.actions[key]
-        obj[key] = payload => {
-          try {
-            return action(payload)
-          } catch (error) {
-            this.errorDidCatch(error, 'model')
-            throw error
-          }
-        }
-        return obj
-      }, {} as Currings<S, AS>)
+    // if (this.errorDidCatch) {
+    //   let keys = getKeys(this.store.actions)
+    //   let actions: Currings<S & IMVC.State & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions> = keys.reduce((obj, key) => {
+    //     let action = this.store.actions[key]
+    //     let newAction: typeof action = payload => {
+    //       try {
+    //         return action(payload)
+    //       } catch (error) {
+    //         this.errorDidCatch(error, 'model')
+    //         throw error
+    //       }
+    //     }
+    //     obj[key] = newAction
+    //     return obj
+    //   }, {} as Currings<S & IMVC.State & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions>)
 
-      this.store.actions = actions
-    }
+    //   this.store.actions = actions
+    // }
 
     /**
      * 将 handle 开头的方法，合并到 this.handlers 中
@@ -645,7 +645,6 @@ export default class Controller<
 
 
     this.bindStoreWithView()
-    console.log('testa')
     return this.render()
   }
   bindStoreWithView() {

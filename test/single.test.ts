@@ -51,18 +51,12 @@ describe("test", () => {
     let page = await browser.newPage()
     let url = `http://localhost:${config.port}/static_view`
     await page.goto(url)
-    console.log('render')
     await page.waitFor('#static_view')
-    console.log('render')
     let serverContent = await fetchContent(url)
-    console.log('render')
     let clientContent = await page.evaluate(
       () => document.documentElement.outerHTML
     )
-    console.log('render')
-    expect(serverContent.includes('static view content')).toBe(
-      config.SSR ? true : false
-    )
+    expect(serverContent.includes('static view content')).toBe(true)
     expect(clientContent.includes('static view content')).toBe(true)
 
     await page.close()

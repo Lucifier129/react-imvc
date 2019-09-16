@@ -296,7 +296,7 @@ declare namespace IMVC {
 
   export interface ViewProps {
     key?: string
-    state?: State
+    state?: Partial<State>
     handlers?: Handlers
     actions?: CurryingActions
   }

@@ -8,10 +8,10 @@ import IMVC from '../index'
 import Controller from '../controller'
 
 const { getFlatList } = util
-const getModule = module => module.default || module
-const commonjsLoader: createApp.Loader = async (loadModule, location, context) => {
-  return await ((loadModule as createApp.LoadController)(location, context) as
-    Promise<createApp.ControllerConstructor>).then(getModule) as Promise<createApp.ControllerConstructor>
+const getModule = module =>  module.default || module
+const commonjsLoader: createApp.Loader = (loadModule, location, context) => {
+  return ((loadModule as createApp.LoadController)(location, context) as
+    Promise<createApp.ControllerConstructor>).then(getModule)
 }
 
 /**

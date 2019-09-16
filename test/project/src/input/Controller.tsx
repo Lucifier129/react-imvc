@@ -48,10 +48,10 @@ function View({ state }) {
       <div>
         firstname: <Input name="user.name.first" id="first-name-input" />
         friends: {
-          state.friends.map((friend, index) => {
+          state && state.friends && state.friends.map((friend, index) => {
             return (
               <div key={index}>
-                name: <Input name={`friends/${index}/name`} id={`firend-${index}-input`} />
+                name: <Input name={`friends/${index}/name`} id={`friend-${index}-input`} />
               </div>
             )
           })
@@ -61,7 +61,7 @@ function View({ state }) {
       <div>
         firstname: <p id="first-name-value">{state.user.name.first}</p>
         friends: {
-          state.friends.map((friend, index) => {
+          state && state.friends && state.friends.map((friend, index) => {
             return (
               <div key={index}>
                 name: <p id={`friend-${index}-value`}>{friend.name}</p>
