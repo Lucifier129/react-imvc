@@ -31,6 +31,6 @@ const options: IMVC.Options = {
 
 describe('page test', () => {
   it('', () => {
-    
+
   })
 })
