@@ -30,5 +30,13 @@ export default [
 	{
 		path: '/input',
 		controller: () => import('./input/Controller')
+	},
+	{
+		path: '/outer_click',
+		controller: () => import('./outer-click-wrapper/Controller')
+	},
+	{
+		path: '/event',
+		controller: () => import('./event-wrapper/Controller')
 	}
 ]

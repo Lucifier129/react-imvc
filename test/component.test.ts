@@ -61,8 +61,19 @@ describe('component test', () => {
     
   })
   
-  it('EventWrapper', () => {
-    
+  it('EventWrapper', async () => {
+    let page = await browser.newPage()
+    let url = `http://localhost:${config.port}/event`
+    await page.goto(url)
+    await page.waitFor('#event')
+
+    let count = await page.$eval('#count', (e) => e.innerHTML)
+    expect(count).toBe('0')
+
+    await page.click('#inner')
+
+    count = await page.$eval('#count', (e) => e.innerHTML)
+    expect(count).toBe('1')
   })
   
   describe('Input', () => {
@@ -207,8 +218,29 @@ describe('component test', () => {
   })
   
   
-  it('OuterClickWrapper', () => {
-    
+  it('OuterClickWrapper', async () => {
+    let page = await browser.newPage()
+    let url = `http://localhost:${config.port}/outer_click`
+    await page.goto(url)
+    await page.waitFor('#outer_click')
+
+    let count = await page.$eval('#count', (e) => e.innerHTML)
+    expect(count).toBe('0')
+
+    await page.click('#inner')
+
+    count = await page.$eval('#count', (e) => e.innerHTML)
+    expect(count).toBe('0')
+
+    await page.click('#beside')
+
+    count = await page.$eval('#count', (e) => e.innerHTML)
+    expect(count).toBe('1')
+
+    await page.click('#out')
+
+    count = await page.$eval('#count', (e) => e.innerHTML)
+    expect(count).toBe('2')
   })
   
   it('Prefetch', () => {

@@ -1,7 +1,7 @@
 import React from 'react'
 import IMVC from '../../../../index'
 import Controller from '../../../../controller'
-import { OuterClickWrapper } from '../../../../component'
+import { EventWrapper } from '../../../../component'
 
 const initialState = {
   count: 0
@@ -24,15 +24,10 @@ export default class extends Controller<typeof initialState, {}> {
 
 function View({ state, handlers }) {
 	return (
-    <div id="outer_click">
-      <div id="out">
-        <div>
-          <p id="beside">beside region</p>
-        </div>
-        <OuterClickWrapper onClick={handlers.handleClick}>
-          <p id="inner">inner region</p>
-        </OuterClickWrapper>
-      </div>
+    <div id="event">
+      <EventWrapper onClick='handleClick'>
+        <p id="inner">inner region</p>
+      </EventWrapper>
       <p id="count">{state.count}</p>
     </div>
   )
