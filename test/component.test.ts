@@ -251,8 +251,15 @@ describe('component test', () => {
     
   })
   
-  it('Style', () => {
-    
+  it('Style', async () => {
+    let page = await browser.newPage()
+    let url = `http://localhost:${config.port}/style`
+    await page.goto(url)
+    await page.waitFor('#style')
+
+    let height = await page.$eval('.style', (e) => e.clientHeight)
+
+    expect(height).toBe(50)
   })
   
   it('ViewManager', () => {

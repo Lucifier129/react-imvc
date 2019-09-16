@@ -38,5 +38,9 @@ export default [
 	{
 		path: '/event',
 		controller: () => import('./event-wrapper/Controller')
+	},
+	{
+		path: '/style',
+		controller: () => import('./style/Controller')
 	}
 ]
