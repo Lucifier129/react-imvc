@@ -1,5 +1,4 @@
 import path from 'path'
-import fetch from 'node-fetch'
 import http from 'http'
 import express from 'express'
 import puppeteer from 'puppeteer'
@@ -123,6 +122,7 @@ describe('component test', () => {
 
       await page.focus('#phone-input')
       inputHandler.click({ clickCount: 3 })
+      await page.keyboard.press('Space')
       await page.keyboard.press('Backspace')
       await page.keyboard.type('1312456456')
       content = await page.$eval('#phone-value', (e) => e.innerHTML)

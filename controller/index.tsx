@@ -481,7 +481,7 @@ export default class Controller<
      * 关闭 SSR 后，不执行 componentWillCreate 和 shouldComponentCreate，直接返回 Loading 界面
      * SSR 如果是个方法，则执行并等待它完成
      */
-    let SSR: boolean
+    let SSR = this.SSR
     if (this.context.isServer) {
       if (typeof this.SSR === 'function') {
         SSR = await this.SSR(this.location, this.context)

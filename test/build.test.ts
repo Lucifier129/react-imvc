@@ -69,28 +69,8 @@ describe('build test', () => {
   // })
 
   describe('index', () => {
-		let browser: puppeteer.Browser
-    beforeAll(() => {
-      jest.resetModules();
-      return build({ config }).then(() => {
-        return puppeteer.launch()
-      }).then((brws) => {
-        browser = brws
-      })
-    })
-
-    afterAll(() => {
-			browser.close()
-		})
-
     it('file after building should run as same as start', async () => {
 
     })
   })
 })
-
-async function fetchContent(url: string): Promise<string> {
-	let response = await fetch(url)
-	let content = await response.text()
-	return content
-}

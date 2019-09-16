@@ -30,37 +30,7 @@ const options: IMVC.Options = {
 }
 
 describe('page test', () => {
-  let browser: puppeteer.Browser
-  let app: express.Express
-  let server: http.Server
-
-  beforeEach(async () => {
-    try {
-      app = express()
-      server = http.createServer(app)
-      server.listen(PORT)
-      browser = await puppeteer.launch()
-    } catch (error) {
-      console.log('error', error)
-    }
+  it('', () => {
+    
   })
-
-  afterEach(() => {
-    server.close()
-    return browser && browser.close()
-  })
-  describe('createPageRouter', () => {
-    it('shoule create router correctly', async () => {
-    })
-  })
-
-  // describe('View', () => {
-
-  // })
 })
-
-async function fetchContent(url: string): Promise<string> {
-  let response = await fetch(url)
-  let content = await response.text()
-  return content
-}
