@@ -65,7 +65,7 @@ const createWebpackConfig: CreateWebpackConfig = (options, isServer = false) => 
 
 	let ManifestPluginMap = (file: ManifestPlugin.FileDescriptor) => {
 		// 删除 .js 后缀，方便直接使用 obj.name 来访问
-		if (/\.js$/.test(file.name)) {
+		if (file.name && /\.js$/.test(file.name)) {
 			file.name = file.name.slice(0, -3)
 		}
 		return file

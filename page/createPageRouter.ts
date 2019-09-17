@@ -8,7 +8,7 @@ import IMVC from '../index'
 import Controller from '../controller'
 
 const { getFlatList } = util
-const getModule = module =>  module.default || module
+const getModule = (module: any) =>  module.default || module
 const commonjsLoader: createApp.Loader = (loadModule, location, context) => {
   return ((loadModule as createApp.LoadController)(location, context) as
     Promise<createApp.ControllerConstructor>).then(getModule)

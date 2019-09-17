@@ -3,6 +3,7 @@ import Script from '../component/Script'
 import IMVC from '../index'
 
 export default function Page(props: IMVC.RenderProps) {
+	console.log(props)
 	return (
 		<html>
 			<head>

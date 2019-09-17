@@ -144,12 +144,12 @@ export const reporter: Reporter = (middlewareOptions, options) => {
 	const { log, state, stats } = options
 	if (state) {
 		const displayStats = middlewareOptions.stats !== false
-		const statsString = stats.toString(middlewareOptions.stats)
+		const statsString = stats ? stats.toString(middlewareOptions.stats) : ''
 
 		if (displayStats && statsString.trim().length) {
-			if (stats.hasErrors()) {
+			if (stats && stats.hasErrors()) {
 				log.error(statsString)
-			} else if (stats.hasWarnings()) {
+			} else if (stats && stats.hasWarnings()) {
 				log.warn(statsString)
 			} else {
 				log.info(statsString)
@@ -158,9 +158,9 @@ export const reporter: Reporter = (middlewareOptions, options) => {
 
 		let message = 'Compiled successfully.'
 
-		if (stats.hasErrors()) {
+		if (stats && stats.hasErrors()) {
 			message = 'Failed to compile.'
-		} else if (stats.hasWarnings()) {
+		} else if (stats && stats.hasWarnings()) {
 			message = 'Compiled with warnings.'
 		}
 		log.info(message)

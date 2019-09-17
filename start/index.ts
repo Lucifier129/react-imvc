@@ -74,7 +74,7 @@ const start: IMVC.Start = (options) => {
 	}
 	
 	// catch 404 and forward to error handler
-	let catch404: IMVC.RequestHandler = function(req, res, next) {
+	let catch404: express.RequestHandler = function(req, res, next) {
 		const err: any = new Error('Not Found')
 		err.status = 404
 		res.render('404', err)
@@ -93,7 +93,7 @@ const start: IMVC.Start = (options) => {
 		res.json(err.message)
 	}
 
-	app.use(addRenderPage)
+	app.use(addRenderPage as express.RequestHandler)
 	app.use(pageRouter)
 	app.use(catch404)
 	// will print stacktrace
