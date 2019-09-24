@@ -1,4 +1,4 @@
-import createApp, { Route } from 'create-app/client'
+import { Route } from 'create-app/client'
 
 export default {
   toJSON,
