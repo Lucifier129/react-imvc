@@ -1,16 +1,39 @@
 import React from "react"
+import { Actions } from 'relite'
 import GlobalContext from "../context"
-import IMVC from "../type"
+import { State, Handlers } from "../type"
 
-const returnNull: IMVC.Selector = () => null
+export interface ConnectProps {
+  state?: State
+  handlers?: Handlers
+  actions?: Actions<State>
+  props?: {
+    [propName: string]: any
+  }
+}
 
-const connect: IMVC.Connect = (selector = returnNull) => (
+export interface Selector {
+  (props: ConnectProps): any
+}
+
+export interface Connect {
+  (selector: Selector): With
+}
+
+export interface With {
+  <P>(inputComponent: React.ComponentType<P>): (props: P) => React.ReactElement
+}
+
+
+const returnNull: Selector = () => null
+
+const connect: Connect = (selector = returnNull) => (
   InputComponent
 ) => {
   return function Connector(props) {
     return (
       <GlobalContext.Consumer>
-        {({ state, handlers, actions }: IMVC.ConnectProps) => {
+        {({ state, handlers, actions }: ConnectProps) => {
           return (
             <InputComponent
               {...props}

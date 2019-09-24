@@ -64,7 +64,7 @@ export default class Link extends React.Component<Props> {
 	
 	handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		let { onClick, replace, back, forward, go, to } = this.props
-		let { history, location } = this.context as { history: CH.NativeHistory, location: IMVC.Location }
+		let { history, location } = this.context
 		onClick && onClick(event)
 
 		if (

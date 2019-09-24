@@ -1,7 +1,6 @@
 import React from 'react'
 import GlobalContext from '../context'
 import _ from '../util'
-import IMVC from '../type'
 
 const { getValueByPath } = _
 

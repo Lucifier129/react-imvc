@@ -2,19 +2,19 @@ import React from 'react'
 import classnames from 'classnames'
 import connect from '../hoc/connect'
 import Link from './Link'
-import IMVC from '../type'
+import { NativeLocation } from '../type'
 
 const withLocation = connect(({ state }) => {
   return {
-    location: (state as IMVC.State).location
+    location: state.location
   }
 })
 
 export default withLocation(NavLink)
 
 interface Props {
-  isActive?: { (...args: any[]): boolean }
-  location?: IMVC.Location
+  isActive: { (...args: any[]): boolean }
+  location: NativeLocation
   className?: string
   activeClassName?: string
   style?: object
@@ -39,7 +39,7 @@ function NavLink({
   return <Link to={to} className={finalClassName} style={finalStyle} {...rest} />
 }
 
-function checkActive(getIsActive: { (...args: any[]): boolean }, path: string, location: IMVC.Location) {
+function checkActive(getIsActive: { (...args: any[]): boolean }, path: string, location: NativeLocation) {
   return getIsActive
     ? !!getIsActive(path, location)
     : path === location.raw

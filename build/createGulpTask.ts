@@ -9,10 +9,10 @@ import htmlmin from 'gulp-htmlmin'
 import imagemin from 'gulp-imagemin'
 import uglify from 'gulp-uglify'
 import babel from 'gulp-babel'
-import IMVC from '../type'
+import { Config, GulpTaskConfig } from '../type'
 
 interface CreateGulpTaskConfig {
-  (options: IMVC.Config): IMVC.GulpTaskConfig
+  (options: Config): GulpTaskConfig
 }
 
 const createConfig: CreateGulpTaskConfig = options => {
@@ -20,7 +20,7 @@ const createConfig: CreateGulpTaskConfig = options => {
   let src = path.join(root, options.src)
   let publish = path.join(root, options.publish)
   let staticPath = path.join(publish, options.static)
-  let config: IMVC.GulpTaskConfig = {
+  let config: GulpTaskConfig = {
     css: {
       src: [src + '/**/*.css'],
       dest: staticPath
@@ -76,11 +76,11 @@ const createConfig: CreateGulpTaskConfig = options => {
 }
 
 interface CreateGulpTask {
-  (options: IMVC.Config): gulp.TaskFunction
+  (options: Config): gulp.TaskFunction
 }
 
 const createGulpTask: CreateGulpTask = (options) => {
-  let config: IMVC.GulpTaskConfig = Object.assign(createConfig(options))
+  let config: GulpTaskConfig = Object.assign(createConfig(options))
 
   let minifyCSS = () => {
     if (!config.css) {

@@ -4,7 +4,7 @@ import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 import createApp, { Loader, LoadController, ControllerConstructor, Route, RenderTo } from 'create-app/server'
 import util from '../util'
-import IMVC from '../type'
+import { RenderToNodeStream, RenderToString, Config, AppSettings, Req, State } from '../type'
 import Controller from '../controller'
 
 const { getFlatList } = util
@@ -21,7 +21,7 @@ const commonjsLoader: Loader = (loadModule, location, context) => {
  */
 const createElement = React.createElement
 
-const renderToNodeStream: IMVC.RenderToNodeStream<React.ReactElement> = (view: React.ReactElement, controller?: Controller<any, any>) => {
+const renderToNodeStream: RenderToNodeStream<React.ReactElement> = (view: React.ReactElement, controller?: Controller<any, any>) => {
   return new Promise<{}>((resolve, reject) => {
     let stream = ReactDOMServer.renderToNodeStream(view)
     let buffers: Uint8Array[] = []
@@ -51,7 +51,7 @@ const renderToNodeStream: IMVC.RenderToNodeStream<React.ReactElement> = (view: R
   })
 }
 
-const renderToString: IMVC.RenderToString<React.ReactElement> = (view: React.ReactElement, controller?: Controller<any, any>) => {
+const renderToString: RenderToString<React.ReactElement> = (view: React.ReactElement, controller?: Controller<any, any>) => {
   try {
     return ReactDOMServer.renderToString(view)
   } catch (error) {
@@ -73,14 +73,14 @@ const renderToString: IMVC.RenderToString<React.ReactElement> = (view: React.Rea
 }
 
 const renderers: {
-  renderToNodeStream: IMVC.RenderToNodeStream<React.ReactElement>,
-  renderToString: IMVC.RenderToString<React.ReactElement>
+  renderToNodeStream: RenderToNodeStream<React.ReactElement>,
+  renderToString: RenderToString<React.ReactElement>
 } = {
   renderToNodeStream,
   renderToString
 }
 
-export default function createPageRouter(options: IMVC.Config) {
+export default function createPageRouter(options: Config) {
   let config = Object.assign({}, options)
   let routes: Route[] = []
 
@@ -97,7 +97,7 @@ export default function createPageRouter(options: IMVC.Config) {
 
   let router = Router()
   let render: RenderTo<React.ReactElement> = renderers[config.renderMode] || renderToNodeStream
-  let serverAppSettings: IMVC.AppSettings = {
+  let serverAppSettings: AppSettings = {
     loader: commonjsLoader,
     routes: routes,
     viewEngine: { render },
@@ -131,7 +131,7 @@ export default function createPageRouter(options: IMVC.Config) {
   }
 
   // handle page
-  router.all('*', async (req: IMVC.Req, res, next) => {
+  router.all('*', async (req: Req, res, next) => {
     let { basename, serverPublicPath, publicPath } = req
     let context = {
       basename,
@@ -160,7 +160,7 @@ export default function createPageRouter(options: IMVC.Config) {
       // content 可能是异步渲染的
       content = await content
 
-      let initialState: IMVC.State | undefined = controller.store
+      let initialState: State | undefined = controller.store
         ? (controller.store.getState as Function)()
         : undefined
       let htmlConfigs = initialState ? initialState.html : undefined

@@ -3,14 +3,26 @@ import 'whatwg-fetch'
 import React from 'react'
 import Cookie from 'js-cookie'
 import querystringify from 'querystringify'
-import CA from 'create-app/client'
 import { createStore, Actions, StateFromAS, Store } from 'relite'
-import CH from 'create-history'
+import {
+  Controller as BaseController,
+  Actions as HistoryActions
+} from 'create-app/client'
 import _ from '../util'
 import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
 import attachDevToolsIfPossible from './attachDevToolsIfPossible'
-import IMVC from '../type'
+import {
+  BaseViewFC,
+  BaseViewClass,
+  Preload,
+  API,
+  Context,
+  State,
+  Handlers,
+  Meta,
+  NativeLocation
+} from '../type'
 
 const REDIRECT =
   typeof Symbol === 'function'
@@ -24,35 +36,31 @@ let uid = 0 // seed of controller id
 let createElement = React.originalCreateElement || React.createElement
 
 /**
- * 绑定 IMVC.Store 到 View
+ * 绑定 Store 到 View
  * 提供 Controller 的生命周期钩子
- * 组装事件处理器 Event IMVC.Handlers
+ * 组装事件处理器 Event Handlers
  * 提供 fetch 方法
  */
 export default class Controller<
-  S extends object,
+  S extends State,
   AS extends Actions<S & StateFromAS<AS>>
-  > implements CA.Controller {
-  View: IMVC.BaseViewFC | IMVC.BaseViewClass = EmptyView
+  > implements BaseController {
+  View: BaseViewFC | BaseViewClass = EmptyView
   restapi?: string = ''
-  preload?: IMVC.Preload
-  API?: IMVC.API
+  preload?: Preload
+  API?: API
   Model?: { initialState: S } & AS
   initialState?: S
   actions?: AS
-  SSR?: boolean | { (location: IMVC.Location, context: IMVC.Context): Promise<boolean> } | undefined
+  SSR?: boolean | { (location: NativeLocation, context: Context): Promise<boolean> } | undefined
   KeepAliveOnPush?: boolean | undefined
-  history?: CH.NativeHistory
-  store?: Store<S & IMVC.State, AS & typeof shareActions>
-  location?: IMVC.Location
-  context?: IMVC.Context
-  handlers?: IMVC.Handlers
-  meta?: IMVC.Meta
+  store: Store<S & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions> = createStore(shareActions as (AS & typeof shareActions), {} as S)
+  context: Context = {}
+  handlers: Handlers = {}
+  meta?: Meta
   proxyHandler?: any
   resetScrollOnMount?: boolean
-  matcher?: CA.Matcher
-  loader: CA.Loader
-  Loading: IMVC.BaseViewFC | IMVC.BaseViewClass = () => null
+  Loading: BaseViewFC | BaseViewClass = () => null
 
   errorDidCatch?(error: Error, str: string): void
   getComponentFallback?(displayName: string, InputComponent: React.ComponentType): void
@@ -71,7 +79,7 @@ export default class Controller<
 
   [propName: string]: any
 
-  constructor(location: IMVC.Location, context: IMVC.Context) {
+  constructor(location: NativeLocation, context: Context) {
     this.meta = {
       id: uid++,
       isDestroyed: false,
@@ -228,7 +236,7 @@ export default class Controller<
     let { context, API } = this
 
     /**
-     * IMVC.API shortcut，方便 fetch(name, options) 代替 url
+     * API shortcut，方便 fetch(name, options) 代替 url
      */
     if (API && Object.prototype.hasOwnProperty.call(API, url)) {
       url = API[url]
@@ -317,8 +325,8 @@ export default class Controller<
   /**
    * 预加载 css 样式等资源
    */
-  fetchPreload(preload?: IMVC.Preload) {
-    preload = preload || this.preload
+  fetchPreload(preload?: Preload) {
+    preload = preload || this.preload || {}
     let keys = Object.keys(preload)
 
     if (keys.length === 0) {
@@ -327,10 +335,10 @@ export default class Controller<
 
     let { context } = this
     let list = keys.map(name => {
-      if ((context.preload as IMVC.Preload)[name]) {
+      if ((context.preload as Preload)[name]) {
         return
       }
-      let url = (preload as IMVC.Preload)[name]
+      let url = (preload as Preload)[name]
 
       if (!_.isAbsoluteUrl(url)) {
         if (context.isServer) {
@@ -351,7 +359,7 @@ export default class Controller<
              */
             content = content.replace(/\r+/g, '')
           }
-          (context.preload as IMVC.Preload)[name] = content
+          (context.preload as Preload)[name] = content
         })
     })
     return Promise.all(list)
@@ -408,7 +416,7 @@ export default class Controller<
           static displayName = `ErrorBoundary(${displayName})`
           static isErrorBoundary = true
 
-          state: Partial<IMVC.State> = {
+          state: Partial<State> = {
             hasError: false
           }
 
@@ -487,7 +495,7 @@ export default class Controller<
         SSR = await this.SSR(this.location, this.context)
       }
       if (SSR === false) {
-        let View: IMVC.BaseViewFC | IMVC.BaseViewClass = this.Loading || EmptyView
+        let View: BaseViewFC | BaseViewClass = this.Loading || EmptyView
         return <View />
       }
     }
@@ -506,7 +514,7 @@ export default class Controller<
       actions = this.actions = this.Model
     }
 
-    let globalInitialState: IMVC.State
+    let globalInitialState: State | undefined
 
     // 服务端把 initialState 吐在 html 里的全局变量 __INITIAL_STATE__ 里
     if (typeof __INITIAL_STATE__ !== 'undefined') {
@@ -514,28 +522,20 @@ export default class Controller<
       __INITIAL_STATE__ = undefined
     }
 
-
-
-    if (typeof initialState === 'function') {
-      initialState = initialState(location, context)
-    }
-
-
-
     if (typeof initialState === 'object') {
       // 保护性复制初始化状态，避免运行中修改引用导致其他实例初始化数据不对
       initialState = JSON.parse(JSON.stringify(initialState))
     }
 
-    let baseState: IMVC.State = {
+    let baseState: State = {
       location: this.location,
-      basename: this.context.basename,
-      publicPath: this.context.publicPath,
-      restapi: this.context.restapi
+      basename: this.context.basename || '',
+      publicPath: this.context.publicPath || '',
+      restapi: this.context.restapi || ''
     }
-    let finalInitialState: S & IMVC.State = {
+    let finalInitialState: S & State = {
       ...initialState,
-      ...globalInitialState,
+      ...(globalInitialState || {}),
       ...baseState
     }
 
@@ -570,7 +570,7 @@ export default class Controller<
     // proxy store.actions for handling error
     // if (this.errorDidCatch) {
     //   let keys = getKeys(this.store.actions)
-    //   let actions: Currings<S & IMVC.State & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions> = keys.reduce((obj, key) => {
+    //   let actions: Currings<S & State & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions> = keys.reduce((obj, key) => {
     //     let action = this.store.actions[key]
     //     let newAction: typeof action = payload => {
     //       try {
@@ -582,7 +582,7 @@ export default class Controller<
     //     }
     //     obj[key] = newAction
     //     return obj
-    //   }, {} as Currings<S & IMVC.State & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions>)
+    //   }, {} as Currings<S & State & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions>)
 
     //   this.store.actions = actions
     // }
@@ -667,9 +667,9 @@ export default class Controller<
 
     // 判断是否缓存
     {
-      let unlisten = history.listenBefore((location: IMVC.Location) => {
+      let unlisten = history.listenBefore((location: NativeLocation) => {
         if (!this.KeepAliveOnPush) return
-        if (location.action === 'PUSH') {
+        if (location.action === HistoryActions.PUSH) {
           this.saveToCache()
         } else {
           this.removeFromCache()
@@ -695,7 +695,7 @@ export default class Controller<
     }
   }
 
-  restore(location: IMVC.Location, context: IMVC.Context) {
+  restore(location: NativeLocation, context: Context) {
     let { meta, store } = this
     let { __PAGE_DID_BACK__ } = store.actions
 

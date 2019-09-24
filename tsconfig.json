@@ -22,7 +22,7 @@
       "node_modules/@types"
     ]
   },
-  "include": [
+  "files": [
     "./bin",
     "./build",
     "./component",
@@ -37,13 +37,7 @@
     "./polyfill",
     "./scripts",
     "./start",
-    "./util"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules"
-  ],
-  "files": [
+    "./util",
     "type.d.ts"
   ]
 }

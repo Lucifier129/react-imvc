@@ -16,9 +16,13 @@ import debug from 'debug'
 import createExpressApp from '../entry/server'
 import getConfig from '../config'
 import createPageRouter from '../page/createPageRouter'
-import IMVC from '../type'
+import { Options, RequestHandler } from '../type'
 
-const start: IMVC.Start = (options) => {
+export interface Start {
+  (options: Options): Promise<{ server: http.Server, app: express.Express }>
+}
+
+const start: Start = (options) => {
 	let config = getConfig(options)
 	let app = createExpressApp(config)
 	let port = normalizePort(config.port)
@@ -68,7 +72,7 @@ const start: IMVC.Start = (options) => {
 	}
 
 	// 添加 renderPage 方法，让自定义的 routes 里可以手动调用，走 IMVC 的渲染流程
-	let addRenderPage: IMVC.RequestHandler = (req, res, next) => {
+	let addRenderPage: RequestHandler = (req, res, next) => {
 		res.renderPage = pageRouter
 		next()
 	}

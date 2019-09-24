@@ -7,14 +7,18 @@ import start from '../start'
 import getConfig from '../config'
 import createGulpTask from './createGulpTask'
 import createWebpackConfig from './createWebpackConfig'
-import IMVC from '../type'
+import { Options, Config, AppSettings } from '../type'
 
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
 
+export interface Build {
+  (options: Options): Promise<Config | void>
+}
+
 process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
-const build: IMVC.Build = (options) => {
+const build: Build = (options) => {
   let config = getConfig(options)
   let delPublicPgs = () => delPublish(path.join(config.root, config.publish))
   let startGulpPgs = () => startGulp(config)
@@ -52,10 +56,10 @@ const delPublish: DelPublish = (folder) => {
 }
 
 interface StartType<T> {
-  (config: IMVC.Config): Promise<T>
+  (config: Config): Promise<T>
 }
 
-const startWebpackForClient: StartType<IMVC.Config | boolean> = (config) => {
+const startWebpackForClient: StartType<Config | boolean> = (config) => {
   let webpackConfig = createWebpackConfig(config, false)
   return new Promise((resolve, reject) => {
     webpack(webpackConfig, (error, stats) => {
@@ -74,7 +78,7 @@ const startWebpackForClient: StartType<IMVC.Config | boolean> = (config) => {
   })
 }
 
-const startWebpackForServer: StartType<IMVC.Config> = (config) => {
+const startWebpackForServer: StartType<Config> = (config) => {
   let webpackConfig = createWebpackConfig(config, true)
   return new Promise((resolve, reject) => {
     webpack(webpackConfig, (error, stats) => {
@@ -93,7 +97,7 @@ const startWebpackForServer: StartType<IMVC.Config> = (config) => {
   })
 }
 
-const startGulp: StartType<IMVC.Config> = (config) => {
+const startGulp: StartType<Config> = (config) => {
   return new Promise((resolve, reject) => {
     gulp.task('default', createGulpTask(config))
 
@@ -109,20 +113,20 @@ const startGulp: StartType<IMVC.Config> = (config) => {
 }
 
 interface StartStaticEntry<T> {
-  (config: IMVC.Config): Promise<T | void>
+  (config: Config): Promise<T | void>
 }
 
-const startStaticEntry: StartStaticEntry<IMVC.Config> = async (config) => {
+const startStaticEntry: StartStaticEntry<Config> = async (config) => {
   if (!config.staticEntry) {
     return
   }
   console.log(`start generating static entry file`)
 
-  let appSettings: IMVC.AppSettings = {
+  let appSettings: AppSettings = {
     ...config.appSettings,
     type: 'createHashHistory'
   }
-  let staticEntryconfig: IMVC.Config = {
+  let staticEntryconfig: Config = {
     ...config,
     root: path.join(config.root, config.publish),
     publicPath: config.publicPath || '',
@@ -147,7 +151,7 @@ const startStaticEntry: StartStaticEntry<IMVC.Config> = async (config) => {
 
   server.close(() => console.log('finish generating static entry file'))
 
-  return new Promise<IMVC.Config>((resolve, reject) => {
+  return new Promise<Config>((resolve, reject) => {
 
     type ErrorCallback = (err: NodeJS.ErrnoException | null) => void
 

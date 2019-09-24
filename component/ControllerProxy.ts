@@ -15,7 +15,7 @@ export default class ControllerProxy<S extends object, AS extends Actions<S & St
 
   updateDocumentTitle() {
     let { controller } = this.props
-    let { html } = (controller.store.getState as Function)()
+    let { html } = controller.store.getState()
 
     if (html && html.title !== document.title) {
       document.title = html.title

@@ -1,12 +1,12 @@
 import express from "express"
 import yargs from "yargs"
-import createApp, { Settings, Context as BaseContext } from "create-app/client"
+import createApp, { Settings, Context as BaseContext, HistoryNativeLocation } from "create-app/client"
 import webpack from "webpack"
 import serveStatic from "serve-static"
 import cookieParser from "cookie-parser"
 import helmet from "helmet"
 import compression from "compression"
-import * as Relite from "relite"
+import { Action } from "relite"
 import babelCore from "babel-core"
 
 import {
@@ -46,6 +46,8 @@ declare global {
 }
 
 // Controller
+export type NativeLocation = HistoryNativeLocation
+
 type ObjectAlias = object
 
 export interface State extends ObjectAlias {
@@ -58,13 +60,9 @@ export interface State extends ObjectAlias {
   [x: string]: any
 }
 
-export interface InitialStateFunc<S extends object> {
-  (location: Location, context: Context): S
-}
-
 export interface Model {
   initialState?: State
-  [propName: string]: Relite.Action<State>
+  [propName: string]: Action<State>
 }
 
 export type Preload = Record<string, string>
@@ -76,7 +74,7 @@ export interface Context extends BaseContext {
   env?: string
   preload?: Payload
   publicPath?: string
-  location?: Location
+  location?: HistoryNativeLocation
   restapi?: string
   userInfo?: object
   [propName: string]: any
@@ -129,6 +127,27 @@ export interface ViewEngine extends ViewEngine {
   render: Render
 }
 
+export interface RenderProps {
+  description?: string
+  keywords?: string
+  title?: string
+  content: string
+  initialState?: object
+  appSettings: AppSettings
+  publicPath: string
+  assets: {
+    vendor: string
+    index: string
+  }
+}
+
+export interface ViewProps {
+  key?: string
+  state?: Partial<State>
+  handlers?: Handlers
+  actions?: CurryingActions
+}
+
 // Server
 export interface Req extends express.Request {
   basename?: string
@@ -153,7 +172,6 @@ export interface NativeModule extends NodeModule {
 
 // Compile config
 export interface AppSettings extends Settings {
-  hashType?: string // hash history 显示的起点缀，默认是 !
   container?: string // react 组件渲染的容器
   cacheAmount?: number
   basename?: string
@@ -261,27 +279,6 @@ export interface BabelConfig {
 
 export interface GetBabelFunc {
   (isServer: boolean): BabelConfig
-}
-
-export interface RenderProps {
-  description?: string
-  keywords?: string
-  title?: string
-  content: string
-  initialState?: object
-  appSettings: AppSettings
-  publicPath: string
-  assets: {
-    vendor: string
-    index: string
-  }
-}
-
-export interface ViewProps {
-  key?: string
-  state?: Partial<State>
-  handlers?: Handlers
-  actions?: CurryingActions
 }
 
 export interface Config {
@@ -535,34 +532,3 @@ export interface Config {
    */
   entry?: string | string[] | webpack.Entry | webpack.EntryFunc
 }
-
-// Util function
-export interface Build {
-  (options: IMVC.Options): Promise<IMVC.Config | void>
-}
-
-export interface Start {
-  (options: IMVC.Options): Promise<{ server: http.Server, app: express.Express }>
-}
-
-export interface ConnectProps {
-  state?: IMVC.State
-  handlers?: IMVC.Actions
-  actions?: IMVC.Handlers
-  props?: {
-    [propName: string]: any
-  }
-}
-
-export interface Selector {
-  (props: ConnectProps): any
-}
-
-export interface Connect {
-  (selector: Selector): With
-}
-
-export interface With {
-  <P>(inputComponent: React.ComponentType<P>): (props: P) => React.ReactElement
-}
-

@@ -3,7 +3,7 @@
  */
 import express from "express"
 import createCache, { Cache } from "./createCache"
-import IMVC from "../type"
+import { RequestHandler, Req, Res } from "../type"
 
 interface Settings {
   timeout: number
@@ -24,7 +24,7 @@ let defaults: Settings = {
   debug: false
 }
 
-let callNext: IMVC.RequestHandler = (req, res, next) => next()
+let callNext: RequestHandler = (req, res, next) => next()
 
 export default (settings: Settings) => {
   // 只在生产环境，或者开启了 debug = true 的情况下，做缓存
@@ -35,7 +35,7 @@ export default (settings: Settings) => {
 
   let cache: Cache = createCache()
 
-  return function (req: IMVC.Req, res: IMVC.Res, next: express.NextFunction) {
+  return function (req: Req, res: Res, next: express.NextFunction) {
     let cacheKey: string = settings.key(req.originalUrl, req)
     let cacheContent: any
     if (cache.get) {

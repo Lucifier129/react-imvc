@@ -1,6 +1,5 @@
 import React from 'react'
 import GlobalContext from '../context'
-import IMVC from '../type'
 
 const isHandler = (key: string) => /^on[A-Z]+/.test(key)
 

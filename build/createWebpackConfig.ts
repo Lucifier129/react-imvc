@@ -8,18 +8,18 @@ import PnpWebpackPlugin from 'pnp-webpack-plugin'
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
 import resolve from 'resolve'
 import { getExternals } from './util'
-import IMVC from '../type'
+import { Config } from '../type'
 
 interface CreateWebpackConfig {
 	(
-		options: IMVC.Config,
+		options: Config,
 		isServer?: boolean
 	): webpack.Configuration
 }
 
 const createWebpackConfig: CreateWebpackConfig = (options, isServer = false) => {
 	let result: webpack.Configuration = {}
-	let config: IMVC.Config = Object.assign({}, options)
+	let config: Config = Object.assign({}, options)
 	let root: string = path.join(config.root, config.src)
 	let alias = Object.assign({}, config.alias, {
 		'@routes': root

@@ -1,7 +1,7 @@
 import path from 'path'
-import IMVC from '../type'
+import { Config } from '../type'
 
-type GetExternals = (config: IMVC.Config) => string[]
+type GetExternals = (config: Config) => string[]
 
 export const getExternals: GetExternals = config => {
   let dependencies: string[] = []

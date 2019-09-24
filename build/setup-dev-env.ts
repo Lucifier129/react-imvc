@@ -8,16 +8,16 @@ import notifier from 'node-notifier'
 
 import createWebpackConfig from './createWebpackConfig'
 import { getExternals, matchExternals } from './util'
-import IMVC from '../type'
+import { Config } from '../type'
 
 export interface SetupClient {
-	(config: IMVC.Config): {
+	(config: Config): {
 		compiler: webpack.Compiler,
 		middleware: webpackDevMiddleware.WebpackDevMiddleware & NextHandleFunction
 	}
 }
 
-export const setupClient: SetupClient = (config: IMVC.Config) => {
+export const setupClient: SetupClient = (config: Config) => {
 	let clientConfig = createWebpackConfig(config)
 	let compiler = webpack(clientConfig)
 	let middleware = webpackDevMiddleware(compiler, {
@@ -44,7 +44,7 @@ interface SetupServerOptions {
 	handleHotModule: (value: any) => void
 }
 
-export type SetupServer = (config: IMVC.Config, options: SetupServerOptions) => void
+export type SetupServer = (config: Config, options: SetupServerOptions) => void
 
 export const setupServer: SetupServer = (config, options) => {
 	let serverConfig = createWebpackConfig(config, true)
