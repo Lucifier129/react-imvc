@@ -57,7 +57,7 @@ export default class Controller<
   store: Store<S & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions> = createStore(shareActions as (AS & typeof shareActions), {} as S)
   context: Context = {}
   handlers: Handlers = {}
-  meta?: Meta
+  meta: Meta
   proxyHandler?: any
   resetScrollOnMount?: boolean
   Loading: BaseViewFC | BaseViewClass = () => null
@@ -506,7 +506,7 @@ export default class Controller<
     this.prefetch = this.prefetch.bind(this)
 
     let actions: AS = this.actions
-    let initialState: S = this.initialState
+    let initialState: S = this.initialState = {}
 
     // 如果 Model 存在，且 initialState 和 actions 不存在，从 Model 里解构出来
     if (this.Model && this.initialState === undefined && this.actions === undefined) {
