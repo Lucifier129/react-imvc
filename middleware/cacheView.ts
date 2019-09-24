@@ -3,7 +3,7 @@
  */
 import express from "express"
 import createCache, { Cache } from "./createCache"
-import IMVC from "../index"
+import IMVC from "../type"
 
 interface Settings {
   timeout: number

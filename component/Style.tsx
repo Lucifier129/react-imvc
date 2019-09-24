@@ -1,6 +1,6 @@
 import React from 'react'
 import GlobalContext from '../context'
-import IMVC from '../index'
+import IMVC from '../type'
 
 interface Props {
 	name: string

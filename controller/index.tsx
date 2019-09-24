@@ -10,7 +10,7 @@ import _ from '../util'
 import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
 import attachDevToolsIfPossible from './attachDevToolsIfPossible'
-import IMVC from '../index'
+import IMVC from '../type'
 
 const REDIRECT =
   typeof Symbol === 'function'

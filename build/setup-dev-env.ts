@@ -8,7 +8,7 @@ import notifier from 'node-notifier'
 
 import createWebpackConfig from './createWebpackConfig'
 import { getExternals, matchExternals } from './util'
-import IMVC from '../index'
+import IMVC from '../type'
 
 export interface SetupClient {
 	(config: IMVC.Config): {

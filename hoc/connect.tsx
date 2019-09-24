@@ -1,8 +1,6 @@
 import React from "react"
 import GlobalContext from "../context"
-import IMVC from "../index"
-
-
+import IMVC from "../type"
 
 const returnNull: IMVC.Selector = () => null
 

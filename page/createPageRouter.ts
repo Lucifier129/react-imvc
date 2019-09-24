@@ -2,16 +2,16 @@ import { Router } from 'express'
 import path from 'path'
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
-import createApp from 'create-app/server'
+import createApp, { Loader, LoadController, ControllerConstructor, Route, RenderTo } from 'create-app/server'
 import util from '../util'
-import IMVC from '../index'
+import IMVC from '../type'
 import Controller from '../controller'
 
 const { getFlatList } = util
 const getModule = (module: any) =>  module.default || module
-const commonjsLoader: createApp.Loader = (loadModule, location, context) => {
-  return ((loadModule as createApp.LoadController)(location, context) as
-    Promise<createApp.ControllerConstructor>).then(getModule)
+const commonjsLoader: Loader = (loadModule, location, context) => {
+  return ((loadModule as LoadController)(location, context) as
+    Promise<ControllerConstructor>).then(getModule)
 }
 
 /**
@@ -82,7 +82,7 @@ const renderers: {
 
 export default function createPageRouter(options: IMVC.Config) {
   let config = Object.assign({}, options)
-  let routes: createApp.Route[] = []
+  let routes: Route[] = []
 
   if (config.useServerBundle) {
     routes = require(path.join(config.root, config.serverBundleName))
@@ -96,7 +96,7 @@ export default function createPageRouter(options: IMVC.Config) {
   routes = getFlatList(routes)
 
   let router = Router()
-  let render: createApp.RenderTo<React.ReactElement> = renderers[config.renderMode] || renderToNodeStream
+  let render: RenderTo<React.ReactElement> = renderers[config.renderMode] || renderToNodeStream
   let serverAppSettings: IMVC.AppSettings = {
     loader: commonjsLoader,
     routes: routes,

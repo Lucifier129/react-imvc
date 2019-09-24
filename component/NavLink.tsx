@@ -2,7 +2,7 @@ import React from 'react'
 import classnames from 'classnames'
 import connect from '../hoc/connect'
 import Link from './Link'
-import IMVC from '../index'
+import IMVC from '../type'
 
 const withLocation = connect(({ state }) => {
   return {

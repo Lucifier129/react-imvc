@@ -7,7 +7,7 @@ import createApp from "create-app/client"
 import util from "../util"
 // @ts-ignore
 import $routes from "@routes"
-import IMVC from "../index"
+import IMVC from "../type"
 import Controller from '../controller'
 
 __webpack_public_path__ = window.__PUBLIC_PATH__ + "/"

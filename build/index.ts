@@ -7,7 +7,7 @@ import start from '../start'
 import getConfig from '../config'
 import createGulpTask from './createGulpTask'
 import createWebpackConfig from './createWebpackConfig'
-import IMVC from '../index'
+import IMVC from '../type'
 
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'

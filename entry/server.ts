@@ -10,7 +10,7 @@ import helmet from "helmet"
 import querystringify from "querystringify"
 
 import shareRoot from "../middleware/shareRoot"
-import IMVC from "../index"
+import IMVC from "../type"
 import configBabel from "../config/babel"
 import * as setupDevEnv from "../build/setup-dev-env"
 

@@ -8,7 +8,7 @@ import PnpWebpackPlugin from 'pnp-webpack-plugin'
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
 import resolve from 'resolve'
 import { getExternals } from './util'
-import IMVC from '../index'
+import IMVC from '../type'
 
 interface CreateWebpackConfig {
 	(

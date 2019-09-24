@@ -44,6 +44,6 @@
     "node_modules"
   ],
   "files": [
-    "index.d.ts"
+    "type.d.ts"
   ]
 }

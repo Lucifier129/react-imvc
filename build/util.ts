@@ -1,5 +1,5 @@
 import path from 'path'
-import IMVC from '../index'
+import IMVC from '../type'
 
 type GetExternals = (config: IMVC.Config) => string[]
 

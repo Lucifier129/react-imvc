@@ -16,7 +16,7 @@ import debug from 'debug'
 import createExpressApp from '../entry/server'
 import getConfig from '../config'
 import createPageRouter from '../page/createPageRouter'
-import IMVC from '../index'
+import IMVC from '../type'
 
 const start: IMVC.Start = (options) => {
 	let config = getConfig(options)

@@ -2,7 +2,7 @@
  * 共享的 action 函数
  */
 import _ from '../util'
-import IMVC from '../index'
+import IMVC from '../type'
 
 const { setValueByPath } = _
 

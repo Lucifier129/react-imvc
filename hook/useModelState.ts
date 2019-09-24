@@ -1,6 +1,6 @@
 import useCtrl from './useCtrl'
 import Controller from '../controller'
-import IMVC from '../index'
+import IMVC from '../type'
 
 export default () => {
   let ctrl = useCtrl()

@@ -1,9 +1,8 @@
 import React from 'react'
 import Script from '../component/Script'
-import IMVC from '../index'
+import IMVC from '../type'
 
 export default function Page(props: IMVC.RenderProps) {
-	console.log(props)
 	return (
 		<html>
 			<head>

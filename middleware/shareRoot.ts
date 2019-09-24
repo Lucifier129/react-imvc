@@ -2,7 +2,7 @@
  * 对 req.url 进行裁剪，以便适应不同的发布路径
  */
 import express from 'express'
-import IMVC from '../index'
+import IMVC from '../type'
 
 type ShareRoot = (rootPath: string) => express.RequestHandler
 

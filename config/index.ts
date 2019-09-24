@@ -3,7 +3,7 @@
  */
 import path from 'path'
 import defaultConfig from './config.defaults'
-import IMVC from '../index'
+import IMVC from '../type'
 
 interface GetConfig {
 	(options?: IMVC.Options): IMVC.Config
