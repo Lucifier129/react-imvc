@@ -42,19 +42,19 @@ let createElement = React.originalCreateElement || React.createElement
  * 提供 fetch 方法
  */
 export default class Controller<
-  S extends State,
-  AS extends Actions<S & StateFromAS<AS>>
-  > implements BaseController {
+  S extends object = object,
+  AS extends Actions<S & StateFromAS<AS>> = {}
+> implements BaseController {
   View: BaseViewFC | BaseViewClass = EmptyView
   restapi?: string = ''
   preload?: Preload
   API?: API
   Model?: { initialState: S } & AS
-  initialState?: S
-  actions?: AS
+  initialState: S = {} as S
+  actions: AS = {} as AS
   SSR?: boolean | { (location: NativeLocation, context: Context): Promise<boolean> } | undefined
   KeepAliveOnPush?: boolean | undefined
-  store: Store<S & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions> = createStore(shareActions as (AS & typeof shareActions), {} as S)
+  store: Store<S & State & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions> = createStore(shareActions as (AS & typeof shareActions), {} as S & State)
   context: Context = {}
   handlers: Handlers = {}
   meta: Meta
@@ -70,9 +70,7 @@ export default class Controller<
   getFinalActions?(...args: any[]): any
   shouldComponentCreate?(...args: any[]): any
   componentWillCreate?(...args: any[]): any
-  refreshView?(...args: any[]): any
   stateDidChange?(...args: any[]): any
-  saveToCache?(...args: any[]): any
   pageWillLeave?(...args: any[]): any
   windowWillUnload?(...args: any[]): any
   pageDidBack?(...args: any[]): any
@@ -506,7 +504,7 @@ export default class Controller<
     this.prefetch = this.prefetch.bind(this)
 
     let actions: AS = this.actions
-    let initialState: S = this.initialState = {}
+    let initialState: S = this.initialState
 
     // 如果 Model 存在，且 initialState 和 actions 不存在，从 Model 里解构出来
     if (this.Model && this.initialState === undefined && this.actions === undefined) {

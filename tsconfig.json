@@ -22,7 +22,8 @@
       "node_modules/@types"
     ]
   },
-  "files": [
+  "include": [
+    "./bin",
     "./build",
     "./component",
     "./config",
@@ -37,6 +38,8 @@
     "./scripts",
     "./start",
     "./util",
+  ],
+  "files": [
     "type.d.ts"
   ]
 }
