@@ -3,10 +3,10 @@
  */
 import path from 'path'
 import defaultConfig from './config.defaults'
-import IMVC from '../type'
+import { Options, Config } from '../type'
 
 interface GetConfig {
-	(options?: IMVC.Options): IMVC.Config
+	(options?: Options): Config
 }
 
 const getConfig: GetConfig = (options) => {
@@ -14,7 +14,7 @@ const getConfig: GetConfig = (options) => {
 
 	options = options || {}
 
-	let customConfig: Partial<IMVC.Config> = {}
+	let customConfig: Partial<Config> = {}
 	switch (typeof options.config) {
 		case 'object':
 			customConfig = options.config as object

@@ -10,11 +10,11 @@ import helmet from "helmet"
 import querystringify from "querystringify"
 
 import shareRoot from "../middleware/shareRoot"
-import IMVC from "../type"
+import { Config, Req } from "../type"
 import configBabel from "../config/babel"
 import * as setupDevEnv from "../build/setup-dev-env"
 
-export default function createExpressApp(config: IMVC.Config) {
+export default function createExpressApp(config: Config) {
 	const app: express.Express = express()
 
 	// handle basename
@@ -151,7 +151,7 @@ export default function createExpressApp(config: IMVC.Config) {
 	}
 
 	// handle publicPath and default props
-	app.use((req: IMVC.Req, res, next) => {
+	app.use((req: Req, res, next) => {
 		let basename = req.basename // from shareRoot
 		let serverPublicPath = basename + config.staticPath
 		let publicPath = config.publicPath || serverPublicPath
@@ -168,7 +168,7 @@ export default function createExpressApp(config: IMVC.Config) {
 	})
 
 	// attach appSettings for client
-	app.use((req: IMVC.Req, res, next) => {
+	app.use((req: Req, res, next) => {
 		let { basename, publicPath } = req
 		let context = {
 			basename,
@@ -199,7 +199,7 @@ function getAssets(stats: Record<string, any>) {
 	}, {})
 }
 
-function readAssets(config: IMVC.Config) {
+function readAssets(config: Config) {
 	let result
 	// 生产模式直接用编译好的资源表
 	let assetsPathList = [

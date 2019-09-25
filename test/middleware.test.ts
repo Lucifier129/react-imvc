@@ -6,25 +6,25 @@ jest.useFakeTimers()
 
 describe('middleware', () => {
   describe('cacheView', () => {
-    it('cached view will be used next time', () => {
+    // it('cached view will be used next time', () => {
 
-    })
+    // })
 
-    it('set `debug = true` when env is production', () => {
+    // it('set `debug = true` when env is production', () => {
 
-    })
+    // })
 
-    it('default setting worked', () => {
+    // it('default setting worked', () => {
 
-    })
+    // })
 
-    it('setting passed in will cover default setting', () => {
+    // it('setting passed in will cover default setting', () => {
 
-    })
+    // })
 
-    it('it will release some cache when data amount in cache is more than limite', () => {
+    // it('it will release some cache when data amount in cache is more than limite', () => {
 
-    })
+    // })
   })
 
   describe('createCache', () => {
@@ -425,16 +425,16 @@ describe('middleware', () => {
   })
 
   describe('shareRoot', () => {
-    it('rootPath will be set in req.basename', () => {
+    // it('rootPath will be set in req.basename', () => {
 
-    })
+    // })
 
-    it('rootPath format will be adjust', () => {
+    // it('rootPath format will be adjust', () => {
 
-    })
+    // })
 
-    it('the sub string in url match rootPath will be delete', () => {
+    // it('the sub string in url match rootPath will be delete', () => {
 
-    })
+    // })
   })
 })

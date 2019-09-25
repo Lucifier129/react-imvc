@@ -1,7 +1,7 @@
 import path from 'path'
 import * as util from '../build/util'
 import build from '../build'
-import IMVC from '../index'
+import { Config } from '../type'
 import * as setupDevEnv from '../build/setup-dev-env'
 import puppeteer from 'puppeteer'
 import defaultConfig from '../config/config.defaults'
@@ -10,7 +10,7 @@ const pkg = require('../package.json')
 process.env.NODE_ENV = "production"
 let PORT = 3333
 const ROOT = path.join(__dirname, "project")
-const config: Partial<IMVC.Config> = {
+const config: Partial<Config> = {
   root: ROOT, // 项目根目录
   port: PORT, // server 端口号
   logger: null, // 不出 log
@@ -68,9 +68,9 @@ describe('build test', () => {
     
   // })
 
-  describe('index', () => {
-    it('file after building should run as same as start', async () => {
+  // describe('index', () => {
+  //   it('file after building should run as same as start', async () => {
 
-    })
-  })
+  //   })
+  // })
 })

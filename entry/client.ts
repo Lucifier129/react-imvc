@@ -13,7 +13,7 @@ import Controller from '../controller'
 __webpack_public_path__ = window.__PUBLIC_PATH__ + "/"
 const __APP_SETTINGS__: AppSettings = window.__APP_SETTINGS__ || {}
 
-const getModule = module => module.default || module
+const getModule = (module: any) => module.default || module
 const webpackLoader: Loader = (loadModule, location, context) => {
   return ((loadModule as LoadController)(
     location,
@@ -25,15 +25,17 @@ let shouldHydrate = !!window.__INITIAL_STATE__
 
 const render: Render<React.ReactElement> = (
   view: React.ReactElement,
-  controller?: Controller<any, any>,
+  controller?: Controller<any, any, any>,
   container?: Element | null
 ) => {
   try {
-    if (shouldHydrate) {
-      shouldHydrate = false
-      ReactDOM.hydrate([view], container)
-    } else {
-      ReactDOM.render([view], container)
+    if (container) {
+      if (shouldHydrate) {
+        shouldHydrate = false
+        ReactDOM.hydrate([view], container)
+      } else {
+        ReactDOM.render([view], container)
+      }
     }
   } catch (error) {
     if (!controller) throw error

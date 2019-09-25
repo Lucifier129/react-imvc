@@ -3,7 +3,7 @@ import fetch from "node-fetch"
 import http from "http"
 import express from "express"
 import puppeteer from 'puppeteer'
-import IMVC from "../"
+import { Config } from "../type"
 import start from "../start"
 
 jest.setTimeout(20000)
@@ -11,7 +11,7 @@ jest.setTimeout(20000)
 process.env.NODE_ENV = "development"
 let PORT = 3333
 const ROOT = path.join(__dirname, "project")
-const config: Partial<IMVC.Config> = {
+const config: Partial<Config> = {
   root: ROOT, // 项目根目录
   port: PORT, // server 端口号
   logger: null, // 不出 log

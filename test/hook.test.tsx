@@ -21,15 +21,15 @@ describe('hook', () => {
     })
   })
   
-  describe('useModel', () => {
+  // describe('useModel', () => {
     
-  })
+  // })
   
-  describe('useModelActions', () => {
+  // describe('useModelActions', () => {
     
-  })
+  // })
   
-  describe('useModelState', () => {
+  // describe('useModelState', () => {
     
-  })
+  // })
 })

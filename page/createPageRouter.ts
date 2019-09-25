@@ -21,7 +21,7 @@ const commonjsLoader: Loader = (loadModule, location, context) => {
  */
 const createElement = React.createElement
 
-const renderToNodeStream: RenderToNodeStream<React.ReactElement> = (view: React.ReactElement, controller?: Controller<any, any>) => {
+const renderToNodeStream: RenderToNodeStream<React.ReactElement> = (view: React.ReactElement, controller?: Controller<any, any, any>) => {
   return new Promise<{}>((resolve, reject) => {
     let stream = ReactDOMServer.renderToNodeStream(view)
     let buffers: Uint8Array[] = []
@@ -51,7 +51,7 @@ const renderToNodeStream: RenderToNodeStream<React.ReactElement> = (view: React.
   })
 }
 
-const renderToString: RenderToString<React.ReactElement> = (view: React.ReactElement, controller?: Controller<any, any>) => {
+const renderToString: RenderToString<React.ReactElement> = (view: React.ReactElement, controller?: Controller<any, any, any>) => {
   try {
     return ReactDOMServer.renderToString(view)
   } catch (error) {

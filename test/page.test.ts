@@ -4,7 +4,7 @@ import View from '../page/view'
 import http from 'http'
 import express from 'express'
 import puppeteer from 'puppeteer'
-import IMVC from '../index'
+import { Options } from '../type'
 import getConfig from '../config'
 
 jest.setTimeout(20000)
@@ -12,7 +12,7 @@ jest.setTimeout(20000)
 process.env.NODE_ENV = 'test'
 let PORT = 3333
 const ROOT = path.join(__dirname, 'project')
-const options: IMVC.Options = {
+const options: Options = {
   config: {
     root: ROOT, // 项目根目录
     port: PORT, // server 端口号
@@ -30,7 +30,7 @@ const options: IMVC.Options = {
 }
 
 describe('page test', () => {
-  it('', () => {
+  // it('', () => {
 
-  })
+  // })
 })

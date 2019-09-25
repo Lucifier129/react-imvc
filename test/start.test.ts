@@ -3,7 +3,7 @@ import fetch from 'node-fetch'
 import http from 'http'
 import express from 'express'
 import puppeteer from 'puppeteer'
-import IMVC from '../index'
+import { Config } from '../type'
 import start from '../start'
 
 jest.setTimeout(20000)
@@ -18,7 +18,7 @@ interface App extends express.Express {
 process.env.NODE_ENV = 'development'
 let PORT = 3333
 const ROOT = path.join(__dirname, 'project')
-const config: Partial<IMVC.Config> = {
+const config: Partial<Config> = {
 	root: ROOT, // 项目根目录
 	port: PORT, // server 端口号
 	logger: null, // 不出 log
@@ -49,7 +49,7 @@ describe('React-IMVC', () => {
 		})
 	})
 })
-function mainTest(config: Partial<IMVC.Config>) {
+function mainTest(config: Partial<Config>) {
 
 	describe('static view', () => {
 		let renderCondition = config.SSR ? 'render' : 'NOT render'

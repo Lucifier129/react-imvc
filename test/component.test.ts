@@ -2,7 +2,7 @@ import path from 'path'
 import http from 'http'
 import express from 'express'
 import puppeteer from 'puppeteer'
-import IMVC from '../index'
+import { Config } from '../type'
 import start from '../start'
 
 jest.setTimeout(30000)
@@ -13,7 +13,7 @@ let PORT: number = 3333
 
 const ROOT: string = path.join(__dirname, 'project')
 
-const config: Partial<IMVC.Config> = {
+const config: Partial<Config> = {
 	root: ROOT, // 项目根目录
 	port: PORT, // server 端口号
 	logger: null, // 不出 log
@@ -52,13 +52,13 @@ describe('component test', () => {
     server.close()
     return browser.close()
   })
-  it('ControllerProxy', () => {
+  // it('ControllerProxy', () => {
     
-  })
+  // })
   
-  it('ErrorBoundary', () => {
+  // it('ErrorBoundary', () => {
     
-  })
+  // })
   
   it('EventWrapper', async () => {
     let page = await browser.newPage()
@@ -243,13 +243,13 @@ describe('component test', () => {
     expect(count).toBe('2')
   })
   
-  it('Prefetch', () => {
+  // it('Prefetch', () => {
     
-  })
+  // })
   
-  it('Script', () => {
+  // it('Script', () => {
     
-  })
+  // })
   
   it('Style', async () => {
     let page = await browser.newPage()
@@ -262,7 +262,7 @@ describe('component test', () => {
     expect(height).toBe(50)
   })
   
-  it('ViewManager', () => {
+  // it('ViewManager', () => {
     
-  })
+  // })
 })
