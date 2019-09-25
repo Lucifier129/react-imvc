@@ -561,7 +561,7 @@ export default class Controller<
     /**
      * 创建 store
      */
-    let finalActions: AS & typeof shareActions = { ...actions, ...shareActions }
+    let finalActions: AS & typeof shareActions = { ...shareActions, ...actions }
     this.store = createStore(finalActions, finalInitialState)
     attachDevToolsIfPossible(this.store)
 
@@ -704,7 +704,9 @@ export default class Controller<
     }
 
     meta.isDestroyed = false;
-    __PAGE_DID_BACK__(location)
+    if (__PAGE_DID_BACK__) {
+      __PAGE_DID_BACK__(location)
+    }
 
     if (this.pageDidBack) {
       this.pageDidBack(location, context)
