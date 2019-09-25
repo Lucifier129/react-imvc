@@ -3,7 +3,7 @@ import Controller from '../controller'
 import { Actions, StateFromAS } from 'relite'
 
 export interface Props<S extends object, AS extends Actions<S & StateFromAS<AS>>> {
-  controller: Controller<S, AS>
+  controller: Controller<S, AS, any>
 }
 
 /**

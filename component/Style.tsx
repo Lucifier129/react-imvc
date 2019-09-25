@@ -14,7 +14,7 @@ export default function Style({ name }: Props) {
 					<style
 						type="text/css"
 						data-preload={name}
-						dangerouslySetInnerHTML={{ __html: preload[name] }}
+						dangerouslySetInnerHTML={{ __html: preload ? preload[name] : '' }}
 					/>
 				)
 			}}

@@ -29,7 +29,15 @@ const REDIRECT =
     ? Symbol('react.imvc.redirect')
     : Object('react.imvc.redirect')
 
-const EmptyView = () => null
+const EmptyView = <Ctrl extends Controller<any, any, any>>(props?: {
+  state?: {
+    aa?: string
+  },
+  actions?: {
+    AAA?: () => void
+  },
+  ctrl?: Ctrl
+}) => null
 let uid = 0 // seed of controller id
 // fixed: webpack rebuild lost original React.createElement
 // @ts-ignore
@@ -42,10 +50,15 @@ let createElement = React.originalCreateElement || React.createElement
  * 提供 fetch 方法
  */
 export default class Controller<
-  S extends object = object,
-  AS extends Actions<S & StateFromAS<AS>> = {}
+  S extends object,
+  AS extends Actions<S & StateFromAS<AS>>,
+  View extends React.ComponentType<{
+    state: Partial<S>
+    actions: Partial<AS>
+    ctrl: any
+  }>
 > implements BaseController {
-  View: BaseViewFC | BaseViewClass = EmptyView
+  View: View = EmptyView as View
   restapi?: string = ''
   preload?: Preload
   API?: API
@@ -99,7 +112,7 @@ export default class Controller<
     this.preload = {}
   }
   // 绑定 handler 的 this 值为 controller 实例
-  combineHandlers(source: Controller<S, AS>) {
+  combineHandlers(source: Controller<S, AS, View>) {
     let { handlers } = this
     Object.keys(source).forEach(key => {
       let value = source[key]
@@ -723,17 +736,18 @@ export default class Controller<
 
   renderView(View = this.View) {
     if (this.context.isServer) return
-    if (View && !View.viewId) {
-      View.viewId = Date.now()
-    }
-    let ctrl: Controller<S, AS> = Object.create(this)
+    // if (View && !View.viewId) {
+    //   View.viewId = Date.now()
+    // }
+    let ctrl: Controller<S, AS, View> = Object.create(this)
     ctrl.View = View
     ctrl.componentDidFirstMount = null
     ctrl.componentDidMount = null
     ctrl.componentWillUnmount = null
     ctrl.meta = {
       ...this.meta,
-      id: View.viewId
+      // id: View.viewId
+      id: Date.now()
     }
     if (this.proxyHandler) {
       this.proxyHandler.attach()

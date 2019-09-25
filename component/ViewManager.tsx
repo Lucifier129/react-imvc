@@ -5,7 +5,7 @@ import ControllerProxy from './ControllerProxy'
 import Controller from '../controller'
 
 interface Props<S extends object, AS extends Actions<S & StateFromAS<AS>>> {
-	controller: Controller<S, AS>
+	controller: Controller<S, AS, any>
 }
 
 export default class ViewManager<S extends object, AS extends Actions<S & StateFromAS<AS>>> extends React.Component<Props<S, AS>> {
