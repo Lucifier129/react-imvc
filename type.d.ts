@@ -56,7 +56,10 @@ export interface State extends ObjectAlias {
   publicPath: string
   restapi: string
   hasError?: boolean
-  html?: object
+  html?: {
+    title: string
+    [x: string]: any
+  }
   [x: string]: any
 }
 
