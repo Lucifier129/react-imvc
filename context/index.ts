@@ -1,32 +1,22 @@
 import React from 'react'
-
+import { ClientController } from 'create-app/client'
 import Controller from '../controller'
 
-interface GlobalContent <Ctrl extends Controller<{ }, { }, any>> {
-  ctrl: Ctrl
-  location: 
-}
-
-let a = <Ctrl extends Controller<{ }, { }, any>>(ctrl: Ctrl) => {
-  React.createContext({
+const createContext = <Ctrl extends Controller<{ }, { }, any>>(ctrl: Ctrl & ClientController) => {
+  return React.createContext({
     ctrl,
-    location: ctrl,
+    location: ctrl.location,
+    history: ctrl.history,
     state: ctrl.store.getState(),
     actions: ctrl.store.actions,
-    preload: ctrl.context.preload
+    preload: ctrl.context.preload,
+    handlers: ctrl.handlers,
+    matcher: ctrl.matcher,
+    loader: ctrl.loader,
+    prefetch: ctrl.prefetch
   })
 }
 
-export default 
+let GlobalContext = createContext({} as Controller<{ }, { }, any> & ClientController)
 
-class Greeter {
-  greeting: string;
-  constructor(message: string) {
-      this.greeting = message;
-  }
-  greet() {
-      return "Hello, " + this.greeting;
-  }
-}
-
-let greeter = new Greeter("world");
+export default GlobalContext

@@ -89,7 +89,7 @@ export default class ViewManager<S extends object, AS extends Actions<S & StateF
 		}
 
 		let view = (
-			<GlobalContext.Provider value={globalContext}>
+			<GlobalContext.Provider value={globalContext as any}>
 				<View
 					key={`${meta.id}_${currentPath}`}
 					state={state}

@@ -3,17 +3,8 @@ import { Actions } from 'relite'
 import GlobalContext from "../context"
 import { State, Handlers } from "../type"
 
-export interface ConnectProps {
-  state?: State
-  handlers?: Handlers
-  actions?: Actions<State>
-  props?: {
-    [propName: string]: any
-  }
-}
-
 export interface Selector {
-  (props: ConnectProps): any
+  (props: object): any
 }
 
 export interface Connect {
@@ -33,7 +24,7 @@ const connect: Connect = (selector = returnNull) => (
   return function Connector(props) {
     return (
       <GlobalContext.Consumer>
-        {({ state, handlers, actions }: ConnectProps) => {
+        {({ state, handlers, actions }) => {
           return (
             <InputComponent
               {...props}
