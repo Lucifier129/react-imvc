@@ -11,8 +11,8 @@ interface Props {
 }
 
 export default class ErrorBoundary extends React.Component<Props, Partial<State>> {
-  static ignoreErrors: boolean = true
-  static contextType: React.Context<{}> = GlobalContext
+  static ignoreErrors = true
+  static contextType = GlobalContext
   static getDerivedStateFromError() {
     return { hasError: true }
   }

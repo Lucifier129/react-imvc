@@ -1,7 +1,5 @@
 import React from 'react'
 import GlobalContext from '../context'
-import IMVC from '../type'
-import CH from 'create-history'
 
 interface Props {
 	as?: keyof HTMLElementTagNameMap

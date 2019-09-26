@@ -2,7 +2,7 @@ import { Router } from 'express'
 import path from 'path'
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
-import createApp, { Loader, LoadController, ControllerConstructor, Route, RenderTo } from 'create-app/server'
+import createApp, { Loader, LoadController, ControllerConstructor, Route, ViewEngineRender } from 'create-app/server'
 import util from '../util'
 import { RenderToNodeStream, RenderToString, Config, AppSettings, Req, State } from '../type'
 import Controller from '../controller'
@@ -96,7 +96,7 @@ export default function createPageRouter(options: Config) {
   routes = getFlatList(routes)
 
   let router = Router()
-  let render: RenderTo<React.ReactElement> = renderers[config.renderMode] || renderToNodeStream
+  let render: ViewEngineRender<any> = renderers[config.renderMode] || renderToNodeStream
   let serverAppSettings: AppSettings = {
     loader: commonjsLoader,
     routes: routes,

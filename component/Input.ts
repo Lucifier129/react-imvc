@@ -12,7 +12,7 @@ export interface Props {
 	as?: keyof HTMLElementTagNameMap
 	type?: string
 	name: string
-	actionType?: string
+	actionType: string
 	value?: string
 	check?: ((value: string) => boolean) | boolean
 	transformer?: Transformer
@@ -20,7 +20,7 @@ export interface Props {
 }
 
 export default class Input extends React.Component<Props> {
-	static contextType: React.Context<{}> = GlobalContext
+	static contextType = GlobalContext
 	static defaultProps: Props = {
 		as: 'input',
 		type: 'text',

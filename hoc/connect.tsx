@@ -3,8 +3,15 @@ import { Actions } from 'relite'
 import GlobalContext from "../context"
 import { State, Handlers } from "../type"
 
+export interface Props {
+  state: State
+  handlers: Handlers
+  actions: {}
+  [x: string]: any
+}
+
 export interface Selector {
-  (props: object): any
+  (props: Props): any
 }
 
 export interface Connect {

@@ -9,7 +9,7 @@ interface Props {
 }
 
 export default class EventWrapper extends React.Component<Props> {
-	static contextType: React.Context<{}> = GlobalContext
+	static contextType = GlobalContext
 	static defaultProps: Props = {
 		as: 'div'
 	}

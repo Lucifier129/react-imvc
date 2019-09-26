@@ -24,7 +24,7 @@ export default class OuterClickWrapper extends Component<Props> {
   }
 
   // 结点是否包含结点
-  contains(rootNode: Element | Text, node: Node & ParentNode) {
+  contains(rootNode: Element | Text, node: Node & ParentNode | null) {
     if (typeof rootNode.contains === 'function') {
       return rootNode.contains(node)
     }
