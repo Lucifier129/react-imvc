@@ -6,8 +6,11 @@ import querystringify from 'querystringify'
 import { createStore, Actions, StateFromAS, Store } from 'relite'
 import {
   Controller as BaseController,
-  Actions as HistoryActions
+  Actions as HistoryActions,
+  AppElement,
+  createHistory
 } from 'create-app/client'
+import { NativeHistoryWithBFOL, NLWithBQ, BLWithBQ } from 'create-history'
 import _ from '../util'
 import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
@@ -21,7 +24,8 @@ import {
   State,
   Handlers,
   Meta,
-  NativeLocation
+  NativeLocation,
+  BaseLocation
 } from '../type'
 
 const REDIRECT =
@@ -59,17 +63,19 @@ export default class Controller<
   }>
 > implements BaseController {
   View: View = EmptyView as View
-  restapi?: string = ''
-  preload?: Preload
+  restapi?: string
+  preload: Preload
   API?: API
   Model?: { initialState: S } & AS
   initialState: S = {} as S
   actions: AS = {} as AS
   SSR?: boolean | { (location: NativeLocation, context: Context): Promise<boolean> } | undefined
   KeepAliveOnPush?: boolean | undefined
-  store: Store<S & State & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions> = createStore(shareActions as (AS & typeof shareActions), {} as S & State)
-  context: Context = {}
-  handlers: Handlers = {}
+  store: Store<S & State & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions>
+  context: Context
+  history: NativeHistoryWithBFOL<BLWithBQ, NLWithBQ>
+  handlers: Handlers
+  location: NativeLocation
   meta: Meta
   proxyHandler?: any
   resetScrollOnMount?: boolean
@@ -110,6 +116,9 @@ export default class Controller<
     this.context = context
     this.handlers = {}
     this.preload = {}
+
+    this.store = createStore(shareActions as (AS & typeof shareActions), {} as S & State)
+    this.history = createHistory()
   }
   // 绑定 handler 的 this 值为 controller 实例
   combineHandlers(source: Controller<S, AS, View>) {
@@ -678,7 +687,7 @@ export default class Controller<
 
     // 判断是否缓存
     {
-      let unlisten = history.listenBefore((location: NativeLocation) => {
+      let unlisten = history.listenBefore((location) => {
         if (!this.KeepAliveOnPush) return
         if (location.action === HistoryActions.PUSH) {
           this.saveToCache()
@@ -706,7 +715,7 @@ export default class Controller<
     }
   }
 
-  restore(location: NativeLocation, context: Context) {
+  restore(location: NativeLocation, context?: Context): AppElement {
     let { meta, store } = this
     let { __PAGE_DID_BACK__ } = store.actions
 
@@ -755,7 +764,7 @@ export default class Controller<
     this.refreshView(<ViewManager controller={ctrl} />)
   }
 
-  render() {
+  render(): AppElement {
     if (this.proxyHandler) this.proxyHandler.attach()
     return <ViewManager controller={this} />
   }

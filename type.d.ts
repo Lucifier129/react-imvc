@@ -1,6 +1,6 @@
 import express from "express"
 import yargs from "yargs"
-import createApp, { Settings, Context as BaseContext, HistoryNativeLocation } from "create-app/client"
+import createApp, { Settings, Context as BaseContext, HistoryNativeLocation, HistoryBaseLocation } from "create-app/client"
 import webpack from "webpack"
 import serveStatic from "serve-static"
 import cookieParser from "cookie-parser"
@@ -48,10 +48,12 @@ declare global {
 // Controller
 export type NativeLocation = HistoryNativeLocation
 
+export type BaseLocation = HistoryBaseLocation
+
 type ObjectAlias = object
 
 export interface State extends ObjectAlias {
-  location: Location
+  location: NativeLocation
   basename: string
   publicPath: string
   restapi: string
