@@ -1,6 +1,13 @@
 import express from "express"
 import yargs from "yargs"
-import createApp, { Settings, Context as BaseContext, HistoryNativeLocation, HistoryBaseLocation } from "create-app/client"
+import createApp, {
+  Settings,
+  Context as BaseContext,
+  HistoryNativeLocation,
+  HistoryBaseLocation,
+  ViewEngineRender,
+  Controller as BaseController
+} from "create-app/client"
 import webpack from "webpack"
 import serveStatic from "serve-static"
 import cookieParser from "cookie-parser"
@@ -111,25 +118,14 @@ export interface BaseViewClass extends React.ComponentClass<ViewProps> {
 
 
 // Render view
-export interface Render<E = string> extends RenderTo<E> {
-  (
-    view: React.ReactElement,
-    controller?: Controller,
-    container?: Element | null
-  ): void
+
+export interface RenderToNodeStream<E = string, C extends BaseController>
+  extends ViewEngineRender<C> {
+  (view: E, controller?: C): Promise<{}>
 }
 
-export interface RenderToNodeStream<E = string>
-  extends RenderTo<E> {
-  (view: E, controller?: Controller): Promise<{}>
-}
-
-export interface RenderToString<E = string> extends RenderTo<E> {
-  (view: E, controller?: Controller): void
-}
-
-export interface ViewEngine extends ViewEngine {
-  render: Render
+export interface RenderToString<E = string, C extends BaseController> extends ViewEngineRender<C> {
+  (view: E, controller?: C): void
 }
 
 export interface RenderProps {
@@ -176,7 +172,7 @@ export interface NativeModule extends NodeModule {
 }
 
 // Compile config
-export interface AppSettings extends Settings {
+export interface AppSettings<C extends BaseController> extends Settings<C> {
   container?: string // react 组件渲染的容器
   cacheAmount?: number
   basename?: string

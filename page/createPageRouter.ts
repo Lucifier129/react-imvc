@@ -2,9 +2,23 @@ import { Router } from 'express'
 import path from 'path'
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
-import createApp, { Loader, LoadController, ControllerConstructor, Route, ViewEngineRender } from 'create-app/server'
+import createApp, {
+  Loader,
+  LoadController,
+  ControllerConstructor,
+  Route,
+  ViewEngineRender,
+  ServerController
+} from 'create-app/server'
 import util from '../util'
-import { RenderToNodeStream, RenderToString, Config, AppSettings, Req, State } from '../type'
+import {
+  Config,
+  AppSettings,
+  Req,
+  State,
+  RenderToNodeStream,
+  RenderToString
+} from '../type'
 import Controller from '../controller'
 
 const { getFlatList } = util
@@ -51,7 +65,7 @@ const renderToNodeStream: RenderToNodeStream<React.ReactElement> = (view: React.
   })
 }
 
-const renderToString: RenderToString<React.ReactElement> = (view: React.ReactElement, controller?: Controller<any, any, any>) => {
+const renderToString: RenderToString<React.ReactElement, Controller<any, any, any>> = (view, controller) => {
   try {
     return ReactDOMServer.renderToString(view)
   } catch (error) {
@@ -96,8 +110,8 @@ export default function createPageRouter(options: Config) {
   routes = getFlatList(routes)
 
   let router = Router()
-  let render: ViewEngineRender<any> = renderers[config.renderMode] || renderToNodeStream
-  let serverAppSettings: AppSettings = {
+  let render: ViewEngineRender<ServerController> = renderers[config.renderMode] || renderToNodeStream
+  let serverAppSettings: Partial<AppSettings<ServerController>> = {
     loader: commonjsLoader,
     routes: routes,
     viewEngine: { render },
