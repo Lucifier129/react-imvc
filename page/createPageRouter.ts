@@ -8,7 +8,8 @@ import createApp, {
   ControllerConstructor,
   Route,
   ViewEngineRender,
-  ServerController
+  ViewEngine,
+  Controller as BaseController
 } from 'create-app/server'
 import util from '../util'
 import {
@@ -35,7 +36,7 @@ const commonjsLoader: Loader = (loadModule, location, context) => {
  */
 const createElement = React.createElement
 
-const renderToNodeStream: RenderToNodeStream<React.ReactElement> = (view: React.ReactElement, controller?: Controller<any, any, any>) => {
+const renderToNodeStream: RenderToNodeStream<React.ReactElement, Controller<any, any, any>> = (view, controller) => {
   return new Promise<{}>((resolve, reject) => {
     let stream = ReactDOMServer.renderToNodeStream(view)
     let buffers: Uint8Array[] = []
@@ -86,10 +87,7 @@ const renderToString: RenderToString<React.ReactElement, Controller<any, any, an
   }
 }
 
-const renderers: {
-  renderToNodeStream: RenderToNodeStream<React.ReactElement>,
-  renderToString: RenderToString<React.ReactElement>
-} = {
+const renderers = {
   renderToNodeStream,
   renderToString
 }
@@ -110,11 +108,11 @@ export default function createPageRouter(options: Config) {
   routes = getFlatList(routes)
 
   let router = Router()
-  let render: ViewEngineRender<ServerController> = renderers[config.renderMode] || renderToNodeStream
-  let serverAppSettings: Partial<AppSettings<ServerController>> = {
+  let render: ViewEngineRender<React.ReactElement, Controller<any, any, any>> = renderers[config.renderMode] || renderToNodeStream
+  let serverAppSettings: Partial<AppSettings> = {
     loader: commonjsLoader,
     routes: routes,
-    viewEngine: { render },
+    viewEngine: { render } as ViewEngine<React.ReactElement, BaseController>,
     context: {
       isClient: false,
       isServer: true
@@ -184,8 +182,8 @@ export default function createPageRouter(options: Config) {
         initialState
       }
 
-      if (controller.destory) {
-        controller.destory()
+      if (controller.destroy) {
+        controller.destroy()
       }
 
       // 支持通过 res.locals.layoutView 动态确定 layoutView

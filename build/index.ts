@@ -3,6 +3,7 @@ import gulp from 'gulp'
 import path from 'path'
 import webpack from 'webpack'
 import del from 'del'
+import { Controller as BaseController } from 'create-app/client'
 import start from '../start'
 import getConfig from '../config'
 import createGulpTask from './createGulpTask'
@@ -122,7 +123,7 @@ const startStaticEntry: StartStaticEntry<Config> = async (config) => {
   }
   console.log(`start generating static entry file`)
 
-  let appSettings: AppSettings = {
+  let appSettings: Partial<AppSettings> = {
     ...config.appSettings,
     type: 'createHashHistory'
   }

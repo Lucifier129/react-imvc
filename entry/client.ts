@@ -3,11 +3,11 @@ import "regenerator-runtime/runtime"
 import "../polyfill"
 import "whatwg-fetch"
 import ReactDOM from "react-dom"
-import createApp, { Loader, LoadController, ControllerConstructor } from "create-app/client"
+import createApp, { Loader, LoadController, ControllerConstructor, ViewEngineRender, ViewEngine, Controller as BaseController } from "create-app/client"
 import util from "../util"
 // @ts-ignore
 import $routes from "@routes"
-import { AppSettings, Render, Preload, NativeModule } from "../type"
+import { AppSettings, Preload, NativeModule } from "../type"
 import Controller from '../controller'
 
 __webpack_public_path__ = window.__PUBLIC_PATH__ + "/"
@@ -23,7 +23,7 @@ const webpackLoader: Loader = (loadModule, location, context) => {
 
 let shouldHydrate = !!window.__INITIAL_STATE__
 
-const render: Render<React.ReactElement> = (
+const render: ViewEngineRender<React.ReactElement, Controller<any, any, any>> = (
   view: React.ReactElement,
   controller?: Controller<any, any, any>,
   container?: Element | null
@@ -51,7 +51,8 @@ const render: Render<React.ReactElement> = (
     }
   }
 }
-const viewEngine = { render }
+const viewEngine: ViewEngine<React.ReactElement, BaseController> =
+  { render } as ViewEngine<React.ReactElement, BaseController>
 
 const routes = util.getFlatList(
   Array.isArray($routes) ? $routes : Object.values($routes)

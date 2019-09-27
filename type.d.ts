@@ -119,12 +119,11 @@ export interface BaseViewClass extends React.ComponentClass<ViewProps> {
 
 // Render view
 
-export interface RenderToNodeStream<E = string, C extends BaseController>
-  extends ViewEngineRender<C> {
+export interface RenderToNodeStream<E = string, C extends BaseController> {
   (view: E, controller?: C): Promise<{}>
 }
 
-export interface RenderToString<E = string, C extends BaseController> extends ViewEngineRender<C> {
+export interface RenderToString<E = string, C extends BaseController> {
   (view: E, controller?: C): void
 }
 
@@ -172,7 +171,7 @@ export interface NativeModule extends NodeModule {
 }
 
 // Compile config
-export interface AppSettings<C extends BaseController> extends Settings<C> {
+export interface AppSettings extends Settings {
   container?: string // react 组件渲染的容器
   cacheAmount?: number
   basename?: string
@@ -312,7 +311,7 @@ export interface Config {
   /**
    * client app settings
    */
-  appSettings?: AppSettings
+  appSettings?: Partial<AppSettings<BaseController>>
   /**
    * react-imvc app 所在的根目录
    * 默认是 cwd

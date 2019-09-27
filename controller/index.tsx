@@ -7,7 +7,6 @@ import { createStore, Actions, StateFromAS, Store } from 'relite'
 import {
   Controller as BaseController,
   Actions as HistoryActions,
-  AppElement,
   createHistory
 } from 'create-app/client'
 import { NativeHistoryWithBFOL, NLWithBQ, BLWithBQ } from 'create-history'
@@ -24,8 +23,7 @@ import {
   State,
   Handlers,
   Meta,
-  NativeLocation,
-  BaseLocation
+  NativeLocation
 } from '../type'
 
 const REDIRECT =
@@ -715,7 +713,7 @@ export default class Controller<
     }
   }
 
-  restore(location: NativeLocation, context?: Context): AppElement {
+  restore(location: NativeLocation, context?: Context): React.ReactElement {
     let { meta, store } = this
     let { __PAGE_DID_BACK__ } = store.actions
 
@@ -764,7 +762,7 @@ export default class Controller<
     this.refreshView(<ViewManager controller={ctrl} />)
   }
 
-  render(): AppElement {
+  render(): React.ReactElement {
     if (this.proxyHandler) this.proxyHandler.attach()
     return <ViewManager controller={this} />
   }
