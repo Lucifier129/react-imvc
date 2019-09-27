@@ -179,11 +179,21 @@ module.exports = function createGulpTask(options) {
       .pipe(plumber())
       .pipe(gulp.dest(config.copy.dest))
   }
+  let parallelList = [
+    config.html && minifyHTML,
+    config.css && minifyCSS,
+    config.js && minifyJS,
+    config.img && minifyImage
+  ].filter(Boolean)
+
+  let taskList = [
+    config.publishCopy && publishCopy,
+    config.publishBabel && publishBabel,
+    config.copy && copy,
+  ].filter(Boolean)
 
   return gulp.series(
-    publishCopy,
-    publishBabel,
-    copy,
-    gulp.parallel(minifyHTML, minifyCSS, minifyES5, minifyES6, minifyImage)
+    ...taskList,
+    gulp.parallel(...parallelList)
   )
 }
