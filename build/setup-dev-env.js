@@ -31,7 +31,7 @@ exports.setupClient = function setupClient(config) {
 }
 
 exports.setupServer = function setupServer(config, options) {
-	let serverConfig = createWebpackConfig(config)
+	let serverConfig = createWebpackConfig(config, true)
 	serverConfig.target = 'node'
 	serverConfig.entry = {
 		routes: path.join(config.root, config.src)

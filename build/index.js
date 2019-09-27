@@ -1,6 +1,7 @@
 process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
-require('@babel/polyfill')
+require('core-js/stable')
+require('regenerator-runtime/runtime')
 
 const fs = require('fs')
 const del = require('del')
@@ -26,7 +27,10 @@ module.exports = function build(options) {
       )
     )
     .then(() => startStaticEntry(config))
-    .catch(error => console.error(error))
+    .catch(error => {
+      console.error(error)
+      process.exit(1)
+    })
 }
 
 function delPublish(folder) {

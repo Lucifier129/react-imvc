@@ -28,8 +28,12 @@ const createConfig = options => {
       dest: staticPath
     },
     js: {
-      src: [src + '/lib/**/*.@(js|ts|jsx|tsx)'],
+      src: [src + '/lib/!(es5)/**/*.@(js|ts|jsx|tsx)', src + '/lib/*.@(js|ts|jsx|tsx)'],
       dest: staticPath + '/lib'
+    },
+    es5: {
+      src: [src + '/lib/es5/**/*.@(js|ts|jsx|tsx)'],
+      dest: staticPath + '/lib/es5'
     },
     copy: {
       src: [src + '/**/!(*.@(html|htm|css|js|ts|jsx|tsx))'],
@@ -44,7 +48,10 @@ const createConfig = options => {
     },
     publishBabel: {
       src: [
-        root + `/!(node_modules|${options.publish}|buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
+        root +
+          `/!(node_modules|${
+            options.publish
+          }|buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
         publish + '/*.@(js|ts|jsx|tsx)'
       ],
       dest: publish
@@ -52,8 +59,13 @@ const createConfig = options => {
   }
 
   for (let key in options.gulp) {
-    if (config.hasOwnProperty(key) && options.gulp[key]) {
-      config[key].src = config[key].src.concat(options.gulp[key])
+    if (key in config) {
+      // if options.gulp[key] === false, remove this task
+      if (options.gulp[key] === false) {
+        delete config[key]
+      } else if (options.gulp[key]) {
+        config[key].src = config[key].src.concat(options.gulp[key])
+      }
     }
   }
 
@@ -114,16 +126,27 @@ module.exports = function createGulpTask(options) {
       .pipe(gulp.dest(config.img.dest))
   }
 
-  let minifyJS = () => {
+  let minifyES6 = () => {
     if (!config.js) {
       return
     }
     return gulp
       .src(config.js.src)
       .pipe(plumber())
-      .pipe(babel(options.babel(false)))
+      .pipe(babel(options.babel(false), { babelrc: false }))
       .pipe(uglify())
       .pipe(gulp.dest(config.js.dest))
+  }
+
+  let minifyES5 = () => {
+    if (!config.es5) {
+      return
+    }
+    return gulp
+      .src(config.es5.src)
+      .pipe(plumber())
+      .pipe(uglify())
+      .pipe(gulp.dest(config.es5.dest))
   }
 
   let publishCopy = () => {
@@ -143,7 +166,7 @@ module.exports = function createGulpTask(options) {
     return gulp
       .src(config.publishBabel.src)
       .pipe(plumber())
-      .pipe(babel(options.babel(true)))
+      .pipe(babel(options.babel(true), { babelrc: false }))
       .pipe(gulp.dest(config.publishBabel.dest))
   }
 

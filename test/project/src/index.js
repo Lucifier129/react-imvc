@@ -9,6 +9,14 @@ export default [
 	},
 	{
 		path: '/basic_state',
-		controller: () => import('./basic_state/Controller')
+		controller: () => import('./basic-state/Controller')
+	},
+	{
+		path: '/error_boundary',
+		controller: () => import('./error-boundary/Controller')
+	},
+	{
+		path: '/render_view',
+		controller: () => import('./render-view/Controller')
 	}
 ]

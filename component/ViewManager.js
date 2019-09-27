@@ -3,6 +3,7 @@ import GlobalContext from '../context'
 import ControllerProxy from './ControllerProxy'
 
 export default class ViewManager extends React.Component {
+	static ignoreErrors = true
 	views = {}
 	scrollMap = {}
 	constructor(props, context) {
@@ -83,6 +84,7 @@ export default class ViewManager extends React.Component {
 							isActive={path === controller.location.raw}
 							view={this.renderView(path)}
 							scrollY={this.scrollMap[path]}
+							resetScrollOnMount={controller.resetScrollOnMount}
 						/>
 					)
 				})}
@@ -96,8 +98,13 @@ export default class ViewManager extends React.Component {
 }
 
 class ViewItem extends React.Component {
+	static ignoreErrors = true
 	getContainer = container => {
 		this.container = container
+	}
+	getResetScrollOnMount = () => {
+		let { resetScrollOnMount } = this.props
+		return resetScrollOnMount == undefined ? true : !!resetScrollOnMount
 	}
 	shouldComponentUpdate(nextProps) {
 		if (!nextProps.isActive) {
@@ -111,7 +118,9 @@ class ViewItem extends React.Component {
 		return nextProps.isActive
 	}
 	componentDidMount() {
-		window.scroll(0, 0)
+		if (this.getResetScrollOnMount()) {
+			window.scroll(0, 0)
+		}
 	}
 	render() {
 		return (
