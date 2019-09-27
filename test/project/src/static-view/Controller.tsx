@@ -1,10 +1,10 @@
 import Controller from '../../../../controller'
 import React from 'react'
-import IMVC from '../../../../index'
-export default class extends Controller<{}, {}> {
+import { NativeLocation, Context } from '../../../../type'
+export default class extends Controller<{}, {}, typeof View> {
 	// SSR = true // enable server side rendering
 	View = View
-  constructor(location: IMVC.Location, context: IMVC.Context) {
+  constructor(location: NativeLocation, context: Context) {
     super(location, context)
   }
 }

@@ -1,5 +1,5 @@
 import React from 'react'
-import IMVC from '../../../../index'
+import { NativeLocation, Context } from '../../../../type'
 import Controller from '../../../../controller'
 import { OuterClickWrapper } from '../../../../component'
 
@@ -7,11 +7,11 @@ const initialState = {
   count: 0
 }
 
-export default class extends Controller<typeof initialState, {}> {
+export default class extends Controller<typeof initialState, {}, typeof View> {
 	SSR = true // enable server side rendering
   View = View
   initialState = initialState
-  constructor(location: IMVC.Location, context: IMVC.Context) {
+  constructor(location: NativeLocation, context: Context) {
     super(location, context)
   }
 
@@ -22,14 +22,14 @@ export default class extends Controller<typeof initialState, {}> {
   }
 }
 
-function View({ state, handlers }) {
+function View({ state, ctrl }) {
 	return (
     <div id="outer_click">
       <div id="out">
         <div>
           <p id="beside">beside region</p>
         </div>
-        <OuterClickWrapper onClick={handlers.handleClick}>
+        <OuterClickWrapper onClick={ctrl.handleClick}>
           <p id="inner">inner region</p>
         </OuterClickWrapper>
       </div>

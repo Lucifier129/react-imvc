@@ -1,7 +1,7 @@
 import ErrorBoundary from '../../../../component/ErrorBoundary'
 import Controller from '../../../../controller'
 import React, { useState } from 'react'
-import IMVC from '../../../../index'
+import { NativeLocation, Context } from '../../../../type'
 
 const actions = {
   TEST: () => {
@@ -9,8 +9,8 @@ const actions = {
   }
 }
 
-export default class extends Controller<{}, typeof actions> {
-  constructor(location: IMVC.Location, context: IMVC.Context) {
+export default class extends Controller<{}, typeof actions, typeof View> {
+  constructor(location: NativeLocation, context: Context) {
     super(location, context)
   }
   SSR = true // enable server side rendering

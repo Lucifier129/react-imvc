@@ -1,5 +1,5 @@
 import React from 'react'
-import IMVC from '../../../../index'
+import { NativeLocation, Context } from '../../../../type'
 import Controller from '../../../../controller'
 import { Input } from '../../../../component'
 
@@ -28,11 +28,11 @@ const initialState = {
   content: ''
 }
 
-export default class extends Controller<typeof initialState, {}> {
+export default class extends Controller<typeof initialState, {}, typeof View> {
   SSR = true // enable server side rendering
   View = View
   initialState = initialState
-  constructor(location: IMVC.Location, context: IMVC.Context) {
+  constructor(location: NativeLocation, context: Context) {
     super(location, context)
   }
 }

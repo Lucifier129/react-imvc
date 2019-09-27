@@ -1,10 +1,10 @@
-import IMVC from '../../../../index'
+import { NativeLocation, Context } from '../../../../type'
 import Controller from '../../../../controller'
 import React from 'react'
 
-export default class extends Controller<{}, {}> {
+export default class extends Controller<{}, {}, typeof View> {
     View = View
-    constructor(location: IMVC.Location, context: IMVC.Context) {
+    constructor(location: NativeLocation, context: Context) {
         super(location, context)
         if (context.isClient) {
             window.controller = this
@@ -15,6 +15,6 @@ export default class extends Controller<{}, {}> {
 }
 
 
-function View({ state }: IMVC.ViewProps) {
+function View({ state }) {
     return <pre id="basic_state">{JSON.stringify(state, null, 2)}</pre>
 }

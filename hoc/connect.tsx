@@ -11,31 +11,32 @@ export interface Props {
 }
 
 export interface Selector {
-  (props: Props): any
+  <R extends object>(props: Props): R
 }
 
 export interface Connect {
-  (selector: Selector): With
+  <S extends (...args: any[]) => any = () => null>(selector?: S): With<ReturnType<S>>
 }
 
-export interface With {
-  <P>(inputComponent: React.ComponentType<P>): (props: P) => React.ReactElement
+type ExcludeFromObject<T, E> = Pick<T, Exclude<keyof T, keyof E>>
+
+export interface With<EP extends object> {
+  <P extends object>(inputComponent: React.ComponentType<P>): (props: ExcludeFromObject<P, EP>) => React.ReactElement
 }
 
-
-const returnNull: Selector = () => null
-
-const connect: Connect = (selector = returnNull) => (
+const connect: Connect = <S extends (...args: any[]) => any>(selector?: S) => (
   InputComponent
 ) => {
   return function Connector(props) {
     return (
       <GlobalContext.Consumer>
         {({ state, handlers, actions }) => {
+            let sProps = selector ? selector({ state, handlers, actions, props }) : {}
+
           return (
             <InputComponent
               {...props}
-              {...selector({ state, handlers, actions, props })}
+              {...sProps}
             />
           )
         }}
@@ -43,4 +44,5 @@ const connect: Connect = (selector = returnNull) => (
     )
   }
 }
+
 export default  connect

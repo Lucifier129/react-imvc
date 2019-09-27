@@ -1,15 +1,15 @@
 import React from 'react'
-import IMVC from '../../.././../index'
+import { NativeLocation, Context } from '../../../../type'
 import Controller from '../../../../controller'
 
 const delay = (time: number) => new Promise(resolve => {
   setTimeout(resolve, time)
 })
 
-export default class extends Controller<{}, {}> {
+export default class extends Controller<{}, {}, typeof View> {
   SSR = false
   View = View
-  constructor(location: IMVC.Location, context: IMVC.Context) {
+  constructor(location: NativeLocation, context: Context) {
     super(location, context)
     if (context.isClient) {
       window.controller = this
@@ -23,7 +23,7 @@ export default class extends Controller<{}, {}> {
   }
   componentDidMount() {
     let count: number = 0
-    let View: IMVC.BaseViewFC = () => <div>{count}</div>
+    let View = () => <div>{count}</div>
     setInterval(() => {
       this.renderView(View)
       count += 1
@@ -31,6 +31,6 @@ export default class extends Controller<{}, {}> {
   }
 }
 
-function View({ state }: IMVC.ViewProps) {
+function View({ state }: { state: object }) {
   return <pre id="basic_state">{JSON.stringify(state, null, 2)}</pre>
 }

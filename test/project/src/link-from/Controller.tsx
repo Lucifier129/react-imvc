@@ -1,17 +1,17 @@
 import React from 'react'
-import IMVC from '../../../../index'
+import { NativeLocation, Context } from '../../../../type'
 import Link from '../../../../component/Link'
 import NavLink from '../../../../component/NavLink'
 import Style from '../../../../component/Style'
 import Controller from '../../../../controller'
 
-export default class extends Controller<{}, {}> {
+export default class extends Controller<{}, {}, typeof View> {
   SSR = true // enable server side rendering
   View = View
   preload = {
     css: '/link-from/preload.css'
   }
-  constructor(location: IMVC.Location, context: IMVC.Context) {
+  constructor(location: NativeLocation, context: Context) {
     super(location, context)
   }
 }

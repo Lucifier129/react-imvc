@@ -23,8 +23,12 @@ import {
 import Controller from '../controller'
 
 const { getFlatList } = util
-const getModule = (module: any) =>  module.default || module
+const getModule = (module: any) =>  {
+  console.log(module)
+  return module.default || module
+}
 const commonjsLoader: Loader = (loadModule, location, context) => {
+  console.log(loadModule)
   return ((loadModule as LoadController)(location, context) as
     Promise<ControllerConstructor>).then(getModule)
 }
