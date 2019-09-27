@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.7.0
+
+- feature: 支持禁用 gulp 任务
+
 ## 2.6.7
 - fix: 'fetch is not a function' Error
 
