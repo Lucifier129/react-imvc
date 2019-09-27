@@ -59,8 +59,13 @@ const createConfig = options => {
   }
 
   for (let key in options.gulp) {
-    if (config.hasOwnProperty(key) && options.gulp[key]) {
-      config[key].src = config[key].src.concat(options.gulp[key])
+    if (key in config) {
+      // if options.gulp[key] === false, remove this task
+      if (options.gulp[key] === false) {
+        delete config[key]
+      } else if (options.gulp[key]) {
+        config[key].src = config[key].src.concat(options.gulp[key])
+      }
     }
   }
 
