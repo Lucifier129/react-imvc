@@ -28,7 +28,10 @@ const createConfig = options => {
       dest: staticPath
     },
     js: {
-      src: [src + '/lib/!(es5)/**/*.@(js|ts|jsx|tsx)', src + '/lib/*.@(js|ts|jsx|tsx)'],
+      src: [
+        src + '/lib/!(es5)/**/*.@(js|ts|jsx|tsx)',
+        src + '/lib/*.@(js|ts|jsx|tsx)'
+      ],
       dest: staticPath + '/lib'
     },
     es5: {
@@ -49,9 +52,7 @@ const createConfig = options => {
     publishBabel: {
       src: [
         root +
-          `/!(node_modules|${
-            options.publish
-          }|buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
+          `/!(node_modules|${options.publish}|buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
         publish + '/*.@(js|ts|jsx|tsx)'
       ],
       dest: publish
@@ -179,21 +180,20 @@ module.exports = function createGulpTask(options) {
       .pipe(plumber())
       .pipe(gulp.dest(config.copy.dest))
   }
+
   let parallelList = [
     config.html && minifyHTML,
     config.css && minifyCSS,
-    config.js && minifyJS,
+    config.es5 && minifyES5,
+    config.js && minifyES6,
     config.img && minifyImage
   ].filter(Boolean)
 
-  let taskList = [
+  let seriesList = [
     config.publishCopy && publishCopy,
     config.publishBabel && publishBabel,
-    config.copy && copy,
+    config.copy && copy
   ].filter(Boolean)
 
-  return gulp.series(
-    ...taskList,
-    gulp.parallel(...parallelList)
-  )
+  return gulp.series(...seriesList, gulp.parallel(...parallelList))
 }
