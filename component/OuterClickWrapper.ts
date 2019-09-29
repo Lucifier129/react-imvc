@@ -24,8 +24,8 @@ export default class OuterClickWrapper extends Component<Props> {
   }
 
   // 结点是否包含结点
-  contains(rootNode: Element | Text, node: Node & ParentNode | null) {
-    if (typeof rootNode.contains === 'function') {
+  contains(rootNode: Element | Text | null, node: Node | null) {
+    if (rootNode && typeof rootNode.contains === 'function') {
       return rootNode.contains(node)
     }
     while (node) {
@@ -43,7 +43,7 @@ export default class OuterClickWrapper extends Component<Props> {
       return
     }
     let root = findDOMNode(this)
-    let isContains = root && (event.target || event.srcElement) && this.contains(root, (event.target || event.srcElement) as Node & ParentNode)
+    let isContains = this.contains(root, (event.target || event.srcElement) as Node | null)
     if (!isContains) {
       onClick(event)
     }

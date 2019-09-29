@@ -3,11 +3,13 @@
 import querystringify from 'querystringify'
 import spawn from 'cross-spawn'
 import { SpawnSyncReturns } from 'child_process'
+import { getKeys } from '../util'
+
 let command = process.argv[2]
 let args = process.argv.slice(3)
 let [script, paramsStr = ''] = command.split('?')
 let query = querystringify.parse(paramsStr)
-let params = Object.keys(query).map(key => {
+let params = getKeys(query).map(key => {
   return query[key] ? `--${key}=${query[key]}` : `--${key}`
 })
 let result: SpawnSyncReturns<Buffer> | undefined = undefined

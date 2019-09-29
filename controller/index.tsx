@@ -6,9 +6,11 @@ import querystringify from 'querystringify'
 import { createStore, Actions, StateFromAS, Store } from 'relite'
 import {
   Controller as BaseController,
-  Actions as HistoryActions,
-  createHistory
+  Actions as HistoryActions
 } from 'create-app/client'
+import {
+  createHistory
+} from 'create-app/server'
 import { NativeHistoryWithBFOL, NLWithBQ, BLWithBQ } from 'create-history'
 import _ from '../util'
 import ViewManager from '../component/ViewManager'
@@ -115,8 +117,8 @@ export default class Controller<
     this.handlers = {}
     this.preload = {}
 
-    this.store = createStore(shareActions as (AS & typeof shareActions), {} as S & State)
-    this.history = createHistory()
+    this.store = createStore({} as (AS & typeof shareActions), {} as S & State)
+    this.history = createHistory() as NativeHistoryWithBFOL<BLWithBQ, NLWithBQ>
   }
   // 绑定 handler 的 this 值为 controller 实例
   combineHandlers(source: Controller<S, AS, View>) {

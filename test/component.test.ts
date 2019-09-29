@@ -40,8 +40,8 @@ describe('component test', () => {
       app = result.app
       server = result.server
       return puppeteer.launch({
-        headless: false,
-        slowMo: 50
+        // headless: false,
+        // slowMo: 50
       })
     }).then((brws) => {
       browser = brws
@@ -109,7 +109,7 @@ describe('component test', () => {
       await page.waitFor('#input')
 
       const inputHandler = await page.$('#phone-input')
-      await inputHandler.focus()
+      inputHandler && await inputHandler.focus()
       await page.keyboard.type('test')
       let content = await page.$eval('#phone-value', (e) => e.innerHTML)
 
@@ -121,7 +121,7 @@ describe('component test', () => {
       expect(content).toBe('test true false')
 
       await page.focus('#phone-input')
-      inputHandler.click({ clickCount: 3 })
+      inputHandler && inputHandler.click({ clickCount: 3 })
       await page.keyboard.press('Space')
       await page.keyboard.press('Backspace')
       await page.keyboard.type('1312456456')

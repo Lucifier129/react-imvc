@@ -189,8 +189,8 @@ function mainTest(config: Partial<Config>) {
 		})
 		it('should have location and context properties in controller instance both server side and client side', async () => {
 			let url = `http://localhost:${config.port}/basic_state?a=1&b=2`
-			let page
-			let clientController
+			let page: any
+			let clientController: any
 			try {
 				page = await browser.newPage()
 

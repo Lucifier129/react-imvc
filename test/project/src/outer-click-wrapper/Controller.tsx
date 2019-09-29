@@ -22,7 +22,15 @@ export default class extends Controller<typeof initialState, {}, typeof View> {
   }
 }
 
-function View({ state, ctrl }) {
+export interface State {
+  count: number
+}
+
+export interface Ctrl {
+  handleClick: Function
+}
+
+function View({ state, ctrl, actions }: { state: State, ctrl: Ctrl, actions: any }) {
 	return (
     <div id="outer_click">
       <div id="out">

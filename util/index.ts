@@ -122,3 +122,5 @@ const getValue: getValue = (ret, key) => ret[key]
 function getValueByPath(obj: ObjectOrArray, path: string | string[]): any {
   return getPath(path).reduce(getValue, obj)
 }
+
+export const getKeys = <T extends {}>(o: T) => Object.keys(o) as Array<keyof T>

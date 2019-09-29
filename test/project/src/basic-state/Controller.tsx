@@ -15,6 +15,6 @@ export default class extends Controller<{}, {}, typeof View> {
 }
 
 
-function View({ state }) {
-    return <pre id="basic_state">{JSON.stringify(state, null, 2)}</pre>
+function View({ state }: { state: object }) {
+    return <pre id="basic_state">{JSON.stringify(state, undefined, 2)}</pre>
 }
