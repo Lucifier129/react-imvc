@@ -189,7 +189,7 @@ export default function createPageRouter(options: Config) {
       if (controller.destroy) {
         controller.destroy()
       }
-
+      console.log(data)
       // 支持通过 res.locals.layoutView 动态确定 layoutView
       res.render(res.locals.layoutView || layoutView, data)
     } catch (error) {

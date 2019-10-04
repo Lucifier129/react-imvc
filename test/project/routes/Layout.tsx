@@ -4,6 +4,7 @@ import { RenderProps } from '../../../type'
 
 
 export default function Page(props: RenderProps) {
+	console.log(props)
 	return (
 		<html>
 			<head>

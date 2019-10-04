@@ -9,7 +9,7 @@ import start from "../start"
 jest.setTimeout(20000)
 
 process.env.NODE_ENV = "development"
-let PORT = 3333
+let PORT = 33330
 const ROOT = path.join(__dirname, "project")
 const config: Partial<Config> = {
   root: ROOT, // 项目根目录
@@ -49,27 +49,20 @@ describe("test", () => {
 
   it('OuterClickWrapper', async () => {
     let page = await browser.newPage()
-    let url = `http://localhost:${config.port}/outer_click`
-    await page.goto(url)
-    await page.waitFor('#outer_click')
-
-    let count = await page.$eval('#count', (e) => e.innerHTML)
-    expect(count).toBe('0')
-
-    await page.click('#inner')
-
-    count = await page.$eval('#count', (e) => e.innerHTML)
-    expect(count).toBe('0')
-
-    await page.click('#beside')
-
-    count = await page.$eval('#count', (e) => e.innerHTML)
-    expect(count).toBe('1')
-
-    await page.click('#out')
-
-    count = await page.$eval('#count', (e) => e.innerHTML)
-    expect(count).toBe('2')
+			let url = `http://localhost:${config.port}/static_view_csr`
+			await page.goto(url)
+			await page.waitFor('#static_view_csr')
+			let serverContent = await fetchContent(url)
+			let clientContent = await page.evaluate(
+				() => document.documentElement.outerHTML
+			)
+			expect(
+				serverContent.includes('static view content by client side rendering')
+			).toBe(false)
+			expect(
+				clientContent.includes('static view content by client side rendering')
+			).toBe(true)
+			await page.close()
   })
 })
 
