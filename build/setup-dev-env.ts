@@ -19,6 +19,7 @@ export interface SetupClient {
 
 export const setupClient: SetupClient = (config: Config) => {
 	let clientConfig = createWebpackConfig(config)
+	console.log(clientConfig)
 	let compiler = webpack(clientConfig)
 	let middleware = webpackDevMiddleware(compiler, {
 		publicPath: config.staticPath,
@@ -48,6 +49,7 @@ export type SetupServer = (config: Config, options: SetupServerOptions) => void
 
 export const setupServer: SetupServer = (config, options) => {
 	let serverConfig = createWebpackConfig(config, true)
+	console.log(serverConfig)
 	serverConfig.target = 'node'
 	serverConfig.entry = {
 		routes: path.join(config.root, config.src)

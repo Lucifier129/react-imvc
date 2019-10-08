@@ -60,7 +60,8 @@ const createConfig: CreateGulpTaskConfig = options => {
         `/!(node_modules|${
           /^[a-zA-Z]+$/.test(options.publish) ? options.publish + '|' : ''
         }buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
-        publish + '/*.@(js|ts|jsx|tsx)'
+        publish + '/*.@(js|ts|jsx|tsx)',
+        root + '/*.@(js|ts|jsx|tsx)'
       ],
       dest: publish
     }
@@ -168,7 +169,6 @@ const createGulpTask: CreateGulpTask = (options) => {
   }
 
   let publishBabel = () => {
-    console.log(config.publishBabel)
     if (!config.publishBabel) {
       return
     }
