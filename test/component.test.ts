@@ -121,7 +121,7 @@ describe('component test', () => {
       expect(content).toBe('test true false')
 
       await page.focus('#phone-input')
-      inputHandler && inputHandler.click({ clickCount: 3 })
+      inputHandler && await inputHandler.click({ clickCount: 3 })
       await page.keyboard.press('Space')
       await page.keyboard.press('Backspace')
       await page.keyboard.type('1312456456')

@@ -93,7 +93,7 @@ export default class ViewManager<S extends object, AS extends Actions<S & StateF
 				<View
 					key={`${meta.id}_${currentPath}`}
 					state={state}
-					handlers={handlers}
+					ctrl={controller}
 					actions={actions}
 				/>
 			</GlobalContext.Provider>

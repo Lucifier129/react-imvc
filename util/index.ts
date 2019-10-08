@@ -14,7 +14,7 @@ export default {
 
 
 type RouteList = Route[]
-type inputList = RouteList | RouteList[]
+type inputList = (Route | RouteList)[]
 
 function getFlatList(list: inputList): RouteList {
   let result: RouteList = []

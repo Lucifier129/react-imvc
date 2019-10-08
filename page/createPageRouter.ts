@@ -23,15 +23,10 @@ import {
 import Controller from '../controller'
 
 const { getFlatList } = util
-const getModule = (module: any) =>  {
-  console.log(module)
-  return module.default || module
-}
-const commonjsLoader: Loader = (loadModule, location, context) => {
-  console.log(loadModule)
-  return ((loadModule as LoadController)(location, context) as
+const getModule = (module: any) => module.default || module
+const commonjsLoader: Loader = (loadModule, location, context) =>
+  ((loadModule as LoadController)(location, context) as
     Promise<ControllerConstructor>).then(getModule)
-}
 
 /**
  * controller 里会劫持 React.createElement
@@ -189,7 +184,6 @@ export default function createPageRouter(options: Config) {
       if (controller.destroy) {
         controller.destroy()
       }
-      console.log(data)
       // 支持通过 res.locals.layoutView 动态确定 layoutView
       res.render(res.locals.layoutView || layoutView, data)
     } catch (error) {

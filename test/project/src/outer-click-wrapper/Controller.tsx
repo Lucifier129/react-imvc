@@ -16,6 +16,7 @@ export default class extends Controller<typeof initialState, {}, typeof View> {
   }
 
   handleClick = () => {
+    // @ts-ignore
     this.store.actions.UPDATE_INPUT_VALUE({
       count: this.store.getState().count + 1
     })
@@ -23,14 +24,14 @@ export default class extends Controller<typeof initialState, {}, typeof View> {
 }
 
 export interface State {
-  count: number
+  count?: number
 }
 
 export interface Ctrl {
   handleClick: Function
 }
 
-function View({ state, ctrl, actions }: { state: State, ctrl: Ctrl, actions: any }) {
+function View({ state, ctrl, actions }: React.PropsWithChildren<{ state: State, ctrl: Ctrl, actions: any }>) {
 	return (
     <div id="outer_click">
       <div id="out">

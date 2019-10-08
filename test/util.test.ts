@@ -1,12 +1,15 @@
 import fetchMock from 'fetch-mock'
 import fetch from 'node-fetch'
 import util from '../util'
+import { Route } from 'create-app/client'
 
 const defaultOption = {
   overwriteRoutes: true,
   fetch,
   fallbackToNetwork: true
 }
+
+const noop = () => {}
 
 describe('util test', () => {
   describe('toJSON', () => {
@@ -366,7 +369,16 @@ describe('util test', () => {
   
   describe('getFlatList', () => {
     it('test when we pass in double dimensional array', () => {
-      let list = [[{}, {}], [{}]]
+      let list: Route[][] = [[{
+        path: '',
+        controller: (noop as any)
+      }, {
+        path: '',
+        controller: (noop as any)
+      }], [{
+        path: '',
+        controller: (noop as any)
+      }]]
       let result = util.getFlatList(list)
 
       expect(result instanceof Array).toBeTruthy()
@@ -374,7 +386,13 @@ describe('util test', () => {
     })
 
     it('test when we pass in array', () => {
-      let list = [{}, {}]
+      let list: Route[] = [{
+        path: '',
+        controller: (noop as any)
+      }, {
+        path: '',
+        controller: (noop as any)
+      }]
       let result = util.getFlatList(list)
 
       expect(result instanceof Array).toBeTruthy()
@@ -385,7 +403,21 @@ describe('util test', () => {
     })
 
     it('test when we pass in array and double dimensional array', () => {
-      let list = [{}, {}, [{}, {}]]
+      type RouteList = Route[]
+      type inputList = (Route | RouteList)[]  
+      let list: inputList = [{
+        path: '',
+        controller: (noop as any)
+      }, {
+        path: '',
+        controller: (noop as any)
+      }, [{
+        path: '',
+        controller: (noop as any)
+      }, {
+        path: '',
+        controller: (noop as any)
+      }]]
       let result = util.getFlatList(list)
 
       expect(result instanceof Array).toBeTruthy()
