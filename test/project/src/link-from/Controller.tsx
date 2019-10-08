@@ -1,5 +1,5 @@
 import React from 'react'
-import { NativeLocation, Context } from '../../../../type'
+import { Location, Context } from '../../../../type'
 import Link from '../../../../component/Link'
 import NavLink from '../../../../component/NavLink'
 import Style from '../../../../component/Style'
@@ -11,7 +11,7 @@ export default class extends Controller<{}, {}, typeof View> {
   preload = {
     css: '/link-from/preload.css'
   }
-  constructor(location: NativeLocation, context: Context) {
+  constructor(location: Location, context: Context) {
     super(location, context)
   }
 }

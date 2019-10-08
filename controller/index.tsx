@@ -11,7 +11,7 @@ import {
 import {
   createHistory
 } from 'create-app/server'
-import { NativeHistoryWithBFOL, NLWithBQ, BLWithBQ } from 'create-history'
+import { HistoryWithBFOL, ILWithBQ, BLWithBQ } from 'create-history'
 import _ from '../util'
 import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
@@ -25,7 +25,7 @@ import {
   State,
   Handlers,
   Meta,
-  NativeLocation
+  Location
 } from '../type'
 
 const REDIRECT =
@@ -69,13 +69,13 @@ export default class Controller<
   Model?: { initialState: S } & AS
   initialState: S = {} as S
   actions: AS = {} as AS
-  SSR?: boolean | { (location: NativeLocation, context: Context): Promise<boolean> } | undefined
+  SSR?: boolean | { (location: Location, context: Context): Promise<boolean> } | undefined
   KeepAliveOnPush?: boolean | undefined
   store: Store<S & State & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions>
   context: Context
-  history: NativeHistoryWithBFOL<BLWithBQ, NLWithBQ>
+  history: HistoryWithBFOL<BLWithBQ, ILWithBQ>
   handlers: Handlers
-  location: NativeLocation
+  location: Location
   meta: Meta
   proxyHandler?: any
   resetScrollOnMount?: boolean
@@ -96,7 +96,7 @@ export default class Controller<
 
   [propName: string]: any
 
-  constructor(location: NativeLocation, context: Context) {
+  constructor(location: Location, context: Context) {
     this.meta = {
       id: uid++,
       isDestroyed: false,
@@ -118,7 +118,7 @@ export default class Controller<
     this.preload = {}
 
     this.store = createStore({} as (AS & typeof shareActions), {} as S & State)
-    this.history = createHistory() as NativeHistoryWithBFOL<BLWithBQ, NLWithBQ>
+    this.history = createHistory() as HistoryWithBFOL<BLWithBQ, ILWithBQ>
   }
   // 绑定 handler 的 this 值为 controller 实例
   combineHandlers(source: Controller<S, AS, View>) {
@@ -715,7 +715,7 @@ export default class Controller<
     }
   }
 
-  restore(location: NativeLocation, context?: Context): React.ReactElement {
+  restore(location: Location, context?: Context): React.ReactElement {
     let { meta, store } = this
     let { __PAGE_DID_BACK__ } = store.actions
 

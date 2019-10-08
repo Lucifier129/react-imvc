@@ -1,5 +1,5 @@
 import React from 'react'
-import { NativeLocation, Context } from '../../../../type'
+import { Location, Context } from '../../../../type'
 import Controller from '../../../../controller'
 
 const delay = (time: number) => new Promise(resolve => {
@@ -9,7 +9,7 @@ const delay = (time: number) => new Promise(resolve => {
 export default class extends Controller<{}, {}, typeof View> {
   SSR = false
   View = View
-  constructor(location: NativeLocation, context: Context) {
+  constructor(location: Location, context: Context) {
     super(location, context)
     if (context.isClient) {
       window.controller = this

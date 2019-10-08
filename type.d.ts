@@ -3,7 +3,7 @@ import yargs from "yargs"
 import createApp, {
   Settings,
   Context as BaseContext,
-  HistoryNativeLocation,
+  HistoryLocation,
   HistoryBaseLocation,
   ViewEngineRender,
   Controller as BaseController
@@ -53,14 +53,14 @@ declare global {
 }
 
 // Controller
-export type NativeLocation = HistoryNativeLocation
+export type Location = HistoryLocation
 
 export type BaseLocation = HistoryBaseLocation
 
 type ObjectAlias = object
 
 export interface State extends ObjectAlias {
-  location: NativeLocation
+  location: Location
   basename: string
   publicPath: string
   restapi: string
@@ -86,7 +86,7 @@ export interface Context extends BaseContext {
   env?: string
   preload?: Payload
   publicPath?: string
-  location?: HistoryNativeLocation
+  location?: HistoryLocation
   restapi?: string
   userInfo?: object
   [propName: string]: any
@@ -164,7 +164,7 @@ export interface RequestHandler {
   (req: Req, res: Res, next: express.NextFunction): any
 }
 
-export interface NativeModule extends NodeModule {
+export interface Module extends NodeModule {
   hot?: {
     accept: Function
   }

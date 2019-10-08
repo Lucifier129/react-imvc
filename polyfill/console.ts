@@ -2,11 +2,11 @@
  * 对console未定义及console方法未定义时，补充定义空对象、空函数，防止报错
  * 如IE 9在未开启过Dev Tools时，console对象将会是未定义
  */
-export interface NativeWindow {
+export interface Window {
   console?: any
 }
 
-type ConsolePolyfill = (window: NativeWindow) => void
+type ConsolePolyfill = (window: Window) => void
 
 const consolePolyfill: ConsolePolyfill = (window) => {
   // Avoid `console` errors in browsers that lack a console.

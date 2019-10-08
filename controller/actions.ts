@@ -2,7 +2,7 @@
  * 共享的 action 函数
  */
 import _ from '../util'
-import { NativeLocation } from '../type'
+import { Location } from '../type'
 
 const { setValueByPath } = _
 
@@ -15,7 +15,7 @@ export let UPDATE_STATE = (state: { }, newState: { }) => {
   }
 }
 
-export let __PAGE_DID_BACK__ = (state: { }, location: NativeLocation) => {
+export let __PAGE_DID_BACK__ = (state: { }, location: Location) => {
   return {
     ...state,
     location

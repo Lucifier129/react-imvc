@@ -7,7 +7,7 @@ import createApp, { Loader, LoadController, ControllerConstructor, ViewEngineRen
 import util from "../util"
 // @ts-ignore
 import $routes from "@routes"
-import { AppSettings, Preload, NativeModule } from "../type"
+import { AppSettings, Preload, Module } from "../type"
 import Controller from '../controller'
 
 __webpack_public_path__ = window.__PUBLIC_PATH__ + "/"
@@ -92,9 +92,9 @@ const app = createApp(appSettings)
 app.start()
 
 // 热更新
-if (typeof module !== "undefined" && (module as NativeModule).hot) {
-  if ((module as NativeModule).hot) {
-    let hot = (module as NativeModule).hot
+if (typeof module !== "undefined" && (module as Module).hot) {
+  if ((module as Module).hot) {
+    let hot = (module as Module).hot
     if (hot && hot.accept) {
       hot.accept()
     }

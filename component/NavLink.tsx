@@ -2,7 +2,7 @@ import React from 'react'
 import classnames from 'classnames'
 import connect from '../hoc/connect'
 import Link from './Link'
-import { NativeLocation } from '../type'
+import { Location } from '../type'
 
 const withLocation = connect(({ state }) => {
   return {
@@ -14,7 +14,7 @@ export default withLocation(NavLink)
 
 export interface Props {
   isActive?: { (...args: any[]): boolean }
-  location: NativeLocation
+  location: Location
   className?: string
   activeClassName?: string
 	children?: React.ReactChild
@@ -42,7 +42,7 @@ function NavLink(props: Props) {
   return <Link to={to} className={finalClassName} style={finalStyle} {...rest}>{children}</Link>
 }
 
-function checkActive(path: string, location: NativeLocation, getIsActive?: { (...args: any[]): boolean }) {
+function checkActive(path: string, location: Location, getIsActive?: { (...args: any[]): boolean }) {
   return getIsActive
     ? !!getIsActive(path, location)
     : path === location.raw

@@ -1,5 +1,5 @@
 import React from 'react'
-import { NativeLocation, Context } from '../../../../type'
+import { Location, Context } from '../../../../type'
 import Controller from '../../../../controller'
 import { Input } from '../../../../component'
 
@@ -32,7 +32,7 @@ export default class extends Controller<typeof initialState, {}, typeof View> {
   SSR = true // enable server side rendering
   View = View
   initialState = initialState
-  constructor(location: NativeLocation, context: Context) {
+  constructor(location: Location, context: Context) {
     super(location, context)
   }
 }

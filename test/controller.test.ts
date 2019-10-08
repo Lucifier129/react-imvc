@@ -2,7 +2,7 @@ import Controller from '../controller'
 import * as Actions from '../controller/actions'
 import attachDevToolsIfPossible from '../controller/attachDevToolsIfPossible'
 import { createStore } from 'relite'
-import { NativeLocation } from '../type'
+import { Location } from '../type'
 
 describe('controller test', () => {
   // describe('Actions', () => {
@@ -84,7 +84,7 @@ describe('controller test', () => {
   //         e: true
   //       }
   //       let location = {}
-  //       let result = Actions.__PAGE_DID_BACK__(oldState, location as NativeLocation)
+  //       let result = Actions.__PAGE_DID_BACK__(oldState, location as Location)
     
   //       expect(typeof result).toBe('object')
   //       expect(result.a).toBe(1)
@@ -104,7 +104,7 @@ describe('controller test', () => {
   //       let location = {
   //         basename: 'test2'
   //       }
-  //       let state = Actions.__PAGE_DID_BACK__(oldState, location as NativeLocation)
+  //       let state = Actions.__PAGE_DID_BACK__(oldState, location as Location)
 
   //       expect(state).not.toBeUndefined()
   //       expect(state.location).not.toBeUndefined()

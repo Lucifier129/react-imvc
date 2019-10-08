@@ -1,7 +1,7 @@
 import ErrorBoundary from '../../../../component/ErrorBoundary'
 import Controller from '../../../../controller'
 import React, { useState } from 'react'
-import { NativeLocation, Context } from '../../../../type'
+import { Location, Context } from '../../../../type'
 
 const actions = {
   TEST: () => {
@@ -10,7 +10,7 @@ const actions = {
 }
 
 export default class extends Controller<{}, typeof actions, typeof View> {
-  constructor(location: NativeLocation, context: Context) {
+  constructor(location: Location, context: Context) {
     super(location, context)
   }
   SSR = true // enable server side rendering
