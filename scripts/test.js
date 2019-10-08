@@ -39,7 +39,7 @@ const travelDirectoryToAddTestFiles = (dir) => {
 		if (fs.statSync(filename).isDirectory()) {
 			return travelDirectoryToAddTestFiles(filename)
 		}
-		// add *test.js file to the mocha instance
+		// add *test.js file to the jest instance
 		if (filename.substr(-8) === '.test.js' || filename.substr(-8) === '.test.ts') {
 			return files.push(filename)
 		}
