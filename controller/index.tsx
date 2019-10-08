@@ -3,10 +3,11 @@ import 'whatwg-fetch'
 import React from 'react'
 import Cookie from 'js-cookie'
 import querystringify from 'querystringify'
-import { createStore, Actions, StateFromAS, Store } from 'relite'
+import { createStore, Actions, StateFromAS, Store, Data } from 'relite'
 import {
   Controller as BaseController,
-  Actions as HistoryActions
+  Actions as HistoryActions,
+  HistoryLocation
 } from 'create-app/client'
 import {
   createHistory
@@ -83,16 +84,16 @@ export default class Controller<
 
   errorDidCatch?(error: Error, str: string): void
   getComponentFallback?(displayName: string, InputComponent: React.ComponentType): void
-  getViewFallback?(...args: any[]): any
-  getInitialState?(...args: any[]): any
-  stateDidReuse?(...args: any[]): any
-  getFinalActions?(...args: any[]): any
-  shouldComponentCreate?(...args: any[]): any
-  componentWillCreate?(...args: any[]): any
-  stateDidChange?(...args: any[]): any
-  pageWillLeave?(...args: any[]): any
-  windowWillUnload?(...args: any[]): any
-  pageDidBack?(...args: any[]): any
+  getViewFallback?(): React.ReactElement
+  getInitialState?(state: S & State): S & State
+  stateDidReuse?(state: S & State): void
+  getFinalActions?(actions: AS): any
+  shouldComponentCreate?(): void | boolean
+  componentWillCreate?(): Promise<void>
+  stateDidChange?(data?: Data<S & State & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions>): void
+  pageWillLeave?(location: ILWithBQ): any
+  windowWillUnload?(location: ILWithBQ): any
+  pageDidBack?(locaiton: HistoryLocation, context?: Context): void
 
   [propName: string]: any
 
@@ -676,7 +677,7 @@ export default class Controller<
     }
 
     if (store) {
-      let unsubscribe = store.subscribe((data: any) => {
+      let unsubscribe = store.subscribe((data) => {
         this.refreshView()
         if (this.stateDidChange) {
           this.stateDidChange(data)
