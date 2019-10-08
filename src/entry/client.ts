@@ -1,6 +1,6 @@
 import "core-js/stable"
 import "regenerator-runtime/runtime"
-import "../polyfill"
+import "../src/polyfill"
 import "whatwg-fetch"
 import ReactDOM from "react-dom"
 import createApp, { Loader, LoadController, ControllerConstructor, ViewEngineRender, ViewEngine, Controller as BaseController } from "create-app/client"

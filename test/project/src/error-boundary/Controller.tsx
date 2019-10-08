@@ -1,7 +1,7 @@
-import ErrorBoundary from '../../../../component/ErrorBoundary'
-import Controller from '../../../../controller'
+import ErrorBoundary from '../../../../src/component/ErrorBoundary'
+import Controller from '../../../../src/controller'
 import React, { useState } from 'react'
-import { Location, Context } from '../../../../type'
+import { Location, Context } from '../../../../src/type'
 
 const actions = {
   TEST: () => {
@@ -23,7 +23,7 @@ export default class extends Controller<{}, typeof actions, typeof View> {
     return `component-fallback: ${displayName}`
   }
   getViewFallback() {
-    return 'view-fallback'
+    return <p>view-fallback</p>
   }
   errorDidCatch(error: Error, type: string) {
     console.log('error-did-catch', type, error)

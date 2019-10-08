@@ -1,7 +1,7 @@
 import React from 'react'
-import { Location, Context } from '../../../../type'
-import Controller from '../../../../controller'
-import { Input } from '../../../../component'
+import { Location, Context } from '../../../../src/type'
+import Controller from '../../../../src/controller'
+import { Input } from '../../../../src/component'
 
 const initialState = {
   // 多层次对象

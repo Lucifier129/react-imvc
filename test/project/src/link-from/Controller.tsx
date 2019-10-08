@@ -1,9 +1,9 @@
 import React from 'react'
-import { Location, Context } from '../../../../type'
-import Link from '../../../../component/Link'
-import NavLink from '../../../../component/NavLink'
-import Style from '../../../../component/Style'
-import Controller from '../../../../controller'
+import { Location, Context } from '../../../../src/type'
+import Link from '../../../../src/component/Link'
+import NavLink from '../../../../src/component/NavLink'
+import Style from '../../../../src/component/Style'
+import Controller from '../../../../src/controller'
 
 export default class extends Controller<{}, {}, typeof View> {
   SSR = true // enable server side rendering

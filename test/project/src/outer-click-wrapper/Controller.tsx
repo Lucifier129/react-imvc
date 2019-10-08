@@ -1,7 +1,7 @@
 import React from 'react'
-import { Location, Context } from '../../../../type'
-import Controller from '../../../../controller'
-import { OuterClickWrapper } from '../../../../component'
+import { Location, Context } from '../../../../src/type'
+import Controller from '../../../../src/controller'
+import { OuterClickWrapper } from '../../../../src/component'
 
 const initialState = {
   count: 0

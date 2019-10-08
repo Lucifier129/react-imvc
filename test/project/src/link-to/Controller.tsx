@@ -1,6 +1,6 @@
 import React from 'react'
-import { Location, Context } from '../../../../type'
-import Controller from '../../../../controller'
+import { Location, Context } from '../../../../src/type'
+import Controller from '../../../../src/controller'
 
 export default class extends Controller<{}, {}, typeof View> {
 	SSR = true // enable server side rendering

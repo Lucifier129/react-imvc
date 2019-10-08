@@ -84,7 +84,7 @@ export default class Controller<
 
   errorDidCatch?(error: Error, str: string): void
   getComponentFallback?(displayName: string, InputComponent: React.ComponentType): void
-  getViewFallback?(): React.ReactElement
+  getViewFallback?(view?: string): React.ReactElement
   getInitialState?(state: S & State): S & State
   stateDidReuse?(state: S & State): void
   getFinalActions?(actions: AS): any

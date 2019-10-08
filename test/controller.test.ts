@@ -1,8 +1,8 @@
-import Controller from '../controller'
+import Controller from '../src/controller'
 import * as Actions from '../controller/actions'
-import attachDevToolsIfPossible from '../controller/attachDevToolsIfPossible'
+import attachDevToolsIfPossible from '../src/controller/attachDevToolsIfPossible'
 import { createStore } from 'relite'
-import { Location } from '../type'
+import { Location } from '../src/type'
 
 describe('controller test', () => {
   // describe('Actions', () => {

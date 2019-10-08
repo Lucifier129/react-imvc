@@ -23,23 +23,23 @@
     ]
   },
   "include": [
-    "./bin",
+    "src/bin",
     "./build",
-    "./component",
+    "src/component",
     "./config",
-    "./context",
+    "src/context",
     "./controller",
     "./entry",
-    "./hoc",
-    "./hook",
+    "src/hoc",
+    "src/hook",
     "./middleware",
-    "./page",
-    "./polyfill",
-    "./scripts",
+    "src/page",
+    "src/polyfill",
+    "src/scripts",
     "./start",
     "./util",
   ],
   "files": [
-    "type.d.ts"
+    "src/type.d.ts"
   ]
 }

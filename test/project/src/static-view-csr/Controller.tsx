@@ -1,6 +1,6 @@
-import Controller from '../../../../controller'
+import Controller from '../../../../src/controller'
 import React from 'react'
-import { Location, Context } from '../../../../type'
+import { Location, Context } from '../../../../src/type'
 export default class extends Controller<{}, {}, typeof View> {
     SSR = false // disable server side rendering
     View = View
