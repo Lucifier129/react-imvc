@@ -56,12 +56,11 @@ let createElement = React.originalCreateElement || React.createElement
  */
 export default class Controller<
   S extends object,
-  AS extends Actions<S & StateFromAS<AS>>,
+  AS extends Actions<S & State & StateFromAS<AS>>,
   View extends React.ComponentType<{
-    state?: Partial<S>
-    actions?: Partial<AS>
-    ctrl?: any,
-    [x: string]: any
+    state?: Partial<S & State>
+    actions?: Partial<AS & typeof shareActions>
+    ctrl?: any
   }>
 > implements BaseController {
   View: View = EmptyView as View

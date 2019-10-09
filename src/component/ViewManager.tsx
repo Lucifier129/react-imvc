@@ -3,12 +3,13 @@ import { Actions, StateFromAS } from 'relite'
 import GlobalContext from '../context'
 import ControllerProxy from './ControllerProxy'
 import Controller from '../controller'
+import { State } from '../type'
 
-interface Props<S extends object, AS extends Actions<S & StateFromAS<AS>>> {
+interface Props<S extends object, AS extends Actions<S & State & StateFromAS<AS>>> {
 	controller: Controller<S, AS, any>
 }
 
-export default class ViewManager<S extends object, AS extends Actions<S & StateFromAS<AS>>> extends React.Component<Props<S, AS>> {
+export default class ViewManager<S extends object, AS extends Actions<S & State & StateFromAS<AS>>> extends React.Component<Props<S, AS>> {
 	static ignoreErrors = true
 	views: Record<string, any> = {}
 	scrollMap: Record<string, any> = {}

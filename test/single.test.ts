@@ -47,15 +47,63 @@ describe("test", () => {
     return browser.close()
   })
 
-  it('connect', async () => {
-    let page = await browser.newPage()
-    let url = `http://localhost:${config.port}/hook`
-    await page.goto(url)
-    await page.waitFor('#hook')
+  it('single', async () => {
+    let url = `http://localhost:${config.port}/basic_state?a=1&b=2`
+			let page: any
+			let clientController: any
+			try {
+				page = await browser.newPage()
 
-    let content = await page.$eval('#hook', (e) => e.innerHTML)
+				await page.goto(url)
+				await page.waitFor('#basic_state')
+	
+				clientController = await page.evaluate(() => window.controller)
+			} catch (e) {
+				throw e
+			}
+			
 
-    expect(content).toBe('Hello World')
+      let serverController = global.controller
+
+      let locationKeys = [
+        'params',
+        'query',
+        'pathname',
+        'pattern',
+        'search',
+        'raw'
+      ]
+      locationKeys.forEach(key => {
+        expect(JSON.stringify(serverController.location[key])).toEqual(
+          JSON.stringify(clientController.location[key])
+        )
+      })
+
+      let contextKeys = ['basename', 'publicPath', 'restapi']
+      contextKeys.forEach(key => {
+        expect(JSON.stringify(serverController.context[key])).toEqual(
+          JSON.stringify(clientController.context[key])
+        )
+      })
+
+      expect(typeof serverController.context.req).toBe('object')
+      expect(typeof serverController.context.res).toBe('object')
+      expect(serverController.context.isClient).toBe(false)
+      expect(serverController.context.isServer).toBe(true)
+
+      expect(clientController.context.isClient).toBe(true)
+      expect(clientController.context.isServer).toBe(false)
+
+			let { location, context } = clientController
+
+			expect(location.pattern).toEqual('/basic_state')
+			expect(location.pathname).toEqual('/basic_state')
+			expect(location.raw).toEqual('/basic_state?a=1&b=2')
+			expect(location.search).toEqual('?a=1&b=2')
+			expect(location.query).toEqual({ a: '1', b: '2' })
+			expect(location.params).toEqual({})
+
+			await page.close()
   })
 })
 

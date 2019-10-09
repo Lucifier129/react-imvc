@@ -1,8 +1,9 @@
 import React from 'react'
 import Controller from '../controller'
 import { Actions, StateFromAS } from 'relite'
+import { State } from '../type'
 
-export interface Props<S extends object, AS extends Actions<S & StateFromAS<AS>>> {
+export interface Props<S extends object, AS extends Actions<S & State & StateFromAS<AS>>> {
   controller: Controller<S, AS, any>
 }
 
@@ -10,7 +11,7 @@ export interface Props<S extends object, AS extends Actions<S & StateFromAS<AS>>
  * ViewProxy 把 react 组件生命周期同步到 controller 里
  * 根据 state 更新 document.title
  */
-export default class ControllerProxy<S extends object, AS extends Actions<S & StateFromAS<AS>>> extends React.Component<Props<S, AS>> {
+export default class ControllerProxy<S extends object, AS extends Actions<S & State & StateFromAS<AS>>> extends React.Component<Props<S, AS>> {
   static ignoreErrors: boolean = true
 
   updateDocumentTitle() {
