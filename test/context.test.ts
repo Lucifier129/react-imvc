@@ -1,4 +1,4 @@
-import GlobalContext from '../context'
+import GlobalContext from '../src/context'
 
 describe('context test', () => {
   it('context complete', () => {

@@ -1,6 +1,6 @@
 import fetchMock from 'fetch-mock'
 import fetch from 'node-fetch'
-import util from '../util'
+import util from '../src/util'
 import { Route } from 'create-app/client'
 
 const defaultOption = {

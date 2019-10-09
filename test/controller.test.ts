@@ -1,5 +1,5 @@
 import Controller from '../src/controller'
-import * as Actions from '../controller/actions'
+import * as Actions from '../src/controller/actions'
 import attachDevToolsIfPossible from '../src/controller/attachDevToolsIfPossible'
 import { createStore } from 'relite'
 import { Location } from '../src/type'

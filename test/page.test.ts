@@ -1,11 +1,11 @@
 import path from 'path'
-import createPageRouter from '../page/createPageRouter'
-import View from '../page/view'
+import createPageRouter from '../src/page/createPageRouter'
+import View from '../src/page/view'
 import http from 'http'
 import express from 'express'
 import puppeteer from 'puppeteer'
-import { Options } from '../type'
-import getConfig from '../config'
+import { Options } from '../src/type'
+import getConfig from '../src/config'
 
 jest.setTimeout(20000)
 

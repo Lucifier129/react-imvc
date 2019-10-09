@@ -1,6 +1,6 @@
 process.env.NODE_ENV = 'development'
-import start from '../../start/babel'
-import { Config } from '../../type'
+import start from '../../src/start/babel'
+import { Config } from '../../src/type'
 const PORT: number = 3333
 const ROOT = __dirname
 const config: Partial<Config> = {

@@ -1,5 +1,5 @@
 import React from 'react'
-import connect from '../hoc/connect'
+import connect from '../src/connect'
 
 describe('hoc test', () => {
   describe('connect', () => {

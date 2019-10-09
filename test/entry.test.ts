@@ -1,5 +1,5 @@
-import * as client from '../entry/client'
-import server from '../entry/server'
+import * as client from '../src/entry/client'
+import server from '../src/entry/server'
 
 describe('entry test', () => {
   // describe('client', () => {

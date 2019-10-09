@@ -1,4 +1,4 @@
-import getConfig, * as Config from '../config'
+import getConfig, * as Config from '../src/config'
 import * as _ from 'lodash'
 
 describe('config test', () => {

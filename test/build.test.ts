@@ -1,10 +1,10 @@
 import path from 'path'
-import * as util from '../build/util'
+import * as util from '../src/build/util'
 import build from '../build'
-import { Config } from '../type'
-import * as setupDevEnv from '../build/setup-dev-env'
+import { Config } from '../src/type'
+import * as setupDevEnv from '../src/build/setup-dev-env'
 import puppeteer from 'puppeteer'
-import defaultConfig from '../config/config.defaults'
+import defaultConfig from '../src/config/config.defaults'
 const pkg = require('../package.json')
 
 process.env.NODE_ENV = "production"

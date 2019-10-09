@@ -1,15 +1,15 @@
 import React from 'react'
-import IMVC from '../../../../index'
-import Controller from '../../../../controller'
-import { Style } from '../../../../component'
+import { Location, Context } from '../../../../src/type'
+import Controller from '../../../../src/controller'
+import { Style } from '../../../../src/component'
 
-export default class extends Controller<{}, {}> {
+export default class extends Controller<{}, {}, typeof View> {
 	SSR = true // enable server side rendering
   View = View
   preload = {
     css: '/style/preload.css'
   }
-  constructor(location: IMVC.Location, context: IMVC.Context) {
+  constructor(location: Location, context: Context) {
     super(location, context)
   }
 
@@ -20,7 +20,7 @@ export default class extends Controller<{}, {}> {
   }
 }
 
-function View({ state, handlers }) {
+function View() {
 	return (
     <div id="style">
       <Style name="css" />
