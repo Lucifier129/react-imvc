@@ -11,6 +11,7 @@
   "scripts": {
     "build": "tsc",
     "prebuild": "rimraf ./dist",
+    "postbuild": "ts-node cp.ts",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
     "test:single": "jest",
@@ -142,6 +143,7 @@
     "@types/lodash": "^4.14.137",
     "@types/puppeteer": "^1.19.1",
     "fetch-mock": "^7.3.9",
+    "fs-extra": "^8.1.0",
     "lodash": "^4.17.15",
     "puppeteer": "^1.19.0",
     "react": "^16.8.0",

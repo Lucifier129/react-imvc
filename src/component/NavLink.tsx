@@ -1,6 +1,6 @@
 import React from 'react'
 import classnames from 'classnames'
-import connect from '../hoc/connect'
+import connect from '../connect/connect'
 import Link from './Link'
 import { Location } from '../type'
 

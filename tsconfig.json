@@ -16,28 +16,13 @@
     "resolveJsonModule": true,
     "jsx": "react",
     "declaration": true,
-    "declarationDir": "./dist/types",
-    "outDir": "./dist/lib",
+    "outDir": "./dist",
     "typeRoots": [
       "node_modules/@types"
     ]
   },
   "include": [
-    "src/bin",
-    "./build",
-    "src/component",
-    "./config",
-    "src/context",
-    "./controller",
-    "./entry",
-    "src/hoc",
-    "src/hook",
-    "./middleware",
-    "src/page",
-    "src/polyfill",
-    "src/scripts",
-    "./start",
-    "./util",
+    "src"
   ],
   "files": [
     "src/type.d.ts"

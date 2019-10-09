@@ -1,5 +1,4 @@
 import React from "react"
-import { Actions } from 'relite'
 import GlobalContext from "../context"
 import { State, Handlers } from "../type"
 

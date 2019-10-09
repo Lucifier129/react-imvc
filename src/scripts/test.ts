@@ -26,9 +26,9 @@ require('@babel/register')({
 	extensions: ['.es6', '.es', '.jsx', '.js', '.mjs', '.ts', '.tsx']
 })
 
-let files = []
+let files: string[] = []
 
-const travelDirectoryToAddTestFiles = (dir) => {
+const travelDirectoryToAddTestFiles = (dir: string) => {
 	fs.readdirSync(dir).forEach(file => {
 		let filename = path.join(dir, file)
 		// ignore node_modules
