@@ -42,5 +42,13 @@ export default [
 	{
 		path: '/style',
 		controller: () => import('./style/Controller')
+	},
+	{
+		path: '/connect',
+		controller: () => import('./connect/Controller')
+	},
+	{
+		path: '/hook',
+		controller: () => import('./hook/Controller')
 	}
 ]

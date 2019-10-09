@@ -9,14 +9,7 @@ import {
 describe('hook', () => {
   describe('useCtrl', () => {
     it('it work well', () => {
-      const Test = () => {
-        let context = React.createContext({
-          a: test
-        })
-        let ctrl = useCtrl()
-
-        return <div>test</div>
-      }
+      
 
     })
   })

@@ -2,7 +2,7 @@ import { Store, Data, Actions, StateFromAS } from "relite"
 
 interface AttachDevToolsIfPossible {
   <S extends object, AS extends Actions<Partial<S & StateFromAS<AS>>>>(
-    store: Store<S & StateFromAS<AS>, AS>
+    store: Store<Partial<S & StateFromAS<AS>>, AS>
   ): void
 }
 
@@ -10,7 +10,7 @@ const attachDevToolsIfPossible: AttachDevToolsIfPossible = <
   S extends object,
   AS extends Actions<Partial<S & StateFromAS<AS>>>
 >(
-  store: Store<S & StateFromAS<AS>, AS>
+  store: Store<Partial<S & StateFromAS<AS>>, AS>
 ) => {
   if (process.env.NODE_ENV === "production") {
     return
@@ -31,7 +31,7 @@ const attachDevToolsIfPossible: AttachDevToolsIfPossible = <
     options
   )
   let isSync = false
-  store.subscribe((data?: Data<S & StateFromAS<AS>, AS>) => {
+  store.subscribe((data?: Data<Partial<S & StateFromAS<AS>>, AS>) => {
     if (!data || data.actionType === __FROM_REDUX_DEVTOOLS_EXTENSION__) {
       return
     }

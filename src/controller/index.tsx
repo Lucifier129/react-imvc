@@ -58,9 +58,10 @@ export default class Controller<
   S extends object,
   AS extends Actions<S & StateFromAS<AS>>,
   View extends React.ComponentType<{
-    state: Partial<S>
-    actions: Partial<AS>
-    ctrl: any
+    state?: Partial<S>
+    actions?: Partial<AS>
+    ctrl?: any,
+    [x: string]: any
   }>
 > implements BaseController {
   View: View = EmptyView as View
@@ -72,7 +73,7 @@ export default class Controller<
   actions: AS = {} as AS
   SSR?: boolean | { (location: Location, context: Context): Promise<boolean> } | undefined
   KeepAliveOnPush?: boolean | undefined
-  store: Store<S & State & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions>
+  store: Store<Partial<S & State & StateFromAS<AS & typeof shareActions>>, AS & typeof shareActions>
   context: Context
   history: HistoryWithBFOL<BLWithBQ, ILWithBQ>
   handlers: Handlers

@@ -6,7 +6,7 @@ import puppeteer from 'puppeteer'
 import { Config } from "../src/type"
 import start from "../src/start"
 
-jest.setTimeout(20000)
+jest.setTimeout(30000)
 
 process.env.NODE_ENV = "development"
 let PORT = 3333
@@ -20,6 +20,7 @@ const config: Partial<Config> = {
     beautify: false, // 不美化
     transformViews: false // 已有转换，无须再做
   },
+  renderMode: 'renderToString',
   routes: "routes", // 服务端路由目录
   layout: "Layout", // 自定义 Layoutclear
   webpackLogger: false, // 关闭 webpack logger
@@ -32,7 +33,7 @@ describe("test", () => {
   let browser: puppeteer.Browser
 
   beforeAll(() => {
-    jest.resetModules();
+    // jest.resetModules();
     return start({ config }).then((result) => {
       app = result.app
       server = result.server
@@ -47,11 +48,12 @@ describe("test", () => {
     return browser.close()
   })
 
-  it('OuterClickWrapper', async () => {
+  it('connect', async () => {
     let page = await browser.newPage()
-    let url = `http://localhost:${config.port}/outer_click`
+    let url = `http://localhost:${config.port}/hook`
     await page.goto(url)
-    await page.waitFor('#outer_click')
+    await page.waitFor('#hook')
+
   })
 })
 
