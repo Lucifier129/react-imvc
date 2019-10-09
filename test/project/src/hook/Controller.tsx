@@ -26,5 +26,5 @@ class RootView extends React.Component {
 function View() {
   let ctrl = useCtrl()
   
-	return <div id="hook">hook {ctrl.initialState.foo}</div>
+	return <div id="hook">{ctrl.initialState.foo}</div>
 }

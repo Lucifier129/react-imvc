@@ -33,7 +33,6 @@ describe("test", () => {
   let browser: puppeteer.Browser
 
   beforeAll(() => {
-    // jest.resetModules();
     return start({ config }).then((result) => {
       app = result.app
       server = result.server
@@ -54,6 +53,9 @@ describe("test", () => {
     await page.goto(url)
     await page.waitFor('#hook')
 
+    let content = await page.$eval('#hook', (e) => e.innerHTML)
+
+    expect(content).toBe('Hello World')
   })
 })
 
