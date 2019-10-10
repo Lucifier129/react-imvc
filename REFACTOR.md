@@ -87,13 +87,17 @@ yarn add react-imvc
 npm
 
 ```console
-npm install --save-dev typescript ts-node @types/node
+npm install --save-dev typescript
 ```
 
 or yarn
 
 ```console
-
+yarn add -D typescript
 ```
+
+3. add tsconfig.json
+
+template: [tsconfig.json](https://github.com/Lucifier129/react-imvc/blob/master/tsconfig.json)
 
 ### What' new
