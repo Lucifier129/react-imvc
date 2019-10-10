@@ -1,3 +1,3 @@
 export { default as start } from './start'
 export { default as build } from './build'
-export * from './dist/index.d.ts'
+export * from './dist/index'

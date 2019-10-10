@@ -68,4 +68,32 @@
 
 ### How to upgrade
 
+1. update react-imvc to 3.x
+
+npm
+
+```console
+npm install --save react-imvc
+```
+
+or yarn
+
+```console
+yarn add react-imvc
+```
+
+2. add typescript support
+
+npm
+
+```console
+npm install --save-dev typescript ts-node @types/node
+```
+
+or yarn
+
+```console
+
+```
+
 ### What' new

@@ -15,6 +15,7 @@ import helmet from "helmet"
 import compression from "compression"
 import { Action } from "relite"
 import babelCore from "babel-core"
+import 'global'
 
 import {
   useCtrl as _useCtrl,
@@ -24,10 +25,18 @@ import {
 } from "./hook"
 
 // global
+
 declare global {
+  declare var __INITIAL_STATE__ : State
+  declare var __webpack_public_path__: string
+  declare var __REDUX_DEVTOOLS_EXTENSION__: any
+  declare var __PUBLIC_PATH__: string
+  declare var __APP_SETTINGS__: AppSettings
+  declare var controller: BaseController<any, any, any>
+
   namespace NodeJS {
     interface Global {
-      __INITIAL_STATE__?: IMVC.State
+      __INITIAL_STATE__?: State
       __webpack_public_path__?: string
       fetch?: Function
       [x: string]: any
@@ -35,21 +44,16 @@ declare global {
   }
 
   interface Window {
-    __INITIAL_STATE__?: IMVC.State
     __REDUX_DEVTOOLS_EXTENSION__?: any
     __PUBLIC_PATH__?: string
-    __APP_SETTINGS__?: IMVC.AppSettings
+    __APP_SETTINGS__?: AppSettings
     [x: string]: any
   }
 
-  var __INITIAL_STATE__: IMVC.State | undefined
   interface Document {
     attachEvent: typeof document.addEventListener
     detachEvent: typeof document.removeEventListener
   }
-  var __REDUX_DEVTOOLS_EXTENSION__: any
-  var controller: _Controller
-  var __webpack_public_path__: any
 }
 
 // Controller

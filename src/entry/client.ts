@@ -11,7 +11,7 @@ import { AppSettings, Preload, Module } from ".."
 import Controller from '../controller'
 
 __webpack_public_path__ = window.__PUBLIC_PATH__ + "/"
-const __APP_SETTINGS__: AppSettings = window.__APP_SETTINGS__ || {}
+const __APP_SETTINGS__: AppSettings = window.__APP_SETTINGS__
 
 const getModule = (module: any) => module.default || module
 const webpackLoader: Loader = (loadModule, location, context) => {
