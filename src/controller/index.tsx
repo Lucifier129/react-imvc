@@ -90,7 +90,7 @@ export default class Controller<
   getFinalActions?(actions: AS): any
   shouldComponentCreate?(): void | boolean
   componentWillCreate?(): Promise<void>
-  stateDidChange?(data?: Data<S & State & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions>): void
+  stateDidChange?(data?: Data<Partial<S & State & StateFromAS<AS & typeof shareActions>>, AS & typeof shareActions>): void
   pageWillLeave?(location: ILWithBQ): any
   windowWillUnload?(location: ILWithBQ): any
   pageDidBack?(locaiton: HistoryLocation, context?: Context): void

@@ -16,7 +16,7 @@ interface App extends express.Express {
 }
 
 process.env.NODE_ENV = 'development'
-let PORT = 3333
+let PORT = 33333
 const ROOT = path.join(__dirname, 'project')
 const config: Partial<Config> = {
 	root: ROOT, // 项目根目录
