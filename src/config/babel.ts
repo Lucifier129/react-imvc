@@ -1,4 +1,4 @@
-import IMVC from '../type'
+import IMVC from '..'
 
 export interface GetBabelFunc {
   (isServer: boolean): IMVC.BabelConfig

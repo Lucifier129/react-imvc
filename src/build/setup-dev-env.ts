@@ -8,7 +8,7 @@ import notifier from 'node-notifier'
 
 import createWebpackConfig from './createWebpackConfig'
 import { getExternals, matchExternals } from './util'
-import { Config } from '../type'
+import { Config } from '..'
 
 export interface SetupClient {
 	(config: Config): {

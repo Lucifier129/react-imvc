@@ -3,7 +3,7 @@
  */
 import path from 'path'
 import defaultConfig from './config.defaults'
-import { Options, Config } from '../type'
+import { Options, Config } from '..'
 
 interface GetConfig {
 	(options?: Options): Config

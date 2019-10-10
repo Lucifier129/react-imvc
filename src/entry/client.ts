@@ -7,7 +7,7 @@ import createApp, { Loader, LoadController, ControllerConstructor, ViewEngineRen
 import util from "../util"
 // @ts-ignore
 import $routes from "@routes"
-import { AppSettings, Preload, Module } from "../type"
+import { AppSettings, Preload, Module } from ".."
 import Controller from '../controller'
 
 __webpack_public_path__ = window.__PUBLIC_PATH__ + "/"

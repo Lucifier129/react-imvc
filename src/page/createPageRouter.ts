@@ -19,7 +19,7 @@ import {
   State,
   RenderToNodeStream,
   RenderToString
-} from '../type'
+} from '..'
 import Controller from '../controller'
 
 const { getFlatList } = util

@@ -1,7 +1,7 @@
 import React from 'react'
 import Controller from '../controller'
 import { Actions, StateFromAS } from 'relite'
-import { State } from '../type'
+import { State } from '..'
 
 export interface Props<S extends object, AS extends Actions<S & State & StateFromAS<AS>>> {
   controller: Controller<S, AS, any>

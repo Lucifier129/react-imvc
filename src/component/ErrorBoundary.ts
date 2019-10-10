@@ -1,6 +1,6 @@
 import React from 'react'
 import GlobalContext from '../context'
-import { State } from '../type'
+import { State } from '..'
 
 // fixed: webpack rebuild lost original React.createElement
 // @ts-ignore

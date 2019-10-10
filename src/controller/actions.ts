@@ -2,7 +2,7 @@
  * 共享的 action 函数
  */
 import _ from '../util'
-import { Location } from '../type'
+import { Location } from '..'
 
 const { setValueByPath } = _
 

@@ -2,7 +2,7 @@ import React from 'react'
 import classnames from 'classnames'
 import connect from '../hoc/connect'
 import Link from './Link'
-import { Location } from '../type'
+import { Location } from '..'
 
 const withLocation = connect(({ state }) => {
   return {

@@ -1,6 +1,6 @@
 import React from "react"
 import GlobalContext from "../context"
-import { State, Handlers } from "../type"
+import { State, Handlers } from ".."
 
 export interface Props {
   state: State

@@ -2,7 +2,7 @@
  * 对 req.url 进行裁剪，以便适应不同的发布路径
  */
 import express from 'express'
-import { RequestHandler, Res, Req } from '../type'
+import { RequestHandler, Res, Req } from '..'
 
 type ShareRoot = (rootPath: string) => express.RequestHandler
 

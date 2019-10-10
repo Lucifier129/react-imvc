@@ -10,7 +10,7 @@ import helmet from "helmet"
 import querystringify from "querystringify"
 
 import shareRoot from "../middleware/shareRoot"
-import { Config, Req } from "../type"
+import { Config, Req } from ".."
 import configBabel from "../config/babel"
 import * as setupDevEnv from "../build/setup-dev-env"
 

@@ -9,7 +9,7 @@ import htmlmin from 'gulp-htmlmin'
 import imagemin from 'gulp-imagemin'
 import uglify from 'gulp-uglify'
 import babel from 'gulp-babel'
-import { Config, GulpTaskConfig } from '../type'
+import { Config, GulpTaskConfig } from '..'
 
 interface CreateGulpTaskConfig {
   (options: Config): GulpTaskConfig

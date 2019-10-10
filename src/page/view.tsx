@@ -1,6 +1,6 @@
 import React from 'react'
 import Script from '../component/Script'
-import { RenderProps } from '../type'
+import { RenderProps } from '..'
 
 export default function Page(props: RenderProps) {
 	return (

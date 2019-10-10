@@ -1,5 +1,5 @@
 import path from 'path'
-import { Config } from '../type'
+import { Config } from '..'
 
 type GetExternals = (config: Config) => string[]
 

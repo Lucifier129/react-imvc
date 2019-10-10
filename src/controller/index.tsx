@@ -27,7 +27,7 @@ import {
   Handlers,
   Meta,
   Location
-} from '../type'
+} from '..'
 
 const REDIRECT =
   typeof Symbol === 'function'

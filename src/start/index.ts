@@ -16,7 +16,7 @@ import debug from 'debug'
 import createExpressApp from '../entry/server'
 import getConfig from '../config'
 import createPageRouter from '../page/createPageRouter'
-import { Options, RequestHandler } from '../type'
+import { Options, RequestHandler } from '..'
 
 export interface Start {
   (options: Options): Promise<{ server: http.Server, app: express.Express }>

@@ -3,7 +3,7 @@ import { Actions, StateFromAS } from 'relite'
 import GlobalContext from '../context'
 import ControllerProxy from './ControllerProxy'
 import Controller from '../controller'
-import { State } from '../type'
+import { State } from '..'
 
 interface Props<S extends object, AS extends Actions<S & State & StateFromAS<AS>>> {
 	controller: Controller<S, AS, any>
