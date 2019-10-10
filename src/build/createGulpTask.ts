@@ -190,9 +190,9 @@ const createGulpTask: CreateGulpTask = (options) => {
   }
 
   return gulp.series(
-    // publishCopy,
+    publishCopy,
     publishBabel,
-    // copy,
+    copy,
     gulp.parallel(minifyHTML, minifyCSS, minifyES5, minifyES6, minifyImage)
   )
 }

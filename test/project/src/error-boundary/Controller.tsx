@@ -1,7 +1,7 @@
 import ErrorBoundary from '../../../../src/component/ErrorBoundary'
 import Controller from '../../../../src/controller'
 import React, { useState } from 'react'
-import { Location, Context } from '../../../../src/type'
+import { Location, Context } from '../../../../src/'
 
 const actions = {
   TEST: () => {

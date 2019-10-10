@@ -1,5 +1,5 @@
 import React from 'react'
-import { Location, Context } from '../../../../src/type'
+import { Location, Context } from '../../../../src/'
 import Controller from '../../../../src/controller'
 import { EventWrapper } from '../../../../src/component'
 

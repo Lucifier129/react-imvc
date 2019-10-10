@@ -1,7 +1,7 @@
 import path from 'path'
 import * as util from '../src/build/util'
 import build from '../build'
-import { Config } from '../src/type'
+import { Config } from '../src/'
 import * as setupDevEnv from '../src/build/setup-dev-env'
 import puppeteer from 'puppeteer'
 import defaultConfig from '../src/config/config.defaults'

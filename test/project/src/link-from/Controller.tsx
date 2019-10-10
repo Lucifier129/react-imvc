@@ -1,5 +1,5 @@
 import React from 'react'
-import { Location, Context } from '../../../../src/type'
+import { Location, Context } from '../../../../src/'
 import Link from '../../../../src/component/Link'
 import NavLink from '../../../../src/component/NavLink'
 import Style from '../../../../src/component/Style'

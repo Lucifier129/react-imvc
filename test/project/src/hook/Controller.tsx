@@ -1,6 +1,6 @@
 import Controller from '../../../../src/controller'
 import React, { useState } from 'react'
-import { Location, Context } from '../../../../src/type'
+import { Location, Context } from '../../../../src/'
 import { useCtrl, useModel, useModelActions, useModelState } from '../../../../src/hook'
 
 let initialState = {

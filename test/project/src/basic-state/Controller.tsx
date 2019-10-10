@@ -1,4 +1,4 @@
-import { Location, Context, State } from '../../../../src/type'
+import { Location, Context, State } from '../../../../src/'
 import Controller from '../../../../src/controller'
 import React from 'react'
 

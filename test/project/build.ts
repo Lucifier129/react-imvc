@@ -1,6 +1,6 @@
 import path from 'path'
 import build from '../../src/build/babel'
-import { Config } from '../../src/type'
+import { Config } from '../../src/'
 
 let PORT = 3333
 const ROOT = __dirname
