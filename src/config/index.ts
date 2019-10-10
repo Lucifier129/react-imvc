@@ -21,7 +21,7 @@ const getConfig: GetConfig = (options) => {
 			break
 		case 'string':
 			let customConfigModule = require(path.resolve(options.config as string))
-			customConfig = customConfigModule.default as object || customConfig
+			customConfig = customConfigModule.default as object || customConfigModule
 			break
 	}
 	Object.assign(config, customConfig)
