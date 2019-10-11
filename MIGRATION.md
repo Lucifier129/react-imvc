@@ -100,7 +100,7 @@
 
     We suggest you to use the `ES2015+` syntax, it will support all the feature of TypeScript.
 
-    There must be some spots else that we haven't record here. You need to fix them when you find.
+    There must be some spots else that we haven't record here. When you find please tell to me, we will append it here to help other people.
 
 ## Dependence change
 

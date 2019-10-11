@@ -93,7 +93,8 @@ export interface Context extends BaseContext {
   location?: HistoryLocation
   restapi?: string
   userInfo?: object
-  [propName: string]: any
+  req?: express.Request
+  res?: express.Response
 }
 
 export interface Handlers {

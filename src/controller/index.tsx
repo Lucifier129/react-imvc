@@ -1,5 +1,6 @@
 // base controller class
 import 'whatwg-fetch'
+import express from 'express'
 import React from 'react'
 import Cookie from 'js-cookie'
 import querystringify from 'querystringify'
@@ -60,7 +61,7 @@ export default class Controller<
   View extends React.ComponentType<{
     state?: Partial<S & State>
     actions?: Partial<AS & typeof shareActions>
-    ctrl?: any
+    ctrl?: object
   }>
 > implements BaseController {
   View: View = EmptyView as View
@@ -78,21 +79,24 @@ export default class Controller<
   handlers: Handlers
   location: Location
   meta: Meta
-  proxyHandler?: any
+  proxyHandler?: {
+    attach(): void
+    detach(): void
+  }
   resetScrollOnMount?: boolean
   Loading: BaseViewFC | BaseViewClass = () => null
 
   errorDidCatch?(error: Error, str: string): void
   getComponentFallback?(displayName: string, InputComponent: React.ComponentType): void
   getViewFallback?(view?: string): React.ReactElement
-  getInitialState?(state: S & State): S & State
+  getInitialState?(state: S & State): (S & State) | Promise<S & State>
   stateDidReuse?(state: S & State): void
-  getFinalActions?(actions: AS): any
-  shouldComponentCreate?(): void | boolean
+  getFinalActions?(actions: AS): AS
+  shouldComponentCreate?(): void | boolean | Promise<void> | Promise<boolean>
   componentWillCreate?(): Promise<void>
   stateDidChange?(data?: Data<Partial<S & State & StateFromAS<AS & typeof shareActions>>, AS & typeof shareActions>): void
-  pageWillLeave?(location: ILWithBQ): any
-  windowWillUnload?(location: ILWithBQ): any
+  pageWillLeave?(location: ILWithBQ): void
+  windowWillUnload?(location: ILWithBQ): void
   pageDidBack?(locaiton: HistoryLocation, context?: Context): void
 
   [propName: string]: any
@@ -178,7 +182,7 @@ export default class Controller<
    * 封装重定向方法，根据 server/client 环境不同而选择不同的方式
    * isRaw 是否不拼接 Url，直接使用
    */
-  redirect(redirectUrl: string, isRaw: boolean) {
+  redirect(redirectUrl: string, isRaw?: boolean) {
     let { history, context } = this
 
     if (context.isServer) {
@@ -199,8 +203,8 @@ export default class Controller<
     }
   }
   // 封装 cookie 的同构方法
-  cookie(key: string, value: string, options: any) {
-    if (value == null) {
+  cookie(key: string, value?: string, options?: Cookie.CookieAttributes | express.CookieOptions) {
+    if (!value) {
       return this.getCookie(key)
     }
     this.setCookie(key, value, options)
@@ -214,7 +218,7 @@ export default class Controller<
       return Cookie.get(key)
     }
   }
-  setCookie(key: string, value: string, options: any) {
+  setCookie(key: string, value: string, options?: Cookie.CookieAttributes | express.CookieOptions) {
     let { context } = this
 
     if (options && options.expires) {
@@ -230,19 +234,19 @@ export default class Controller<
 
     if (context.isServer) {
       let { res } = context
-      res.cookie(key, value, options)
+      res.cookie(key, value, options as express.CookieOptions)
     } else if (context.isClient) {
-      Cookie.set(key, value, options)
+      Cookie.set(key, value, options as Cookie.CookieAttributes)
     }
   }
-  removeCookie(key: string, options: any) {
+  removeCookie(key: string, options?:  Cookie.CookieAttributes | express.CookieOptions) {
     let { context } = this
 
     if (context.isServer) {
       let { res } = context
       res.clearCookie(key, options)
     } else if (context.isClient) {
-      Cookie.remove(key, options)
+      Cookie.remove(key, options as Cookie.CookieAttributes)
     }
   }
 
@@ -253,7 +257,15 @@ export default class Controller<
    * options.timeoutErrorFormatter 超时时错误信息展示格式
    * options.raw 不补全 restfulBasename
    */
-  fetch(url: string, options: Record<string, any> = {}) {
+  fetch(
+    url: string,
+    options: RequestInit & {
+      raw?: boolean
+      json?: boolean
+      timeout?: number
+      timeoutErrorFormatter?: ((opstion: any) => string) | string
+    } = {}
+  ) {
     let { context, API } = this
 
     /**
@@ -268,7 +280,7 @@ export default class Controller<
       url = this.prependRestapi(url)
     }
 
-    let finalOptions = {
+    let finalOptions: RequestInit = {
       method: 'GET',
       credentials: 'include',
       ...options,
@@ -285,7 +297,7 @@ export default class Controller<
       finalOptions.headers['Cookie'] = context.req.headers.cookie || ''
     }
 
-    let fetchData: Promise<any> = fetch(url, finalOptions as RequestInit)
+    let fetchData: Promise<any> = fetch(url, finalOptions)
 
     /**
      * 拓展字段，如果手动设置 options.json 为 false
@@ -300,7 +312,7 @@ export default class Controller<
      */
     if (typeof options.timeout === 'number') {
       let { timeoutErrorFormatter } = options
-      let timeoutErrorMsg =
+      let timeoutErrorMsg: string =
         typeof timeoutErrorFormatter === 'function'
           ? timeoutErrorFormatter({ url, options: finalOptions })
           : timeoutErrorFormatter
@@ -463,10 +475,7 @@ export default class Controller<
           }
         }
 
-        let Forwarder: {
-          isErrorBoundary?: boolean
-          [propName: string]: any
-        } = React.forwardRef((props, ref) => {
+        let Forwarder: React.ForwardRefExoticComponent<{}> & { isErrorBoundary?: boolean } = React.forwardRef((props, ref) => {
           return createElement(ErrorBoundary, { ...props, forwardedRef: ref })
         })
 
@@ -499,7 +508,7 @@ export default class Controller<
     }
 
     if (meta.unsubscribeList.length > 0) {
-      meta.unsubscribeList.forEach((unsubscribe: any) => unsubscribe())
+      meta.unsubscribeList.forEach((unsubscribe: () => {}) => unsubscribe())
       meta.unsubscribeList.length = 0
     }
     meta.isDestroyed = true
