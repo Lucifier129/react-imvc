@@ -1,4 +1,4 @@
 "use strict";
 
-exports.start = require('./start');
-exports.build = require('./build');
+exports.start = require('./start')
+exports.build = require('./build')

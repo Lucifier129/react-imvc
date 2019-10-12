@@ -735,7 +735,7 @@ export default class Controller<
       this.proxyHandler.attach()
     }
 
-    meta.isDestroyed = false;
+    meta.isDestroyed = false
     if (__PAGE_DID_BACK__) {
       __PAGE_DID_BACK__(location)
     }

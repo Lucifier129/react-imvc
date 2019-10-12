@@ -35,7 +35,6 @@ describe('component test', () => {
   let browser: puppeteer.Browser
 
   beforeAll(() => {
-    jest.resetModules();
     return start({ config }).then((result) => {
       app = result.app
       server = result.server
