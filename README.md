@@ -12,7 +12,6 @@ react-imvc 是 isomorphic mvc 的 react 实现，它是一个 Web 框架。通�
 
 - isomorphic-cnode [DEMO地址](https://lucifier129.github.io/isomorphic-cnode/publish/static/) 和 [源代码地址](https://github.com/Lucifier129/isomorphic-cnode)
 
-
 [点击访问详细文档地址：Documents](./doc/index.md)
 
 ## react-imvc 的作用和特性
