@@ -23,7 +23,6 @@ import {
   useModelActions as _useModelAction,
   useModelState as _useModelState
 } from "./hook"
-import { Settings } from "@nodelib/fs.stat"
 
 // global
 

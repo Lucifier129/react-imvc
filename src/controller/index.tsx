@@ -50,6 +50,8 @@ let uid = 0 // seed of controller id
 // @ts-ignore
 let createElement = React.originalCreateElement || React.createElement
 
+export type Action = typeof shareActions
+
 /**
  * 绑定 Store 到 View
  * 提供 Controller 的生命周期钩子
@@ -60,7 +62,7 @@ export default class Controller<
   S extends object,
   AS extends ActionsType<S, AS>
 > implements BaseController {
-  View: any = EmptyView as any
+  View: React.ComponentType<any> = EmptyView
   restapi?: string
   preload: Preload
   API?: API
@@ -322,7 +324,16 @@ export default class Controller<
    *
    * 封装 get 请求，方便使用
    */
-  get(url: string, params: object, options: object) {
+  get(
+    url: string,
+    params: Record<string, string>,
+    options?: RequestInit & {
+      raw?: boolean
+      json?: boolean
+      timeout?: number
+      timeoutErrorFormatter?: ((opstion: any) => string) | string
+    }
+  ) {
     let { API } = this
     /**
      * API shortcut，方便 fetch(name, options) 代替 url
@@ -344,7 +355,16 @@ export default class Controller<
    *
    * 封装 post 请求，方便使用
    */
-  post(url: string, data: any, options: object) {
+  post(
+    url: string,
+    data: any,
+    options?: RequestInit & {
+      raw?: boolean
+      json?: boolean
+      timeout?: number
+      timeoutErrorFormatter?: ((opstion: any) => string) | string
+    }
+  ) {
     options = {
       ...options,
       method: 'POST',

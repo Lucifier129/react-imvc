@@ -5,7 +5,6 @@ interface Props {
 	as?: keyof HTMLElementTagNameMap
 	to?: string
 	href?: string
-	children?: React.ReactChild
 	replace?: boolean
 	back?: boolean
 	forward?: boolean
@@ -14,7 +13,7 @@ interface Props {
 	[propName: string]: any
 }
 
-export default class Link extends React.Component<Props> {
+export default class Link extends React.Component<React.PropsWithChildren<Props>> {
 	static contextType = GlobalContext
 	static defaultProps: Props = {
 		as: 'a'
