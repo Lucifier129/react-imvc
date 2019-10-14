@@ -56,7 +56,7 @@ let createElement = React.originalCreateElement || React.createElement
  * 提供 fetch 方法
  */
 export default class Controller<
-  S extends State,
+  S extends object,
   AS extends Actions<S & StateFromAS<AS>>,
   View extends React.ComponentType<{
     state?: Partial<S>
@@ -213,7 +213,7 @@ export default class Controller<
     let { context } = this
     if (context.isServer) {
       let { req } = context
-      return req.cookies[key]
+      return req && req.cookies[key]
     } else if (context.isClient) {
       return Cookie.get(key)
     }
@@ -234,7 +234,7 @@ export default class Controller<
 
     if (context.isServer) {
       let { res } = context
-      res.cookie(key, value, options as express.CookieOptions)
+      res && res.cookie(key, value, options as express.CookieOptions)
     } else if (context.isClient) {
       Cookie.set(key, value, options as Cookie.CookieAttributes)
     }
@@ -244,7 +244,7 @@ export default class Controller<
 
     if (context.isServer) {
       let { res } = context
-      res.clearCookie(key, options)
+      res && res.clearCookie(key, options)
     } else if (context.isClient) {
       Cookie.remove(key, options as Cookie.CookieAttributes)
     }
@@ -780,5 +780,3 @@ export default class Controller<
     return <ViewManager controller={this} />
   }
 }
-
-const getKeys = <T extends {}>(o: T) => Object.keys(o) as Array<keyof T>

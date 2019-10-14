@@ -13,7 +13,7 @@ import serveStatic from "serve-static"
 import cookieParser from "cookie-parser"
 import helmet from "helmet"
 import compression from "compression"
-import { Action, Currings, AnyAction } from "relite"
+import { Action, Currings, AnyAction, StateFromAS, Actions } from "relite"
 import babelCore from "babel-core"
 import 'global'
 
@@ -23,6 +23,7 @@ import {
   useModelActions as _useModelAction,
   useModelState as _useModelState
 } from "./hook"
+import { Settings } from "@nodelib/fs.stat"
 
 // global
 
@@ -92,6 +93,16 @@ export type Preload = Record<string, string>
 
 export type API = Record<string, string>
 
+export type ViewProps<S, AS, Ctrl> = {
+  state: Partial<S>,
+  actions: Currings<S, AS>,
+  ctrl: Ctrl
+}
+
+export type ViewType<S, AS, Ctrl> =  React.PropsWithChildren<ViewProps<S, AS, Ctrl>>
+
+export type ActionsType<S, AS> = Actions<S & StateFromAS<AS>>
+
 export interface Context extends BaseContext {
   basename?: string
   env?: string
@@ -100,8 +111,8 @@ export interface Context extends BaseContext {
   location?: HistoryLocation
   restapi?: string
   userInfo?: object
-  req: express.Request
-  res: express.Response
+  req?: express.Request
+  res?: express.Response
 }
 
 export interface Handlers {
