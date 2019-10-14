@@ -23,9 +23,9 @@ const webpackLoader: Loader = (loadModule, location, context) => {
 
 let shouldHydrate = !!window.__INITIAL_STATE__
 
-const render: ViewEngineRender<React.ReactElement, Controller<any, any, any>> = (
+const render: ViewEngineRender<React.ReactElement, Controller<any, any>> = (
   view: React.ReactElement,
-  controller?: Controller<any, any, any>,
+  controller?: Controller<any, any>,
   container?: Element | null
 ) => {
   try {

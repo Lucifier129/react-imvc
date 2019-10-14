@@ -4,7 +4,7 @@ import express from 'express'
 import React from 'react'
 import Cookie from 'js-cookie'
 import querystringify from 'querystringify'
-import { createStore, Actions, StateFromAS, Store, Data } from 'relite'
+import { createStore, StateFromAS, Store, Data } from 'relite'
 import {
   Controller as BaseController,
   Actions as HistoryActions,
@@ -27,7 +27,8 @@ import {
   State,
   Handlers,
   Meta,
-  Location
+  Location,
+  ActionsType
 } from '..'
 
 const REDIRECT =
@@ -35,7 +36,7 @@ const REDIRECT =
     ? Symbol('react.imvc.redirect')
     : Object('react.imvc.redirect')
 
-const EmptyView = <Ctrl extends Controller<any, any, any>>(props?: {
+const EmptyView = <Ctrl extends Controller<any, any>>(props?: {
   state?: {
     aa?: string
   },
@@ -57,14 +58,9 @@ let createElement = React.originalCreateElement || React.createElement
  */
 export default class Controller<
   S extends object,
-  AS extends Actions<S & StateFromAS<AS>>,
-  View extends React.ComponentType<{
-    state?: Partial<S>
-    actions?: Partial<AS & typeof shareActions>
-    ctrl?: object
-  }>
+  AS extends ActionsType<S, AS>
 > implements BaseController {
-  View: View = EmptyView as View
+  View: any = EmptyView as any
   restapi?: string
   preload: Preload
   API?: API
@@ -126,7 +122,7 @@ export default class Controller<
     this.history = createHistory() as HistoryWithBFOL<BLWithBQ, ILWithBQ>
   }
   // 绑定 handler 的 this 值为 controller 实例
-  combineHandlers(source: Controller<S, AS, View>) {
+  combineHandlers(source: Controller<S, AS>) {
     let { handlers } = this
     Object.keys(source).forEach(key => {
       let value = source[key]
@@ -759,7 +755,7 @@ export default class Controller<
     // if (View && !View.viewId) {
     //   View.viewId = Date.now()
     // }
-    let ctrl: Controller<S, AS, View> = Object.create(this)
+    let ctrl: Controller<S, AS> = Object.create(this)
     ctrl.View = View
     ctrl.componentDidFirstMount = null
     ctrl.componentDidMount = null

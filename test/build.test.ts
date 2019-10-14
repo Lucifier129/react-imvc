@@ -1,29 +1,29 @@
-import path from 'path'
+// import path from 'path'
 import * as util from '../src/build/util'
-import build from '../build'
-import { Config } from '../src/'
-import * as setupDevEnv from '../src/build/setup-dev-env'
-import puppeteer from 'puppeteer'
+// import build from '../src/build'
+// import { Config } from '../src/'
+// import * as setupDevEnv from '../src/build/setup-dev-env'
+// import puppeteer from 'puppeteer'
 import defaultConfig from '../src/config/config.defaults'
 const pkg = require('../package.json')
 
 process.env.NODE_ENV = "production"
-let PORT = 3333
-const ROOT = path.join(__dirname, "project")
-const config: Partial<Config> = {
-  root: ROOT, // 项目根目录
-  port: PORT, // server 端口号
-  logger: null, // 不出 log
-  devtool: "", // 不出 source-map
-  ReactViews: {
-    beautify: false, // 不美化
-    transformViews: false // 已有转换，无须再做
-  },
-  routes: "routes", // 服务端路由目录
-  layout: "Layout", // 自定义 Layoutclear
-  webpackLogger: false, // 关闭 webpack logger
-  webpackDevMiddleware: true // 在内存里编译
-}
+// let PORT = 3333
+// const ROOT = path.join(__dirname, "project")
+// const config: Partial<Config> = {
+//   root: ROOT, // 项目根目录
+//   port: PORT, // server 端口号
+//   logger: null, // 不出 log
+//   devtool: "", // 不出 source-map
+//   ReactViews: {
+//     beautify: false, // 不美化
+//     transformViews: false // 已有转换，无须再做
+//   },
+//   routes: "routes", // 服务端路由目录
+//   layout: "Layout", // 自定义 Layoutclear
+//   webpackLogger: false, // 关闭 webpack logger
+//   webpackDevMiddleware: true // 在内存里编译
+// }
 
 describe('build test', () => {
   describe('util', () => {

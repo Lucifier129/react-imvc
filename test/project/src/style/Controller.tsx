@@ -3,7 +3,7 @@ import { Location, Context } from '../../../../src/'
 import Controller from '../../../../src/controller'
 import { Style } from '../../../../src/component'
 
-export default class extends Controller<{}, {}, typeof View> {
+export default class extends Controller<{}, {}> {
 	SSR = true // enable server side rendering
   View = View
   preload = {

@@ -35,7 +35,7 @@ const commonjsLoader: Loader = (loadModule, location, context) =>
  */
 const createElement = React.createElement
 
-const renderToNodeStream: RenderToNodeStream<React.ReactElement, Controller<any, any, any>> = (view, controller) => {
+const renderToNodeStream: RenderToNodeStream<React.ReactElement, Controller<any, any>> = (view, controller) => {
   return new Promise<{}>((resolve, reject) => {
     let stream = ReactDOMServer.renderToNodeStream(view)
     let buffers: Uint8Array[] = []
@@ -65,7 +65,7 @@ const renderToNodeStream: RenderToNodeStream<React.ReactElement, Controller<any,
   })
 }
 
-const renderToString: RenderToString<React.ReactElement, Controller<any, any, any>> = (view, controller) => {
+const renderToString: RenderToString<React.ReactElement, Controller<any, any>> = (view, controller) => {
   try {
     return ReactDOMServer.renderToString(view)
   } catch (error) {
@@ -107,7 +107,7 @@ export default function createPageRouter(options: Config) {
   routes = getFlatList(routes)
 
   let router = Router()
-  let render: ViewEngineRender<React.ReactElement, Controller<any, any, any>> = renderers[config.renderMode] || renderToNodeStream
+  let render: ViewEngineRender<React.ReactElement, Controller<any, any>> = renderers[config.renderMode] || renderToNodeStream
   let serverAppSettings: Partial<AppSettings> = {
     loader: commonjsLoader,
     routes: routes,

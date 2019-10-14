@@ -28,7 +28,7 @@ const initialState = {
   content: ''
 }
 
-export default class extends Controller<typeof initialState, {}, typeof View> {
+export default class extends Controller<typeof initialState, {}> {
   SSR = true // enable server side rendering
   View = View
   initialState = initialState

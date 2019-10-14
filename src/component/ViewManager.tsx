@@ -6,7 +6,7 @@ import Controller from '../controller'
 import { State } from '..'
 
 interface Props<S extends object, AS extends Actions<S & State & StateFromAS<AS>>> {
-	controller: Controller<S, AS, any>
+	controller: Controller<S, AS>
 }
 
 export default class ViewManager<S extends object, AS extends Actions<S & State & StateFromAS<AS>>> extends React.Component<Props<S, AS>> {

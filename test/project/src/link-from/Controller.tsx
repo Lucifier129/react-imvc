@@ -5,7 +5,7 @@ import NavLink from '../../../../src/component/NavLink'
 import Style from '../../../../src/component/Style'
 import Controller from '../../../../src/controller'
 
-export default class extends Controller<{}, {}, typeof View> {
+export default class extends Controller<{}, {}> {
   SSR = true // enable server side rendering
   View = View
   preload = {

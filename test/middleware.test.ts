@@ -1,6 +1,6 @@
-import cacheView from '../src/middleware/cacheView'
+// import cacheView from '../src/middleware/cacheView'
 import createCache, { Cache } from '../src/middleware/createCache'
-import shareRoot from '../src/middleware/shareRoot'
+// import shareRoot from '../src/middleware/shareRoot'
 
 jest.useFakeTimers()
 

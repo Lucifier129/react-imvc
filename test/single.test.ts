@@ -1,7 +1,7 @@
 import path from "path"
-import fetch from "node-fetch"
+// import fetch from "node-fetch"
 import http from "http"
-import express from "express"
+// import express from "express"
 import puppeteer from 'puppeteer'
 import { Config } from "../src/"
 import start from "../src/start"
@@ -28,13 +28,13 @@ const config: Partial<Config> = {
 }
 
 describe("test", () => {
-  let app: express.Express
+  // let app: express.Express
   let server: http.Server
   let browser: puppeteer.Browser
 
   beforeAll(() => {
     return start({ config }).then((result) => {
-      app = result.app
+      // app = result.app
       server = result.server
       return puppeteer.launch()
     }).then((brws) => {
@@ -94,7 +94,7 @@ describe("test", () => {
       expect(clientController.context.isClient).toBe(true)
       expect(clientController.context.isServer).toBe(false)
 
-			let { location, context } = clientController
+			let { location } = clientController
 
 			expect(location.pattern).toEqual('/basic_state')
 			expect(location.pathname).toEqual('/basic_state')
@@ -107,8 +107,8 @@ describe("test", () => {
   })
 })
 
-async function fetchContent(url: string): Promise<string> {
-  let response = await fetch(url)
-  let content = await response.text()
-  return content
-}
+// async function fetchContent(url: string): Promise<string> {
+//   let response = await fetch(url)
+//   let content = await response.text()
+//   return content
+// }

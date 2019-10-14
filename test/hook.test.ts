@@ -1,7 +1,7 @@
 import path from "path"
-import fetch from "node-fetch"
+// import fetch from "node-fetch"
 import http from "http"
-import express from "express"
+// import express from "express"
 import puppeteer from 'puppeteer'
 import { Config } from "../src/"
 import start from "../src/start"
@@ -30,13 +30,13 @@ const config: Partial<Config> = {
 
 describe('hook', () => {
   describe('useCtrl', () => {
-    let app: express.Express
+    // let app: express.Express
     let server: http.Server
     let browser: puppeteer.Browser
 
     beforeAll(() => {
       return start({ config }).then((result) => {
-        app = result.app
+        // app = result.app
         server = result.server
         return puppeteer.launch()
       }).then((brws) => {

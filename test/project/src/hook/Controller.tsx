@@ -7,7 +7,7 @@ let initialState = {
   foo: 'Hello World'
 }
 
-export default class extends Controller<typeof initialState, {}, typeof RootView> {
+export default class extends Controller<typeof initialState, {}> {
   // SSR = true // enable server side rendering
   SSR = true
   initialState = initialState

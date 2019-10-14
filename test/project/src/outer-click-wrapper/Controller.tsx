@@ -1,13 +1,21 @@
 import React from 'react'
-import { Location, Context } from '../../../../src/'
+import { Location, Context, ViewPropsType } from '../../../../src/'
 import Controller from '../../../../src/controller'
 import { OuterClickWrapper } from '../../../../src/component'
 
-const initialState = {
+export interface State {
+  count?: number
+}
+
+export interface Ctrl {
+  handleClick: Function
+}
+
+const initialState: State = {
   count: 0
 }
 
-export default class extends Controller<typeof initialState, {}, typeof View> implements Ctrl {
+export default class extends Controller<State, {}> implements Ctrl {
 	SSR = true // enable server side rendering
   View = View
   initialState = initialState
@@ -22,15 +30,7 @@ export default class extends Controller<typeof initialState, {}, typeof View> im
   }
 }
 
-export interface State {
-  count?: number
-}
-
-export interface Ctrl {
-  handleClick: Function
-}
-
-function View({ state, ctrl }: React.PropsWithChildren<{ state: State, ctrl: Ctrl }>) {
+function View({ state, ctrl }: ViewPropsType<State, {}, Ctrl>) {
 	return (
     <div id="outer_click">
       <div id="out">

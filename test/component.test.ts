@@ -1,6 +1,6 @@
 import path from 'path'
 import http from 'http'
-import express from 'express'
+// import express from 'express'
 import puppeteer from 'puppeteer'
 import { Config } from '../src/'
 import start from '../src/start'
@@ -30,13 +30,13 @@ const config: Partial<Config> = {
 }
 
 describe('component test', () => {
-  let app: express.Express
+  // let app: express.Express
   let server: http.Server
   let browser: puppeteer.Browser
 
   beforeAll(() => {
     return start({ config }).then((result) => {
-      app = result.app
+      // app = result.app
       server = result.server
       return puppeteer.launch({
         // headless: false,
@@ -72,9 +72,32 @@ describe('component test', () => {
 
     count = await page.$eval('#count', (e) => e.innerHTML)
     expect(count).toBe('1')
+
+    await page.close()
   })
   
   describe('Input', () => {
+    // let app: express.Express
+    let server: http.Server
+    let browser: puppeteer.Browser
+
+    beforeAll(() => {
+      return start({ config }).then((result) => {
+        // app = result.app
+        server = result.server
+        return puppeteer.launch({
+          // headless: false,
+          // slowMo: 50
+        })
+      }).then((brws) => {
+        browser = brws
+      })
+    })
+
+    afterAll(() => {
+      server.close()
+      return browser.close()
+    })
     it('global state should change when the input has been changed', async () => {
       let page = await browser.newPage()
       let url = `http://localhost:${config.port}/input`
@@ -86,6 +109,8 @@ describe('component test', () => {
       let content = await page.$eval('#first-name-value', (e) => e.innerHTML)
 
       expect(content).toBe('test')
+
+      await page.close()
     })
 
     it('global state should change when the input with deep level has been changed', async () => {
@@ -99,6 +124,8 @@ describe('component test', () => {
       let content = await page.$eval('#friend-0-value', (e) => e.innerHTML)
 
       expect(content).toBe('friendAtest')
+
+      await page.close()
     })
 
     it('global state and it `isWarn` and `isValid` should change when the input with check attribute has been changed', async () => {
@@ -132,6 +159,8 @@ describe('component test', () => {
       content = await page.$eval('#phone-value', (e) => e.innerHTML)
 
       expect(content).toBe('1312456456 false true')
+
+      await page.close()
     })
   })
   
@@ -154,6 +183,8 @@ describe('component test', () => {
     )
 
     expect(toContent.includes('link to page')).toBeTruthy()
+
+    await page.close()
   })
   
   describe('NavLink', () => {
@@ -188,6 +219,8 @@ describe('component test', () => {
       let className = await page.$eval('#nav_link_from_link', e => e.className)
       
       expect(className).toBe('active')
+
+      await page.close()
     })
     
     it('should use active style when the to match the current url', async () => {
@@ -199,6 +232,8 @@ describe('component test', () => {
       let style = await page.$eval('#nav_link_from_link', e => e.getAttribute('style'))
       
       expect(style).toBe("font-size: 14px;")
+
+      await page.close()
     })
 
     it('should use active style and class when the isActive function return true', async () => {
@@ -212,6 +247,8 @@ describe('component test', () => {
       
       expect(style).toBe("font-size: 14px;")
       expect(className).toBe('active')
+
+      await page.close()
 
     })
   })
@@ -240,6 +277,8 @@ describe('component test', () => {
 
     count = await page.$eval('#count', (e) => e.innerHTML)
     expect(count).toBe('2')
+
+    await page.close()
   })
   
   // it('Prefetch', () => {
@@ -259,6 +298,8 @@ describe('component test', () => {
     let height = await page.$eval('.style', (e) => e.clientHeight)
 
     expect(height).toBe(50)
+
+    await page.close()
   })
   
   // it('ViewManager', () => {

@@ -54,13 +54,13 @@ function mainTest(config: Partial<Config>) {
 	describe('static view', () => {
 		let renderCondition = config.SSR ? 'render' : 'NOT render'
 		
-		let app: App
+		// let app: App
 		let server: Server
 		let browser: puppeteer.Browser
 
 		beforeAll(() => {
 			return start({ config }).then((result) => {
-				app = result.app
+				// app = result.app
 				server = result.server
 				return puppeteer.launch()
 			}).then((brws) => {
@@ -166,13 +166,13 @@ function mainTest(config: Partial<Config>) {
 
 	describe('controller', () => {
 		
-		let app: App
+		// let app: App
 		let server: Server
 		let browser: puppeteer.Browser
 
 		beforeAll(() => {
 			return start({ config }).then((result) => {
-				app = result.app
+				// app = result.app
 				server = result.server
 				return puppeteer.launch()
 			}).then((brws) => {
@@ -233,7 +233,7 @@ function mainTest(config: Partial<Config>) {
 				expect(clientController.context.isServer).toBe(false)
 			}
 
-			let { location, context } = clientController
+			let { location } = clientController
 
 			expect(location.pattern).toEqual('/basic_state')
 			expect(location.pathname).toEqual('/basic_state')

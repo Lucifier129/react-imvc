@@ -6,7 +6,7 @@ const delay = (time: number) => new Promise(resolve => {
   setTimeout(resolve, time)
 })
 
-export default class extends Controller<{}, {}, typeof View> {
+export default class extends Controller<{}, {}> {
   SSR = false
   View = View
   constructor(location: Location, context: Context) {

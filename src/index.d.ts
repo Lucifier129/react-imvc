@@ -93,15 +93,15 @@ export type Preload = Record<string, string>
 
 export type API = Record<string, string>
 
-export type ViewProps<S, AS, Ctrl> = {
+export type ViewPropsType<S extends object, AS extends ActionsType<S, AS>, Ctrl = {}> = {
   state: Partial<S>,
   actions: Currings<S, AS>,
   ctrl: Ctrl
 }
 
-export type ViewType<S, AS, Ctrl> =  React.PropsWithChildren<ViewProps<S, AS, Ctrl>>
+export type ViewType<S extends object, AS extends ActionsType<S, AS>> =  React.ComponentType<React.PropsWithChildren<ViewPropsType<S, AS>>>
 
-export type ActionsType<S, AS> = Actions<S & StateFromAS<AS>>
+export type ActionsType<S extends object, AS> = Actions<S & StateFromAS<AS>>
 
 export interface Context extends BaseContext {
   basename?: string

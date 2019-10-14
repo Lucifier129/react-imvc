@@ -9,7 +9,7 @@ const actions = {
   }
 }
 
-export default class extends Controller<{}, typeof actions, typeof View> {
+export default class extends Controller<{}, typeof actions> {
   constructor(location: Location, context: Context) {
     super(location, context)
   }

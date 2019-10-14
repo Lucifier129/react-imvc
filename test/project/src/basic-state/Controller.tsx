@@ -6,7 +6,7 @@ let initialState = {
 
 }
 
-export default class extends Controller<typeof initialState, {}, typeof View> {
+export default class extends Controller<typeof initialState, {}> {
     View = View
     initialState = initialState
     constructor(location: Location, context: Context) {
