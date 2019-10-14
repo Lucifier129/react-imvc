@@ -56,10 +56,10 @@ let createElement = React.originalCreateElement || React.createElement
  * 提供 fetch 方法
  */
 export default class Controller<
-  S extends object,
-  AS extends Actions<S & State & StateFromAS<AS>>,
+  S extends State,
+  AS extends Actions<S & StateFromAS<AS>>,
   View extends React.ComponentType<{
-    state?: Partial<S & State>
+    state?: Partial<S>
     actions?: Partial<AS & typeof shareActions>
     ctrl?: object
   }>
@@ -89,9 +89,9 @@ export default class Controller<
   errorDidCatch?(error: Error, str: string): void
   getComponentFallback?(displayName: string, InputComponent: React.ComponentType): void
   getViewFallback?(view?: string): React.ReactElement
-  getInitialState?(state: S & State): (S & State) | Promise<S & State>
+  getInitialState(state: S & State): (S & State) | Promise<S & State> { return state }
   stateDidReuse?(state: S & State): void
-  getFinalActions?(actions: AS): AS
+  getFinalActions(actions: AS): AS { return actions }
   shouldComponentCreate?(): void | boolean | Promise<void> | Promise<boolean>
   componentWillCreate?(): Promise<void>
   stateDidChange?(data?: Data<Partial<S & State & StateFromAS<AS & typeof shareActions>>, AS & typeof shareActions>): void
@@ -190,7 +190,7 @@ export default class Controller<
         // 兼容 history.push，自动补全 basename
         redirectUrl = this.prependBasename(redirectUrl)
       }
-      context.res.redirect(redirectUrl)
+      context.res && context.res.redirect(redirectUrl)
       // 使用 throw 语句，模拟浏览器跳转时中断代码执行的效果
       // 将在外层 catch 住，并 return null 通知 create-app 无须渲染
       throw REDIRECT
@@ -294,6 +294,7 @@ export default class Controller<
      * 服务端得手动设置，可以从 context 对象里取 cookie
      */
     if (context.isServer && finalOptions.credentials === 'include') {
+      // @ts-ignore
       finalOptions.headers['Cookie'] = context.req.headers.cookie || ''
     }
 
@@ -312,7 +313,7 @@ export default class Controller<
      */
     if (typeof options.timeout === 'number') {
       let { timeoutErrorFormatter } = options
-      let timeoutErrorMsg: string =
+      let timeoutErrorMsg: string | undefined =
         typeof timeoutErrorFormatter === 'function'
           ? timeoutErrorFormatter({ url, options: finalOptions })
           : timeoutErrorFormatter
@@ -504,7 +505,7 @@ export default class Controller<
 
     if (this.proxyHandler) {
       this.proxyHandler.detach()
-      this.proxyHandler = null
+      this.proxyHandler = undefined
     }
 
     if (meta.unsubscribeList.length > 0) {

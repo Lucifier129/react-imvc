@@ -7,7 +7,7 @@ const initialState = {
   count: 0
 }
 
-export default class extends Controller<typeof initialState, {}, typeof View> {
+export default class extends Controller<typeof initialState, {}, typeof View> implements Ctrl {
 	SSR = true // enable server side rendering
   View = View
   initialState = initialState
@@ -16,7 +16,6 @@ export default class extends Controller<typeof initialState, {}, typeof View> {
   }
 
   handleClick = () => {
-    // @ts-ignore
     this.store.actions.UPDATE_INPUT_VALUE({
       count: this.store.getState().count + 1
     })
@@ -31,7 +30,7 @@ export interface Ctrl {
   handleClick: Function
 }
 
-function View({ state, ctrl, actions }: React.PropsWithChildren<{ state: State, ctrl: Ctrl, actions: any }>) {
+function View({ state, ctrl }: React.PropsWithChildren<{ state: State, ctrl: Ctrl }>) {
 	return (
     <div id="outer_click">
       <div id="out">

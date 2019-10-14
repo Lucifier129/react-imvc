@@ -93,9 +93,7 @@ const createGulpTask: CreateGulpTask = (options) => {
       .pipe(plumber())
       .pipe(
         cleanCSS(
-          {
-            debug: true
-          },
+          {},
           (details: Record<string, any>) => {
             let percent = (
               (details.stats.minifiedSize / details.stats.originalSize) *

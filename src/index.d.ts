@@ -13,7 +13,7 @@ import serveStatic from "serve-static"
 import cookieParser from "cookie-parser"
 import helmet from "helmet"
 import compression from "compression"
-import { Action } from "relite"
+import { Action, Currings, AnyAction } from "relite"
 import babelCore from "babel-core"
 import 'global'
 
@@ -26,14 +26,21 @@ import {
 
 // global
 
+declare var __INITIAL_STATE__ : State
+declare var __webpack_public_path__: string
+declare var __REDUX_DEVTOOLS_EXTENSION__: any
+declare var __PUBLIC_PATH__: string
+declare var __APP_SETTINGS__: AppSettings
+declare var controller: BaseController
 declare global {
-  declare var __INITIAL_STATE__ : State
-  declare var __webpack_public_path__: string
-  declare var __REDUX_DEVTOOLS_EXTENSION__: any
-  declare var __PUBLIC_PATH__: string
-  declare var __APP_SETTINGS__: AppSettings
-  declare var controller: BaseController<any, any, any>
 
+
+  var __INITIAL_STATE__: State | undefined
+  var __webpack_public_path__: string
+  var __REDUX_DEVTOOLS_EXTENSION__: any
+  var __PUBLIC_PATH__: string
+  var __APP_SETTINGS__: AppSettings
+  var controller: BaseController
   namespace NodeJS {
     interface Global {
       __INITIAL_STATE__?: State
@@ -77,8 +84,8 @@ export interface State extends ObjectAlias {
 }
 
 export interface Model {
-  initialState?: State
-  [propName: string]: Action<State>
+  initialState: any
+  [propName: string]: Action<any>
 }
 
 export type Preload = Record<string, string>
@@ -88,13 +95,13 @@ export type API = Record<string, string>
 export interface Context extends BaseContext {
   basename?: string
   env?: string
-  preload?: Payload
+  preload?: Preload
   publicPath?: string
   location?: HistoryLocation
   restapi?: string
   userInfo?: object
-  req?: express.Request
-  res?: express.Response
+  req: express.Request
+  res: express.Response
 }
 
 export interface Handlers {
@@ -124,11 +131,11 @@ export interface BaseViewClass extends React.ComponentClass<ViewProps> {
 
 // Render view
 
-export interface RenderToNodeStream<E = string, C extends BaseController> {
+export interface RenderToNodeStream<E = string, C extends BaseController = BaseController> {
   (view: E, controller?: C): Promise<{}>
 }
 
-export interface RenderToString<E = string, C extends BaseController> {
+export interface RenderToString<E = string, C extends BaseController = BaseController> {
   (view: E, controller?: C): void
 }
 
@@ -150,7 +157,7 @@ export interface ViewProps {
   key?: string
   state?: Partial<State>
   handlers?: Handlers
-  actions?: CurryingActions
+  actions?: Currings<Partial<State>, {}>
 }
 
 // Server
@@ -177,9 +184,7 @@ export interface Module extends NodeModule {
 
 // Compile config
 export interface AppSettings extends Settings {
-  container?: string // react 组件渲染的容器
   cacheAmount?: number
-  basename?: string
 }
 
 export interface GulpConfigItem {
@@ -316,7 +321,7 @@ export interface Config {
   /**
    * client app settings
    */
-  appSettings?: Partial<AppSettings<BaseController>>
+  appSettings?: Partial<AppSettings>
   /**
    * react-imvc app 所在的根目录
    * 默认是 cwd
