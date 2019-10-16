@@ -13,7 +13,7 @@ import serveStatic from "serve-static"
 import cookieParser from "cookie-parser"
 import helmet from "helmet"
 import compression from "compression"
-import { Action, Currings, AnyAction, StateFromAS, Actions } from "relite"
+export { Action, Currings, AnyAction, Actions } from "relite"
 import babelCore from "babel-core"
 import 'global'
 
@@ -92,7 +92,7 @@ export type Preload = Record<string, string>
 
 export type API = Record<string, string>
 
-export type ViewPropsType<S extends object, AS extends ActionsType<S, AS>, Ctrl = {}> = React.PropsWithChildren<{
+export type ViewPropsType<S extends object, AS extends Actions<S, AS>, Ctrl = {}> = React.PropsWithChildren<{
   state: Partial<S>,
   actions: Currings<S, AS>,
   ctrl: Ctrl
@@ -100,7 +100,6 @@ export type ViewPropsType<S extends object, AS extends ActionsType<S, AS>, Ctrl 
 
 export type ViewType<S extends object, AS extends ActionsType<S, AS>> =  React.ComponentType<ViewPropsType<S, AS>>
 
-export type ActionsType<S extends object, AS> = Actions<S & StateFromAS<AS>>
 
 export interface Context extends BaseContext {
   basename?: string
