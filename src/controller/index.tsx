@@ -302,7 +302,9 @@ export default class Controller<
      */
     if (context.isServer && finalOptions.credentials === 'include') {
       // @ts-ignore
-      finalOptions.headers['Cookie'] = context.req.headers.cookie || ''
+      finalOptions.headers['Cookie'] = context.req
+        && context.req.headers
+        && context.req.headers.cookie || ''
     }
 
     let fetchData: Promise<any> = fetch(url, finalOptions)
