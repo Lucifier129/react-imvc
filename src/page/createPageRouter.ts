@@ -16,7 +16,7 @@ import {
   Config,
   AppSettings,
   Req,
-  State,
+  BaseState,
   RenderToNodeStream,
   RenderToString
 } from '..'
@@ -171,7 +171,7 @@ export default function createPageRouter(options: Config) {
       // content 可能是异步渲染的
       content = await content
 
-      let initialState: State | undefined = controller.store
+      let initialState: BaseState | undefined = controller.store
         ? (controller.store.getState as Function)()
         : undefined
       let htmlConfigs = initialState ? initialState.html : undefined

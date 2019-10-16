@@ -32,18 +32,15 @@ describe("test", () => {
   let server: http.Server
   let browser: puppeteer.Browser
 
-  beforeAll(() => {
-    return start({ config }).then((result) => {
-      // app = result.app
-      server = result.server
-      return puppeteer.launch()
-    }).then((brws) => {
-      browser = brws
-    })
+  beforeAll(async () => {
+    const result = await start({ config })
+    // app = result.app
+    server = result.server
+    browser = await puppeteer.launch()
   })
 
-  afterAll(() => {
-    server.close()
+  afterAll(async () => {
+    await server.close()
     return browser.close()
   })
 

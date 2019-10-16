@@ -54,13 +54,11 @@ function mainTest(config: Partial<Config>) {
 	describe('static view', () => {
 		let renderCondition = config.SSR ? 'render' : 'NOT render'
 		
-		// let app: App
 		let server: Server
 		let browser: puppeteer.Browser
 
 		beforeAll(() => {
 			return start({ config }).then((result) => {
-				// app = result.app
 				server = result.server
 				return puppeteer.launch()
 			}).then((brws) => {

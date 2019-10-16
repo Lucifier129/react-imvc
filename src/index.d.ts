@@ -70,7 +70,7 @@ export type BaseLocation = HistoryBaseLocation
 
 type ObjectAlias = object
 
-export interface State extends ObjectAlias {
+export interface BaseState extends ObjectAlias {
   location: Location
   basename: string
   publicPath: string
@@ -92,13 +92,13 @@ export type Preload = Record<string, string>
 
 export type API = Record<string, string>
 
-export type ViewPropsType<S extends object, AS extends ActionsType<S, AS>, Ctrl = {}> = {
+export type ViewPropsType<S extends object, AS extends ActionsType<S, AS>, Ctrl = {}> = React.PropsWithChildren<{
   state: Partial<S>,
   actions: Currings<S, AS>,
   ctrl: Ctrl
-}
+}>
 
-export type ViewType<S extends object, AS extends ActionsType<S, AS>> =  React.ComponentType<React.PropsWithChildren<ViewPropsType<S, AS>>>
+export type ViewType<S extends object, AS extends ActionsType<S, AS>> =  React.ComponentType<ViewPropsType<S, AS>>
 
 export type ActionsType<S extends object, AS> = Actions<S & StateFromAS<AS>>
 

@@ -1,30 +1,13 @@
-// import cacheView from '../src/middleware/cacheView'
 import createCache, { Cache } from '../src/middleware/createCache'
-// import shareRoot from '../src/middleware/shareRoot'
+
+// TODO import shareRoot from '../src/middleware/shareRoot'
+// TODO import cacheView from '../src/middleware/cacheView'
 
 jest.useFakeTimers()
 
 describe('middleware', () => {
   describe('cacheView', () => {
-    // it('cached view will be used next time', () => {
-
-    // })
-
-    // it('set `debug = true` when env is production', () => {
-
-    // })
-
-    // it('default setting worked', () => {
-
-    // })
-
-    // it('setting passed in will cover default setting', () => {
-
-    // })
-
-    // it('it will release some cache when data amount in cache is more than limite', () => {
-
-    // })
+    // TODO
   })
 
   describe('createCache', () => {
@@ -425,16 +408,6 @@ describe('middleware', () => {
   })
 
   describe('shareRoot', () => {
-    // it('rootPath will be set in req.basename', () => {
-
-    // })
-
-    // it('rootPath format will be adjust', () => {
-
-    // })
-
-    // it('the sub string in url match rootPath will be delete', () => {
-
-    // })
+    it.todo('should work')
   })
 })

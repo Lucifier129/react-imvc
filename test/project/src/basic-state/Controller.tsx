@@ -2,13 +2,8 @@ import { Location, Context, ViewPropsType } from '../../../../src/'
 import Controller from '../../../../src/controller'
 import React from 'react'
 
-let initialState = {
-
-}
-
-export default class extends Controller<typeof initialState, {}> {
+export default class extends Controller<{}, {}> {
     View = View
-    initialState = initialState
     constructor(location: Location, context: Context) {
         super(location, context)
         if (context.isClient) {

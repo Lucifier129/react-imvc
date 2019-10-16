@@ -1,7 +1,5 @@
 import path from "path"
-// import fetch from "node-fetch"
 import http from "http"
-// import express from "express"
 import puppeteer from 'puppeteer'
 import { Config } from "../src/"
 import start from "../src/start"
@@ -49,7 +47,6 @@ describe('hook', () => {
       return browser.close()
     })
     it('it work well', async () => {
-      
       let page = await browser.newPage()
       let url = `http://localhost:${config.port}/hook`
       await page.goto(url)
@@ -62,15 +59,15 @@ describe('hook', () => {
     })
   })
   
-  // describe('useModel', () => {
-    
-  // })
+  describe('useModel', () => {
+    it.todo('should work with type infer')
+  })
   
-  // describe('useModelActions', () => {
-    
-  // })
+  describe('useModelActions', () => {
+    it.todo('should work with type infer')
+  })
   
-  // describe('useModelState', () => {
-    
-  // })
+  describe('useModelState', () => {
+    it.todo('should work with type infer')
+  })
 })

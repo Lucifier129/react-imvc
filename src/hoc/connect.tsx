@@ -1,9 +1,9 @@
 import React from "react"
 import GlobalContext from "../context"
-import { State, Handlers } from ".."
+import { BaseState, Handlers } from ".."
 
 export interface Props {
-  state: State
+  state: BaseState
   handlers: Handlers
   actions: {}
   [x: string]: any

@@ -4,38 +4,45 @@ import express from 'express'
 import React from 'react'
 import Cookie from 'js-cookie'
 import querystringify from 'querystringify'
-import { createStore, StateFromAS, Store, Data } from 'relite'
 import {
-  Controller as BaseController,
+  createStore,
+  Store,
+  Data,
+  Actions
+} from 'relite'
+import {
+  Controller as AppController,
   Actions as HistoryActions,
-  HistoryLocation
-} from 'create-app/client'
-import {
+  HistoryLocation,
   createHistory
 } from 'create-app/server'
-import { HistoryWithBFOL, ILWithBQ, BLWithBQ } from 'create-history'
-import _ from '../util'
-import ViewManager from '../component/ViewManager'
-import * as shareActions from './actions'
-import attachDevToolsIfPossible from './attachDevToolsIfPossible'
+import {
+  HistoryWithBFOL,
+  ILWithBQ,
+  BLWithBQ
+} from 'create-history'
 import {
   BaseViewFC,
   BaseViewClass,
   Preload,
   API,
   Context,
-  State,
+  BaseState,
   Handlers,
   Meta,
-  Location,
-  ActionsType
+  Location
 } from '..'
+import * as shareActions from './actions'
+import attachDevToolsIfPossible from './attachDevToolsIfPossible'
+import ViewManager from '../component/ViewManager'
+import _ from '../util'
+
+export type BaseActions = typeof shareActions
 
 const REDIRECT =
   typeof Symbol === 'function'
     ? Symbol('react.imvc.redirect')
     : Object('react.imvc.redirect')
-
 const EmptyView = <Ctrl extends Controller<any, any>>(props?: {
   state?: {
     aa?: string
@@ -45,12 +52,11 @@ const EmptyView = <Ctrl extends Controller<any, any>>(props?: {
   },
   ctrl?: Ctrl
 }) => null
+
 let uid = 0 // seed of controller id
 // fixed: webpack rebuild lost original React.createElement
 // @ts-ignore
 let createElement = React.originalCreateElement || React.createElement
-
-export type Action = typeof shareActions
 
 /**
  * 绑定 Store 到 View
@@ -59,9 +65,9 @@ export type Action = typeof shareActions
  * 提供 fetch 方法
  */
 export default class Controller<
-  S extends object,
-  AS extends ActionsType<S, AS>
-> implements BaseController {
+  S extends {},
+  AS extends Actions<S & BaseState>
+> implements AppController {
   View: React.ComponentType<any> = EmptyView
   restapi?: string
   preload: Preload
@@ -71,7 +77,7 @@ export default class Controller<
   actions: AS = {} as AS
   SSR?: boolean | { (location: Location, context: Context): Promise<boolean> } | undefined
   KeepAliveOnPush?: boolean | undefined
-  store: Store<Partial<S & State & StateFromAS<AS & typeof shareActions>>, AS & typeof shareActions>
+  store: Store<S & BaseState, AS & BaseActions>
   context: Context
   history: HistoryWithBFOL<BLWithBQ, ILWithBQ>
   handlers: Handlers
@@ -87,12 +93,12 @@ export default class Controller<
   errorDidCatch?(error: Error, str: string): void
   getComponentFallback?(displayName: string, InputComponent: React.ComponentType): void
   getViewFallback?(view?: string): React.ReactElement
-  getInitialState(state: S & State): (S & State) | Promise<S & State> { return state }
-  stateDidReuse?(state: S & State): void
+  getInitialState(state: S & BaseState): (S & BaseState) | Promise<S & BaseState> { return state }
+  stateDidReuse?(state: S & BaseState): void
   getFinalActions(actions: AS): AS { return actions }
   shouldComponentCreate?(): void | boolean | Promise<void> | Promise<boolean>
   componentWillCreate?(): Promise<void>
-  stateDidChange?(data?: Data<Partial<S & State & StateFromAS<AS & typeof shareActions>>, AS & typeof shareActions>): void
+  stateDidChange?(data?: Data<Partial<S & BaseState>, AS & BaseActions>): void
   pageWillLeave?(location: ILWithBQ): void
   windowWillUnload?(location: ILWithBQ): void
   pageDidBack?(locaiton: HistoryLocation, context?: Context): void
@@ -120,7 +126,7 @@ export default class Controller<
     this.handlers = {}
     this.preload = {}
 
-    this.store = createStore({} as (AS & typeof shareActions), {} as S & State)
+    this.store = createStore({} as (AS & BaseActions), {} as S & BaseState)
     this.history = createHistory() as HistoryWithBFOL<BLWithBQ, ILWithBQ>
   }
   // 绑定 handler 的 this 值为 controller 实例
@@ -466,7 +472,7 @@ export default class Controller<
           static displayName = `ErrorBoundary(${displayName})`
           static isErrorBoundary = true
 
-          state: Partial<State> = {
+          state: Partial<BaseState> = {
             hasError: false
           }
 
@@ -561,7 +567,7 @@ export default class Controller<
       actions = this.actions = this.Model
     }
 
-    let globalInitialState: State | undefined
+    let globalInitialState: BaseState | undefined
 
     // 服务端把 initialState 吐在 html 里的全局变量 __INITIAL_STATE__ 里
     if (typeof __INITIAL_STATE__ !== 'undefined') {
@@ -574,13 +580,13 @@ export default class Controller<
       initialState = JSON.parse(JSON.stringify(initialState))
     }
 
-    let baseState: State = {
+    let baseState: BaseState = {
       location: this.location,
       basename: this.context.basename || '',
       publicPath: this.context.publicPath || '',
       restapi: this.context.restapi || ''
     }
-    let finalInitialState: S & State = {
+    let finalInitialState: S & BaseState = {
       ...initialState,
       ...(globalInitialState || {}),
       ...baseState
@@ -610,7 +616,7 @@ export default class Controller<
     /**
      * 创建 store
      */
-    let finalActions: AS & typeof shareActions = { ...shareActions, ...actions }
+    let finalActions: AS & BaseActions = { ...shareActions, ...actions }
     this.store = createStore(finalActions, finalInitialState)
     attachDevToolsIfPossible(this.store)
 

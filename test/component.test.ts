@@ -1,6 +1,5 @@
 import path from 'path'
 import http from 'http'
-// import express from 'express'
 import puppeteer from 'puppeteer'
 import { Config } from '../src/'
 import start from '../src/start'
@@ -9,7 +8,7 @@ jest.setTimeout(30000)
 
 process.env.NODE_ENV = 'development'
 
-let PORT: number = 3333
+let PORT: number = 33339
 
 const ROOT: string = path.join(__dirname, 'project')
 
@@ -51,13 +50,6 @@ describe('component test', () => {
     server.close()
     return browser.close()
   })
-  // it('ControllerProxy', () => {
-    
-  // })
-  
-  // it('ErrorBoundary', () => {
-    
-  // })
   
   it('EventWrapper', async () => {
     let page = await browser.newPage()
@@ -77,27 +69,6 @@ describe('component test', () => {
   })
   
   describe('Input', () => {
-    // let app: express.Express
-    let server: http.Server
-    let browser: puppeteer.Browser
-
-    beforeAll(() => {
-      return start({ config }).then((result) => {
-        // app = result.app
-        server = result.server
-        return puppeteer.launch({
-          // headless: false,
-          // slowMo: 50
-        })
-      }).then((brws) => {
-        browser = brws
-      })
-    })
-
-    afterAll(() => {
-      server.close()
-      return browser.close()
-    })
     it('global state should change when the input has been changed', async () => {
       let page = await browser.newPage()
       let url = `http://localhost:${config.port}/input`
@@ -281,14 +252,6 @@ describe('component test', () => {
     await page.close()
   })
   
-  // it('Prefetch', () => {
-    
-  // })
-  
-  // it('Script', () => {
-    
-  // })
-  
   it('Style', async () => {
     let page = await browser.newPage()
     let url = `http://localhost:${config.port}/style`
@@ -301,8 +264,11 @@ describe('component test', () => {
 
     await page.close()
   })
+
   
-  // it('ViewManager', () => {
-    
-  // })
+  it.todo('ControllerProxy')
+  
+  it.todo('ErrorBoundary')
+  
+  it.todo('Prefetch')
 })
