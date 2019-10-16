@@ -65,8 +65,10 @@ let createElement = React.originalCreateElement || React.createElement
  * 提供 fetch 方法
  */
 export default class Controller<
-  S extends {},
-  AS extends Actions<S & BaseState>
+  S extends object,
+  AS extends Actions<S & BaseState>,
+  ES extends object = {},
+  EAS extends Actions<S & BaseState & ES> = {}
 > implements AppController {
   View: React.ComponentType<any> = EmptyView
   restapi?: string
@@ -77,7 +79,7 @@ export default class Controller<
   actions: AS = {} as AS
   SSR?: boolean | { (location: Location, context: Context): Promise<boolean> } | undefined
   KeepAliveOnPush?: boolean | undefined
-  store: Store<S & BaseState, AS & BaseActions>
+  store: Store<S & BaseState & ES, AS & BaseActions & EAS>
   context: Context
   history: HistoryWithBFOL<BLWithBQ, ILWithBQ>
   handlers: Handlers
@@ -93,17 +95,18 @@ export default class Controller<
   errorDidCatch?(error: Error, str: string): void
   getComponentFallback?(displayName: string, InputComponent: React.ComponentType): void
   getViewFallback?(view?: string): React.ReactElement
-  getInitialState(state: S & BaseState): (S & BaseState) | Promise<S & BaseState> { return state }
   stateDidReuse?(state: S & BaseState): void
-  getFinalActions(actions: AS): AS { return actions }
   shouldComponentCreate?(): void | boolean | Promise<void> | Promise<boolean>
   componentWillCreate?(): Promise<void>
-  stateDidChange?(data?: Data<Partial<S & BaseState>, AS & BaseActions>): void
+  stateDidChange?(data?: Data<S & BaseState & ES, AS & BaseActions & EAS>): void
   pageWillLeave?(location: ILWithBQ): void
   windowWillUnload?(location: ILWithBQ): void
   pageDidBack?(locaiton: HistoryLocation, context?: Context): void
 
   [propName: string]: any
+
+  getInitialState(state: S & BaseState): any { return state }
+  getFinalActions(actions: AS): any { return actions }
 
   constructor(location: Location, context: Context) {
     this.meta = {
@@ -126,11 +129,11 @@ export default class Controller<
     this.handlers = {}
     this.preload = {}
 
-    this.store = createStore({} as (AS & BaseActions), {} as S & BaseState)
+    this.store = createStore({} as (AS & BaseActions & EAS), {} as S & BaseState & ES)
     this.history = createHistory() as HistoryWithBFOL<BLWithBQ, ILWithBQ>
   }
   // 绑定 handler 的 this 值为 controller 实例
-  combineHandlers(source: Controller<S, AS>) {
+  combineHandlers(source: Controller<S, AS, ES, EAS>) {
     let { handlers } = this
     Object.keys(source).forEach(key => {
       let value = source[key]
@@ -586,18 +589,15 @@ export default class Controller<
       publicPath: this.context.publicPath || '',
       restapi: this.context.restapi || ''
     }
-    let finalInitialState: S & BaseState = {
-      ...initialState,
-      ...(globalInitialState || {}),
-      ...baseState
-    }
 
     /**
      * 动态获取初始化的 initialState
      */
-    if (!globalInitialState && this.getInitialState) {
-      finalInitialState = await this.getInitialState(finalInitialState)
-    }
+    let finalInitialState: S & BaseState & ES = this.getInitialState({
+      ...initialState,
+      ...(globalInitialState || {}),
+      ...baseState
+    })
 
     /**
      * 复用了 server side 的 state 数据之后执行
@@ -609,14 +609,11 @@ export default class Controller<
     /**
      * 动态获取最终的 actions
      */
-    if (this.getFinalActions) {
-      actions = this.getFinalActions(actions)
-    }
-
+    let finalActions: AS & BaseActions & EAS = this.getFinalActions({ ...shareActions, ...actions })
+    
     /**
      * 创建 store
      */
-    let finalActions: AS & BaseActions = { ...shareActions, ...actions }
     this.store = createStore(finalActions, finalInitialState)
     attachDevToolsIfPossible(this.store)
 
@@ -781,7 +778,7 @@ export default class Controller<
     // if (View && !View.viewId) {
     //   View.viewId = Date.now()
     // }
-    let ctrl: Controller<S, AS> = Object.create(this)
+    let ctrl: Controller<S, AS, ES, EAS> = Object.create(this)
     ctrl.View = View
     ctrl.componentDidFirstMount = null
     ctrl.componentDidMount = null
