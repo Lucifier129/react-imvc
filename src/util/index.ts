@@ -13,8 +13,8 @@ export default {
 }
 
 
-type RouteList = Route[]
-type inputList = (Route | RouteList)[]
+export type RouteList = Route[]
+export type inputList = (Route | RouteList)[]
 
 function getFlatList(list: inputList): RouteList {
   let result: RouteList = []
@@ -29,7 +29,7 @@ function getFlatList(list: inputList): RouteList {
   return result
 }
 
-interface FetchResponse {
+export interface FetchResponse {
   ok: boolean
   status: number
   statusText: string
@@ -64,8 +64,8 @@ function isAbsoluteUrl(url: string) {
   return url.indexOf('http') === 0 || url.indexOf('//') === 0
 }
 
-type mapFunction = (value: any, key: string) => any
-type anyObject = { [key: string]: any }
+export type mapFunction = (value: any, key: string) => any
+export type anyObject = { [key: string]: any }
 
 function mapValues(obj: anyObject, fn: mapFunction): anyObject {
   return Object.keys(obj).reduce(
@@ -87,12 +87,12 @@ const getPath = (path: string | string[]) => {
   return path.split(PATH_SEPARATOR_REGEXP)
 }
 
-interface ObjectOrArray {
+export interface ObjectOrArray {
   [key: string]: any
   [key: number]: any
 }
 
-type setValue = (
+export type setValue = (
   obj: ObjectOrArray,
   keys: string[],
   value: any
@@ -116,7 +116,7 @@ function setValueByPath(
   return setValue(obj, getPath(path), value)
 }
 
-type getValue = (ret: ObjectOrArray, key: string | number) => any
+export type getValue = (ret: ObjectOrArray, key: string | number) => any
 const getValue: getValue = (ret, key) => ret[key]
 
 function getValueByPath(obj: ObjectOrArray, path: string | string[]): any {

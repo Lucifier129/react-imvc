@@ -26,7 +26,7 @@ import {
 
 // global
 
-declare var __INITIAL_STATE__ : State
+declare var __INITIAL_STATE__ : BaseState
 declare var __webpack_public_path__: string
 declare var __REDUX_DEVTOOLS_EXTENSION__: any
 declare var __PUBLIC_PATH__: string
@@ -35,7 +35,7 @@ declare var controller: BaseController
 declare global {
 
 
-  var __INITIAL_STATE__: State | undefined
+  var __INITIAL_STATE__: BaseState | undefined
   var __webpack_public_path__: string
   var __REDUX_DEVTOOLS_EXTENSION__: any
   var __PUBLIC_PATH__: string
@@ -43,7 +43,7 @@ declare global {
   var controller: BaseController
   namespace NodeJS {
     interface Global {
-      __INITIAL_STATE__?: State
+      __INITIAL_STATE__?: BaseState
       __webpack_public_path__?: string
       fetch?: Function
       [x: string]: any
@@ -68,7 +68,9 @@ export type Location = HistoryLocation
 
 export type BaseLocation = HistoryBaseLocation
 
-type ObjectAlias = object
+export type ObjectAlias = object
+
+export type WithBase<T extends object> = T & BaseState
 
 export interface BaseState extends ObjectAlias {
   location: Location
@@ -93,7 +95,7 @@ export type Preload = Record<string, string>
 export type API = Record<string, string>
 
 export type ViewPropsType<S extends object, AS extends Actions<S, AS>, Ctrl = {}> = React.PropsWithChildren<{
-  state: Partial<S>,
+  state: S,
   actions: Currings<S, AS>,
   ctrl: Ctrl
 }>
@@ -164,9 +166,9 @@ export interface RenderProps {
 
 export interface ViewProps {
   key?: string
-  state?: Partial<State>
+  state?: BaseState
   handlers?: Handlers
-  actions?: Currings<Partial<State>, {}>
+  actions?: Currings<BaseState, {}>
 }
 
 // Server

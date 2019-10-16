@@ -65,8 +65,8 @@ let createElement = React.originalCreateElement || React.createElement
  * 提供 fetch 方法
  */
 export default class Controller<
-  S extends object,
-  AS extends Actions<S & BaseState>,
+  S extends object = {},
+  AS extends Actions<S & BaseState> = {},
   ES extends object = {},
   EAS extends Actions<S & BaseState & ES> = {}
 > implements AppController {
