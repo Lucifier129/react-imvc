@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import querystringify from 'querystringify'
+import querystring from 'query-string'
 import spawn from 'cross-spawn'
 import { SpawnSyncReturns } from 'child_process'
 import { getKeys } from '../util'
@@ -8,7 +8,7 @@ import { getKeys } from '../util'
 let command = process.argv[2]
 let args = process.argv.slice(3)
 let [script, paramsStr = ''] = command.split('?')
-let query = querystringify.parse(paramsStr)
+let query = querystring.parse(paramsStr)
 let params = getKeys(query).map(key => {
   return query[key] ? `--${key}=${query[key]}` : `--${key}`
 })

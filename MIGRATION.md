@@ -146,7 +146,6 @@
 * @types/node 10.12.24
 * @types/node-fetch 2.5.0
 * @types/node-notifier 5.4.0
-* @types/querystringify 2.0.0
 * @types/raf 3.4.0
 * @types/react 16.8.2
 * @types/react-dom 16.8.0
@@ -160,7 +159,6 @@
 * @types/webpack-manifest-plufin 2.0.0
 * @types/yargs 13.0.1
 * fs-extra 8.1.0
-* querystringify 2.1.1
 
 ### Delete
 

@@ -3,7 +3,7 @@ import 'whatwg-fetch'
 import express from 'express'
 import React from 'react'
 import Cookie from 'js-cookie'
-import querystringify from 'querystringify'
+import querystring from 'query-string'
 import {
   createStore,
   Store,
@@ -337,7 +337,7 @@ export default class Controller<
    */
   get(
     url: string,
-    params: Record<string, string>,
+    params: Record<string, string | number | boolean>,
     options?: RequestInit & {
       raw?: boolean
       json?: boolean
@@ -354,7 +354,7 @@ export default class Controller<
     }
     if (params) {
       let prefix = url.includes('?') ? '&' : '?'
-      url += prefix + querystringify.stringify(params)
+      url += prefix + querystring.stringify(params)
     }
     options = {
       ...options,

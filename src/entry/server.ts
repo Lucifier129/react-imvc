@@ -7,7 +7,7 @@ import cookieParser from "cookie-parser"
 import bodyParser from "body-parser"
 import favicon from "serve-favicon"
 import helmet from "helmet"
-import querystringify from "querystringify"
+import querystring from "query-string"
 
 import shareRoot from "../middleware/shareRoot"
 import { Config, Req } from ".."
@@ -103,7 +103,7 @@ export default function createExpressApp(config: Config) {
 				noInfo: true
 			}
 			app.use(
-				require(`webpack-hot-middleware?${querystringify.stringify(
+				require(`webpack-hot-middleware?${querystring.stringify(
 					whmConfig
 				)}`)(compiler, {
 					log: false
