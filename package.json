@@ -19,7 +19,8 @@
     "test:build": "ts-node test/project/build.ts",
     "publish-imvc": "npm publish ./publish",
     "prepublish-imvc": "npm run build",
-    "script:test": "node ./scripts/test.js"
+    "script:test": "node ./scripts/test.js",
+    "delete": "rimraf node_modules/relite&rimraf node_modules/create-app&rimraf node_modules/create-history"
   },
   "repository": {
     "type": "git",

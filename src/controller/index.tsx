@@ -92,16 +92,16 @@ export default class Controller<
   resetScrollOnMount?: boolean
   Loading: BaseViewFC | BaseViewClass = () => null
 
-  errorDidCatch?(error: Error, str: string): void | Promise<void>
-  getComponentFallback?(displayName: string, InputComponent: React.ComponentType): void | Promise<void>
+  errorDidCatch?(error: Error, str: string): void
+  getComponentFallback?(displayName: string, InputComponent: React.ComponentType): React.ReactElement
   getViewFallback?(view?: string): React.ReactElement
-  stateDidReuse?(state: S & BaseState): void | Promise<void>
+  stateDidReuse?(state: S & BaseState): void
   shouldComponentCreate?(): void | boolean | Promise<void | boolean>
-  componentWillCreate?(): Promise<void>
-  stateDidChange?(data?: Data<S & BaseState & ES, AS & BaseActions & EAS>): void | Promise<void>
-  pageWillLeave?(location: ILWithBQ): void | Promise<void>
-  windowWillUnload?(location: ILWithBQ): void | Promise<void>
-  pageDidBack?(locaiton: HistoryLocation, context?: Context): void | Promise<void>
+  componentWillCreate?(): void | Promise<void>
+  stateDidChange?(data?: Data<S & BaseState & ES, AS & BaseActions & EAS>): void
+  pageWillLeave?(location: ILWithBQ): void
+  windowWillUnload?(location: ILWithBQ): void
+  pageDidBack?(locaiton: HistoryLocation, context?: Context): void
 
   [propName: string]: any
 
