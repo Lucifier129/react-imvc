@@ -111,9 +111,9 @@ export interface Context extends BaseContext {
   publicPath?: string
   location?: HistoryLocation
   restapi?: string
-  userInfo?: object
   req?: express.Request
   res?: express.Response
+  [x: string]: any
 }
 
 export interface Handlers {

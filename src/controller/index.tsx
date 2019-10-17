@@ -92,16 +92,16 @@ export default class Controller<
   resetScrollOnMount?: boolean
   Loading: BaseViewFC | BaseViewClass = () => null
 
-  errorDidCatch?(error: Error, str: string): void
-  getComponentFallback?(displayName: string, InputComponent: React.ComponentType): void
+  errorDidCatch?(error: Error, str: string): void | Promise<void>
+  getComponentFallback?(displayName: string, InputComponent: React.ComponentType): void | Promise<void>
   getViewFallback?(view?: string): React.ReactElement
-  stateDidReuse?(state: S & BaseState): void
-  shouldComponentCreate?(): void | boolean | Promise<void> | Promise<boolean>
+  stateDidReuse?(state: S & BaseState): void | Promise<void>
+  shouldComponentCreate?(): void | boolean | Promise<void | boolean>
   componentWillCreate?(): Promise<void>
-  stateDidChange?(data?: Data<S & BaseState & ES, AS & BaseActions & EAS>): void
-  pageWillLeave?(location: ILWithBQ): void
-  windowWillUnload?(location: ILWithBQ): void
-  pageDidBack?(locaiton: HistoryLocation, context?: Context): void
+  stateDidChange?(data?: Data<S & BaseState & ES, AS & BaseActions & EAS>): void | Promise<void>
+  pageWillLeave?(location: ILWithBQ): void | Promise<void>
+  windowWillUnload?(location: ILWithBQ): void | Promise<void>
+  pageDidBack?(locaiton: HistoryLocation, context?: Context): void | Promise<void>
 
   [propName: string]: any
 
@@ -337,7 +337,7 @@ export default class Controller<
    */
   get(
     url: string,
-    params: Record<string, string | number | boolean>,
+    params?: Record<string, string | number | boolean>,
     options?: RequestInit & {
       raw?: boolean
       json?: boolean
@@ -368,7 +368,7 @@ export default class Controller<
    */
   post(
     url: string,
-    data: any,
+    data?: any,
     options?: RequestInit & {
       raw?: boolean
       json?: boolean
@@ -663,7 +663,7 @@ export default class Controller<
       return this.render()
     }
 
-    let promiseList: (Promise<any> | undefined)[] = []
+    let promiseList: (Promise<any> | void)[] = []
 
     /**
      * 如果 shouldComponentCreate 返回 false，不创建和渲染 React Component

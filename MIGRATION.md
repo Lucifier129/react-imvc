@@ -165,3 +165,7 @@
 * expect 1.20.2
 * mocha 3.0.2
 * querystring 0.2.0
+
+## Notions
+
+* Don't change or override the type of attribute is `BaseState`, it will happen unpredictable error.
