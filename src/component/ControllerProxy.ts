@@ -28,7 +28,7 @@ export default class ControllerProxy<
     let { controller } = this.props
     let { html } = controller.store.getState()
 
-    if (html && html.title !== document.title) {
+    if (html && html.title && html.title !== document.title) {
       document.title = html.title
     }
   }

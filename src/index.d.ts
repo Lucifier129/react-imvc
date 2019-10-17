@@ -79,8 +79,9 @@ export interface BaseState extends ObjectAlias {
   restapi: string
   hasError?: boolean
   html?: {
-    title: string
-    [x: string]: any
+    title?: string
+    description?: string
+    keywords?: string
   }
   [x: string]: any
 }
