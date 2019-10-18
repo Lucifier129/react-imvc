@@ -56,9 +56,7 @@ export default function createExpressApp(config: Config) {
 
 	// view engine setup
 	app.set("views", path.join(config.root, config.routes))
-	app.set("view engine", "ts")
-	app.set("view engine", "jsx")
-	app.set("view engine", "tsx")
+	app.set("view engine", "js") // default view engine ext .js
 
 	// handle logger
 	if (config.logger) {

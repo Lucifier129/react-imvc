@@ -171,3 +171,5 @@
 * Don't change or override the type of attribute is `BaseState`, it will happen unpredictable error.
 
 * Both `shouldComponentCreate` and `componentWillCreate` is support both sync and async two mode programming. But when you extends Controller and overwrite these two method it's mode will be settled. If these are some mix usage. you must fix it by choose one mode(suggest async).
+
+* The default view file extension is 'js'. If you want to use other extension file, please add in config.(eg.view.tsx)

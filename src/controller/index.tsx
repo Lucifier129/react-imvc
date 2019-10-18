@@ -620,6 +620,7 @@ export default class Controller<
     this.store = createStore(finalActions, finalInitialState)
     attachDevToolsIfPossible(this.store)
 
+    // TODO
     // proxy store.actions for handling error
     // if (this.errorDidCatch) {
     //   let keys = getKeys(this.store.actions)
