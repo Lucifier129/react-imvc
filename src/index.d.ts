@@ -227,23 +227,23 @@ export interface GulpTaskConfig {
 
 interface GulpConfig {
   // 需要压缩到 static 目录的 css
-  css?: string[]
+  css?: string[] | false
   // 需要压缩到 static 目录的 html
-  html?: string[]
+  html?: string[] | false
 
-  img?: string[]
+  img?: string[] | false
   // 需要压缩到 static 目录的 js
-  js?: string[]
+  js?: string[] | false
 
-  es5?: string[]
+  es5?: string[] | false
   // 需要复制到 static 目录的非 html, css, js 文件
-  copy?: string[]
+  copy?: string[] | false
   // 需要复制到 publish 目录的额外文件
-  publishCopy?: string[]
+  publishCopy?: string[] | false
   // 需要编译到 publish 目录的额外文件
-  publishBabel?: string[]
+  publishBabel?: string[] | false
 
-  [propName: string]: string[] | undefined
+  [propName: string]: string[] | false
 }
 
 export interface Views {

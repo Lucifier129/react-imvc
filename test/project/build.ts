@@ -14,6 +14,9 @@ const config: Partial<Config> = {
 	publish: '../publish',
 	output: {
 		path: path.resolve(ROOT, '../publish/static')
+	},
+	gulp: {
+		img: false
 	}
 }
 
