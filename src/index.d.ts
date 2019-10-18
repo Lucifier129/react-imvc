@@ -450,7 +450,9 @@ export interface Config {
    * express 中间件 cookie-parser 的自定义配置
    * 默认为空
    */
-  cookieParser: cookieParser.CookieParseOptions
+  cookieParser: cookieParser.CookieParseOptions & {
+    secret?: string | string[]
+  }
 
   /**
    * express 中间件 helmet 的自定义配置
