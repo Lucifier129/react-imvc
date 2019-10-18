@@ -1,1 +1,1 @@
-module.export = require('../../dist/component/Input')
+module.exports = require('../../dist/component/Input')

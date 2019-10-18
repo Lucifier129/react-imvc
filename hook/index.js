@@ -1,1 +1,1 @@
-module.export = require('../dist/hook')
+module.exports = require('../dist/hook')

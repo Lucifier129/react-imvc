@@ -1,1 +1,1 @@
-module.export = require('../../dist/component/Style')
+module.exports = require('../../dist/component/Style')

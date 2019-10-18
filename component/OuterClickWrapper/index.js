@@ -1,1 +1,1 @@
-module.export = require('../../dist/component/OuterClickWrapper')
+module.exports = require('../../dist/component/OuterClickWrapper')

@@ -1,1 +1,1 @@
-module.export = require('../../dist/component/EventWrapper')
+module.exports = require('../../dist/component/EventWrapper')

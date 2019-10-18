@@ -1,1 +1,1 @@
-module.export = require('../dist/controller')
+module.exports = require('../dist/controller')

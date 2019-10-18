@@ -1,1 +1,1 @@
-module.export = require('../../dist/component/ControllerProxy')
+module.exports = require('../../dist/component/ControllerProxy')

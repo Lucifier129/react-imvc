@@ -1,1 +1,1 @@
-module.export = require('../../dist/component/Link')
+module.exports = require('../../dist/component/Link')

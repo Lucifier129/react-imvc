@@ -1,1 +1,1 @@
-module.export = require('../../dist/component/ErrorBoundary')
+module.exports = require('../../dist/component/ErrorBoundary')

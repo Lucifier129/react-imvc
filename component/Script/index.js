@@ -1,1 +1,1 @@
-module.export = require('../../dist/component/Script')
+module.exports = require('../../dist/component/Script')

@@ -1,1 +1,1 @@
-module.export = require('../../dist/component/ViewManager')
+module.exports = require('../../dist/component/ViewManager')

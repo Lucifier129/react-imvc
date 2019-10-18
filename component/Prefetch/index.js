@@ -1,1 +1,1 @@
-module.export = require('../../dist/component/Prefetch')
+module.exports = require('../../dist/component/Prefetch')

@@ -1,1 +1,1 @@
-module.export = require('../dist/hoc/connect')
+module.exports = require('../dist/hoc/connect')
