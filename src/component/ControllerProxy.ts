@@ -33,11 +33,11 @@ export default class ControllerProxy<
     }
   }
 
-  emit(method: string) {
+  async emit(method: string) {
     let { controller } = this.props
     try {
       if (typeof controller[method] === 'function') {
-        controller[method]()
+        await controller[method]()
       }
     } catch (error) {
       if (controller.errorDidCatch) {
