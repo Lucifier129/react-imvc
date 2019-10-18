@@ -532,7 +532,6 @@ export default class Controller<
 
     if (this.proxyHandler) {
       this.proxyHandler.detach()
-      this.proxyHandler = undefined
     }
 
     if (meta.unsubscribeList.length > 0) {
