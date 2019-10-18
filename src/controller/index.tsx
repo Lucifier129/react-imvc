@@ -101,7 +101,7 @@ export default class Controller<
   stateDidChange?(data?: Data<S & BaseState & ES, AS & BaseActions & EAS>): void
   pageWillLeave?(location: ILWithBQ): void
   windowWillUnload?(location: ILWithBQ): void
-  pageDidBack?(locaiton: HistoryLocation, context?: Context): void
+  pageDidBack?(location: HistoryLocation, context?: Context): void
 
   [propName: string]: any
 
@@ -117,7 +117,7 @@ export default class Controller<
     }
     /**
      * 将 location.key 赋值给 this.meta 并在 location 里删除
-     * 避免 SSR 时，因为 initialState 里总有 locaiton.key 这个随机字符串
+     * 避免 SSR 时，因为 initialState 里总有 location.key 这个随机字符串
      * 而导致服务端的 Etag 不断变化，无法 304 。
      */
     if (location) {
@@ -506,7 +506,7 @@ export default class Controller<
         let Forwarder: React.ForwardRefExoticComponent<{}> & { isErrorBoundary?: boolean } = React.forwardRef((props, ref) => {
           return createElement(ErrorBoundary, { ...props, forwardedRef: ref })
         })
-        
+
         /**
          * 同步 InputComponent 的静态属性/方法，一些 UI 框架，如 Ant-Design 
          * 依赖静态属性/方法去判断组件类型
