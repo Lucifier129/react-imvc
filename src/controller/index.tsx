@@ -596,7 +596,7 @@ export default class Controller<
     /**
      * 动态获取初始化的 initialState
      */
-    let finalInitialState: S & BaseState & ES = this.getInitialState({
+    let finalInitialState: S & BaseState & ES = await this.getInitialState({
       ...initialState,
       ...(globalInitialState || {}),
       ...baseState
@@ -612,7 +612,7 @@ export default class Controller<
     /**
      * 动态获取最终的 actions
      */
-    let finalActions: AS & BaseActions & EAS = this.getFinalActions({ ...shareActions, ...actions })
+    let finalActions: AS & BaseActions & EAS = await this.getFinalActions({ ...shareActions, ...actions })
     
     /**
      * 创建 store
