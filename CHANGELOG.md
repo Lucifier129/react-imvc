@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.7.0
+
+- feature: 支持禁用 gulp 任务
+
 ## 2.6.6
 
 - Error Handling 支持异步生命周期的处理
