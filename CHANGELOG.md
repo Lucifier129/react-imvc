@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.6.6
+
+- Error Handling 支持异步生命周期的处理
+- 为 保护性复制功能加开关
+- 支持使用者手动传入自定义的fetch方法替换window.fetch和node-fetch
+
 ## 2.6.1
 
 - 增加 `ctr.fetch` 的 options 参数，options.timeoutErrorFormatter，支持自定义超时错误信息
