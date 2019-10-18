@@ -271,6 +271,7 @@ export default class Controller<
       json?: boolean
       timeout?: number
       timeoutErrorFormatter?: ((opstion: any) => string) | string
+      fetch?: (input: RequestInfo, init?: RequestInit | undefined) => Promise<Response>
     } = {}
   ) {
     let { context, API } = this
@@ -307,7 +308,10 @@ export default class Controller<
         && context.req.headers.cookie || ''
     }
 
-    let fetchData: Promise<any> = fetch(url, finalOptions)
+    // 支持使用方手动传入自定义fetch方法
+    let fetchLocal = typeof options.fetch === 'function' ? options.fetch : fetch
+
+    let fetchData: Promise<any> = fetchLocal(url, finalOptions)
 
     /**
      * 拓展字段，如果手动设置 options.json 为 false
