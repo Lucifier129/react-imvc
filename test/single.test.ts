@@ -22,7 +22,7 @@ const config: Partial<Config> = {
   },
   renderMode: 'renderToString',
   routes: "routes", // 服务端路由目录
-  layout: "Layout", // 自定义 Layoutclear
+  layout: "Layout.tsx", // 自定义 Layoutclear
   webpackLogger: false, // 关闭 webpack logger
   webpackDevMiddleware: true, // 在内存里编译
 }

@@ -28,7 +28,7 @@ const config: Partial<Config> = {
 		transformViews: false // 已有转换，无须再做
 	},
 	routes: 'routes', // 服务端路由目录
-	layout: 'Layout', // 自定义 Layout
+	layout: 'Layout.tsx', // 自定义 Layout
 	webpackLogger: false, // 关闭 webpack logger
 	webpackDevMiddleware: true // 在内存里编译
 }
