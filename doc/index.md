@@ -1298,3 +1298,19 @@ module.exports = {
 目前框架在init阶段默认有以下行为：```JSON.parse(JSON.stringify(initialState))```，目的是防止篡改原数据
 
 此外，我们提供了开关 ```controller.deepCloneInitialState: Boolean```, 设为false即可跳过这个默认行为
+
+### 如何关闭 gulp 任务
+
+在一些场景中，可能需要关闭 gulp 任务，比如禁用图片压缩等。
+
+可以通过在 `imvc.config.js` 中配置：
+
+```javascript
+module.exports = {
+  gulp: {
+    img: false
+  }
+}
+```
+
+所有 gulp 任务可点击[查看](../config/config.defaults.js#L156-L169)
