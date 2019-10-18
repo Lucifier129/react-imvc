@@ -75,8 +75,8 @@ export default class Controller<
   preload: Preload
   API?: API
   Model?: { initialState: S } & AS
-  initialState: S = {} as S
-  actions: AS = {} as AS
+  initialState?: S
+  actions?: AS
   SSR?: boolean | { (location: Location, context: Context): Promise<boolean> } | undefined
   KeepAliveOnPush?: boolean | undefined
   store: Store<S & BaseState & ES, AS & BaseActions & EAS>
@@ -563,8 +563,8 @@ export default class Controller<
     this.fetch = this.fetch.bind(this)
     this.prefetch = this.prefetch.bind(this)
 
-    let actions: AS = this.actions
-    let initialState: S = this.initialState
+    let actions: AS = this.actions || {} as AS
+    let initialState: S = this.initialState || {} as S
 
     // 如果 Model 存在，且 initialState 和 actions 不存在，从 Model 里解构出来
     if (this.Model && this.initialState === undefined && this.actions === undefined) {
