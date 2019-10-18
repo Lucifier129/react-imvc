@@ -90,6 +90,7 @@ export default class Controller<
     detach(): void
   }
   resetScrollOnMount?: boolean
+  deepCloneInitialState: boolean
   Loading: BaseViewFC | BaseViewClass = () => null
 
   errorDidCatch?(error: Error, str: string): void
@@ -128,6 +129,7 @@ export default class Controller<
     this.context = context
     this.handlers = {}
     this.preload = {}
+    this.deepCloneInitialState = true
 
     this.store = createStore({} as (AS & BaseActions & EAS), {} as S & BaseState & ES)
     this.history = createHistory() as HistoryWithBFOL<BLWithBQ, ILWithBQ>
@@ -589,7 +591,7 @@ export default class Controller<
       __INITIAL_STATE__ = undefined
     }
 
-    if (typeof initialState === 'object') {
+    if (typeof initialState === 'object' && this.deepCloneInitialState) {
       // 保护性复制初始化状态，避免运行中修改引用导致其他实例初始化数据不对
       initialState = JSON.parse(JSON.stringify(initialState))
     }
