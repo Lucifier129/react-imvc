@@ -33,7 +33,6 @@ const build: Build = (options) => {
   let errorHandler = (error: Error) => {
     console.error(error)
     process.exit(1)
-    throw new Error('something is worng')
   }
 
   return Promise.resolve()

@@ -34,7 +34,10 @@ const createConfig: CreateGulpTaskConfig = options => {
       dest: staticPath
     },
     js: {
-      src: [src + '/lib/!(es5)/**/*.@(js|ts|jsx|tsx)', src + '/lib/*.@(js|ts|jsx|tsx)'],
+      src: [
+        src + '/lib/!(es5)/**/*.@(js|ts|jsx|tsx)',
+        src + '/lib/*.@(js|ts|jsx|tsx)'
+      ],
       dest: staticPath + '/lib'
     },
     es5: {
@@ -192,11 +195,20 @@ const createGulpTask: CreateGulpTask = (options) => {
       .pipe(gulp.dest(config.copy.dest))
   }
 
-  return gulp.series(
-    publishCopy,
-    publishBabel,
-    copy,
-    gulp.parallel(minifyHTML, minifyCSS, minifyES5, minifyES6, minifyImage)
-  )
+  let parallelList = [
+    config.html && minifyHTML,
+    config.css && minifyCSS,
+    config.es5 && minifyES5,
+    config.js && minifyES6,
+    config.img && minifyImage
+  ].filter(Boolean)
+
+  let seriesList  = [
+    config.publishCopy && publishCopy,
+    config.publishBabel && publishBabel,
+    config.copy && copy,
+  ].filter(Boolean)
+
+  return gulp.series(...seriesList ,gulp.parallel(...parallelList))
 }
 export default createGulpTask
