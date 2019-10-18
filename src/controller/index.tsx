@@ -570,6 +570,9 @@ export default class Controller<
     if (this.Model && this.initialState === undefined && this.actions === undefined) {
       initialState = this.initialState = this.Model.initialState
       actions = this.actions = this.Model
+      
+      delete actions.initialState
+      delete this.actions.initialState
     }
 
     let globalInitialState: BaseState | undefined
