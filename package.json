@@ -29,7 +29,9 @@
     "hoc",
     "hook",
     "util",
-    "dist"
+    "dist",
+    "index.js",
+    "index.d.ts"
   ],
   "repository": {
     "type": "git",
