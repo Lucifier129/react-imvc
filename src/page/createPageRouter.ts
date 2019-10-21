@@ -35,7 +35,18 @@ const commonjsLoader: Loader = (loadModule, location, context) =>
  */
 const createElement = React.createElement
 
-const renderToNodeStream: RenderToNodeStream<React.ReactElement, Controller<any, any>> = (view, controller) => {
+const renderToNodeStream: RenderToNodeStream<React.ReactElement | string | undefined | null, Controller<any, any>> = (view, controller) => {
+  if (typeof view === 'string') {
+    return new Promise<{}>((resolve, reject) => {
+      resolve(util.str2ab(view))
+    })
+  }
+  if (view === undefined || view === null) {
+    return new Promise<{}>((resolve, reject) => {
+      resolve(util.str2ab(''))
+    })
+  }
+
   return new Promise<{}>((resolve, reject) => {
     let stream = ReactDOMServer.renderToNodeStream(view)
     let buffers: Uint8Array[] = []
@@ -55,7 +66,7 @@ const renderToNodeStream: RenderToNodeStream<React.ReactElement, Controller<any,
       }
 
       if (controller.getViewFallback) {
-        let fallbackView: React.ReactElement = controller.getViewFallback('view')
+        let fallbackView = controller.getViewFallback('view')
         renderToNodeStream(fallbackView).then(resolve, reject)
       } else {
         React.createElement = createElement
@@ -65,7 +76,14 @@ const renderToNodeStream: RenderToNodeStream<React.ReactElement, Controller<any,
   })
 }
 
-const renderToString: RenderToString<React.ReactElement, Controller<any, any>> = (view, controller) => {
+const renderToString: RenderToString<React.ReactElement | string | undefined | null, Controller<any, any>> = (view, controller) => {
+  if (typeof view === 'string') {
+    return view
+  }
+  if (view === undefined || view === null) {
+    return ''
+  }
+
   try {
     return ReactDOMServer.renderToString(view)
   } catch (error) {

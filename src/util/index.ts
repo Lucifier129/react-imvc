@@ -9,7 +9,9 @@ export default {
   isThenable,
   setValueByPath,
   getValueByPath,
-  getFlatList
+  getFlatList,
+  ab2str,
+  str2ab
 }
 
 
@@ -124,3 +126,16 @@ function getValueByPath(obj: ObjectOrArray, path: string | string[]): any {
 }
 
 export const getKeys = <T extends {}>(o: T) => Object.keys(o) as Array<keyof T>
+
+export function ab2str(buf: Uint8Array) {
+  return String.fromCharCode.apply(null, new Uint16Array(buf));
+}
+
+export function str2ab(str: string) {
+  var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
+  var bufView = new Uint16Array(buf);
+  for (let i = 0, strLen = str.length; i<strLen; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
+}
