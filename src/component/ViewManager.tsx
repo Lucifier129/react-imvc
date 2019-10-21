@@ -5,25 +5,21 @@ import ControllerProxy from './ControllerProxy'
 import Controller from '../controller'
 import { BaseState } from '..'
 
-interface Props<
+export interface Props<
 	S extends object,
-	AS extends Actions<S & BaseState>,
-  ES extends object = {},
-  EAS extends Actions<S & BaseState & ES> = {}
+	AS extends Actions<S & BaseState>
 > {
-	controller: Controller<S, AS, ES, EAS>
+	controller: Controller<S, AS>
 }
 
 export default class ViewManager<
 	S extends object,
-	AS extends Actions<S & BaseState>,
-  ES extends object = {},
-  EAS extends Actions<S & BaseState & ES> = {}
-> extends React.Component<Props<S, AS, ES, EAS>> {
+	AS extends Actions<S & BaseState>
+> extends React.Component<Props<S, AS>> {
 	static ignoreErrors = true
 	views: Record<string, any> = {}
 	scrollMap: Record<string, any> = {}
-	constructor(props: Props<S, AS, ES, EAS>, context: React.Context<any>) {
+	constructor(props: Props<S, AS>, context: React.Context<any>) {
 		super(props, context)
 		this.addItemIfNeed(props.controller.location.raw)
 	}
@@ -52,7 +48,7 @@ export default class ViewManager<
 		}
 	}
 
-	componentWillReceiveProps(nextProps: Props<S, AS, ES, EAS>) {
+	componentWillReceiveProps(nextProps: Props<S, AS>) {
 		let currentPath = this.props.controller.location.raw
 		let nextPath = nextProps.controller.location.raw
 		if (currentPath !== nextPath) {
@@ -105,7 +101,6 @@ export default class ViewManager<
 					key={`${meta.id}_${currentPath}`}
 					state={state}
 					ctrl={controller}
-					actions={actions}
 				/>
 			</GlobalContext.Provider>
 		)

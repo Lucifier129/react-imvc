@@ -1,7 +1,7 @@
 import React from 'react'
 import GlobalContext from '../context'
 
-interface Props {
+export interface Props {
 	src: string
 }
 

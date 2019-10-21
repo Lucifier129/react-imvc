@@ -5,11 +5,9 @@ import { BaseState } from '..'
 
 export interface Props<
   S extends object,
-  AS extends Actions<S & BaseState>,
-  ES extends object = {},
-  EAS extends Actions<S & BaseState & ES> = {}
+  AS extends Actions<S & BaseState>
 > {
-  controller: Controller<S, AS, ES, EAS>
+  controller: Controller<S, AS>
 }
 
 /**
@@ -18,10 +16,8 @@ export interface Props<
  */
 export default class ControllerProxy<
   S extends object,
-  AS extends Actions<S & BaseState>,
-  ES extends object = {},
-  EAS extends Actions<S & BaseState & ES> = {}
-> extends React.Component<Props<S, AS, ES, EAS>> {
+  AS extends Actions<S & BaseState>
+> extends React.Component<Props<S, AS>> {
   static ignoreErrors: boolean = true
 
   updateDocumentTitle() {

@@ -2,7 +2,7 @@ import React from 'react'
 import GlobalContext from '../context'
 import { Preload } from '..'
 
-interface Props {
+export interface Props {
 	name: string
 }
 

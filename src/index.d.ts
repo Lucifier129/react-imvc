@@ -23,10 +23,11 @@ import {
   useModelActions as _useModelAction,
   useModelState as _useModelState
 } from "./hook"
+import Controller from "controller"
 
 // global
 
-declare var __INITIAL_STATE__ : BaseState
+declare var __INITIAL_STATE__ : any
 declare var __webpack_public_path__: string
 declare var __REDUX_DEVTOOLS_EXTENSION__: any
 declare var __PUBLIC_PATH__: string
@@ -35,7 +36,7 @@ declare var controller: BaseController
 declare global {
 
 
-  var __INITIAL_STATE__: BaseState | undefined
+  var __INITIAL_STATE__: any
   var __webpack_public_path__: string
   var __REDUX_DEVTOOLS_EXTENSION__: any
   var __PUBLIC_PATH__: string
@@ -43,9 +44,8 @@ declare global {
   var controller: BaseController
   namespace NodeJS {
     interface Global {
-      __INITIAL_STATE__?: BaseState
+      __INITIAL_STATE__?: any
       __webpack_public_path__?: string
-      fetch?: Function
       [x: string]: any
     }
   }
@@ -167,9 +167,8 @@ export interface RenderProps {
 
 export interface ViewProps {
   key?: string
-  state?: BaseState
-  handlers?: Handlers
-  actions?: Currings<BaseState, {}>
+  state?: any
+  ctrl?: Controller<any, any>
 }
 
 // Server

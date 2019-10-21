@@ -3,7 +3,7 @@ import GlobalContext from '../context'
 
 const isHandler = (key: string) => /^on[A-Z]+/.test(key)
 
-interface Props {
+export interface Props {
 	as?: keyof HTMLElementTagNameMap
 	[propName: string]: any
 }

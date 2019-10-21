@@ -1,7 +1,7 @@
 import React from 'react'
 import GlobalContext from '../context'
 
-interface Props {
+export interface Props {
 	as?: keyof HTMLElementTagNameMap
 	to?: string
 	href?: string

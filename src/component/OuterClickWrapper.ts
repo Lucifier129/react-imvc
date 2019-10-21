@@ -1,7 +1,7 @@
 import React, { Component, Children } from 'react'
 import { findDOMNode } from 'react-dom'
 
-interface Props {
+export interface Props {
   onClick?: Function
   children?: React.ReactNode
 }

@@ -30,7 +30,8 @@ import {
   BaseState,
   Handlers,
   Meta,
-  Location
+  Location,
+  ViewProps
 } from '..'
 import * as shareActions from './actions'
 import attachDevToolsIfPossible from './attachDevToolsIfPossible'
@@ -66,20 +67,18 @@ let createElement = React.originalCreateElement || React.createElement
  */
 export default class Controller<
   S extends object = {},
-  AS extends Actions<S & BaseState> = {},
-  ES extends object = {},
-  EAS extends Actions<S & BaseState & ES> = {}
+  AS extends Actions<S & BaseState> = {}
 > implements AppController {
-  View: React.ComponentType<any> = EmptyView
+  View: React.ComponentType<ViewProps> = EmptyView
   restapi?: string
   preload: Preload
   API?: API
-  Model?: { initialState: S } & AS
-  initialState?: S
-  actions?: AS
+  Model?: any
+  initialState?: any
+  actions?: any
   SSR?: boolean | { (location: Location, context: Context): Promise<boolean> } | undefined
   KeepAliveOnPush?: boolean | undefined
-  store: Store<S & BaseState & ES, AS & BaseActions & EAS>
+  store: Store<S & BaseState, AS & BaseActions>
   context: Context
   history: HistoryWithBFOL<BLWithBQ, ILWithBQ>
   handlers: Handlers
@@ -94,12 +93,12 @@ export default class Controller<
   Loading: BaseViewFC | BaseViewClass = () => null
 
   errorDidCatch?(error: Error, str: string): void
-  getComponentFallback?(displayName: string, InputComponent: React.ComponentType): React.ReactElement
-  getViewFallback?(view?: string): React.ReactElement
+  getComponentFallback?(displayName: string, InputComponent: React.ComponentType): React.ReactElement | string | undefined | null
+  getViewFallback?(view?: string): React.ReactElement | string | undefined | null
   stateDidReuse?(state: S & BaseState): void
   shouldComponentCreate?(): void | boolean | Promise<void | boolean>
   componentWillCreate?(): void | Promise<void>
-  stateDidChange?(data?: Data<S & BaseState & ES, AS & BaseActions & EAS>): void
+  stateDidChange?(data?: Data<S & BaseState, AS & BaseActions>): void
   pageWillLeave?(location: ILWithBQ): void
   windowWillUnload?(location: ILWithBQ): void
   pageDidBack?(location: HistoryLocation, context?: Context): void
@@ -131,11 +130,11 @@ export default class Controller<
     this.preload = {}
     this.deepCloneInitialState = true
 
-    this.store = createStore({} as (AS & BaseActions & EAS), {} as S & BaseState & ES)
+    this.store = createStore({} as (AS & BaseActions), {} as S & BaseState)
     this.history = createHistory() as HistoryWithBFOL<BLWithBQ, ILWithBQ>
   }
   // 绑定 handler 的 this 值为 controller 实例
-  combineHandlers(source: Controller<S, AS, ES, EAS>) {
+  combineHandlers(source: Controller<S, AS>) {
     let { handlers } = this
     Object.keys(source).forEach(key => {
       let value = source[key]
@@ -606,7 +605,7 @@ export default class Controller<
     /**
      * 动态获取初始化的 initialState
      */
-    let finalInitialState: S & BaseState & ES = await this.getInitialState({
+    let finalInitialState: S & BaseState = await this.getInitialState({
       ...initialState,
       ...(globalInitialState || {}),
       ...baseState
@@ -622,7 +621,7 @@ export default class Controller<
     /**
      * 动态获取最终的 actions
      */
-    let finalActions: AS & BaseActions & EAS = await this.getFinalActions({ ...shareActions, ...actions })
+    let finalActions: AS & BaseActions = await this.getFinalActions({ ...shareActions, ...actions })
     
     /**
      * 创建 store
@@ -792,7 +791,7 @@ export default class Controller<
     // if (View && !View.viewId) {
     //   View.viewId = Date.now()
     // }
-    let ctrl: Controller<S, AS, ES, EAS> = Object.create(this)
+    let ctrl: Controller<S, AS> = Object.create(this)
     ctrl.View = View
     ctrl.componentDidFirstMount = null
     ctrl.componentDidMount = null

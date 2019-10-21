@@ -6,7 +6,7 @@ import { BaseState } from '..'
 // @ts-ignore
 let createElement = React.originalCreateElement || React.createElement
 
-interface Props {
+export interface Props {
   fallback: object | string | null
 }
 
