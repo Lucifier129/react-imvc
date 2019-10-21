@@ -15,7 +15,7 @@ export default class extends Controller<{}, {}> {
 }
 
 
-function View({ state }: ViewPropsType<{ state: {} }, {}>) {
+function View({ state }: ViewPropsType<{}, {}>) {
     let content = ''
     try {
         content = JSON.stringify(state)
