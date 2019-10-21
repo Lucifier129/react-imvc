@@ -16,9 +16,6 @@ export default class extends Controller<{}, typeof actions> {
   SSR = true // enable server side rendering
   View = View
   actions = actions
-  // componentWillCreate() {
-  //   throw new Error('componentWillCreate')
-  // }
   getComponentFallback(displayName: string) {
     return `component-fallback: ${displayName}`
   }
