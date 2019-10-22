@@ -1,4 +1,4 @@
-# react-imvc v2.0
+# react-imvc v3.0
 
 [![Build Status](https://travis-ci.org/Lucifier129/react-imvc.svg?branch=master)](https://travis-ci.org/Lucifier129/react-imvc)
 [![dependencies Status](https://david-dm.org/Lucifier129/react-imvc/status.svg)](https://david-dm.org/Lucifier129/react-imvc)
