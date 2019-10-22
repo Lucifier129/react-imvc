@@ -2,9 +2,11 @@
 
 ## What' new
 
+* Support to Typescript. Intact intelligent code completion in Visual Studio Code.
+
 ## How to upgrade
 
-1. update react-imvc to 3.x
+1. Update react-imvc to 3.x
 
     npm
 
@@ -18,7 +20,7 @@
     yarn add react-imvc
     ```
 
-2. add typescript support
+2. Add typescript support
 
     (1) add install typescript
 
@@ -63,9 +65,7 @@
     yarn add -D tslint tslint-config-standard tslint-config-prettier
     ```
 
-    Note: If you add this file to you project, after you finish step 3, file will throw syntactic error. There are some differences between JavaScript and TypeScript in syntax.
-
-3. change `js|jsx` postfix to `ts|tsx` postfix
+3. Change `js|jsx` postfix to `ts|tsx` postfix
 
     You need to rename file postfix needed.
 
@@ -101,6 +101,113 @@
     We suggest you to use the `ES2015+` syntax, it will support all the feature of TypeScript.
 
     There must be some spots else that we haven't record here. When you find please tell to me, we will append it here to help other people.
+
+4. Refactor `Model` module
+
+    (1) Import `BaseState` to construct new `State` type
+
+    ```typescript
+    import { BaseState } from 'react-imvc'
+    export type State = BaseState & {
+        // some new feild
+    }
+    ```
+
+    (2) Import `Action` and `ActionWithPayload` to construct action type
+
+    without `payload`
+
+    ```typescript
+    import { Action } from 'react-imvc'
+
+    export const COMPONENT_WILL_CREATE: Action<State> = (state) => {
+        // do somethings
+        return {
+            ...state,
+            // add some new value
+        }
+    }
+    ```
+
+    with `payload`
+
+    ```typescript
+    import { ActionWithPayload } from 'react-imvc'
+
+    export interface Payload { /* payload feild */ }
+    export const COMPONENT_WILL_CREATE: ActionWithPayload<State, Payload> = (state, { /* payload */ }) => {
+        // do somethings
+        return {
+            ...state,
+            // add some new value
+        }
+    }
+    ```
+
+5. Refactor `View` module
+
+    (1) Import `ViewProps` from `react-imvc` and import `State` from `Model`
+
+    ```typescript
+    import { ViewProps } from 'react-imvc'
+    import { State } from './Model'
+    ```
+
+    (2) Construct `Ctrl` type
+
+    ```typescript
+    export type Ctrl = {
+        // some Ctrl feild
+    }
+    ```
+
+    (3) Add `ViewProps` to `View` Component
+
+    ```typescript
+    export default function View({ state, ctrl }: ViewProps<State, Ctrl>) {
+        // do somethings
+    }
+    ```
+
+6. Refactor `Controller` module
+
+    (1) Import `M2AS` from `react-imvc`
+
+    ```typescript
+    import { M2AS } from 'react-imvc'
+    ```
+
+    (2) Import `View`, `Ctrl` and `Model`
+
+    ```typescript
+    import View, { Ctrl } from "./View"
+    import * as Model from "./Model"
+    ```
+
+    (3) Construct `Controller` class
+
+    ```typescript
+    class Detail extends Controller<Model.State, M2AS<typeof Model>> implements Ctrl {
+        View = View
+        Model = Model
+        // do somethings
+    }
+    ```
+
+    or use `initialState` and `actions`
+
+    ```typescript
+    import { State, initialState }, actions from './Model'
+
+    class Detail extends Controller<Model.State, typeof actions> implements Ctrl {
+        View = View
+        initialState = initialState
+        actions = actions
+        // do somethings
+    }
+    ```
+
+Note: If you has the `BaseController`, please look through how did we do in [isomorphic-cnode](https://github.com/Lucifier129/isomorphic-cnode)
 
 ## Dependence change
 
@@ -166,10 +273,14 @@
 * mocha 3.0.2
 * querystring 0.2.0
 
-## Notions
+## Notions when migrating
 
 * Don't change or override the type of attribute is `BaseState`, it will happen unpredictable error.
 
-* Both `shouldComponentCreate` and `componentWillCreate` is support both sync and async two mode programming. But when you extends Controller and overwrite these two method it's mode will be settled. If these are some mix usage. you must fix it by choose one mode(suggest async).
+* Both `shouldComponentCreate` and `componentWillCreate` is support both `sync` and `async` two mode programming. But when you extends Controller and overwrite these two method it's mode will be settled. If these are some mix usage. you must fix it by choose one mode(suggest `async`).
 
 * The default view file extension is 'js'. If you want to use other extension file, please add in config.(eg.view.tsx)
+
+* Props of `View` has changed from `state, handlers, actions` to `state, ctrl`.
+
+* If you start by line command with config file(eg.`imvc.config.js`). You must write config file with `CommonJS` and `ES5` syntax(not support `ES6` or `Typescript` syntax yet).
