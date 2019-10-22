@@ -209,6 +209,18 @@
 
 Note: If you has the `BaseController`, please look through how did we do in [isomorphic-cnode](https://github.com/Lucifier129/isomorphic-cnode)
 
+## Notions when migrating
+
+* Don't change or override the type of attribute is `BaseState`, it will happen unpredictable error.
+
+* Both `shouldComponentCreate` and `componentWillCreate` is support both `sync` and `async` two mode programming. But when you extends Controller and overwrite these two method it's mode will be settled. If these are some mix usage. you must fix it by choose one mode(suggest `async`).
+
+* The default view file extension is 'js'. If you want to use other extension file, please add in config.(eg.view.tsx)
+
+* Props of `View` has changed from `state, handlers, actions` to `state, ctrl`.
+
+* If you start by line command with config file(eg.`imvc.config.js`). You must write config file with `CommonJS` and `ES5` syntax(not support `ES6` or `Typescript` syntax yet).
+
 ## Dependence change
 
 ### Upgrade
@@ -272,15 +284,3 @@ Note: If you has the `BaseController`, please look through how did we do in [iso
 * expect 1.20.2
 * mocha 3.0.2
 * querystring 0.2.0
-
-## Notions when migrating
-
-* Don't change or override the type of attribute is `BaseState`, it will happen unpredictable error.
-
-* Both `shouldComponentCreate` and `componentWillCreate` is support both `sync` and `async` two mode programming. But when you extends Controller and overwrite these two method it's mode will be settled. If these are some mix usage. you must fix it by choose one mode(suggest `async`).
-
-* The default view file extension is 'js'. If you want to use other extension file, please add in config.(eg.view.tsx)
-
-* Props of `View` has changed from `state, handlers, actions` to `state, ctrl`.
-
-* If you start by line command with config file(eg.`imvc.config.js`). You must write config file with `CommonJS` and `ES5` syntax(not support `ES6` or `Typescript` syntax yet).
