@@ -2,11 +2,11 @@
 
 ## What' new
 
-* Support to Typescript. Intact intelligent code completion in Visual Studio Code.
+* Support to Typescript. Intact intelligent code completion in `Visual Studio Code`.
 
 ## How to upgrade
 
-1. Update react-imvc to 3.x
+1. Update `react-imvc` to 3.x
 
     npm
 
