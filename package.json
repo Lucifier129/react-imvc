@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsc",
     "prebuild": "rimraf ./dist",
-    "postbuild": "node cp.js",
+    "postbuild": "ts-node cp.ts",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
     "test:single": "jest",
