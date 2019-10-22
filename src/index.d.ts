@@ -13,7 +13,7 @@ import serveStatic from "serve-static"
 import cookieParser from "cookie-parser"
 import helmet from "helmet"
 import compression from "compression"
-export { Action, Currings, AnyAction, Actions } from "relite"
+export { Action as StoreAction, Currings, AnyAction, Actions } from "relite"
 import babelCore from "babel-core"
 import 'global'
 
@@ -23,7 +23,7 @@ import {
   useModelActions as _useModelAction,
   useModelState as _useModelState
 } from "./hook"
-import Controller from "controller"
+import Controller, { BaseActions as BA } from "./controller"
 
 // global
 
@@ -86,23 +86,27 @@ export interface BaseState extends ObjectAlias {
   [x: string]: any
 }
 
+export type BaseActions = BA
+
 export interface Model {
   initialState: any
-  [propName: string]: Action<any>
+  [propName: string]: StoreAction<any>
 }
 
 export type Preload = Record<string, string>
 
 export type API = Record<string, string>
 
-export type ViewPropsType<S extends object, AS extends Actions<S, AS>, Ctrl = {}> = React.PropsWithChildren<{
+export type ViewProps<S extends object, Ctrl = {}> = React.PropsWithChildren<{
   state: S,
-  actions: Currings<S, AS>,
   ctrl: Ctrl
 }>
 
-export type ViewType<S extends object, AS extends ActionsType<S, AS>> =  React.ComponentType<ViewPropsType<S, AS>>
+export type M2AS<M> = Omit<M, 'initialState'>
 
+
+export type ActionWithPayload<State extends object, Payload = any> = <S extends State>(state: S, payload: Payload) => S
+export type Action<State extends object> = <S extends State>(state: S) => S
 
 export interface Context extends BaseContext {
   basename?: string
@@ -132,11 +136,11 @@ export interface Meta {
   unsubscribeList: any
 }
 
-export interface BaseViewFC extends React.FC<ViewProps> {
+export interface BaseViewFC extends React.FC<ViewPropsType> {
   viewId?: any
 }
 
-export interface BaseViewClass extends React.ComponentClass<ViewProps> {
+export interface BaseViewClass extends React.ComponentClass<ViewPropsType> {
   viewId?: any
 }
 
@@ -165,10 +169,10 @@ export interface RenderProps {
   }
 }
 
-export interface ViewProps {
-  key?: string
-  state?: any
-  ctrl?: Controller<any, any>
+export interface ViewPropsType <C extends Controller<any, any>> {
+  key: string
+  state: any
+  ctrl: C
 }
 
 // Server

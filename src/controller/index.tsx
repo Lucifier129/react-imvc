@@ -69,7 +69,7 @@ export default class Controller<
   S extends object = {},
   AS extends Actions<S & BaseState> = {}
 > implements AppController {
-  View: React.ComponentType<ViewProps> = EmptyView
+  View: React.ComponentType<ViewProps<any, any>> = EmptyView
   restapi?: string
   preload: Preload
   API?: API
@@ -791,7 +791,7 @@ export default class Controller<
     // if (View && !View.viewId) {
     //   View.viewId = Date.now()
     // }
-    let ctrl: Controller<S, AS> = Object.create(this)
+    let ctrl: this = Object.create(this)
     ctrl.View = View
     ctrl.componentDidFirstMount = null
     ctrl.componentDidMount = null

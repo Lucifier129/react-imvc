@@ -1,4 +1,4 @@
-import { Location, Context, ViewPropsType } from '../../../../src/'
+import { Location, Context, ViewProps } from '../../../../src/'
 import Controller from '../../../../src/controller'
 import React from 'react'
 
@@ -15,7 +15,7 @@ export default class extends Controller<{}, {}> {
 }
 
 
-function View({ state }: ViewPropsType<{}, {}>) {
+function View({ state }: ViewProps<{}, {}>) {
     let content = ''
     try {
         content = JSON.stringify(state)

@@ -1,6 +1,6 @@
 import Controller from '../../../../src/controller'
 import React from 'react'
-import { Location, Context } from '../../../../src/'
+import { Location, Context, ViewProps } from '../../../../src/'
 import { useCtrl } from '../../../../src/hook'
 
 let initialState = {
@@ -16,7 +16,7 @@ export default class extends Controller<typeof initialState, {}> {
   }
 }
 
-class RootView extends React.Component {
+class RootView extends React.Component<ViewProps<{}, {}>> {
   render() {
     return <View />
   }
