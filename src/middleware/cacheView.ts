@@ -26,7 +26,7 @@ let defaults: Settings = {
 
 let callNext: RequestHandler = (req, res, next) => next()
 
-export default (settings: Settings) => {
+export default function cacheView (settings: Settings): RequestHandler {
   // 只在生产环境，或者开启了 debug = true 的情况下，做缓存
   if (process.env.NODE_ENV !== "production" && !(settings && settings.debug)) {
     return callNext
@@ -35,7 +35,7 @@ export default (settings: Settings) => {
 
   let cache: Cache = createCache()
 
-  return function (req: Req, res: Res, next: express.NextFunction) {
+  return function (req: Req, res: Res, next: express.NextFunction): void {
     let cacheKey: string = settings.key(req.originalUrl, req)
     let cacheContent: any
     if (cache.get) {

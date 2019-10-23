@@ -35,7 +35,7 @@ export default () => {
   }
 
   result = {
-    put: function (key, value, time, timeoutCallback) {
+    put: function (key, value, time, timeoutCallback): any {
       if (debug) {
         console.log('caching: %s = %j (@%s)', key, value, time)
       }
@@ -81,7 +81,7 @@ export default () => {
       return value
     },
 
-    del: function (key) {
+    del: function (key): boolean {
       let canDelete = true
 
       let oldRecord: Record = cache[key]
@@ -100,10 +100,7 @@ export default () => {
 
       return canDelete
     },
-
-
-
-    clear: function () {
+    clear: function (): void {
       for (let key in cache) {
         clearTimeout(cache[key].timeout)
       }
@@ -115,7 +112,7 @@ export default () => {
       }
     },
 
-    get: function (key) {
+    get: function (key): any {
       let data = cache[key]
       if (typeof data !== 'undefined') {
         if (isNaN(data.expire) || data.expire >= Date.now()) {
@@ -133,11 +130,11 @@ export default () => {
       return null
     },
 
-    size: function () {
+    size: function(): number {
       return size
     },
 
-    memsize: function () {
+    memsize: function(): number {
       let size = 0
       for (let _ in cache) {
         size++
@@ -145,19 +142,19 @@ export default () => {
       return size
     },
 
-    debug: function (bool) {
+    debug: function (bool): void {
       debug = bool
     },
 
-    hits: function () {
+    hits: function(): number {
       return hitCount
     },
 
-    misses: function () {
+    misses: function(): number {
       return missCount
     },
 
-    keys: function () {
+    keys: function(): string[] {
       return Object.keys(cache)
     }
   }

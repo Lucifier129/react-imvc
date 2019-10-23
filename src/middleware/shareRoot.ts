@@ -4,9 +4,7 @@
 import express from 'express'
 import { RequestHandler, Res, Req } from '..'
 
-type ShareRoot = (rootPath: string) => express.RequestHandler
-
-const shareRoot: ShareRoot = (rootPath) => {
+export default function shareRoot(rootPath: string): express.RequestHandler {
   if (rootPath.charAt(rootPath.length - 1) === '/') {
     rootPath = rootPath.substr(0, rootPath.length - 1)
   }
@@ -24,7 +22,5 @@ const shareRoot: ShareRoot = (rootPath) => {
     }
     next()
   }
-  return (handler as express.RequestHandler)
+  return handler
 }
-
-export default shareRoot
