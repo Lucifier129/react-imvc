@@ -10,14 +10,10 @@ import createWebpackConfig from './createWebpackConfig'
 import { getExternals, matchExternals } from './util'
 import { Config } from '..'
 
-export interface SetupClient {
-	(config: Config): {
-		compiler: webpack.Compiler,
-		middleware: webpackDevMiddleware.WebpackDevMiddleware & NextHandleFunction
-	}
-}
-
-export const setupClient: SetupClient = (config: Config) => {
+export function setupClient(config: Config): {
+	compiler: webpack.Compiler,
+	middleware: webpackDevMiddleware.WebpackDevMiddleware & NextHandleFunction
+} {
 	let clientConfig = createWebpackConfig(config)
 	let compiler = webpack(clientConfig)
 	let middleware = webpackDevMiddleware(compiler, {
@@ -44,9 +40,10 @@ interface SetupServerOptions {
 	handleHotModule: (value: any) => void
 }
 
-export type SetupServer = (config: Config, options: SetupServerOptions) => void
-
-export const setupServer: SetupServer = (config, options) => {
+export function setupServer(
+	config: Config,
+	options: SetupServerOptions
+): void {
 	let serverConfig = createWebpackConfig(config, true)
 	serverConfig.target = 'node'
 	serverConfig.entry = {
@@ -135,12 +132,10 @@ export const setupServer: SetupServer = (config, options) => {
 	})
 }
 
-export type Reporter = (
+export function reporter(
 	middlewareOptions: webpackDevMiddleware.Options,
 	options: webpackDevMiddleware.ReporterOptions
-) => void
-
-export const reporter: Reporter = (middlewareOptions, options) => {
+): void {
 	const { log, state, stats } = options
 	if (state) {
 		const displayStats = middlewareOptions.stats !== false

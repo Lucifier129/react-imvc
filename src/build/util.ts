@@ -1,9 +1,7 @@
 import path from 'path'
 import { Config } from '..'
 
-type GetExternals = (config: Config) => string[]
-
-export const getExternals: GetExternals = config => {
+export function getExternals(config: Config): string[] {
   let dependencies: string[] = []
 
   let list: string[] = [
@@ -43,9 +41,7 @@ export const getExternals: GetExternals = config => {
   return dependencies
 }
 
-type MatchExternals = (externals: string[], modulePath: string) => boolean
-
-export const matchExternals: MatchExternals = (externals, modulePath) => {
+export function matchExternals(externals: string[], modulePath: string): boolean {
   for (let i = 0; i < externals.length; i++) {
     if (modulePath.startsWith(externals[i])) {
       return true

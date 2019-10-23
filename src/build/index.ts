@@ -12,13 +12,9 @@ import { Options, Config, AppSettings } from '..'
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
 
-export interface Build {
-  (options: Options): Promise<Config | void>
-}
-
 process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
-const build: Build = (options) => {
+export default function build(options: Options): Promise<Config | void> {
   let config = getConfig(options)
   let delPublicPgs = () => delPublish(path.join(config.root, config.publish))
   let startGulpPgs = () => startGulp(config)
@@ -43,22 +39,12 @@ const build: Build = (options) => {
     .catch(errorHandler)
 }
 
-export default build
-
-interface DelPublish {
-  (folder: string): Promise<string[]>
-}
-
-const delPublish: DelPublish = (folder) => {
+function delPublish(folder: string): Promise<string[]> {
   console.log(`delete publish folder: ${folder}`)
   return del(folder)
 }
 
-interface StartType<T> {
-  (config: Config): Promise<T>
-}
-
-const startWebpackForClient: StartType<Config | boolean> = (config) => {
+function startWebpackForClient(config: Config): Promise<Config | boolean> {
   let webpackConfig = createWebpackConfig(config, false)
   return new Promise((resolve, reject) => {
     webpack(webpackConfig, (error, stats) => {
@@ -77,7 +63,7 @@ const startWebpackForClient: StartType<Config | boolean> = (config) => {
   })
 }
 
-const startWebpackForServer: StartType<Config> = (config) => {
+function startWebpackForServer(config: Config): Promise<Config> {
   let webpackConfig = createWebpackConfig(config, true)
   return new Promise((resolve, reject) => {
     webpack(webpackConfig, (error, stats) => {
@@ -96,7 +82,7 @@ const startWebpackForServer: StartType<Config> = (config) => {
   })
 }
 
-const startGulp: StartType<Config> = (config) => {
+function startGulp(config: Config): Promise<Config> {
   return new Promise((resolve, reject) => {
     gulp.task('default', createGulpTask(config))
 
@@ -111,11 +97,7 @@ const startGulp: StartType<Config> = (config) => {
   })
 }
 
-interface StartStaticEntry<T> {
-  (config: Config): Promise<T | void>
-}
-
-const startStaticEntry: StartStaticEntry<Config> = async (config) => {
+async function startStaticEntry(config: Config): Promise<Config | void> {
   if (!config.staticEntry) {
     return
   }

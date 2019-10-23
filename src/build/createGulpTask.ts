@@ -11,11 +11,7 @@ import uglify from 'gulp-uglify'
 import babel from 'gulp-babel'
 import { Config, GulpTaskConfig } from '..'
 
-interface CreateGulpTaskConfig {
-  (options: Config): GulpTaskConfig
-}
-
-const createConfig: CreateGulpTaskConfig = options => {
+function createConfig(options: Config): GulpTaskConfig {
   let root = options.root
   let src = path.join(root, options.src)
   let publish = path.join(root, options.publish)
@@ -84,11 +80,7 @@ const createConfig: CreateGulpTaskConfig = options => {
   return config
 }
 
-interface CreateGulpTask {
-  (options: Config): gulp.TaskFunction
-}
-
-const createGulpTask: CreateGulpTask = (options) => {
+export default function createGulpTask(options: Config): gulp.TaskFunction {
   let config: GulpTaskConfig = Object.assign(createConfig(options))
 
   let minifyCSS = () => {
@@ -211,4 +203,3 @@ const createGulpTask: CreateGulpTask = (options) => {
 
   return gulp.series(...seriesList ,gulp.parallel(...parallelList))
 }
-export default createGulpTask

@@ -10,14 +10,10 @@ import resolve from 'resolve'
 import { getExternals } from './util'
 import { Config } from '..'
 
-interface CreateWebpackConfig {
-	(
-		options: Config,
-		isServer?: boolean
-	): webpack.Configuration
-}
-
-const createWebpackConfig: CreateWebpackConfig = (options, isServer = false) => {
+export default function createWebpackConfig(
+	options: Config,
+	isServer: boolean = false
+): webpack.Configuration {
 	let result: webpack.Configuration = {}
 	let config: Config = Object.assign({}, options)
 	let root: string = path.join(config.root, config.src)
@@ -63,7 +59,9 @@ const createWebpackConfig: CreateWebpackConfig = (options, isServer = false) => 
 
 	let output = Object.assign(defaultOutput, config.output)
 
-	let ManifestPluginMap = (file: ManifestPlugin.FileDescriptor) => {
+	function ManifestPluginMap(
+		file: ManifestPlugin.FileDescriptor
+	): ManifestPlugin.FileDescriptor {
 		// 删除 .js 后缀，方便直接使用 obj.name 来访问
 		if (file.name && /\.js$/.test(file.name)) {
 			file.name = file.name.slice(0, -3)
@@ -286,5 +284,3 @@ const createWebpackConfig: CreateWebpackConfig = (options, isServer = false) => 
 
 	return config.webpack ? config.webpack(result, isServer) : result
 }
-
-export default createWebpackConfig
