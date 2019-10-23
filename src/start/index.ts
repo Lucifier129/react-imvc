@@ -18,11 +18,10 @@ import getConfig from '../config'
 import createPageRouter from '../page/createPageRouter'
 import { Options, RequestHandler } from '..'
 
-export interface Start {
-  (options: Options): Promise<{ server: http.Server, app: express.Express }>
-}
 
-const start: Start = (options) => {
+export default function start(
+	options: Options
+): Promise<{ server: http.Server, app: express.Express }> {
 	let config = getConfig(options)
 	let app = createExpressApp(config)
 	let port = normalizePort(config.port)
@@ -32,7 +31,7 @@ const start: Start = (options) => {
 	 * when url starts with //, prepend protocol
 	 * when url starts with /, prepend protocol, host and port
 	 */
-  let fetchNative = (url: string, options: nodeFetch.RequestInit) => {
+  function fetchNative(url: string, options: nodeFetch.RequestInit): Promise<nodeFetch.Response> {
 		if (url.startsWith('//')) {
 			url = 'http:' + url
 		}
@@ -161,7 +160,7 @@ const start: Start = (options) => {
  * Normalize a port into a number, string, or false.
  */
 
-const normalizePort = (val: string | number) => {
+function normalizePort(val: string | number): string | number | undefined {
 	let port = parseInt(String(val), 10)
 
 	if (isNaN(port)) {
@@ -177,12 +176,10 @@ const normalizePort = (val: string | number) => {
 	return undefined
 }
 
-const hasModuleFile = (filename: string) => {
+function hasModuleFile(filename: string): boolean {
 	try {
 		return !!require.resolve(filename)
 	} catch (_) {
 		return false
 	}
 }
-
-export default start
