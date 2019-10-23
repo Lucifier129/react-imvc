@@ -5,11 +5,10 @@ import path from 'path'
 import defaultConfig from './config.defaults'
 import { Options, Config } from '..'
 
-interface GetConfig {
-	(options?: Options): Config
-}
+export { default as defaultConfig } from './config.defaults'
+export { default as babel } from './babel'
 
-const getConfig: GetConfig = (options) => {
+export default function getConfig(options?: Options): Config {
 	let config = Object.assign({}, defaultConfig)
 
 	options = options || {}
@@ -28,7 +27,3 @@ const getConfig: GetConfig = (options) => {
 
 	return config
 }
-
-export default getConfig
-export { default as defaultConfig } from './config.defaults'
-export { default as babel } from './babel'
