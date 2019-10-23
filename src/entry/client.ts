@@ -2,8 +2,18 @@ import "core-js/stable"
 import "regenerator-runtime/runtime"
 import "../polyfill"
 import "whatwg-fetch"
+import React from 'react'
 import ReactDOM from "react-dom"
-import createApp, { Loader, LoadController, ControllerConstructor, ViewEngineRender, ViewEngine, Controller as BaseController } from "create-app/client"
+import createApp, {
+  Loader,
+  LoadController,
+  ControllerConstructor,
+  ViewEngineRender,
+  HistoryLocation,
+  Context,
+  ViewEngine,
+  Controller as BaseController
+} from "create-app/client"
 import util from "../util"
 // @ts-ignore
 import $routes from "@routes"
@@ -13,21 +23,39 @@ import Controller from '../controller'
 __webpack_public_path__ = window.__PUBLIC_PATH__ + "/"
 const __APP_SETTINGS__: AppSettings = window.__APP_SETTINGS__
 
-const getModule = (module: any) => module.default || module
-const webpackLoader: Loader = (loadModule, location, context) => {
-  return ((loadModule as LoadController)(
-    location,
-    context
-  ) as Promise<ControllerConstructor>).then(getModule)
+function getModule(module: any) {
+  return module.default || module
+}
+function webpackLoader(
+  controller: LoadController,
+  location?: HistoryLocation,
+  context?: Context
+): ControllerConstructor | Promise<ControllerConstructor> {
+  return (
+    controller(
+      location,
+      context
+    ) as Promise<ControllerConstructor>
+  ).then(getModule)
 }
 
 let shouldHydrate = !!window.__INITIAL_STATE__
 
-const render: ViewEngineRender<React.ReactElement | string | undefined | null, Controller<any, any>> = (
-  view: React.ReactElement,
+function render(
+  view: React.ReactElement | string | undefined | null,
   controller?: Controller<any, any>,
   container?: Element | null
-) => {
+): void {
+  if (!view) return
+
+  if (typeof view === 'string') {
+    view = React.createElement(
+      'div',
+      {},
+      view
+    )
+  }
+  
   try {
     if (container) {
       if (shouldHydrate) {
@@ -52,7 +80,7 @@ const render: ViewEngineRender<React.ReactElement | string | undefined | null, C
   }
 }
 const viewEngine: ViewEngine<React.ReactElement, BaseController> =
-  { render } as ViewEngine<React.ReactElement, BaseController>
+  { render }
 
 const routes = util.getFlatList(
   Array.isArray($routes) ? $routes : Object.values($routes)

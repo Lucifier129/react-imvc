@@ -47,4 +47,3 @@ export default function attachDevToolsIfPossible<S extends object, AS extends Ac
     }
   })
 }
-
