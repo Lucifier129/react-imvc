@@ -5,10 +5,8 @@ import "whatwg-fetch"
 import React from 'react'
 import ReactDOM from "react-dom"
 import createApp, {
-  Loader,
   LoadController,
   ControllerConstructor,
-  ViewEngineRender,
   HistoryLocation,
   Context,
   ViewEngine,
