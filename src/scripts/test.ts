@@ -28,7 +28,7 @@ require('@babel/register')({
 
 let files: string[] = []
 
-const travelDirectoryToAddTestFiles = (dir: string) => {
+function travelDirectoryToAddTestFiles(dir: string): void {
 	fs.readdirSync(dir).forEach(file => {
 		let filename = path.join(dir, file)
 		// ignore node_modules

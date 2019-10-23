@@ -6,9 +6,7 @@ export interface Window {
   console?: any
 }
 
-type ConsolePolyfill = (window: Window) => void
-
-const consolePolyfill: ConsolePolyfill = (window) => {
+function consolePolyfill(window: Window): void {
   // Avoid `console` errors in browsers that lack a console.
   let method
   let noop = function () { }
