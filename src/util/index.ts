@@ -14,7 +14,6 @@ export default {
   str2ab
 }
 
-
 export type RouteList = Route[]
 export type inputList = (Route | RouteList)[]
 
@@ -84,7 +83,7 @@ function isThenable(obj: any) {
 }
 
 const PATH_SEPARATOR_REGEXP = /\.|\/|:/
-const getPath = (path: string | string[]) => {
+function getPath(path: string | string[]): string[] {
   if (Array.isArray(path)) return path
   return path.split(PATH_SEPARATOR_REGEXP)
 }
@@ -94,13 +93,12 @@ export interface ObjectOrArray {
   [key: number]: any
 }
 
-export type setValue = (
-  obj: ObjectOrArray,
-  keys: string[],
-  value: any
-) => ObjectOrArray
 
-const setValue: setValue = (obj, [key, ...rest], value) => {
+function setValue(
+  obj: ObjectOrArray,
+  [key, ...rest]: string[],
+  value: any
+): ObjectOrArray {
   obj = Array.isArray(obj)
     ? obj.concat()
     : Object.assign({} as { [key: string]: any }, obj)
@@ -118,20 +116,29 @@ function setValueByPath(
   return setValue(obj, getPath(path), value)
 }
 
-export type getValue = (ret: ObjectOrArray, key: string | number) => any
-const getValue: getValue = (ret, key) => ret[key]
+function getValue(
+  ret: ObjectOrArray,
+  key: string | number
+): any{
+  return ret[key]
+}
 
-function getValueByPath(obj: ObjectOrArray, path: string | string[]): any {
+function getValueByPath(
+  obj: ObjectOrArray,
+  path: string | string[]
+): any {
   return getPath(path).reduce(getValue, obj)
 }
 
-export const getKeys = <T extends {}>(o: T) => Object.keys(o) as Array<keyof T>
+export function getKeys<T extends {}>(o: T): Array<keyof T>{
+  return Object.keys(o) as Array<keyof T>
+} 
 
-export function ab2str(buf: Uint8Array) {
-  return String.fromCharCode.apply(null, new Uint16Array(buf));
+export function ab2str(buf: Uint8Array): string {
+  return String.fromCharCode.apply(null, new Uint16Array(buf))
 }
 
-export function str2ab(str: string) {
+export function str2ab(str: string): ArrayBuffer {
   var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
   var bufView = new Uint16Array(buf);
   for (let i = 0, strLen = str.length; i<strLen; i++) {
