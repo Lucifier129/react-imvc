@@ -148,11 +148,11 @@ export interface BaseViewClass extends React.ComponentClass<ViewPropsType> {
 // Render view
 
 export interface RenderToNodeStream<E = string, C extends BaseController = BaseController> {
-  (view: E, controller?: C): Promise<{}>
+  (view: E, controller?: C): Promise<ArrayBuffer>
 }
 
 export interface RenderToString<E = string, C extends BaseController = BaseController> {
-  (view: E, controller?: C): void
+  (view: E, controller?: C): string
 }
 
 export interface RenderProps {

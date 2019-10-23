@@ -3,7 +3,8 @@ import path from 'path'
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 import createApp, {
-  Loader,
+  HistoryLocation,
+  Context,
   LoadController,
   ControllerConstructor,
   Route,
@@ -16,17 +17,28 @@ import {
   Config,
   AppSettings,
   Req,
-  BaseState,
-  RenderToNodeStream,
-  RenderToString
+  BaseState
 } from '..'
 import Controller from '../controller'
 
 const { getFlatList } = util
-const getModule = (module: any) => module.default || module
-const commonjsLoader: Loader = (loadModule, location, context) =>
-  ((loadModule as LoadController)(location, context) as
-    Promise<ControllerConstructor>).then(getModule)
+
+
+function getModule(module: any) {
+  return module.default || module
+}
+function commonjsLoader(
+  controller: LoadController,
+  location?: HistoryLocation,
+  context?: Context
+): ControllerConstructor | Promise<ControllerConstructor> {
+  return (
+    controller(
+      location,
+      context
+    ) as Promise<ControllerConstructor>
+  ).then(getModule)
+}
 
 /**
  * controller 里会劫持 React.createElement
@@ -35,19 +47,19 @@ const commonjsLoader: Loader = (loadModule, location, context) =>
  */
 const createElement = React.createElement
 
-const renderToNodeStream: RenderToNodeStream<React.ReactElement | string | undefined | null, Controller<any, any>> = (view, controller) => {
+function renderToNodeStream(view: React.ReactElement | string | undefined | null, controller?: Controller<any, any>): Promise<ArrayBuffer> {
   if (typeof view === 'string') {
-    return new Promise<{}>((resolve, reject) => {
+    return new Promise<ArrayBuffer>((resolve, reject) => {
       resolve(util.str2ab(view))
     })
   }
   if (view === undefined || view === null) {
-    return new Promise<{}>((resolve, reject) => {
+    return new Promise<ArrayBuffer>((resolve, reject) => {
       resolve(util.str2ab(''))
     })
   }
 
-  return new Promise<{}>((resolve, reject) => {
+  return new Promise<ArrayBuffer>((resolve, reject) => {
     let stream = ReactDOMServer.renderToNodeStream(view)
     let buffers: Uint8Array[] = []
     stream.on('data', chunk => buffers.push(chunk))
@@ -76,7 +88,7 @@ const renderToNodeStream: RenderToNodeStream<React.ReactElement | string | undef
   })
 }
 
-const renderToString: RenderToString<React.ReactElement | string | undefined | null, Controller<any, any>> = (view, controller) => {
+function renderToString(view: React.ReactElement | string | undefined | null, controller?: Controller<any, any>): string {
   if (typeof view === 'string') {
     return view
   }
