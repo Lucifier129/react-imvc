@@ -14,7 +14,7 @@ import { Config, Req } from ".."
 import configBabel from "../config/babel"
 import * as setupDevEnv from "../build/setup-dev-env"
 
-export default function createExpressApp(config: Config) {
+export default function createExpressApp(config: Config): express.Express {
 	const app: express.Express = express()
 
 	// handle basename
@@ -190,7 +190,7 @@ export default function createExpressApp(config: Config) {
 	return app
 }
 
-function getAssets(stats: Record<string, any>) {
+function getAssets(stats: Record<string, any>): Record<string, any> {
 	return Object.keys(stats).reduce((result: Record<string, any>, assetName) => {
 		let value = stats[assetName]
 		result[assetName] = Array.isArray(value) ? value[0] : value
@@ -198,7 +198,7 @@ function getAssets(stats: Record<string, any>) {
 	}, {})
 }
 
-function readAssets(config: Config) {
+function readAssets(config: Config): Record<string, any> {
 	let result
 	// 生产模式直接用编译好的资源表
 	let assetsPathList = [
