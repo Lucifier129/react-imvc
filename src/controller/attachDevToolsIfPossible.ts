@@ -1,17 +1,8 @@
 import { Store, Data, Actions } from "relite"
 
-interface AttachDevToolsIfPossible {
-  <S extends object, AS extends Actions<S>>(
-    store: Store<S, AS>
-  ): void
-}
-
-const attachDevToolsIfPossible: AttachDevToolsIfPossible = <
-  S extends object,
-  AS extends Actions<S>
->(
+export default function attachDevToolsIfPossible<S extends object, AS extends Actions<S>>(
   store: Store<S, AS>
-) => {
+): void {
   if (process.env.NODE_ENV === "production") {
     return
   }
@@ -57,4 +48,3 @@ const attachDevToolsIfPossible: AttachDevToolsIfPossible = <
   })
 }
 
-export default attachDevToolsIfPossible
