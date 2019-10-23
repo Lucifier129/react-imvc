@@ -25,8 +25,8 @@ const connect: Connect = <S extends (...args: any[]) => any>(selector?: S) => (
   return function Connector(props) {
     return (
       <GlobalContext.Consumer>
-        {({ state, handlers, actions }) => {
-            let sProps = selector ? selector({ state, handlers, actions, props }) : {}
+        {({ state, ctrl }) => {
+            let sProps = selector ? selector({ state, ctrl, props }) : {}
 
           return (
             <InputComponent
