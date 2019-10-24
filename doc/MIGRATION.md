@@ -132,10 +132,10 @@
     with `payload`
 
     ```typescript
-    import { ActionWithPayload } from 'react-imvc'
+    import { Action } from 'react-imvc'
 
     export interface Payload { /* payload feild */ }
-    export const COMPONENT_WILL_CREATE: ActionWithPayload<State, Payload> = (state, { /* payload */ }) => {
+    export const COMPONENT_WILL_CREATE: Action<State, Payload> = (state, { /* payload */ }) => {
         // do somethings
         return {
             ...state,
@@ -149,7 +149,6 @@
     (1) Import `ViewProps` from `react-imvc` and import `State` from `Model`
 
     ```typescript
-    import { ViewProps } from 'react-imvc'
     import { State } from './Model'
     ```
 
@@ -161,48 +160,48 @@
     }
     ```
 
-    (3) Add `ViewProps` to `View` Component
+    (3) Construct `ViewProps` type
 
     ```typescript
-    export default function View({ state, ctrl }: ViewProps<State, Ctrl>) {
+    export type ViewProps = {
+        state: State,
+        ctrl: Ctrl
+    }
+    ```
+
+    (4) Add `ViewProps` to `View` Component
+
+    ```typescript
+    export default function View({ state, ctrl }: ViewProps) {
         // do somethings
     }
     ```
 
 6. Refactor `Controller` module
 
-    (1) Import `M2AS` from `react-imvc`
-
-    ```typescript
-    import { M2AS } from 'react-imvc'
-    ```
-
-    (2) Import `View`, `Ctrl` and `Model`
+    (1) Import `View`, `Ctrl` and `Model`
 
     ```typescript
     import View, { Ctrl } from "./View"
     import * as Model from "./Model"
     ```
 
+    (2) Get the `Actions` type
+
+    ```typescript
+    // 3.6.x
+    export type Action = Omit<typeof Model, 'initialState'>
+
+    // 3.5.x
+    export type Action = Pick<typeof Model, Exclude<keyof typeof Model, 'initialState'>>
+    ```
+
     (3) Construct `Controller` class
 
     ```typescript
-    class Detail extends Controller<Model.State, M2AS<typeof Model>> implements Ctrl {
+    class Detail extends Controller<Model.State, Actions> implements Ctrl {
         View = View
         Model = Model
-        // do somethings
-    }
-    ```
-
-    or use `initialState` and `actions`
-
-    ```typescript
-    import { State, initialState }, actions from './Model'
-
-    class Detail extends Controller<Model.State, typeof actions> implements Ctrl {
-        View = View
-        initialState = initialState
-        actions = actions
         // do somethings
     }
     ```
