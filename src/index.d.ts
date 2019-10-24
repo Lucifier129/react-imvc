@@ -26,16 +26,7 @@ import {
 import Controller, { BaseActions as BA } from "./controller"
 
 // global
-
-declare var __INITIAL_STATE__ : any
-declare var __webpack_public_path__: string
-declare var __REDUX_DEVTOOLS_EXTENSION__: any
-declare var __PUBLIC_PATH__: string
-declare var __APP_SETTINGS__: AppSettings
-declare var controller: BaseController
 declare global {
-
-
   var __INITIAL_STATE__: any
   var __webpack_public_path__: string
   var __REDUX_DEVTOOLS_EXTENSION__: any
