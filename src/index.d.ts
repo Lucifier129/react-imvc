@@ -88,11 +88,6 @@ export type Preload = Record<string, string>
 
 export type API = Record<string, string>
 
-export type ViewProps<S extends object, Ctrl = {}> = React.PropsWithChildren<{
-  state: S,
-  ctrl: Ctrl
-}>
-
 export type Action<
   State extends object,
   Payload = unknown
