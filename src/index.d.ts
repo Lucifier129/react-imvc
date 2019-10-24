@@ -102,9 +102,6 @@ export type ViewProps<S extends object, Ctrl = {}> = React.PropsWithChildren<{
   ctrl: Ctrl
 }>
 
-export type M2AS<M> = Omit<M, 'initialState'>
-
-
 export type Action<
   State extends object,
   Payload = unknown
