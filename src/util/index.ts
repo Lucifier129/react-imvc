@@ -93,7 +93,6 @@ export interface ObjectOrArray {
   [key: number]: any
 }
 
-
 function setValue(
   obj: ObjectOrArray,
   [key, ...rest]: string[],

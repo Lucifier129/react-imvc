@@ -44,6 +44,7 @@ const REDIRECT =
   typeof Symbol === 'function'
     ? Symbol('react.imvc.redirect')
     : Object('react.imvc.redirect')
+
 const EmptyView = <Ctrl extends Controller<any, any>>(props?: {
   state?: {
     aa?: string
