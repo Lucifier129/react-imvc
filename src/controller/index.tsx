@@ -30,8 +30,7 @@ import {
   BaseState,
   Handlers,
   Meta,
-  Location,
-  ViewProps
+  Location
 } from '..'
 import * as shareActions from './actions'
 import attachDevToolsIfPossible from './attachDevToolsIfPossible'
@@ -70,7 +69,7 @@ export default class Controller<
   S extends object = {},
   AS extends Actions<S & BaseState> = {}
 > implements AppController {
-  View: React.ComponentType<ViewProps<any, any>> = EmptyView
+  View: React.ComponentType<any> = EmptyView
   restapi?: string
   preload: Preload
   API?: API
