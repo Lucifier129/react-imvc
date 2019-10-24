@@ -105,8 +105,12 @@ export type ViewProps<S extends object, Ctrl = {}> = React.PropsWithChildren<{
 export type M2AS<M> = Omit<M, 'initialState'>
 
 
-export type ActionWithPayload<State extends object, Payload = any> = <S extends State>(state: S, payload: Payload) => S
-export type Action<State extends object> = <S extends State>(state: S) => S
+export type Action<
+  State extends object,
+  Payload = unknown
+> = unknown extends Payload
+  ? <S extends State>(state: S) => S
+  : <S extends State>(state: S, payload: Payload) => S
 
 export interface Context extends BaseContext {
   basename?: string
