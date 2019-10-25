@@ -146,12 +146,11 @@
     "react-dom": "^16.8.0"
   },
   "devDependencies": {
-    "tslint": "^5.12.1",
-    "typescript": "^3.6.4",
     "@types/fetch-mock": "^7.3.1",
     "@types/fs-extra": "^8.0.0",
     "@types/lodash": "^4.14.137",
     "@types/puppeteer": "^1.19.1",
+    "@types/whatwg-fetch": "0.0.33",
     "fetch-mock": "^7.3.9",
     "fs-extra": "^8.1.0",
     "lodash": "^4.17.15",
@@ -161,8 +160,7 @@
     "rimraf": "^2.6.1",
     "ts-jest": "^24.0.2",
     "ts-node": "^8.4.1",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-config-standard": "^8.0.1",
+    "typescript": "^3.6.4",
     "webpack-cli": "^3.3.7"
   }
 }

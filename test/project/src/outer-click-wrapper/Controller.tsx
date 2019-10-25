@@ -1,5 +1,5 @@
 import React from 'react'
-import { Location, Context, ViewProps } from '../../../../src/'
+import { Location, Context } from '../../../../src/'
 import Controller from '../../../../src/controller'
 import { OuterClickWrapper } from '../../../../src/component'
 
@@ -30,7 +30,12 @@ export default class extends Controller<State, {}> implements Ctrl {
   }
 }
 
-function View({ state, ctrl }: ViewProps<State, Ctrl>) {
+export type ViewProps = {
+  state: State,
+  ctrl: Ctrl
+}
+
+function View({ state, ctrl }: ViewProps) {
 	return (
     <div id="outer_click">
       <div id="out">

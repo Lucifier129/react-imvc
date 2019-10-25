@@ -41,7 +41,11 @@ function isValidPhone(value) {
   return /^[0-9]+$/ig.test(value)
 }
 
-function View({ state }) {
+export type ViewProps = {
+  state: typeof initialState
+}
+
+function View({ state }: ViewProps) {
   return (
     <div id="input">
       input page

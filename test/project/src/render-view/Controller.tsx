@@ -1,5 +1,5 @@
 import React from 'react'
-import { Location, Context, ViewProps } from '../../../../src/'
+import { Location, Context } from '../../../../src/'
 import Controller from '../../../../src/controller'
 
 const delay = (time: number) => new Promise(resolve => {
@@ -31,6 +31,10 @@ export default class extends Controller<{}, {}> {
   }
 }
 
-function View({ state }: ViewProps<{}, {}>) {
+export type ViewProps = {
+  state: object
+}
+
+function View({ state }: ViewProps) {
   return <pre id="basic_state">{JSON.stringify(state, null, 2)}</pre>
 }

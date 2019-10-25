@@ -45,12 +45,8 @@ const REDIRECT =
     : Object('react.imvc.redirect')
 
 const EmptyView = <Ctrl extends Controller<any, any>>(props?: {
-  state?: {
-    aa?: string
-  },
-  actions?: {
-    AAA?: () => void
-  },
+  state?: {},
+  actions?: {},
   ctrl?: Ctrl
 }) => null
 
