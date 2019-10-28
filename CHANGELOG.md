@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.0.0
+
+- Refactor: support for [Typescript](http://www.typescriptlang.org/docs/home.html)(More details are in [guidance of migration](./doc/MIGRATION.md)).
+
 ## 2.7.0
 
 - feature: 支持禁用 gulp 任务
