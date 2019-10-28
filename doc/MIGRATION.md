@@ -113,7 +113,7 @@
     }
     ```
 
-    (2) Import `Action` and `ActionWithPayload` to construct action type
+    (2) Import `Action` to construct action type
 
     without `payload`
 
