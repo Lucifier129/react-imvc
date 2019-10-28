@@ -2,7 +2,7 @@
 
 ## What' new
 
-* Support to Typescript. Intact intelligent code completion in `Visual Studio Code`.
+* Support for Typescript. Intact intelligent code completion in `Visual Studio Code`.
 
 ## How to upgrade
 
@@ -189,10 +189,10 @@
     (2) Get the `Actions` type
 
     ```typescript
-    // 3.6.x
+    // typescript: 3.6.x
     export type Action = Omit<typeof Model, 'initialState'>
 
-    // 3.5.x
+    // typescript: 3.5.x
     export type Action = Pick<typeof Model, Exclude<keyof typeof Model, 'initialState'>>
     ```
 
@@ -216,7 +216,7 @@ Note: If you has the `BaseController`, please look through how did we do in [iso
 
 * The default view file extension is 'js'. If you want to use other extension file, please add in config.(eg.view.tsx)
 
-* Props of `View` has changed from `state, handlers, actions` to `state, ctrl`.
+* Props of `View` have changed from `state, handlers, actions` to `state, ctrl`.
 
 * If you start by line command with config file(eg.`imvc.config.js`). You must write config file with `CommonJS` and `ES5` syntax(not support `ES6` or `Typescript` syntax yet).
 
