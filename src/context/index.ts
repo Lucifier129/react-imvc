@@ -1,8 +1,7 @@
 import React from 'react'
-import { ClientController } from 'create-app/client'
 import Controller from '../controller'
 
-function createContext<Ctrl extends Controller<any, any>>(ctrl: Ctrl & ClientController) {
+function createContext<Ctrl extends Controller<any, any>>(ctrl: Ctrl) {
   type GlobalContextType = {
     ctrl: typeof ctrl,
     location: typeof ctrl.location,
@@ -18,6 +17,6 @@ function createContext<Ctrl extends Controller<any, any>>(ctrl: Ctrl & ClientCon
   return React.createContext<GlobalContextType>({} as any)
 }
 
-const GlobalContext = createContext({} as Controller<any, any> & ClientController)
+const GlobalContext = createContext({} as Controller<any, any>)
 
 export default GlobalContext

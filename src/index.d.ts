@@ -15,7 +15,6 @@ import helmet from "helmet"
 import compression from "compression"
 export { Action as StoreAction, Currings, AnyAction, Actions } from "relite"
 import babelCore from "babel-core"
-import 'global'
 
 import {
   useCtrl as _useCtrl,
@@ -23,6 +22,7 @@ import {
   useModelActions as _useModelAction,
   useModelState as _useModelState
 } from "./hook"
+export { StateFromCtrl, ASFromCtrl } from './hook'
 import Controller, { BaseActions as BA } from "./controller"
 
 // global
