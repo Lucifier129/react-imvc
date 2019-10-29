@@ -1,7 +1,7 @@
-import { BaseState } from '..'
 import useCtrl from './useCtrl'
+import Controller from '../controller/index'
 
-export default function<S extends BaseState>() {
-  let ctrl = useCtrl<{}, S, {}>()
+export default function<Ctrl extends Controller<any, any>>() {
+  let ctrl = useCtrl<Ctrl>()
   return ctrl.store.getState()
 }

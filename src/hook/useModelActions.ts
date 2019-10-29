@@ -1,8 +1,7 @@
-import { Actions } from 'relite'
-import { BaseState } from '..'
 import useCtrl from './useCtrl'
+import Controller from '../controller/index'
 
-export default function<S extends BaseState, AS extends Actions<S>>() {
-  let ctrl = useCtrl<{}, S, AS>()
+export default function<Ctrl extends Controller<any, any>>() {
+  let ctrl = useCtrl<Ctrl>()
   return ctrl.store.actions
 }
