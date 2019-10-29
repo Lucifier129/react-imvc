@@ -1,42 +1,39 @@
 import React from "react"
 import GlobalContext from "../context"
-import { BaseState, Handlers } from ".."
+import { BaseState } from ".."
 
-export interface Props {
-  state: BaseState
-  handlers: Handlers
-  actions: {}
-  [x: string]: any
+export interface SelectorProps {
+  state?: BaseState
+  ctrl?: {}
+  props?: any
 }
 
-export interface Connect {
-  <S extends (...args: any[]) => any = () => null>(selector?: S): With<ReturnType<S>>
-}
-
-type ExcludeFromObject<T, E> = Pick<T, Exclude<keyof T, keyof E>>
+export type ExcludeFromObject<T, E> = Pick<T, Exclude<keyof T, keyof E>>
 
 export interface With<EP extends object> {
   <P extends object>(inputComponent: React.ComponentType<P>): (props: ExcludeFromObject<P, EP>) => React.ReactElement
 }
 
-const connect: Connect = <S extends (...args: any[]) => any>(selector?: S) => (
-  InputComponent
-) => {
-  return function Connector(props) {
-    return (
-      <GlobalContext.Consumer>
-        {({ state, ctrl }) => {
-            let sProps = selector ? selector({ state, ctrl, props }) : {}
+function connect<S extends (props: SelectorProps) => any>(selector?: S): With<ReturnType<S>> {
+  return <P extends object>(
+    InputComponent: React.ComponentType<P>
+  ) => {
+    return function Connector(props) {
+      return (
+        <GlobalContext.Consumer>
+          {({ state, ctrl }) => {
+              let sProps = selector ? selector({ state, ctrl, props }) : {}
 
-          return (
-            <InputComponent
-              {...props}
-              {...sProps}
-            />
-          )
-        }}
-      </GlobalContext.Consumer>
-    )
+            return (
+              <InputComponent
+                {...props}
+                {...sProps}
+              />
+            )
+          }}
+        </GlobalContext.Consumer>
+      )
+    }
   }
 }
 

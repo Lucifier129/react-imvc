@@ -63,7 +63,6 @@ export default class ViewManager<
 		let {
 			View,
 			store,
-			handlers,
 			location,
 			history,
 			context,
@@ -89,7 +88,6 @@ export default class ViewManager<
 			actions,
 			preload: context.preload,
 			handleInputChange,
-			handlers,
 			matcher,
 			loader,
 			prefetch

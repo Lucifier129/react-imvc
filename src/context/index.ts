@@ -10,7 +10,6 @@ function createContext<Ctrl extends Controller<any, any>>(ctrl: Ctrl & ClientCon
     state: ReturnType<typeof ctrl.store.getState>,
     actions: typeof ctrl.store.actions,
     preload: typeof ctrl.context.preload,
-    handlers:typeof  ctrl.handlers,
     matcher: typeof ctrl.matcher,
     loader: typeof ctrl.loader,
     prefetch: typeof ctrl.prefetch

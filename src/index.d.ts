@@ -107,10 +107,6 @@ export interface Context extends BaseContext {
   [x: string]: any
 }
 
-export interface Handlers {
-  [handleName: string]: Handler
-}
-
 interface Handler {
   (...args: any[]): any
 }

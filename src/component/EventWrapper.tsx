@@ -17,10 +17,10 @@ export default class EventWrapper extends React.Component<Props> {
 	render() {
 		const { children, as: tag, ...restProps } = this.props
 		let props: Record<string, any> = restProps
-		const { handlers } = this.context
+		const { ctrl } = this.context
 		for (let key in props) {
 			if (isHandler(key)) {
-				const handler = handlers[props[key]]
+				const handler = ctrl[props[key]]
 				if ('function' === typeof handler) {
 					props[key] = handler
 				}

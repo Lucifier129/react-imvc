@@ -28,7 +28,6 @@ import {
   API,
   Context,
   BaseState,
-  Handlers,
   Meta,
   Location
 } from '..'
@@ -58,7 +57,6 @@ let createElement = React.originalCreateElement || React.createElement
 /**
  * 绑定 Store 到 View
  * 提供 Controller 的生命周期钩子
- * 组装事件处理器 Event Handlers
  * 提供 fetch 方法
  */
 export default class Controller<
@@ -77,7 +75,6 @@ export default class Controller<
   store: Store<S & BaseState, AS & BaseActions>
   context: Context
   history: HistoryWithBFOL<BLWithBQ, ILWithBQ>
-  handlers: Handlers
   location: Location
   meta: Meta
   proxyHandler?: {
@@ -122,22 +119,11 @@ export default class Controller<
     }
     this.location = location
     this.context = context
-    this.handlers = {}
     this.preload = {}
     this.deepCloneInitialState = true
 
     this.store = createStore({} as (AS & BaseActions), {} as S & BaseState)
     this.history = createHistory() as HistoryWithBFOL<BLWithBQ, ILWithBQ>
-  }
-  // 绑定 handler 的 this 值为 controller 实例
-  combineHandlers(source: Controller<S, AS>) {
-    let { handlers } = this
-    Object.keys(source).forEach(key => {
-      let value = source[key]
-      if (key.startsWith('handle') && typeof value === 'function') {
-        handlers[key] = value.bind(this)
-      }
-    })
   }
   // 补 basename 前缀
   prependBasename(pathname: string) {
@@ -645,11 +631,6 @@ export default class Controller<
 
     //   this.store.actions = actions
     // }
-
-    /**
-     * 将 handle 开头的方法，合并到 this.handlers 中
-     */
-    this.combineHandlers(this)
 
     /**
      * 如果存在 globalInitialState
