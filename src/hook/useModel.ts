@@ -6,5 +6,5 @@ import useModelActions from './useModelActions'
 export default function useModel<S extends BaseState, AS extends Actions<S>>() {
   let state = useModelState<S>()
   let actions = useModelActions<S, AS>()
-  return [state, actions]
+  return [state, actions] as const
 }
