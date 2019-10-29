@@ -1,12 +1,5 @@
 import React from "react"
 import GlobalContext from "../context"
-import { BaseState } from ".."
-
-export interface SelectorProps {
-  state?: BaseState
-  ctrl?: {}
-  props?: any
-}
 
 export type ExcludeFromObject<T, E> = Pick<T, Exclude<keyof T, keyof E>>
 
@@ -14,7 +7,7 @@ export interface With<EP extends object> {
   <P extends object>(inputComponent: React.ComponentType<P>): (props: ExcludeFromObject<P, EP>) => React.ReactElement
 }
 
-function connect<S extends (props: SelectorProps) => any>(selector?: S): With<ReturnType<S>> {
+function connect<S extends (props: any) => any>(selector?: S): With<ReturnType<S>> {
   return <P extends object>(
     InputComponent: React.ComponentType<P>
   ) => {
