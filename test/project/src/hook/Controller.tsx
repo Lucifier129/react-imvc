@@ -1,7 +1,7 @@
 import Controller from '../../../../src/controller'
 import React from 'react'
 import { Location, Context, BaseState } from '../../../../src/'
-import { useCtrl } from '../../../../src/hook'
+import { useCtrl, useModelActions } from '../../../../src/hook'
 
 export type State = BaseState & {
   foo: string
@@ -11,7 +11,7 @@ let initialState = {
   foo: 'Hello World'
 }
 
-export default class extends Controller<State, {}> {
+class Hook extends Controller<State, {}> {
   // SSR = true // enable server side rendering
   initialState = initialState
 	View = RootView
@@ -20,6 +20,8 @@ export default class extends Controller<State, {}> {
   }
 }
 
+export default Hook
+
 class RootView extends React.Component<{}> {
   render() {
     return <View />
@@ -27,6 +29,8 @@ class RootView extends React.Component<{}> {
 }
 
 function View() {
-  let ctrl = useCtrl<{}, State, {}>()
+  let ctrl = useCtrl<Hook>()
+  let actions = useModelActions<Hook>()
+  console.log(actions)
 	return <div id="hook">{ctrl.store.getState().foo}</div>
 }

@@ -79,11 +79,6 @@ export interface BaseState extends ObjectAlias {
 
 export type BaseActions = BA
 
-export interface Model {
-  initialState: any
-  [propName: string]: StoreAction<any>
-}
-
 export type Preload = Record<string, string>
 
 export type API = Record<string, string>
@@ -105,10 +100,6 @@ export interface Context extends BaseContext {
   req?: express.Request
   res?: express.Response
   [x: string]: any
-}
-
-interface Handler {
-  (...args: any[]): any
 }
 
 export interface Meta {
