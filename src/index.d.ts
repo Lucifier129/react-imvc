@@ -106,6 +106,7 @@ export interface Meta {
   key?: string | null
   hadMounted: boolean
   id: number
+  viewId: number
   isDestroyed: boolean
   unsubscribeList: any
 }

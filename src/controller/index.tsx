@@ -125,6 +125,7 @@ export default class Controller<
   constructor(location: Location, context: Context) {
     this.meta = {
       id: uid++,
+      viewId: Date.now(),
       isDestroyed: false,
       hadMounted: false, // change by ControllerProxy
       unsubscribeList: []
@@ -793,20 +794,11 @@ export default class Controller<
 
   renderView(View = this.View) {
     if (this.context.isServer) return
-    // TODO What the target to use `viewId`
-    // if (View && !View.viewId) {
-    //   View.viewId = Date.now()
-    // }
     let ctrl: this = Object.create(this)
     ctrl.View = View
     ctrl.componentDidFirstMount = undefined
     ctrl.componentDidMount = undefined
     ctrl.componentWillUnmount = undefined
-    ctrl.meta = {
-      ...this.meta,
-      // id: View.viewId
-      id: Date.now()
-    }
     if (this.proxyHandler) {
       this.proxyHandler.attach()
     }
