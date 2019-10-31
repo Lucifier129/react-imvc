@@ -8,7 +8,9 @@ import {
   createStore,
   Store,
   Data,
-  Actions
+  Actions,
+  Curring,
+  Currings
 } from 'relite'
 import {
   Controller as AppController,
@@ -647,24 +649,26 @@ export default class Controller<
 
     // TODO
     // proxy store.actions for handling error
-    // if (this.errorDidCatch) {
-    //   let keys = getKeys(this.store.actions)
-    //   let actions: Currings<S & State & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions> = keys.reduce((obj, key) => {
-    //     let action = this.store.actions[key]
-    //     let newAction: typeof action = payload => {
-    //       try {
-    //         return action(payload)
-    //       } catch (error) {
-    //         this.errorDidCatch(error, 'model')
-    //         throw error
-    //       }
-    //     }
-    //     obj[key] = newAction
-    //     return obj
-    //   }, {} as Currings<S & State & StateFromAS<AS & typeof shareActions>, AS & typeof shareActions>)
+    if (this.errorDidCatch) {
+      let keys = _.getKeys(this.store.actions)
+      let actions: Currings<S & BaseState, AS & BaseActions> = keys.reduce((obj, key) => {
+        let action = this.store.actions[key]
+        let newAction = (payload: any) => {
+          try {
+            return action(payload)
+          } catch (error) {
+            if (this.errorDidCatch) {
+              this.errorDidCatch(error, 'model')
+            }
+            throw error
+          }
+        }
+        obj[key] = newAction as Curring<S & BaseState, (AS & typeof import("d:/Projects/react-imvc/src/controller/actions"))[keyof AS]>
+        return obj
+      }, {} as Currings<S & BaseState, AS & BaseActions>)
 
-    //   this.store.actions = actions
-    // }
+      this.store.actions = actions
+    }
 
     /**
      * 如果存在 globalInitialState

@@ -11,7 +11,8 @@ export default {
   getValueByPath,
   getFlatList,
   ab2str,
-  str2ab
+  str2ab,
+  getKeys
 }
 
 export type RouteList = Route[]
