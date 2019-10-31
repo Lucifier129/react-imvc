@@ -14,7 +14,10 @@ import {
   Controller as AppController,
   Actions as HistoryActions,
   HistoryLocation,
-  createHistory
+  createHistory,
+  Matcher,
+  Loader,
+  CacheStorage
 } from 'create-app/server'
 import {
   HistoryWithBFOL,
@@ -63,43 +66,61 @@ export default class Controller<
   S extends object = {},
   AS extends Actions<S & BaseState> = {}
 > implements AppController {
+  location: Location
+  history: HistoryWithBFOL<BLWithBQ, ILWithBQ>
+  context: Context
   View: React.ComponentType<any> = EmptyView
-  restapi?: string
-  preload: Preload
-  API?: API
   Model?: any
   initialState?: any
   actions?: any
-  SSR?: boolean | { (location: Location, context: Context): Promise<boolean> } | undefined
-  KeepAliveOnPush?: boolean | undefined
   store: Store<S & BaseState, AS & BaseActions>
-  context: Context
-  history: HistoryWithBFOL<BLWithBQ, ILWithBQ>
-  location: Location
+  SSR?: boolean | { (location: Location, context: Context): Promise<boolean> } | undefined
+  preload: Preload
+  KeepAlive?: boolean
+  KeepAliveOnPush?: boolean | undefined
+  Loading: BaseViewFC | BaseViewClass = () => null
+  API?: API
+  restapi?: string
+  resetScrollOnMount?: boolean
+  
   meta: Meta
   proxyHandler?: {
     attach(): void
     detach(): void
   }
-  resetScrollOnMount?: boolean
   deepCloneInitialState: boolean
-  Loading: BaseViewFC | BaseViewClass = () => null
+  matcher: Matcher
+  loader: Loader
+
+  // life circle
+  getInitialState(state: S & BaseState): any { return state }
+  getFinalActions(actions: AS): any { return actions }
+  shouldComponentCreate?(): void | boolean | Promise<void | boolean>
+  componentWillCreate?(): void | Promise<void>
+  componentDidFirstMount?(): void | Promise<void>
+  componentDidMount?(): void | Promise<void>
+  pageWillLeave?(location: ILWithBQ): void
+  componentWillUnmount?(): void | Promise<void>
+  pageDidBack?(location: HistoryLocation, context?: Context): void
+  windowWillUnload?(location: ILWithBQ): void
 
   errorDidCatch?(error: Error, str: string): void
   getComponentFallback?(displayName: string, InputComponent: React.ComponentType): React.ReactElement | string | undefined | null
   getViewFallback?(view?: string): React.ReactElement | string | undefined | null
   stateDidReuse?(state: S & BaseState): void
-  shouldComponentCreate?(): void | boolean | Promise<void | boolean>
-  componentWillCreate?(): void | Promise<void>
   stateDidChange?(data?: Data<S & BaseState, AS & BaseActions>): void
-  pageWillLeave?(location: ILWithBQ): void
-  windowWillUnload?(location: ILWithBQ): void
-  pageDidBack?(location: HistoryLocation, context?: Context): void
 
-  [propName: string]: any
+  // will excute in *creatye-app/client*
+  saveToCache(): void {}
+  removeFromCache(): void {}
+  getAllCache?(): CacheStorage<this>
 
-  getInitialState(state: S & BaseState): any { return state }
-  getFinalActions(actions: AS): any { return actions }
+  refreshView?(view?: any): void
+  getContainer?(): HTMLElement | null
+  clearContainer?(): void
+
+  // state change listener
+  handleInputChange(path: string, value: S, oldValue: S): S { return value }
 
   constructor(location: Location, context: Context) {
     this.meta = {
@@ -125,121 +146,7 @@ export default class Controller<
     this.store = createStore({} as (AS & BaseActions), {} as S & BaseState)
     this.history = createHistory() as HistoryWithBFOL<BLWithBQ, ILWithBQ>
   }
-  // 补 basename 前缀
-  prependBasename(pathname: string) {
-    if (_.isAbsoluteUrl(pathname)) {
-      return pathname
-    }
-    let { basename } = this.context
-    return basename + pathname
-  }
-  // 补 publicPath 前缀
-  prependPublicPath(pathname: string) {
-    if (_.isAbsoluteUrl(pathname)) {
-      return pathname
-    }
-    let { publicPath } = this.context
-    return publicPath + pathname
-  }
-
-  // 处理 url 的相对路径或 mock 地址问题
-  prependRestapi(url: string) {
-    let { context } = this
-
-    /**
-     * 如果已经是绝对路径
-     * 在服务端直接返回 url
-     * 在客户端裁剪掉 http: 使之以 // 开头
-     * 让浏览器自动匹配协议，支持 Https
-     */
-    if (_.isAbsoluteUrl(url)) {
-      if (context.isClient && url.startsWith('http:')) {
-        url = url.replace('http:', '')
-      }
-      return url
-    }
-
-    // 对 mock 的请求进行另一种拼接，转到 node.js 服务去
-    if (url.startsWith('/mock/')) {
-      return this.prependBasename(url)
-    }
-
-    let restapi = this.restapi || context.restapi
-    return restapi + url
-  }
-
-  /**
-   * 封装重定向方法，根据 server/client 环境不同而选择不同的方式
-   * isRaw 是否不拼接 Url，直接使用
-   */
-  redirect(redirectUrl: string, isRaw?: boolean) {
-    let { history, context } = this
-
-    if (context.isServer) {
-      if (!isRaw && !_.isAbsoluteUrl(redirectUrl)) {
-        // 兼容 history.push，自动补全 basename
-        redirectUrl = this.prependBasename(redirectUrl)
-      }
-      context.res && context.res.redirect(redirectUrl)
-      // 使用 throw 语句，模拟浏览器跳转时中断代码执行的效果
-      // 将在外层 catch 住，并 return null 通知 create-app 无须渲染
-      throw REDIRECT
-    } else if (context.isClient) {
-      if (isRaw || _.isAbsoluteUrl(redirectUrl)) {
-        window.location.replace(redirectUrl)
-      } else {
-        history.replace(redirectUrl)
-      }
-    }
-  }
-  // 封装 cookie 的同构方法
-  cookie(key: string, value?: string, options?: Cookie.CookieAttributes | express.CookieOptions) {
-    if (!value) {
-      return this.getCookie(key)
-    }
-    this.setCookie(key, value, options)
-  }
-  getCookie(key: string) {
-    let { context } = this
-    if (context.isServer) {
-      let { req } = context
-      return req && req.cookies[key]
-    } else if (context.isClient) {
-      return Cookie.get(key)
-    }
-  }
-  setCookie(key: string, value: string, options?: Cookie.CookieAttributes | express.CookieOptions) {
-    let { context } = this
-
-    if (options && options.expires) {
-      let isDateInstance = options.expires instanceof Date
-      if (!isDateInstance) {
-        throw new Error(
-          `cookie 的过期时间 expires 必须为 Date 的实例，而不是 ${
-          options.expires
-          }`
-        )
-      }
-    }
-
-    if (context.isServer) {
-      let { res } = context
-      res && res.cookie(key, value, options as express.CookieOptions)
-    } else if (context.isClient) {
-      Cookie.set(key, value, options as Cookie.CookieAttributes)
-    }
-  }
-  removeCookie(key: string, options?:  Cookie.CookieAttributes | express.CookieOptions) {
-    let { context } = this
-
-    if (context.isServer) {
-      let { res } = context
-      res && res.clearCookie(key, options)
-    } else if (context.isClient) {
-      Cookie.remove(key, options as Cookie.CookieAttributes)
-    }
-  }
-
+  
   /**
    * 封装 fetch, https://github.github.io/fetch
    * options.json === false 不自动转换为 json
@@ -423,6 +330,132 @@ export default class Controller<
     return this.loader(matches.controller)
   }
 
+  // 补 basename 前缀
+  prependBasename(pathname: string) {
+    if (_.isAbsoluteUrl(pathname)) {
+      return pathname
+    }
+    let { basename } = this.context
+    return basename + pathname
+  }
+
+  // 补 publicPath 前缀
+  prependPublicPath(pathname: string) {
+    if (_.isAbsoluteUrl(pathname)) {
+      return pathname
+    }
+    let { publicPath } = this.context
+    return publicPath + pathname
+  }
+
+  // 处理 url 的相对路径或 mock 地址问题
+  prependRestapi(url: string) {
+    let { context } = this
+
+    /**
+     * 如果已经是绝对路径
+     * 在服务端直接返回 url
+     * 在客户端裁剪掉 http: 使之以 // 开头
+     * 让浏览器自动匹配协议，支持 Https
+     */
+    if (_.isAbsoluteUrl(url)) {
+      if (context.isClient && url.startsWith('http:')) {
+        url = url.replace('http:', '')
+      }
+      return url
+    }
+
+    // 对 mock 的请求进行另一种拼接，转到 node.js 服务去
+    if (url.startsWith('/mock/')) {
+      return this.prependBasename(url)
+    }
+
+    let restapi = this.restapi || context.restapi
+    return restapi + url
+  }
+
+  /**
+   * 封装重定向方法，根据 server/client 环境不同而选择不同的方式
+   * isRaw 是否不拼接 Url，直接使用
+   */
+  redirect(redirectUrl: string, isRaw?: boolean) {
+    let { history, context } = this
+
+    if (context.isServer) {
+      if (!isRaw && !_.isAbsoluteUrl(redirectUrl)) {
+        // 兼容 history.push，自动补全 basename
+        redirectUrl = this.prependBasename(redirectUrl)
+      }
+      context.res && context.res.redirect(redirectUrl)
+      // 使用 throw 语句，模拟浏览器跳转时中断代码执行的效果
+      // 将在外层 catch 住，并 return null 通知 create-app 无须渲染
+      throw REDIRECT
+    } else if (context.isClient) {
+      if (isRaw || _.isAbsoluteUrl(redirectUrl)) {
+        window.location.replace(redirectUrl)
+      } else {
+        history.replace(redirectUrl)
+      }
+    }
+  }
+  
+  reload() {
+    // if not remove controller cache, it will not reload correctly, it will restore instead of reload
+    this.removeFromCache()
+    this.history.replace(this.location.raw)
+  }
+
+  // 封装 cookie 的同构方法
+  cookie(key: string, value?: string, options?: Cookie.CookieAttributes | express.CookieOptions) {
+    if (!value) {
+      return this.getCookie(key)
+    }
+    this.setCookie(key, value, options)
+  }
+
+  getCookie(key: string) {
+    let { context } = this
+    if (context.isServer) {
+      let { req } = context
+      return req && req.cookies[key]
+    } else if (context.isClient) {
+      return Cookie.get(key)
+    }
+  }
+
+  setCookie(key: string, value: string, options?: Cookie.CookieAttributes | express.CookieOptions) {
+    let { context } = this
+
+    if (options && options.expires) {
+      let isDateInstance = options.expires instanceof Date
+      if (!isDateInstance) {
+        throw new Error(
+          `cookie 的过期时间 expires 必须为 Date 的实例，而不是 ${
+          options.expires
+          }`
+        )
+      }
+    }
+
+    if (context.isServer) {
+      let { res } = context
+      res && res.cookie(key, value, options as express.CookieOptions)
+    } else if (context.isClient) {
+      Cookie.set(key, value, options as Cookie.CookieAttributes)
+    }
+  }
+
+  removeCookie(key: string, options?:  Cookie.CookieAttributes | express.CookieOptions) {
+    let { context } = this
+
+    if (context.isServer) {
+      let { res } = context
+      res && res.clearCookie(key, options)
+    } else if (context.isClient) {
+      Cookie.remove(key, options as Cookie.CookieAttributes)
+    }
+  }
+
   async init() {
     if (this.errorDidCatch || this.getComponentFallback) {
       let self = this
@@ -478,7 +511,7 @@ export default class Controller<
             }
           }
           render() {
-            if (self.state.hasError) {
+            if (self.store.getState().hasError) {
               if (self.getComponentFallback) {
                 let result = self.getComponentFallback(displayName as string, InputComponent)
                 if (result !== undefined) return result
@@ -697,7 +730,7 @@ export default class Controller<
 
     if (store) {
       let unsubscribe = store.subscribe((data) => {
-        this.refreshView()
+        this.refreshView && this.refreshView()
         if (this.stateDidChange) {
           this.stateDidChange(data)
         }
@@ -757,11 +790,6 @@ export default class Controller<
     this.bindStoreWithView()
     return this.render()
   }
-  reload() {
-    // if not remove controller cache, it will not reload correctly, it will restore instead of reload
-    this.removeFromCache()
-    this.history.replace(this.location.raw)
-  }
 
   renderView(View = this.View) {
     if (this.context.isServer) return
@@ -771,9 +799,9 @@ export default class Controller<
     // }
     let ctrl: this = Object.create(this)
     ctrl.View = View
-    ctrl.componentDidFirstMount = null
-    ctrl.componentDidMount = null
-    ctrl.componentWillUnmount = null
+    ctrl.componentDidFirstMount = undefined
+    ctrl.componentDidMount = undefined
+    ctrl.componentWillUnmount = undefined
     ctrl.meta = {
       ...this.meta,
       // id: View.viewId
@@ -782,7 +810,7 @@ export default class Controller<
     if (this.proxyHandler) {
       this.proxyHandler.attach()
     }
-    this.refreshView(<ViewManager controller={ctrl} />)
+    this.refreshView && this.refreshView(<ViewManager controller={ctrl} />)
   }
 
   render(): React.ReactElement {
