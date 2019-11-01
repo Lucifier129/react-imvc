@@ -57,8 +57,12 @@ describe('build', () => {
       })
     })
 
-    describe('evn', () => {
-      it.todo('all')
+    describe('NODE_ENV', () => {
+      it.todo('production')
+
+      it.todo('development')
+
+      it.todo('test')
     })
   })
 
