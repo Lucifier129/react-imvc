@@ -146,18 +146,16 @@
 
 5. Refactor `View` module
 
-    (1) Import `ViewProps` from `react-imvc` and import `State` from `Model`
+    (1) import `State` from `Model`
 
     ```typescript
     import { State } from './Model'
     ```
 
-    (2) Construct `Ctrl` type
+    (2) import `Ctrl` from `Controller`
 
     ```typescript
-    export type Ctrl = {
-        // some Ctrl feild
-    }
+    import Ctrl from './Controller'
     ```
 
     (3) Construct `ViewProps` type
@@ -179,10 +177,10 @@
 
 6. Refactor `Controller` module
 
-    (1) Import `View`, `Ctrl` and `Model`
+    (1) Import `View` and `Model`
 
     ```typescript
-    import View, { Ctrl } from "./View"
+    import View from "./View"
     import * as Model from "./Model"
     ```
 
@@ -199,7 +197,7 @@
     (3) Construct `Controller` class
 
     ```typescript
-    class Detail extends Controller<Model.State, Actions> implements Ctrl {
+    class Detail extends Controller<Model.State, Actions> {
         View = View
         Model = Model
         // do somethings
