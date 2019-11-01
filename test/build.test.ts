@@ -4,7 +4,15 @@ const pkg = require('../package.json')
 
 process.env.NODE_ENV = "production"
 
-describe('build test', () => {
+describe('build', () => {
+  describe('createWebpackConfig', () => {
+    describe('isServer should avaliable', () => {
+      it.todo('isServer is true')
+
+      it.todo('isServer is false')
+    })
+  })
+
   describe('util', () => {
     it('getExternals can get all dependences', () => {
       let dependences = util.getExternals(defaultConfig)
