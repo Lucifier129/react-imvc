@@ -2,7 +2,7 @@
 
 ## What' new
 
-* Support for Typescript. Intact intelligent code completion in `Visual Studio Code`.
+* Support for Typescript. Intact intelligent code completion.
 
 ## How to upgrade
 
