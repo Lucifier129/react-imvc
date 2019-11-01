@@ -1,7 +1,7 @@
 import path from "path"
 import http from "http"
 import puppeteer from 'puppeteer'
-import { Config } from "../src/"
+import { Config } from "../src"
 import start from "../src/start"
 
 jest.setTimeout(30000)
@@ -18,7 +18,6 @@ const config: Partial<Config> = {
     beautify: false, // 不美化
     transformViews: false // 已有转换，无须再做
   },
-  renderMode: 'renderToString',
   routes: "routes", // 服务端路由目录
   layout: "Layout.tsx", // 自定义 Layoutclear
   webpackLogger: false, // 关闭 webpack logger
@@ -26,15 +25,13 @@ const config: Partial<Config> = {
 }
 
 
-describe('hook', () => {
-  describe('useCtrl', () => {
-    // let app: express.Express
+describe('hoc test', () => {
+  describe('connect', () => {
     let server: http.Server
     let browser: puppeteer.Browser
 
     beforeAll(() => {
       return start({ config }).then((result) => {
-        // app = result.app
         server = result.server
         return puppeteer.launch()
       }).then((brws) => {
@@ -46,28 +43,15 @@ describe('hook', () => {
       server.close()
       return browser.close()
     })
-    it('it work well', async () => {
+
+    it('should get the right data passed with connect selector', async () => {
       let page = await browser.newPage()
-      let url = `http://localhost:${config.port}/hook`
+      let url = `http://localhost:${config.port}/connect`
       await page.goto(url)
-      await page.waitFor('#hook')
+      await page.waitFor('#connect')
+      let content = await page.$eval('#location', (e) => e.innerHTML)
 
-      let content = await page.$eval('#hook', (e) => e.innerHTML)
-
-      expect(content).toBe('Hello World')
-
+      expect(content).toBe('test')
     })
-  })
-  
-  describe('useModel', () => {
-    it.todo('should work with type infer')
-  })
-  
-  describe('useModelActions', () => {
-    it.todo('should work with type infer')
-  })
-  
-  describe('useModelState', () => {
-    it.todo('should work with type infer')
   })
 })

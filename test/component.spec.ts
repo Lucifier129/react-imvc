@@ -1,7 +1,7 @@
 import path from 'path'
 import http from 'http'
 import puppeteer from 'puppeteer'
-import { Config } from '../src/'
+import { Config } from '../src'
 import start from '../src/start'
 
 jest.setTimeout(30000)
