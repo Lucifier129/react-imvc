@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import querystring from 'query-string'
 import spawn from 'cross-spawn'
 import { SpawnSyncReturns } from 'child_process'
