@@ -32,7 +32,29 @@ describe('build', () => {
         })
       })
 
-      it.todo('isServer is false')
+      it('isServer is false', () => {
+        const config = createWebpackConfig(defaultConfig)
+
+        expect(config.target).toBe('web')
+        expect(config.entry).toStrictEqual({ "index": ["D:\\Projects\\react-imvc\\src\\entry\\client"] })
+        expect(config.output).toBeDefined()
+        if (config.output) {
+          expect(config.output.filename).toBe('js/[name].js')
+          expect(config.output.chunkFilename).toBe('js/[name].js')
+          expect(config.output.path).toBe('D:\\Projects\\react-imvc\\publish\\static')
+        }
+        expect(config.devtool).toBe('')
+        expect(config.plugins).toBeDefined()
+        if (config.plugins) {
+          expect(config.plugins.length).toBe(3)          
+        }
+        expect(config.optimization).toStrictEqual({
+          splitChunks: {
+            chunks: 'all',
+            name: 'vendor'
+          }
+        })
+      })
     })
 
     describe('evn', () => {
