@@ -58,7 +58,43 @@ describe('build', () => {
     })
 
     describe('NODE_ENV', () => {
-      it.todo('production')
+      describe('production', () => {
+        it('isServer is true', () => {
+          const options = Object.assign(defaultConfig, { NODE_ENV: 'production' })
+          const config = createWebpackConfig(options, true)
+  
+          expect(config.mode).toBe('production')
+          expect(config.watch).toBeFalsy()
+          expect(config.output).toBeDefined()
+          if (config.output) {
+            expect(config.output.filename).toBe('server.bundle.js')
+            expect(config.output.libraryTarget).toBe('commonjs2')
+            expect(config.output.path).toBe('D:\\Projects\\react-imvc\\publish')
+          }
+          expect(config.optimization).toBeDefined()
+          if (config.optimization) {
+            expect(config.optimization.minimize).toBeFalsy()
+          }
+        })
+
+        it('isServer is false', () => {
+          const options = Object.assign(defaultConfig, { NODE_ENV: 'production' })
+          const config = createWebpackConfig(options)
+  
+          expect(config.mode).toBe('production')
+          expect(config.watch).toBeFalsy()
+          expect(config.output).toBeDefined()
+          if (config.output) {
+            expect(config.output.filename).toBe('js/[name]-[contenthash:6].js')
+            expect(config.output.chunkFilename).toBe('js/[name]-[contenthash:6].js')
+            expect(config.output.path).toBe('D:\\Projects\\react-imvc\\publish\\static')
+          }
+          expect(config.optimization).toBeDefined()
+          if (config.optimization) {
+            expect(config.optimization.minimizer).toBeDefined()
+          }
+        })
+      })
 
       it.todo('development')
 
