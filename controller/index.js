@@ -144,9 +144,7 @@ export default class Controller {
       let isDateInstance = options.expires instanceof Date
       if (!isDateInstance) {
         throw new Error(
-          `cookie 的过期时间 expires 必须为 Date 的实例，而不是 ${
-            options.expires
-          }`
+          `The expires option of cookie must be an instance of Date instead of ${options.expires}`
         )
       }
     }
