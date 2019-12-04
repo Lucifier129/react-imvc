@@ -305,6 +305,8 @@ export default class Controller {
             content = content.replace(/\r+/g, '')
           }
           context.preload[name] = content
+        }).catch(error => {
+          console.log(`preload resouce failed: ${name}`, error)
         })
     })
     return Promise.all(list)

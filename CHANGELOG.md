@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.7.4
+
+- feature: 忽略 preload css 时渲染终止的问题，改为渲染一个不带样式的页面，并输出错误日志
+
 ## 2.7.3
 
 - fix: 重置 webpack config 的 resolve.modules 配置，不再指定特殊目录，走默认 resolve 路径
