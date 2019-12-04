@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.7.3
+
+- fix: 重置 webpack config 的 resolve.modules 配置，不再指定特殊目录，走默认 resolve 路径
+
 ## 2.7.0
 
 - feature: 支持禁用 gulp 任务
