@@ -30,10 +30,6 @@ module.exports = {
 	 */
 	content: '',
 	/**
-	 * 全局生效的初始化 state，如果配置了，每个页面都会带上它
-	 */
-	initialState: undefined,
-	/**
 	 * client app settings
 	 * {
 	 *   hashType: 'hashbang', hash history 显示的起点缀，默认是 !

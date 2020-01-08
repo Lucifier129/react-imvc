@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.7.5
+
+- deprecated: 废弃 imvc.config 的 initialState 配置，它会导致浏览器端误判已经做过 SSR，跳过 getInitialState 等生命周期。可以通过 initialState.js 这种模块方式去共享状态。
+
 ## 2.7.4
 
 - feature: 忽略 preload css 时渲染终止的问题，改为渲染一个不带样式的页面，并输出错误日志

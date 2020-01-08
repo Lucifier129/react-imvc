@@ -139,6 +139,7 @@ export default function createExpressApp(config) {
 		let publicPath = config.publicPath || serverPublicPath
 		let defaultProps = {
 			...config,
+			initialState: undefined,
 			basename,
 			publicPath,
 			serverPublicPath
