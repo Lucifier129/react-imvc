@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.7.6
+
+- fixed: 修复多 basename 场景下，服务端重复匹配的问题
+
 ## 2.7.5
 
 - deprecated: 废弃 imvc.config 的 initialState 配置，它会导致浏览器端误判已经做过 SSR，跳过 getInitialState 等生命周期。可以通过 initialState.js 这种模块方式去共享状态。
