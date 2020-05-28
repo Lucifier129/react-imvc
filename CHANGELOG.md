@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.7.8
+
+- fixed: 修复 hot reload 在 build 阶段也开启了的问题
+
 ## 2.7.7
 
 - fixed：修复 webpack externals 配置错误的问题，引入 webpack-node-externals
