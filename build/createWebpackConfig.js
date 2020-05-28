@@ -19,6 +19,7 @@ module.exports = function createWebpackConfig(options, isServer = false) {
 	let indexEntry = isServer ? root : path.join(__dirname, '../entry/client')
 	let NODE_ENV = config.NODE_ENV
 	let isProd = NODE_ENV === 'production'
+	let isDev = NODE_ENV === 'development'
 	let mode = NODE_ENV === 'test' ? 'development' : NODE_ENV || 'production'
 	let entry = Object.assign({}, config.entry, {
 		index: [!!config.hot && !isServer && 'webpack-hot-middleware/client', indexEntry].filter(
@@ -94,8 +95,8 @@ module.exports = function createWebpackConfig(options, isServer = false) {
 		 })
 	].filter(Boolean)
 
-	// 添加热更新插件
-	if (!isServer && config.hot) {
+	// 添加热更新插件（只在开发模式下开启）
+	if (isDev && !isServer && config.hot) {
 		plugins.push(new webpack.HotModuleReplacementPlugin())
 	}
 
