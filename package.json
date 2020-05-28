@@ -1,6 +1,6 @@
 {
   "name": "react-imvc",
-  "version": "2.7.6",
+  "version": "2.7.7",
   "description": "An Isomorphic MVC Framework",
   "main": "./index",
   "bin": {
@@ -90,6 +90,7 @@
     "webpack-dev-middleware": "^3.4.0",
     "webpack-hot-middleware": "^2.24.3",
     "webpack-manifest-plugin": "^2.0.4",
+    "webpack-node-externals": "^1.7.2",
     "whatwg-fetch": "^2.0.3",
     "yargs": "^8.0.2"
   },

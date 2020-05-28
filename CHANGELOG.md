@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.7.7
+
+- fixed：修复 webpack externals 配置错误的问题，引入 webpack-node-externals
+
 ## 2.7.6
 
 - fixed: 修复多 basename 场景下，服务端重复匹配的问题

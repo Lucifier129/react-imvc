@@ -4,6 +4,7 @@ const webpack = require('webpack')
 const webpackDevMiddleware = require('webpack-dev-middleware')
 const MFS = require('memory-fs')
 const notifier = require('node-notifier')
+const nodeExternals = require('webpack-node-externals')
 const createWebpackConfig = require('./createWebpackConfig')
 const { getExternals, matchExternals } = require('./util')
 
@@ -32,14 +33,21 @@ exports.setupClient = function setupClient(config) {
 
 exports.setupServer = function setupServer(config, options) {
 	let serverConfig = createWebpackConfig(config, true)
-	serverConfig.target = 'node'
+	
 	serverConfig.entry = {
 		routes: path.join(config.root, config.src)
 	}
-	let externals = (serverConfig.externals = getExternals(config))
+	
+	// in order to ignore built-in modules like path, fs, etc.
+	serverConfig.target = 'node'
+	// in order to ignore all modules in node_modules folder
+	serverConfig.externals = [nodeExternals()]
+
 	serverConfig.output.filename = 'routes.js'
 	serverConfig.output.libraryTarget = 'commonjs2'
 	delete serverConfig.optimization
+
+	let externals = getExternals(config)
 	let serverCompiler = webpack(serverConfig)
 	let mfs = new MFS()
 	let outputPath = path.join(
