@@ -27,6 +27,10 @@ module.exports = function build(options) {
       )
     )
     .then(() => startStaticEntry(config))
+    .then(() => {
+      console.log('build successfully!')
+      process.exit(0)
+    })
     .catch(error => {
       console.error(error)
       process.exit(1)
