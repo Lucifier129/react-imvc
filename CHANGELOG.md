@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.7.9
+
+- fixed：build 任务里强制退出进程，避免悬挂
+
 ## 2.7.8
 
 - fixed: 修复 hot reload 在 build 阶段也开启了的问题
