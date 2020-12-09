@@ -699,7 +699,7 @@ Script 组件，用来防范 querystring 的 XSS 风险，放置 window.\_\_INIT
 
 ```javascript
 import React from 'react'
-import Script from '../component/Script'
+import Script from 'react-imvc/component/Script'
 ;<Script>
   {`
     (function() {
