@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.7.11
+
+- revert: 回滚 Script 组件的处理
+
 ## 2.7.9
 
 - fixed：build 任务里强制退出进程，避免悬挂
