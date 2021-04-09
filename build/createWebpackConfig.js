@@ -76,22 +76,13 @@ module.exports = function createWebpackConfig(options, isServer = false) {
 		
 		// TypeScript type checking
 		config.useTypeCheck && new ForkTsCheckerWebpackPlugin({
-			 typescript: resolve.sync('typescript', {
-				 basedir: path.join(config.root, 'node_modules'),
-			 }),
-			 async: !isProd,
-			 useTypescriptIncrementalApi: true,
-			 checkSyntacticErrors: true,
-			 tsconfig: path.join(config.root, 'tsconfig.json'),
-			 reportFiles: [
-				 '**',
-				 '!**/*.json',
-				 '!**/__tests__/**',
-				 '!**/?(*.)(spec|test).*',
-				 '!**/src/setupProxy.*',
-				 '!**/src/setupTests.*',
-			 ],
-			 watch: config.root
+			typescript: {
+				typescriptPath: resolve.sync('typescript', {
+				 	basedir: path.join(config.root, 'node_modules'),
+			 	}),
+				 configFile: path.join(config.root, 'tsconfig.json'),
+			},
+			async: !isProd,
 		 })
 	].filter(Boolean)
 

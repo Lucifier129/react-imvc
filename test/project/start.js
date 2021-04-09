@@ -8,7 +8,8 @@ const config = {
 	basename: ['/a', '/b'],
 	routes: 'routes', // 服务端路由目录
 	layout: 'Layout', // 自定义 Layout
-	// bundleAnalyzer: true
+	// bundleAnalyzer: true,
+	// useTypeCheck: true
 }
 
 async function main() {
