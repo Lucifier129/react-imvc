@@ -22,6 +22,6 @@
     "removeComments": false,
     "jsx": "react",
     "types": ["node"],
-    "rootDir": ".",
+    "rootDir": "../../",
   },
 }

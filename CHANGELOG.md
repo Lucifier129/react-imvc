@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.7.14
+
+- fix: 固定 core-js 版本为 v3.19.3，其 v3.20 版本改写 Error 导致其它库报错
+
 ## 2.7.11
 
 - revert: 回滚 Script 组件的处理
