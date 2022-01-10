@@ -7,7 +7,6 @@ import querystring from 'querystring'
 import _ from '../util'
 import ViewManager from '../component/ViewManager'
 import * as shareActions from './actions'
-import attachDevToolsIfPossible from './attachDevToolsIfPossible'
 
 const REDIRECT =
   typeof Symbol === 'function'
@@ -434,7 +433,6 @@ export default class Controller {
      */
     let finalActions = { ...actions, ...shareActions }
     this.store = createStore(finalActions, finalInitialState)
-    attachDevToolsIfPossible(this.store)
 
     // proxy store.actions for handling error
     if (this.errorDidCatch) proxyStoreActions(this)

@@ -28,7 +28,7 @@ describe('util', () => {
             let resolveAfter5ms = new Promise(resolve => setTimeout(resolve, 5))
             let count = 0
             try {
-                await util.timeoutReject(resolveAfter5ms, 10)
+                await util.timeoutReject(resolveAfter5ms, 20)
             } catch(error) {
                 count += 1
             }

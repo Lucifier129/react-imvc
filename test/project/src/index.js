@@ -22,5 +22,9 @@ export default [
 	{
 		path: '/life_cycle',
 		controller: () => import('./life-cycle/Controller')
+	},
+	{
+		path: '/model',
+		controller: () => import('./model/Controller')
 	}
 ]
