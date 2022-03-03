@@ -188,43 +188,6 @@ function mainTest(config) {
 
 			await page.close()
 		})
-
-		// it('should share history and context properties in all controller instances', async () => {
-		//   let url = `http://localhost:${config.port}/basic_state?a=1&b=2`;
-		//   let page = await browser.newPage();
-
-		//   await page.goto(url)
-		//   await page.waitFor('#basic_state')
-
-		//   let clientController = await page.evaluate(() => window.controller)
-
-		//   expect(clientController.history).toBeA('object')
-
-		//   await page.evaluate(() => window.controller.history.push('/static_view?a=1&b=2'))
-		//   await page.waitFor('#static_view')
-
-		//   let clientLocation = await page.evaluate(() => window.location)
-		//   expect(clientLocation.pathanme).toEqual('/static_view')
-		//   expect(clientLocation.search).toEqual('?a=1&b=2')
-
-		//   await page.goBack()
-		//   await page.waitFor('#basic_state')
-
-		//   let newClientController = await page.evaluate(() => window.controller)
-		//   expect(newClientController === clientController).toBe(false)
-		//   expect(newClientController.history === clientController.history).toBe(true) // share the same history property
-		//   expect(newClientController.context === clientController.context).toBe(true) // share the same context property
-
-		//   await page.goForward()
-		//   await page.waitFor('#static_view')
-
-		//   clientLocation = await page.evaluate(() => window.location)
-		//   console.log('location', clientLocation)
-		//   expect(clientLocation.pathanme).toEqual('/static_view')
-		//   expect(clientLocation.search).toEqual('?a=1&b=2')
-
-		//   await page.close()
-		// })
 	})
 }
 

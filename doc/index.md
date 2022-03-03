@@ -52,7 +52,7 @@ react-imvc 的 `View` 是 React.js，建议尽可能使用 `functional stateless
 
 ```javascript
 // /my_page/Controller.js
-import Controller from 'react-imvc/controller' // Controller 基类里实现了许多方法，子类 Controller 要避免使用同名方法
+import Controller from 'react-imvc/controller'; // Controller 基类里实现了许多方法，子类 Controller 要避免使用同名方法
 
 export default class extends Controller {
   // your code
@@ -255,9 +255,10 @@ fetch 方法用来跟服务端进行 http 或 https 通讯，它的用法和参�
   - 内部会对 url 进行转换 `url = config.restapi + url`
   - 当 options.raw === true 时，不做上述转换，直接使用 url
 
-- 当options.fetch存在，且时function类型时
-  - 框架使用自定义的options.fetch方法替换原本的fetch方法
-  - 建议自定义的options.fetch方法的interface与浏览器自带的fetch保持一致
+- 当 options.fetch 存在，且时 function 类型时
+
+  - 框架使用自定义的 options.fetch 方法替换原本的 fetch 方法
+  - 建议自定义的 options.fetch 方法的 interface 与浏览器自带的 fetch 保持一致
 
 - 当 options.timeout 为数字时，controller.fetch 将有以下行为
 
@@ -341,7 +342,7 @@ controller.redirect 方法可实现重定向功能。
 ```javascript
 try {
   // do something
-  this.redirect(targetUrl)
+  this.redirect(targetUrl);
 } catch (error) {
   if (error instanceof Error) {
     // catch error
@@ -407,7 +408,7 @@ controller.renderView 方法只在客户端生效，从参数 ReactComponent 作
 ```javascript
 class Controller extends BaseController {
   componentWillCreate() {
-    this.renderView(LoadingView)
+    this.renderView(LoadingView);
     // ...other code
   }
 }
@@ -427,6 +428,7 @@ Controller 具有以下生命周期方法，执行顺序为：
 getInitialState
 shouldComponentCreate
 componentWillCreate
+viewWillHydrate
 componentDidFirstMount
 componentDidMount
 pageWillLeave
@@ -485,6 +487,12 @@ controller.componentWillCreate 方法触发时，view 还未被创建和渲染�
 该方法支持 promise，如果使用了 async/await 语法，或者 return promise，后面的生命周期方法将会等待它们 resolve。
 
 注意：在该生命周期 fetch 数据时，需要 `await fetch(xxx)` 否则不会等待请求结果。
+
+### Controller.viewWillHydrate()
+
+Controller.viewWillHydrate 方法触发时，view 已经做过 SSR，但还没有做 hydrate，即还没有首次渲染。
+
+可以在这个生命周期里，调用接口，或其它异步操作，获取 hydrate 所需的数据或组件。确保 hydrate 时，SSR/CSR 渲染结果是一致的。
 
 ### Controller.componentDidFirstMount()
 
@@ -581,46 +589,46 @@ react-imvc 建议除了把 state 从 component 里抽离出来，组成 global s
 event handler 必须是 arrow function 箭头函数的语法，这样可以做到内部的 this 值永远指向 controller 实例，不需要 bind this，在 view 组件里直接使用即可。
 
 ```javascript
-import React from 'react'
-import Controller from 'react-imvc/controller'
+import React from 'react';
+import Controller from 'react-imvc/controller';
 
 export default class extends Controller {
-  View = View
+  View = View;
   initialState = {
-    count: 0
-  }
+    count: 0,
+  };
   actions = {
-    INCREMENT: state => ({ ...state, count: state.count + 1 }),
-    DECREMENT: state => ({ ...state, count: state.count - 1 }),
+    INCREMENT: (state) => ({ ...state, count: state.count + 1 }),
+    DECREMENT: (state) => ({ ...state, count: state.count - 1 }),
     CHANGE_BY_NUM: (state, num) => ({
       ...state,
-      count: state.count + Number(num)
-    })
-  }
+      count: state.count + Number(num),
+    }),
+  };
   // 事件处理器必须使用 arrow function 箭头函数的语法
   handleIncre = () => {
-    let { INCREMENT } = this.store.actions
-    INCREMENT()
-  }
+    let { INCREMENT } = this.store.actions;
+    INCREMENT();
+  };
   // 事件处理器里使用 action 更新 global state
   handleDecre = () => {
-    let { DECREMENT } = this.store.actions
-    DECREMENT()
-  }
+    let { DECREMENT } = this.store.actions;
+    DECREMENT();
+  };
   // 将特殊的索引如 index, id 或者其他信息，缓存在 DOM attribute 里
   // 在事件处理器里，从 DOM attribute 里取回
-  handleCustomNum = event => {
-    let { CHANGE_BY_NUM } = this.store.actions
-    let num = event.currentTarget.getAttribute('data-num')
-    CHANGE_BY_NUM(num)
-  }
+  handleCustomNum = (event) => {
+    let { CHANGE_BY_NUM } = this.store.actions;
+    let num = event.currentTarget.getAttribute('data-num');
+    CHANGE_BY_NUM(num);
+  };
 }
 
 /**
  * 在 view 组件里，可以从 props 里拿到 global state 和 global event handlers
  */
 function View({ state, handlers }) {
-  let { handleIncre, handleDecre, handleCustomNum } = handlers
+  let { handleIncre, handleDecre, handleCustomNum } = handlers;
   return (
     <div>
       <h1>Count: {state.count}</h1>
@@ -630,7 +638,7 @@ function View({ state, handlers }) {
         +10
       </button>
     </div>
-  )
+  );
 }
 ```
 
@@ -653,7 +661,7 @@ function View({ state, handlers }) {
 react-imvc 有一些内置的 React Component，可以便利地实现某些特定需求，使用方法如下：
 
 ```javascript
-import { Link, Style } from 'react-imvc/component'
+import { Link, Style } from 'react-imvc/component';
 // your code here
 ```
 
@@ -698,9 +706,9 @@ NavLink 组件，跟 Link 类似，可以用来实现页面的单页路由跳转
 Script 组件，用来防范 querystring 的 XSS 风险，放置 window.\_\_INITIAL_STATE 里执行恶意代码。
 
 ```javascript
-import React from 'react'
-import Script from 'react-imvc/component/Script'
-;<Script>
+import React from 'react';
+import Script from 'react-imvc/component/Script';
+<Script>
   {`
     (function() {
         window.__INITIAL_STATE__ = ${JSON.stringify(props.initialState)}
@@ -708,7 +716,7 @@ import Script from 'react-imvc/component/Script'
         window.__PUBLIC_PATH__ = '${props.publicPath}'
     })()
 `}
-</Script>
+</Script>;
 ```
 
 ### Prefetch
@@ -716,8 +724,8 @@ import Script from 'react-imvc/component/Script'
 Prefetch 组件，可以预加载特定页面的 js bundle 文件。
 
 ```javascript
-import { Prefetch } from 'react-imvc/component'
-;<Prefetch src="/detail" /> // 预加载详情页的 js 文件
+import { Prefetch } from 'react-imvc/component';
+<Prefetch src="/detail" />; // 预加载详情页的 js 文件
 ```
 
 ### Style
@@ -725,15 +733,15 @@ import { Prefetch } from 'react-imvc/component'
 Style 组件，用来将 controller.preload 里配置的 css，展示在页面上。
 
 ```javascript
-import React from 'react'
-import Controller from 'react-imvc/controller'
-import { Style } from 'react-imvc/component' // 加载 Style 组件
+import React from 'react';
+import Controller from 'react-imvc/controller';
+import { Style } from 'react-imvc/component'; // 加载 Style 组件
 
 export default class extends Controller {
   preload = {
-    main: 'path/to/css' // 配置 css 文件路径
-  }
-  View = View
+    main: 'path/to/css', // 配置 css 文件路径
+  };
+  View = View;
 }
 
 // 当组件渲染时，Style 标签会将 preload 里的同名 css 内容，展示为 style 标签。
@@ -742,7 +750,7 @@ function View() {
     <div>
       <Style name="main" />
     </div>
-  )
+  );
 }
 ```
 
@@ -858,13 +866,13 @@ EventWrapper 组件，提供传递事件 handler 的快捷通道。
 使用该 hooks-api，可以减少传递 handlers 的负担。
 
 ```javascript
-import React from 'react'
-import { useCtrl } from 'react-imvc/hook'
+import React from 'react';
+import { useCtrl } from 'react-imvc/hook';
 
 export default function Counter() {
-  let ctrl = useCtrl()
+  let ctrl = useCtrl();
 
-  return <button onClick={ctrl.handleIncre} />
+  return <button onClick={ctrl.handleIncre} />;
 }
 ```
 
@@ -875,13 +883,13 @@ export default function Counter() {
 使用该 hooks-api，可以减少传递 state 的负担。
 
 ```javascript
-import React from 'react'
-import { useModel } from 'react-imvc/hook'
+import React from 'react';
+import { useModel } from 'react-imvc/hook';
 
 export default function Counter() {
-  let [state, actions] = useModel()
+  let [state, actions] = useModel();
 
-  return <div onClick={() => actions.INCRE()}>count:{state.count}</div>
+  return <div onClick={() => actions.INCRE()}>count:{state.count}</div>;
 }
 ```
 
@@ -890,13 +898,13 @@ export default function Counter() {
 在 react 组件里获取倒当前 model 对应的 state 状态。
 
 ```javascript
-import React from 'react'
-import { useModelState } from 'react-imvc/hook'
+import React from 'react';
+import { useModelState } from 'react-imvc/hook';
 
 const Counter = () => {
-  let state = useModelState()
-  return state.count
-}
+  let state = useModelState();
+  return state.count;
+};
 ```
 
 ### useModelActions
@@ -906,24 +914,24 @@ const Counter = () => {
 使用该 hooks-api，可以减少在 controller 里添加 handler 方法。
 
 ```javascript
-import React, { useEffect } from 'react'
-import { useModelActions } from 'react-imvc/hook'
+import React, { useEffect } from 'react';
+import { useModelActions } from 'react-imvc/hook';
 
 export default function Counter() {
-  let { INCRE_COUNT } = useModelActions()
+  let { INCRE_COUNT } = useModelActions();
 
   let handleClick = () => {
-    INCRE_COUNT()
-  }
+    INCRE_COUNT();
+  };
 
   useEffect(() => {
     let timer = setInterval(() => {
-      INCRE_COUNT()
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [])
+      INCRE_COUNT();
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
-  return <button onClick={handleClick} />
+  return <button onClick={handleClick} />;
 }
 ```
 
@@ -989,26 +997,26 @@ react-imvc 也提供了 node.js 里可用的 api。
 
 ```javascript
 // 设置环境变量为生产模式
-process.env.NODE_ENV = 'production'
+process.env.NODE_ENV = 'production';
 // 引入 react-imvc
-var ReactIMVC = require('react-imvc')
+var ReactIMVC = require('react-imvc');
 // 引入配置
-var config = require('./imvc.config')
+var config = require('./imvc.config');
 // 将配置部分修改为生产模式
 var productionConfig = {
   ...config,
   root: __dirname,
-  logger: 'dev'
-}
+  logger: 'dev',
+};
 // 启动 react-imvc 应用
 ReactIMVC.start({
-  config: productionConfig
-})
+  config: productionConfig,
+});
 
 // 除了 start 方法以外，还有 build 方法，可以对 react-imvc 项目进行构建
 ReactIMVC.build({
-  config: productionConfig
-})
+  config: productionConfig,
+});
 ```
 
 ### ReactIMVC.start(options)
@@ -1047,7 +1055,7 @@ IMVC 支持开发者自定义配置，实现灵活的功能。
 
 ```javascript
 // routes/index.js
-export test from './test'
+export test from './test';
 ```
 
 react-imvc 将会 `require(routes)` 并把它们 apply 到 express app 里。
@@ -1060,26 +1068,26 @@ react-imvc 将会 `require(routes)` 并把它们 apply 到 express app 里。
 // routes/test/index.js
 
 // 引入 express router
-import { Router } from 'express'
+import { Router } from 'express';
 // 创建 router
-const router = Router()
+const router = Router();
 
 // 输出一个函数，该函数可以拿到 expres app 和 http server 两个参数
-export default function(app, server) {
-  app.use('/restapi', router) // 将 router 挂载到 express app 里
-  server.on('error', error => {
+export default function (app, server) {
+  app.use('/restapi', router); // 将 router 挂载到 express app 里
+  server.on('error', (error) => {
     // 对 server 进行一些处理
-    console.log('error', error)
-  })
+    console.log('error', error);
+  });
 }
 
 // 编写 router 中间件
 router.get('/admin', (req, res) => {
   res.render('test/view', {
     // view path 在 routes 目录下，所以 test/view 就是 routes/test/view.js 文件
-    name: 'Jade Gu'
-  })
-})
+    name: 'Jade Gu',
+  });
+});
 ```
 
 react-imvc 里采用 `express` 作为服务端框架，采用 `express-react-views` 作为 view engine，并将 view path 设置成 `config.routes` 目录。
@@ -1111,20 +1119,20 @@ withData 函数接受一个 React 组件作为参数，返回新的 React 组件
 selector({ state, handlers, actions }) 函数将得到一个 data 参数，其中包含三个字段 state, handlers, acitons，分别对应 controller 里的 global state, global handlers 和 actions 对象。
 
 ```javascript
-import React from 'react'
-import connect from 'react-imvc/hoc/connect'
+import React from 'react';
+import connect from 'react-imvc/hoc/connect';
 
 const withData = connect(({ state }) => {
   return {
-    content: state.loadingText
-  }
-})
+    content: state.loadingText,
+  };
+});
 
-export default withData(Loading)
+export default withData(Loading);
 
 function Loading(props) {
   if (!props.content) {
-    return null
+    return null;
   }
   return (
     <div id="wxloading" className="wx_loading">
@@ -1133,7 +1141,49 @@ function Loading(props) {
         {props.content}
       </div>
     </div>
-  )
+  );
+}
+```
+
+### lazy(loader)
+
+类似于 `React.lazy`，但不需要 `Suspense` 组件包裹，它暴露了 `load` 方法，调用时会加载目标组件，否则渲染为 null。
+
+任何时候调用 load，都会在加载组件后，更新所有当前活跃的相关 Lazy 组件。
+
+配合 `ctrl.componentWillCreate` 和 `ctrl.viewWillHydrate`，可以实现支持 SSR 的异步组件。
+
+```tsx
+import React from 'react';
+import { lazy } from 'react-imvc/hoc/lazy';
+
+const LazySidebar = lazy(() => import('./sidebar'));
+
+const View = () => {
+  const handleClick = () => {
+    // 加载完成后，自动刷新 LazySideBar
+    LazySideBar.load();
+  };
+  return (
+    <div>
+      <button onClick={}>load</button>
+      <LazySidebar />
+    </div>
+  );
+};
+
+
+class Async extends Controller {
+  View = View;
+  async componentWillCreate() {
+    // SSR 时提前加载 LazySideBar
+    await LazySideBar.load()
+  }
+
+  async viewWillHydrate() {
+    // hydrate 前，提前加载 LazySideBar
+    await LazySideBar.load()
+  }
 }
 ```
 
@@ -1146,17 +1196,17 @@ function Loading(props) {
 ```javascript
 // imvc.config.js
 // 引入 react-imvc 内置的 babel 配置函数
-const defaultBabel = require('react-imvc/config/babel')
+const defaultBabel = require('react-imvc/config/babel');
 
 module.exports = {
   ...otherConfigs,
-  babel: isServer => {
-    let babelOptions = defaultBabel(isServer)
-    babelOptions.presets.push() // 添加 presets 配置
-    babelOptions.plugins.push() // 添加 plugins 配置
-    return babelOptions
-  }
-}
+  babel: (isServer) => {
+    let babelOptions = defaultBabel(isServer);
+    babelOptions.presets.push(); // 添加 presets 配置
+    babelOptions.plugins.push(); // 添加 plugins 配置
+    return babelOptions;
+  },
+};
 ```
 
 ## Config Webpack
@@ -1166,11 +1216,11 @@ imvc.config.js 里，除了一些相关的 webpackPlugins 等配置以外，还�
 ```javascript
 module.exports = {
   ...otherConfigs,
-  webpack: webpackConfig => {
-    webpackConfig.module.rules.push() // 添加 loader
-    return webpackConfig
-  }
-}
+  webpack: (webpackConfig) => {
+    webpackConfig.module.rules.push(); // 添加 loader
+    return webpackConfig;
+  },
+};
 ```
 
 ## Error Handling
@@ -1219,23 +1269,24 @@ Component 参数为发生错误的组件本身。
 注意：该组件包裹的元素，将脱离全局 `getComponentFallback` 生命周期，走它自身的 fallback 处理逻辑。但依然会内部上抛错误给 `controller.errorDidCatch`。
 
 ```javascript
-import ErrorBoundary, { withFallback } from 'react-imvc/component/ErrorBoundary'
+import ErrorBoundary, {
+  withFallback,
+} from 'react-imvc/component/ErrorBoundary';
 
 // render-props 模式，当 ErrorBoundary 组件的子元素发生错误时，展示 fallback 内容
-const App = props => {
+const App = (props) => {
   return (
     <ErrorBoundary fallback={<span>发生错误，请重试</span>}>
       {() => {
-        return <div>test</div>
+        return <div>test</div>;
       }}
     </ErrorBoundary>
-  )
-}
+  );
+};
 
 // hoc 模式，当 Test 组件出现错误时，展示 fallback 内容
-const Test = () => <div>test</div>
-const TestWithFallback = withFallback(<span>发生错误，请重试</span>)(Test)
-
+const Test = () => <div>test</div>;
+const TestWithFallback = withFallback(<span>发生错误，请重试</span>)(Test);
 ```
 
 ## FAQ
@@ -1255,14 +1306,14 @@ webpack 的智能拆包功能，会扫描模块间的依赖，如果 A 页面依
 ```javascript
 // imvc.config.js
 module.exports = {
-  webpack: webpackConfig => {
+  webpack: (webpackConfig) => {
     webpackConfig.optimization.splitChunks = {
       cacheGroups: {
         groupindex: {
           test: /[\\/]group-index[\\/]/,
           name: 'groupindex',
           minSize: 0,
-          minChunks: 1
+          minChunks: 1,
         },
         vendor: {
           test(mod, chunks) {
@@ -1273,16 +1324,16 @@ module.exports = {
               /src[\\/]\w+[\\/](share|components)|src[\\/]shared/.test(
                 mod.context
               )
-            )
+            );
           },
           chunks: 'all', //表示显示块的范围，有三个可选值：initial(初始块)、async(按需加载块)、all(全部块)，默认为all;
-          name: 'vendor' //拆分出来块的名字(Chunk Names)，默认由块名和hash值自动生成；
-        }
-      }
-    }
-    return webpackConfig
-  }
-}
+          name: 'vendor', //拆分出来块的名字(Chunk Names)，默认由块名和hash值自动生成；
+        },
+      },
+    };
+    return webpackConfig;
+  },
+};
 ```
 
 ### 如何让组件的错误不被捕获?
@@ -1291,13 +1342,13 @@ module.exports = {
 
 设置组件的 ignoreErrors 属性为 true，它将不被全局监控。
 
-### 为什么initialState中的方法丢失了?
+### 为什么 initialState 中的方法丢失了?
 
-首先，不建议在globalState中存放函数。
+首先，不建议在 globalState 中存放函数。
 
-目前框架在init阶段默认有以下行为：```JSON.parse(JSON.stringify(initialState))```，目的是防止篡改原数据
+目前框架在 init 阶段默认有以下行为：`JSON.parse(JSON.stringify(initialState))`，目的是防止篡改原数据
 
-此外，我们提供了开关 ```controller.deepCloneInitialState: Boolean```, 设为false即可跳过这个默认行为
+此外，我们提供了开关 `controller.deepCloneInitialState: Boolean`, 设为 false 即可跳过这个默认行为
 
 ### 如何关闭 gulp 任务？
 
@@ -1308,9 +1359,9 @@ module.exports = {
 ```javascript
 module.exports = {
   gulp: {
-    img: false
-  }
-}
+    img: false,
+  },
+};
 ```
 
 所有 gulp 任务可点击[查看](../config/config.defaults.js#L156-L169)

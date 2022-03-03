@@ -26,5 +26,9 @@ export default [
 	{
 		path: '/model',
 		controller: () => import('./model/Controller')
+	},
+	{
+		path: '/lazy',
+		controller: () => import('./lazy/controller')
 	}
 ]

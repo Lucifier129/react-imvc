@@ -13,7 +13,7 @@ const REDIRECT =
     ? Symbol('react.imvc.redirect')
     : Object('react.imvc.redirect')
 
-const EmptyView = () => false
+const EmptyView = (props) => <></>
 let uid = 0 // seed of controller id
 /**
  * 绑定 Store 到 View
@@ -458,6 +458,11 @@ export default class Controller {
       )
 
       if (!isPreload) await this.fetchPreload()
+
+      if (this.viewWillHydrate) {
+        await this.viewWillHydrate()
+      }
+
       return this.render()
     }
 
