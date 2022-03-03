@@ -35,23 +35,26 @@ export function lazy<T extends React.ComponentType<any>>(
     }
   };
 
-  const Lazy = (props: React.ComponentProps<T>) => {
+  type LazyProps = React.ComponentProps<T> & {
+    fallback?: React.ReactNode;
+  };
+
+  const Lazy = (props: LazyProps) => {
+    const { fallback = null, ...rest } = props;
     const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 
     React.useEffect(() => {
-      if (isSupportWindow) {
-        addConsumer(forceUpdate);
-        return () => {
-          removeConsumer(forceUpdate);
-        };
-      }
+      addConsumer(forceUpdate);
+      return () => {
+        removeConsumer(forceUpdate);
+      };
     }, []);
 
     if (Component) {
-      return <Component {...props} />;
+      return <Component {...(rest as React.ComponentProps<T>)} />;
     }
 
-    return null;
+    return fallback;
   };
 
   Lazy.load = load;
