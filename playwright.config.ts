@@ -97,9 +97,21 @@ const config: PlaywrightTestConfig = {
 
   /* Run your local dev server before starting the tests */
   webServer: {
+    /**
+    * 测试之前，启动本地 server
+    */
     command: 'node project/start',
-    url: 'http://localhost:3333/static_view',
+    /**
+     * 等待目标 url 200 响应后再开始测试
+     */
+    url: 'http://localhost:3333/slbhealthcheck.html',
+    /**
+     * 如果本地已经启动了服务，则复用该服务
+     */
     reuseExistingServer: true,
+    /**
+     * 注入环境变量，通过 react-imvc 开启覆盖率检测的编译选项
+     */
     env: {
       USE_COVERAGE: '1',
     },
