@@ -195,7 +195,7 @@ module.exports = function createWebpackConfig(options, isServer = false) {
 		babelrc: false,
 		configFile: false,
 		cacheDirectory: true,
-		...config.babel(isServer),
+		...config.babel(isServer, config),
 		// Save disk space when time isn't as important
 		cacheCompression: isProd,
 		compact: isProd

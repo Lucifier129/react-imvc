@@ -1,6 +1,9 @@
-require('@babel/register')({
-  ...require('../config/babel')(true),
-  extensions: ['.es6', '.es', '.jsx', '.js', '.mjs', '.ts', '.tsx']
-})
+const babel = require('../config/babel');
+const defaultConfig = require('../config/config.defaults');
 
-module.exports = require('./index')
+require('@babel/register')({
+  ...babel(true, defaultConfig),
+  extensions: ['.es6', '.es', '.jsx', '.js', '.mjs', '.ts', '.tsx'],
+});
+
+module.exports = require('./index');

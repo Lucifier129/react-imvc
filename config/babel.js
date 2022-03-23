@@ -1,4 +1,4 @@
-module.exports = (isServer = true) => ({
+module.exports = (isServer = true, config) => ({
   presets: [
     '@babel/preset-env',
     '@babel/preset-react',
@@ -7,9 +7,9 @@ module.exports = (isServer = true) => ({
       '@babel/preset-typescript',
       {
         isTSX: true,
-        allExtensions: true
-      }
-    ]
+        allExtensions: true,
+      },
+    ],
   ],
   plugins: [
     // Stage 0
@@ -35,6 +35,10 @@ module.exports = (isServer = true) => ({
     '@babel/plugin-syntax-import-meta',
     ['@babel/plugin-proposal-class-properties', { loose: false }],
     '@babel/plugin-proposal-json-strings',
-    isServer && 'dynamic-import-node'
-  ].filter(Boolean)
-})
+    isServer && 'dynamic-import-node',
+    config.useCoverage && [
+      'babel-plugin-istanbul',
+      { exclude: ['**/node_modules/**'] },
+    ],
+  ].filter(Boolean),
+});
