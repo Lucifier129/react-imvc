@@ -1,4 +1,4 @@
-import Controller from '../../../../controller'
+import Controller from '../../../controller'
 import React from 'react'
 export default class extends Controller {
 	SSR = true // enable server side rendering

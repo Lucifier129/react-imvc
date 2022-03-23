@@ -1,5 +1,5 @@
 import React from 'react'
-import Script from '../../../component/Script'
+import Script from '../../component/Script'
 
 export default function Page(props) {
 	return (

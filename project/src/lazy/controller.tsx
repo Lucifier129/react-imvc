@@ -1,6 +1,6 @@
 import React from 'react'
-import Controller from '../../../../controller'
-import { lazy } from '../../../../hoc/lazy'
+import Controller from '../../../controller'
+import { lazy } from '../../../hoc/lazy'
 
 const components = {
   A: lazy(() => import('./A')),
@@ -33,6 +33,7 @@ function View({}: ViewProps) {
   return (
     <div>
       <button
+        id="for-d"
         onClick={() => {
           components.D.load()
         }}
@@ -40,6 +41,7 @@ function View({}: ViewProps) {
         load D
       </button>
       <button
+        id="for-e"
         onClick={() => {
           components.E.load()
         }}

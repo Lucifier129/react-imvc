@@ -8,8 +8,8 @@ export const Counter = (props: CounterProps) => {
   const [count, setCount] = React.useState(props.count);
 
   return (
-    <div>
-      <h1>Counter E</h1>
+    <div id="b">
+      <h1>Counter B</h1>
       <p>
         <button onClick={() => setCount(count + 1)}>+</button>
         <span>{count}</span>
