@@ -1,3 +1,5 @@
+import 'regenerator-runtime/runtime'
+
 import * as fs from 'fs'
 import * as path from 'path'
 import * as crypto from 'crypto'
