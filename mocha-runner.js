@@ -16,7 +16,7 @@ let getConfig = require('./config')
 let config = getConfig(options)
 
 require('@babel/register')({
-  ...config.babel(true),
+  ...config.babel(true, config),
   extensions: ['.es6', '.es', '.jsx', '.js', '.mjs', '.ts', '.tsx']
 })
 
