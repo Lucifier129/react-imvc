@@ -10,9 +10,13 @@ const uuid = () => {
   return crypto.randomBytes(16).toString('hex')
 }
 
-const getNycOutputPath = async () => {
+const getRootDir = async () => {
   const rootDir = await packageDirectory()
-  return path.join(rootDir ?? process.cwd(), '.nyc_output')
+  return resolvePath(rootDir ?? process.cwd())
+}
+
+const resolvePath = (filepath: string) => {
+  return filepath.split(path.sep).join('/')
 }
 
 type ContextCallbackType = Exclude<
@@ -22,7 +26,8 @@ type ContextCallbackType = Exclude<
 
 const context: ContextCallbackType = async ({ context }, use) => {
   try {
-    const nycOutputPath = await getNycOutputPath()
+    const rootDir = await getRootDir()
+    const nycOutputPath = `${rootDir}/.nyc_output`
 
     await context.addInitScript(() =>
       window.addEventListener('beforeunload', () =>
@@ -38,9 +43,19 @@ const context: ContextCallbackType = async ({ context }, use) => {
       'collectIstanbulCoverage',
       (coverageJSON: string) => {
         if (coverageJSON) {
+          const coverage = JSON.parse(coverageJSON)
+
+          const json = {} as any
+
+          for (const key in coverage) {
+            const newKey = resolvePath(key).replace(rootDir, '.')
+            coverage[key].path = newKey
+            json[newKey] = coverage[key]
+          }
+
           fs.writeFileSync(
             path.join(nycOutputPath, `${uuid()}.json`),
-            coverageJSON
+            JSON.stringify(json)
           )
         }
       }
@@ -49,11 +64,10 @@ const context: ContextCallbackType = async ({ context }, use) => {
     await use(context)
 
     for (const page of context.pages()) {
-      await page.evaluate(() =>
-        (window as any).collectIstanbulCoverage(
-          JSON.stringify((window as any).__coverage__)
-        )
-      )
+      await page.evaluate(() => {
+        const coverage = (window as any).__coverage__
+        ;(window as any).collectIstanbulCoverage(JSON.stringify(coverage))
+      })
       await page.close()
     }
   } catch (error) {
