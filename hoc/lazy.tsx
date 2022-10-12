@@ -42,12 +42,22 @@ export function lazy<T extends React.ComponentType<any>>(
   const Lazy = (props: LazyProps) => {
     const { fallback = null, ...rest } = props;
     const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
+    const isLoaded = !!Component
 
     React.useEffect(() => {
-      addConsumer(forceUpdate);
-      return () => {
-        removeConsumer(forceUpdate);
-      };
+      if (!isLoaded) {
+        // Component is loaded before useEffect called
+        if (!!Component) {
+          forceUpdate();
+          return;
+        } else {
+          addConsumer(forceUpdate);
+          return () => {
+            removeConsumer(forceUpdate);
+          };
+        }
+      }
+      return;
     }, []);
 
     if (Component) {
