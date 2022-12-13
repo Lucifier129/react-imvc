@@ -234,6 +234,7 @@ module.exports = function createWebpackConfig(options, isServer = false) {
 			...config.performance
 		},
 		resolve: {
+			mainFields: ['browser', 'main'],
 			modules: ['node_modules'],
 			extensions: ['.js', '.jsx', '.json', '.mjs', '.ts', '.tsx'],
 			alias: alias,
