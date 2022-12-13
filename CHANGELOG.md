@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.9.9
+- fix: 修改 webpack 配置的 resolve.mainFields 指定为 ['browser', 'main']，避免引入 esm 模块引发的问题
+
+## 2.9.8
+- fix: fix bug when lazy component is loaded before useEffect called
+
 ## 2.9.7
 
 - fix: 修复写死 express ~v.4.14.0 的问题
