@@ -6,7 +6,7 @@ import fetch from 'node-fetch'
 process.env.NODE_ENV = 'development'
 const start = require('../start')
 let PORT = 3333
-const ROOT = path.join(__dirname, 'project')
+const ROOT = path.join(__dirname, '../project')
 const config = {
 	root: ROOT, // 项目根目录
 	port: PORT, // server 端口号
