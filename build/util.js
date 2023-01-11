@@ -1,39 +1,28 @@
 const path = require('path')
+const fs = require('fs')
+const { readFromPackageJson } = require('webpack-node-externals/utils')
 
-exports.getExternals = config => {
-  var dependencies = []
-
-  var list = [
-    path.resolve('package.json'),
-    path.join(__dirname, '../package.json'),
-    path.join(config.root, '../package.json')
-  ]
-
-  while (list.length) {
-    var item = list.shift()
-    try {
-      var pkg = require(item)
-      if (pkg.dependencies) {
-        dependencies = dependencies.concat(Object.keys(pkg.dependencies))
-      }
-      if (pkg.devDependencies) {
-        dependencies = dependencies.concat(Object.keys(pkg.devDependencies))
-      }
-    } catch (error) {
-      // ignore error
-    }
+function getPackageRelativePath(config) {
+  if (typeof config !== 'object') {
+    config = {};
   }
+  const cwd = process.cwd()
+  if (typeof config.root !== 'string' || config.root === cwd) {
+    return 'package.json'
+  }
+  const rootPackagePath = path.join(config.root, './package.json')
+  const rootParentPackagePath = path.join(config.root, '../package.json')
+  if (fs.existsSync(rootPackagePath)) {
+    return path.relative(cwd, rootPackagePath)
+  } else if (fs.existsSync(rootParentPackagePath)) {
+    return path.relative(cwd, rootParentPackagePath)
+  }
+  return 'package.json'
+}
+exports.getPackageRelativePath = getPackageRelativePath
 
-  var map = {}
-  dependencies = dependencies.filter(name => {
-    if (map[name]) {
-      return false
-    }
-    map[name] = true
-    return true
-  })
-
-  return dependencies
+exports.getExternals = function (config) {
+  return readFromPackageJson({ fileName: getPackageRelativePath(config) })
 }
 
 exports.matchExternals = (externals, modulePath) => {
