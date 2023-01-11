@@ -58,7 +58,7 @@
     "core-js": "3.19.3",
     "create-app": "^1.0.0",
     "cross-spawn": "^5.1.0",
-    "debug": "^2.2.0",
+    "debug": "^3.1.0",
     "del": "^3.0.0",
     "expect": "^1.20.2",
     "express": "^4.14.0",
