@@ -7,7 +7,7 @@ const config = {
 	routes: 'routes', // 服务端路由目录
 	layout: 'Layout', // 自定义 Layout
 	// bundleAnalyzer: true,
-	staticEntry: 'index.html',
+	// staticEntry: 'index.html',
 	gulp: {
 		img: false
 	}
