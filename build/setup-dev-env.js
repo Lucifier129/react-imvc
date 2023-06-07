@@ -33,11 +33,11 @@ exports.setupClient = function setupClient(config) {
 
 exports.setupServer = function setupServer(config, options) {
 	let serverConfig = createWebpackConfig(config, true)
-	
+
 	serverConfig.entry = {
 		routes: path.join(config.root, config.src)
 	}
-	
+
 	// in order to ignore built-in modules like path, fs, etc.
 	serverConfig.target = 'node'
 	// in order to ignore all modules in node_modules folder
@@ -64,7 +64,10 @@ exports.setupServer = function setupServer(config, options) {
 		let defaultModuleResult = Symbol('default-module-result')
 		let virtualRequire = modulePath => {
 			if (matchExternals(externals, modulePath)) {
-				return require(modulePath)
+				const resolvedPath = require.resolve(modulePath, {
+					paths: [config.root]
+				})
+				return require(resolvedPath)
 			}
 
 			let filePath = path.join(serverConfig.output.path, modulePath)
