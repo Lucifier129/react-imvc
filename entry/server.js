@@ -9,8 +9,9 @@ import favicon from 'serve-favicon'
 import helmet from 'helmet'
 import ReactViews from 'express-react-views'
 import shareRoot from '../middleware/shareRoot'
+import configBabel from '../config/babel'
 
-export default function createExpressApp(config) {
+export default async function createExpressApp(config) {
 	const app = express()
 
 	// handle basename
@@ -34,13 +35,22 @@ export default function createExpressApp(config) {
 	if (config.favicon) {
 		app.use(favicon(config.favicon))
 	}
-
 	// handle view engine
-	app.engine('js', ReactViews.createEngine(config.ReactViews))
+	const viewsConfig = {
+		...config.ReactViews,
+		babel: {
+			...configBabel(true, config),
+			extensions: ['.es6', '.es', '.jsx', '.js', '.mjs', '.ts', '.tsx'],
+		},
+	}
+	app.engine('js', ReactViews.createEngine(viewsConfig))
+	app.engine('jsx', ReactViews.createEngine(viewsConfig))
+	app.engine('ts', ReactViews.createEngine(viewsConfig))
+	app.engine('tsx', ReactViews.createEngine(viewsConfig))
 
 	// view engine setup
 	app.set('views', path.join(config.root, config.routes))
-	app.set('view engine', 'js')
+	app.set('view engine', 'js') // default view engine ext .js
 
 	// handle logger
 	if (config.logger) {
@@ -77,7 +87,7 @@ export default function createExpressApp(config) {
 	if (config.webpackDevMiddleware) {
 		// 开发模式用 webpack-dev-middleware 代理 js 文件
 		let setupDevEnv = require('../build/setup-dev-env')
-		let { compiler, middleware } = setupDevEnv.setupClient(config)
+		let { compiler, middleware } = await setupDevEnv.setupClient(config)
 		app.use(middleware)
 
 		// 添加热更新中间件

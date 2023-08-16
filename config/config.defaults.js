@@ -258,20 +258,20 @@ module.exports = {
    * 热更新开关 默认关闭
    */
   hot: false,
+
   /**
-   * 是否使用 server.bundle.js 代替 src/index 作为服务端访问的代码入口
-   * 默认 false 兼容以前的默认行为
-   */
-  useServerBundle: false,
+ * 编译 node_modules 模块选项
+ */
+  compileNodeModules: undefined,
 
   /**
    * 使用 fork-ts-checker-webpack-plugin 进行类型检查
    */
   useTypeCheck: false,
 
-	/**
-	 * 使用覆盖率检查
-	 */
+  /**
+   * 使用覆盖率检查
+   */
   useCoverage: process.env.USE_COVERAGE === '1',
 
   /**

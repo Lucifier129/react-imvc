@@ -20,9 +20,12 @@ createExpressApp = createExpressApp.default || createExpressApp
 getConfig = getConfig.default || getConfig
 createPageRouter = createPageRouter.default || createPageRouter
 
-module.exports = function start(options) {
+module.exports = async function start(options) {
 	let config = getConfig(options)
-	let app = createExpressApp(config)
+	let [app, pageRouter] = await Promise.all([
+		createExpressApp(config),
+		createPageRouter(config)
+	])
 	let port = normalizePort(config.port)
 
 	/**
@@ -51,8 +54,6 @@ module.exports = function start(options) {
 
 	let server = http.createServer(app)
 
-	let pageRouter = createPageRouter(config)
-
 	// 添加 renderPage 方法，让自定义的 routes 里可以手动调用，走 IMVC 的渲染流程
 	app.use((req, res, next) => {
 		res.renderPage = pageRouter
@@ -76,7 +77,7 @@ module.exports = function start(options) {
 	app.use(pageRouter)
 
 	// catch 404 and forward to error handler
-	app.use(function(req, res, next) {
+	app.use(function (req, res, next) {
 		const err = new Error('Not Found')
 		err.status = 404
 		res.render('404', err)
@@ -87,7 +88,7 @@ module.exports = function start(options) {
 	// development error handler
 	// will print stacktrace
 	if (app.get('env') === 'development') {
-		app.use(function(err, req, res, next) {
+		app.use(function (err, req, res, next) {
 			res.status(err.status || 500)
 			res.send(err.stack)
 		})
@@ -95,7 +96,7 @@ module.exports = function start(options) {
 
 	// production error handler
 	// no stacktraces leaked to user
-	app.use(function(err, req, res, next) {
+	app.use(function (err, req, res, next) {
 		res.status(err.status || 500)
 		res.json(err.message)
 	})

@@ -3,6 +3,7 @@ import path from 'path'
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 import createApp from 'create-app/lib/server'
+import fs from 'fs'
 import util from '../util'
 
 const { getFlatList } = util
@@ -74,14 +75,48 @@ const renderers = {
   renderToString
 }
 
-export default function createPageRouter(options) {
-  let config = Object.assign({}, options)
-  let routes
+function getClearFilePath(
+  filepath,
+  extensions = ['js']
+) {
+  function replacer(
+    match,
+    p1,
+    p2,
+    offset,
+    str
+  ) {
+    if (extensions.includes(p2)) {
+      return p1
+    } else {
+      return str
+    }
+  }
+  return filepath.replace(/^(.*)\.([a-zA-Z]{1,5})$/, replacer)
+}
 
-  if (config.useServerBundle) {
+function getRightPath(filePath) {
+  const extensions = ['js', 'jsx', 'ts', 'tsx']
+  let finalFilePath = filePath
+  let clearFilePath = getClearFilePath(filePath, extensions)
+
+  extensions.some((ets) => {
+    if (fs.existsSync(`${clearFilePath}.${ets}`)) {
+      finalFilePath = `${clearFilePath}.${ets}`
+      return true
+    }
+    return false
+  })
+
+  return finalFilePath
+}
+
+export default async function createPageRouter(options) {
+  let config = Object.assign({}, options)
+  let routes = []
+
+  if (!config.webpackDevMiddleware) {
     routes = require(path.join(config.root, config.serverBundleName))
-  } else {
-    routes = require(path.join(config.root, config.src))
   }
 
   routes = routes.default || routes
@@ -99,27 +134,35 @@ export default function createPageRouter(options) {
   }
 
   let app = createApp(serverAppSettings)
-  let layoutView = config.layout || path.join(__dirname, 'view')
+  let layoutView = config.layout
+    ? process.env.NODE_ENV !== 'production'
+      ? getRightPath(path.resolve(config.root, config.routes, config.layout))
+      : config.layout
+    : path.join(__dirname, 'view')
 
   // 纯浏览器端渲染模式，用前置中间件拦截所有请求
   if (config.SSR === false) {
     router.all('*', (req, res) => {
       res.render(layoutView)
     })
-  } else if (config.NODE_ENV === 'development') {
+  } else if (config.webpackDevMiddleware) {
     // 带服务端渲染模式的开发环境，需要动态编译 src/routes
-    var setupDevEnv = require('../build/setup-dev-env')
-    setupDevEnv.setupServer(config, {
-      handleHotModule: $routes => {
-        const routes = getFlatList(
-          Array.isArray($routes) ? $routes : Object.values($routes)
-        )
-        app = createApp({
-          ...serverAppSettings,
-          routes
-        })
-      }
+    let setupDevEnv = require('../build/setup-dev-env')
+    let handleRoutes = ($routes) => {
+      const routes = getFlatList(
+        Array.isArray($routes) ? $routes : Object.values($routes)
+      )
+      app = createApp({
+        ...serverAppSettings,
+        routes,
+      })
+    }
+
+    let $routes = await setupDevEnv.setupServer(config, {
+      handleHotModule: handleRoutes,
     })
+
+    handleRoutes($routes)
   }
 
   // handle page
@@ -169,6 +212,9 @@ export default function createPageRouter(options) {
       // 支持通过 res.locals.layoutView 动态确定 layoutView
       res.render(res.locals.layoutView || layoutView, data)
     } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error(error)
+      }
       next(error)
     }
   })

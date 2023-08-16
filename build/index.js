@@ -22,8 +22,8 @@ module.exports = function build(options) {
       Promise.all(
         [
           startWebpackForClient(config),
-          config.useServerBundle && startWebpackForServer(config)
-        ].filter(Boolean)
+          startWebpackForServer(config)
+        ]
       )
     )
     .then(() => startStaticEntry(config))
@@ -44,8 +44,8 @@ function delPublish(folder) {
 
 function startWebpackForClient(config) {
   let webpackConfig = createWebpackConfig(config, false)
-  return new Promise(function(resolve, reject) {
-    webpack(webpackConfig, function(error, stats) {
+  return new Promise(function (resolve, reject) {
+    webpack(webpackConfig, function (error, stats) {
       if (error) {
         reject(error)
       } else {
@@ -63,8 +63,8 @@ function startWebpackForClient(config) {
 
 function startWebpackForServer(config) {
   let webpackConfig = createWebpackConfig(config, true)
-  return new Promise(function(resolve, reject) {
-    webpack(webpackConfig, function(error, stats) {
+  return new Promise(function (resolve, reject) {
+    webpack(webpackConfig, function (error, stats) {
       if (error) {
         reject(error)
       } else {
@@ -81,7 +81,7 @@ function startWebpackForServer(config) {
 }
 
 function startGulp(config) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     gulp.task('default', createGulpTask(config))
     gulp.series('default')(error => {
       if (error) {

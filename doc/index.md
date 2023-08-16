@@ -1208,6 +1208,30 @@ module.exports = {
 };
 ```
 
+
+## 支持编译 ESM 模块
+
+可以通过 `imvc.config.js` 的 `compileNodeModules` 配置，支持编译 node_modules 模块。
+
+该配置为可选配置，对象类型。
+
+- `rules`: 数组类型，支持 `string | RegExp | ((filename: string) => boolean)`
+
+命中该配置的模块将被 babel 编译，因此可以通过该配置支持 esm 模块。
+
+请注意，使用正则时需兼容处理 Windows 和 Mac/Linux 的路径差异（`(\/|\\)` 同时支持了两者）。
+
+```js
+{
+  compileNodeModules: {
+        rules: [
+            // 将 @antv/g2 加入编译
+            /@antv(\/|\\)g2/
+        ]
+    },
+}
+```
+
 ## Config Webpack
 
 imvc.config.js 里，除了一些相关的 webpackPlugins 等配置以外，还新增了一个 config.webpack 配置，它的类型为一个函数

@@ -4,10 +4,11 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 	.BundleAnalyzerPlugin
 const ManifestPlugin = require('webpack-manifest-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
+const nodeExternals = require('webpack-node-externals')
 const PnpWebpackPlugin = require('pnp-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const resolve = require('resolve')
-const { getExternals } = require('./util')
+const { checkFilename } = require('./compileNodeModules')
 
 module.exports = function createWebpackConfig(options, isServer = false) {
 	let result = {}
@@ -36,11 +37,13 @@ module.exports = function createWebpackConfig(options, isServer = false) {
 	}
 
 	if (isServer) {
+		result.target = 'node'
 		defaultOutput = {
 			...defaultOutput,
 			libraryTarget: 'commonjs2',
 			path: path.join(config.root, config.publish),
 			filename: config.serverBundleName,
+			chunkFilename: `js/[name].js`,
 		}
 	} else {
 		defaultOutput = {
@@ -73,17 +76,17 @@ module.exports = function createWebpackConfig(options, isServer = false) {
 		new webpack.DefinePlugin({
 			'process.env.NODE_ENV': JSON.stringify(NODE_ENV)
 		}),
-		
+
 		// TypeScript type checking
 		config.useTypeCheck && new ForkTsCheckerWebpackPlugin({
 			typescript: {
 				typescriptPath: resolve.sync('typescript', {
-				 	basedir: path.join(config.root, 'node_modules'),
-			 	}),
-				 configFile: path.join(config.root, 'tsconfig.json'),
+					basedir: path.join(config.root, 'node_modules'),
+				}),
+				configFile: path.join(config.root, 'tsconfig.json'),
 			},
 			async: !isProd,
-		 })
+		})
 	].filter(Boolean)
 
 	// 添加热更新插件（只在开发模式下开启）
@@ -168,9 +171,9 @@ module.exports = function createWebpackConfig(options, isServer = false) {
 				]
 			})
 		} else {
-			optimization = {
+			Object.assign(optimization, {
 				minimize: false
-			}
+			})
 		}
 	}
 
@@ -223,8 +226,20 @@ module.exports = function createWebpackConfig(options, isServer = false) {
 					exclude: /(node_modules|bower_components)/,
 					loader: 'babel-loader',
 					options: babelOptions
+				},
+				// 将指定的node_modules目录下的文件也进行babel编译
+				config.compileNodeModules?.rules && {
+					test: /\.(js|mjs|jsx|ts|tsx)$/,
+					include: filename => {
+						if (!filename.includes('node_modules')) {
+							return false
+						}
+						return checkFilename(filename, config.compileNodeModules?.rules)
+					},
+					loader: 'babel-loader',
+					options: babelOptions,
 				}
-			].concat(config.webpackLoaders, postLoaders)
+			].filter(Boolean).concat(config.webpackLoaders, postLoaders)
 		},
 		plugins: plugins,
 		optimization,
@@ -234,7 +249,6 @@ module.exports = function createWebpackConfig(options, isServer = false) {
 			...config.performance
 		},
 		resolve: {
-			mainFields: ['browser', 'main'],
 			modules: ['node_modules'],
 			extensions: ['.js', '.jsx', '.json', '.mjs', '.ts', '.tsx'],
 			alias: alias,
@@ -252,8 +266,13 @@ module.exports = function createWebpackConfig(options, isServer = false) {
 				PnpWebpackPlugin.moduleLoader(module)
 			]
 		},
-		externals: isServer ? getExternals(config) : undefined
+		externals: isServer ? nodeExternals({
+			allowlist: (config.compileNodeModules?.rules ?? []),
+			modulesFromFile: true,
+		}) : void 0,
 	})
+
+
 
 	return config.webpack ? config.webpack(result, isServer) : result
 }

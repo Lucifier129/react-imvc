@@ -4,120 +4,110 @@ const webpack = require('webpack')
 const webpackDevMiddleware = require('webpack-dev-middleware')
 const MFS = require('memory-fs')
 const notifier = require('node-notifier')
-const nodeExternals = require('webpack-node-externals')
 const createWebpackConfig = require('./createWebpackConfig')
-const { getExternals, matchExternals, getPackageRelativePath } = require('./util')
 
 exports.setupClient = function setupClient(config) {
+	let startTime = Date.now()
+	console.log('client webpack is starting...')
 	let clientConfig = createWebpackConfig(config)
 	let compiler = webpack(clientConfig)
-	let middleware = webpackDevMiddleware(compiler, {
-		publicPath: config.staticPath,
-		stats: config.webpackLogger,
-		serverSideRender: true,
-		reporter: (middlewareOptions, options) => {
-			reporter(middlewareOptions, options)
-			if (config.notifier) {
-				notifier.notify({
-					title: 'React-IMVC',
-					message: 'Webpack 编译结束'
-				})
-			}
-		}
+	return new Promise(resolve => {
+		let isResolved = false
+		let middleware = webpackDevMiddleware(compiler, {
+			publicPath: config.staticPath,
+			stats: config.webpackLogger,
+			serverSideRender: true,
+			reporter: (middlewareOptions, options) => {
+				reporter(middlewareOptions, options)
+				if (config.notifier) {
+					notifier.notify({
+						title: 'React-IMVC',
+						message: 'Webpack 编译结束',
+					})
+				}
+				if (!isResolved) {
+					isResolved = true
+					console.log(`client webpack compile success in ${Date.now() - startTime}ms`)
+					resolve({
+						middleware,
+						compiler,
+					})
+				}
+			},
+		})
 	})
-	return {
-		middleware,
-		compiler
-	}
 }
 
 exports.setupServer = function setupServer(config, options) {
+	let startTime = Date.now()
+	console.log('server webpack is starting...')
+
 	let serverConfig = createWebpackConfig(config, true)
 
-	serverConfig.entry = {
-		routes: path.join(config.root, config.src)
+	if (!serverConfig.output?.path || !serverConfig.output.filename) {
+		throw new Error('serverConfig.output.path and serverConfig.output.filename must be specified')
 	}
 
-	// in order to ignore built-in modules like path, fs, etc.
-	serverConfig.target = 'node'
-	// in order to ignore all modules in node_modules folder
-	serverConfig.externals = [nodeExternals({ modulesFromFile: { fileName: getPackageRelativePath(config) } })];
-
-	serverConfig.output.filename = 'routes.js'
-	serverConfig.output.libraryTarget = 'commonjs2'
-	delete serverConfig.optimization
-
-	let externals = getExternals(config)
 	let serverCompiler = webpack(serverConfig)
 	let mfs = new MFS()
+	let outputDir = serverConfig.output.path
 	let outputPath = path.join(
-		serverConfig.output.path,
+		outputDir,
 		serverConfig.output.filename
 	)
 	serverCompiler.outputFileSystem = mfs
-	serverCompiler.watch({}, (err, stats) => {
-		if (err) throw err
-		stats = stats.toJson()
-		stats.errors.forEach(err => console.error(err))
-		stats.warnings.forEach(err => console.warn(err))
-		let sourceCode = mfs.readFileSync(outputPath, 'utf-8')
-		let defaultModuleResult = Symbol('default-module-result')
-		let virtualRequire = modulePath => {
-			if (matchExternals(externals, modulePath)) {
-				const resolvedPath = require.resolve(modulePath, {
-					paths: [config.root]
-				})
-				return require(resolvedPath)
+
+	return new Promise < unknown > (resolve => {
+		let isResolved = false
+		serverCompiler.watch({}, (err, stats) => {
+			if (err) throw err
+			let currentStats = stats.toJson()
+			currentStats.errors.forEach((err) => console.error(err))
+			currentStats.warnings.forEach((err) => console.warn(err))
+			let sourceCode = mfs.readFileSync(outputPath, 'utf-8')
+
+			let virtualRequire = (modulePath) => {
+				let filePath = path.join(outputDir, modulePath)
+
+				if (mfs.existsSync(filePath)) {
+					let sourceCode = mfs.readFileSync(filePath, 'utf-8')
+					return runCode(sourceCode)
+				}
+
+				return require(modulePath)
 			}
 
-			let filePath = path.join(serverConfig.output.path, modulePath)
-			let sourceCode = ''
-			let moduleResult = defaultModuleResult
 
-			try {
-				sourceCode = mfs.readFileSync(filePath, 'utf-8')
-			} catch (_) {
-				/**
-				 * externals 和 mfs 里没有这个文件
-				 * 它可能是 node.js 原生模块
-				 */
-				moduleResult = require(modulePath)
+			let runCode = (sourceCode) => {
+				return vm.runInThisContext(`
+			(function(require) {
+			  var module = {exports: {}}
+					  var factory = function(require, module, exports) {
+						  ${sourceCode}
+					  }
+					  try {
+						  factory(require, module, module.exports)
+					  } catch(error) {
+						  return null
+					  }
+					  return module.exports
+			})
+		  `)(virtualRequire)
 			}
 
-			if (sourceCode) {
-				moduleResult = runCode(sourceCode)
+			// 构造一个 commonjs 的模块加载函数，拿到 newModule
+			let newModule = runCode(sourceCode)
+
+			if (newModule) {
+				if (isResolved) {
+					options.handleHotModule(newModule.default || newModule)
+				} else {
+					isResolved = true
+					console.log(`server webpack compile success in ${Date.now() - startTime}ms`)
+					resolve(newModule.default || newModule)
+				}
 			}
-
-			if (moduleResult === defaultModuleResult) {
-				throw new Error(`${modulePath} not found in server webpack compiler`)
-			}
-
-			return moduleResult
-		}
-		let runCode = sourceCode => {
-			return vm.runInThisContext(`
-				(function(require) {
-					var module = {exports: {}}
-									var factory = function(require, module, exports) {
-											${sourceCode}
-									}
-									try {
-											factory(require, module, module.exports)
-									} catch(error) {
-											console.log(error)
-											return null
-									}
-									return module.exports
-				})
-			`)(virtualRequire)
-		}
-
-		// 构造一个 commonjs 的模块加载函数，拿到 newModule
-		let newModule = runCode(sourceCode)
-
-		if (newModule) {
-			options.handleHotModule(newModule.default || newModule)
-		}
+		})
 	})
 }
 
