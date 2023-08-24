@@ -85,11 +85,9 @@ exports.setupServer = function setupServer(config, options) {
 					  var factory = function(require, module, exports) {
 						  ${sourceCode}
 					  }
-					  try {
-						  factory(require, module, module.exports)
-					  } catch(error) {
-						  return null
-					  }
+					  
+					  factory(require, module, module.exports)
+
 					  return module.exports
 			})
 		  `)(virtualRequire)
