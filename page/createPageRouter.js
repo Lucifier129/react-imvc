@@ -149,6 +149,9 @@ export default async function createPageRouter(options) {
     // 带服务端渲染模式的开发环境，需要动态编译 src/routes
     let setupDevEnv = require('../build/setup-dev-env')
     let handleRoutes = ($routes) => {
+      if (!$routes) {
+        return
+      }
       const routes = getFlatList(
         Array.isArray($routes) ? $routes : Object.values($routes)
       )

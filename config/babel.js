@@ -1,4 +1,4 @@
-module.exports = (isServer, config) => {
+module.exports = (isServer = true, config = {}) => {
   let presets = [
     '@babel/preset-env',
     '@babel/preset-react',
@@ -13,7 +13,7 @@ module.exports = (isServer, config) => {
     ],
   ]
   let plugins = [
-    '@babel/plugin-transform-runtime',
+    ['@babel/plugin-transform-runtime', { regenerator: false }],
     '@babel/plugin-proposal-function-bind',
     '@babel/plugin-proposal-export-default-from',
     ['@babel/plugin-proposal-pipeline-operator', { proposal: 'minimal' }],
