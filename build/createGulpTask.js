@@ -52,7 +52,7 @@ const createConfig = options => {
     publishBabel: {
       src: [
         root +
-          `/!(node_modules|${options.publish}|buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
+        `/!(node_modules|${options.publish}|buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
         publish + '/*.@(js|ts|jsx|tsx)'
       ],
       dest: publish
@@ -71,6 +71,23 @@ const createConfig = options => {
   }
 
   return config
+}
+
+const removeBabelRuntimePlugin = (babelConfig) => {
+  /**
+   * Remove @babel/plugin-transform-runtime
+   * 因为 gulp 编译的文件可能不会被 bundle，无法使用 require('@babel/runtime')，所以需要把 runtime 代码内联
+   */
+  babelConfig.plugins = (babelConfig.plugins || []).filter(plugin => {
+    if (Array.isArray(plugin)) {
+      return plugin[0].includes('runtime') ? false : true
+    } else if (typeof plugin === 'string') {
+      return plugin.includes('runtime') ? false : true
+    }
+    return true
+  })
+
+  return babelConfig
 }
 
 module.exports = function createGulpTask(options) {
@@ -134,7 +151,7 @@ module.exports = function createGulpTask(options) {
     return gulp
       .src(config.js.src)
       .pipe(plumber())
-      .pipe(babel(options.babel(false, config)), { babelrc: false })
+      .pipe(babel(removeBabelRuntimePlugin(options.babel(false, options)), { babelrc: false }))
       .pipe(uglify())
       .pipe(gulp.dest(config.js.dest))
   }
@@ -167,7 +184,7 @@ module.exports = function createGulpTask(options) {
     return gulp
       .src(config.publishBabel.src)
       .pipe(plumber())
-      .pipe(babel(options.babel(true, config), { babelrc: false }))
+      .pipe(babel(options.babel(true, options), { babelrc: false }))
       .pipe(gulp.dest(config.publishBabel.dest))
   }
 

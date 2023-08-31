@@ -1,3 +1,4 @@
+process.env.NODE_ENV = 'production'
 const build = require('../build/babel')
 let PORT = 3333
 const ROOT = __dirname

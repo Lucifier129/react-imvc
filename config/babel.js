@@ -13,7 +13,7 @@ module.exports = (isServer = true, config = {}) => {
     ],
   ]
   let plugins = [
-    ['@babel/plugin-transform-runtime', { regenerator: false }],
+    config.useBabelRuntime && ['@babel/plugin-transform-runtime', { regenerator: false }],
     '@babel/plugin-proposal-function-bind',
     '@babel/plugin-proposal-export-default-from',
     ['@babel/plugin-proposal-pipeline-operator', { proposal: 'minimal' }],
