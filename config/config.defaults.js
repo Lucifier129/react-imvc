@@ -283,4 +283,12 @@ module.exports = {
    * 打包出来的服务端 bundle 的文件名
    */
   serverBundleName: 'server.bundle.js',
+
+  /**
+   * 服务端渲染器
+   * 默认为空
+   * 
+   * 支持：(view: React.ReactElement) => Promise<string | Buffer | NodeJS.ReadableStream> | string | Buffer | NodeJS.ReadableStream
+   */
+  serverRenderer: undefined
 };

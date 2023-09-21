@@ -19,6 +19,19 @@ const commonjsLoader = (loadModule, location, context) => {
  */
 const createElement = React.createElement
 
+const getStreamBuffer = stream => {
+  return new Promise((resolve, reject) => {
+    let buffers = []
+    stream.on('data', chunk => buffers.push(chunk))
+    stream.on('end', () => resolve(Buffer.concat(buffers)))
+    stream.on('error', reject)
+  })
+}
+
+const isStream = stream => {
+  return stream && typeof stream.pipe === 'function'
+}
+
 const renderToNodeStream = (view, controller) => {
   return new Promise((resolve, reject) => {
     let stream = ReactDOMServer.renderToNodeStream(view)
@@ -130,7 +143,21 @@ export default async function createPageRouter(options) {
   let serverAppSettings = {
     loader: commonjsLoader,
     routes: routes,
-    viewEngine: { render }
+    viewEngine: {
+      render: (view, controller) => {
+        if (config.serverRenderer) {
+          const result = config.serverRenderer(view, controller)
+          if (Buffer.isBuffer(result)) {
+            return result.toString()
+          } else if (isStream(result)) {
+            return getStreamBuffer(result).then(buffer => buffer.toString())
+          } else {
+            return result
+          }
+        }
+        return render(view, controller)
+      }
+    }
   }
 
   let app = createApp(serverAppSettings)
@@ -208,8 +235,8 @@ export default async function createPageRouter(options) {
         initialState
       }
 
-      if (controller.destory) {
-        controller.destory()
+      if (controller.destroy) {
+        controller.destroy()
       }
 
       // 支持通过 res.locals.layoutView 动态确定 layoutView
