@@ -202,6 +202,7 @@ export default async function createPageRouter(options) {
       basename,
       serverPublicPath,
       publicPath,
+      staticPath: config.staticPath,
       restapi: config.serverRestapi || config.restapi || '',
       ...config.context,
       preload: {},
