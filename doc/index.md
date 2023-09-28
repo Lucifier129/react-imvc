@@ -231,6 +231,11 @@ controller.handlers 是在初始化时，从 controller 的实例里收集的以
 
 当 controller.resetScrollOnMount = true 时，在页面 DidMount 时将自动引入滚动至顶部的副作用。不想引入此副作用，请给置为 false。默认为 true
 
+
+### controller.disablePublicPathForPreload -> boolean
+
+是否在 preload 里禁用 publicPath，默认为 false，只对 CRS 生效。如果为 true，会直接使用 node.js 服务端的静态资源路径
+
 ## Controller API
 
 ### controller.fetch(url=string, options=object)
