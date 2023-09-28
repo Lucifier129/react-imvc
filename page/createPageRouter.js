@@ -208,7 +208,8 @@ export default async function createPageRouter(options) {
       isServer: true,
       isClient: false,
       req,
-      res
+      res,
+      assets: res.locals.assets
     }
 
     try {

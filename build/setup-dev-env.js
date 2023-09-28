@@ -6,10 +6,10 @@ const MFS = require('memory-fs')
 const notifier = require('node-notifier')
 const createWebpackConfig = require('./createWebpackConfig')
 
-exports.setupClient = function setupClient(config) {
+exports.setupClient = async function setupClient(config) {
 	let startTime = Date.now()
 	console.log('client webpack is starting...')
-	let clientConfig = createWebpackConfig(config)
+	let clientConfig = await createWebpackConfig(config)
 	let compiler = webpack(clientConfig)
 	return new Promise(resolve => {
 		let isResolved = false
@@ -38,11 +38,11 @@ exports.setupClient = function setupClient(config) {
 	})
 }
 
-exports.setupServer = function setupServer(config, options) {
+exports.setupServer = async function setupServer(config, options) {
 	let startTime = Date.now()
 	console.log('server webpack is starting...')
 
-	let serverConfig = createWebpackConfig(config, true)
+	let serverConfig = await createWebpackConfig(config, true)
 
 	if (!serverConfig.output?.path || !serverConfig.output.filename) {
 		throw new Error('serverConfig.output.path and serverConfig.output.filename must be specified')

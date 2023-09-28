@@ -42,8 +42,8 @@ function delPublish(folder) {
   return del(folder)
 }
 
-function startWebpackForClient(config) {
-  let webpackConfig = createWebpackConfig(config, false)
+async function startWebpackForClient(config) {
+  let webpackConfig = await createWebpackConfig(config, false)
   return new Promise(function (resolve, reject) {
     webpack(webpackConfig, function (error, stats) {
       if (error) {
@@ -61,8 +61,8 @@ function startWebpackForClient(config) {
   })
 }
 
-function startWebpackForServer(config) {
-  let webpackConfig = createWebpackConfig(config, true)
+async function startWebpackForServer(config) {
+  let webpackConfig = await createWebpackConfig(config, true)
   return new Promise(function (resolve, reject) {
     webpack(webpackConfig, function (error, stats) {
       if (error) {

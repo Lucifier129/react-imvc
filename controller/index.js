@@ -205,7 +205,7 @@ export default class Controller {
     if (context.isServer && finalOptions.credentials === 'include') {
       finalOptions.headers['Cookie'] = context.req.headers.cookie || ''
     }
-    
+
     // 支持使用方手动传入自定义fetch方法
     let rawFetch = context.isServer ? global.fetch : window.fetch
     let finalFetch = typeof options.fetch === 'function' ? options.fetch : rawFetch
@@ -226,7 +226,7 @@ export default class Controller {
     if (typeof options.timeout === 'number') {
       let { timeoutErrorFormatter } = options
       let timeoutErrorMsg = typeof timeoutErrorFormatter === 'function' ?
-          timeoutErrorFormatter({ url, options: finalOptions }) : timeoutErrorFormatter
+        timeoutErrorFormatter({ url, options: finalOptions }) : timeoutErrorFormatter
       fetchData = _.timeoutReject(fetchData, options.timeout, timeoutErrorMsg)
     }
 
@@ -267,6 +267,41 @@ export default class Controller {
     return this.fetch(url, options)
   }
   /**
+   * 基于 webpack 构建的 assets.json 获取客户端的静态资源路径
+   */
+  getClientAssetPath(assetPath) {
+    if (this.context.isServer) {
+      return assetPath
+    }
+
+    let [pathname, search] = assetPath.split('?')
+
+    let assets = this.context.assets ?? {}
+    let realAssetPath = assets[pathname]
+
+    if (realAssetPath) {
+      if (!realAssetPath.startsWith('/')) {
+        realAssetPath = '/' + realAssetPath
+      }
+
+      if (search) {
+        // 保留原有的 querystring
+        return `${realAssetPath}?${search}`
+      }
+
+      return realAssetPath
+    }
+
+    /**
+     * 如果未匹配到，尝试去掉前缀再试一次
+     */
+    if (assetPath.startsWith('/')) {
+      return this.getClientAssetPath(assetPath.slice(1))
+    }
+
+    return assetPath
+  }
+  /**
    * 预加载 css 样式等资源
    */
   fetchPreload(preload) {
@@ -282,7 +317,10 @@ export default class Controller {
       if (context.preload[name]) {
         return
       }
-      let url = preload[name]
+      /**
+      * 获取资源的真实路径（可能经过 bundler 处理为 hash 值）
+      */
+      let url = this.getClientAssetPath(preload[name])
 
       if (!_.isAbsoluteUrl(url)) {
         if (context.isServer) {

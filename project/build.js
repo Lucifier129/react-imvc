@@ -9,6 +9,7 @@ const config = {
 	layout: 'Layout', // 自定义 Layout
 	// bundleAnalyzer: true,
 	// staticEntry: 'index.html',
+	publish: '../project_publish', // 打包输出目录
 	gulp: {
 		img: false
 	}

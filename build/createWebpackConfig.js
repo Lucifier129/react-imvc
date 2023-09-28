@@ -9,8 +9,9 @@ const PnpWebpackPlugin = require('pnp-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const resolve = require('resolve')
 const { checkFilename } = require('./compileNodeModules')
+const { getStaticAssets } = require('./assets-helper')
 
-module.exports = function createWebpackConfig(options, isServer = false) {
+module.exports = async function createWebpackConfig(options, isServer = false) {
 	let result = {}
 	let config = Object.assign({}, options)
 	let root = path.join(config.root, config.src)
@@ -56,15 +57,30 @@ module.exports = function createWebpackConfig(options, isServer = false) {
 
 	let output = Object.assign(defaultOutput, config.output)
 
+	let staticAssets = await getStaticAssets(root)
+
 	let plugins = [
 		!isServer && new ManifestPlugin({
 			fileName: config.assetsPath,
-			map: file => {
-				// 删除 .js 后缀，方便直接使用 obj.name 来访问
-				if (/\.js$/.test(file.name)) {
-					file.name = file.name.slice(0, -3)
+			generate: (_seed, files, _entries) => {
+				const assets = { ...staticAssets }
+
+				for (const file of files) {
+					if (!file.name) {
+						continue
+					}
+
+					assets[file.name] = file.path
+
+					// 生成一个不带后缀的文件名
+					// assets.vendor 可以访问到 vendor.js
+					// assets.index 可以访问到 index.js
+					if (file.name && /\.js$/.test(file.name)) {
+						assets[file.name.slice(0, -3)] = file.path
+					}
 				}
-				return file
+
+				return assets
 			}
 		}),
 		// Moment.js is an extremely popular library that bundles large locale files

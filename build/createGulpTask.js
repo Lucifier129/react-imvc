@@ -44,16 +44,17 @@ const createConfig = options => {
     },
     publishCopy: {
       src: [
-        root + `/!(node_modules|${options.publish}|buildportal-script)/**/*`,
-        root + `/!(node_modules|${options.publish}|buildportal-script)`
+        `!${path.join(root, options.publish)}`,
+        root + `/!(node_modules|buildportal-script)/**/*`,
+        root + `/!(node_modules|buildportal-script)`
       ],
       dest: publish
     },
     publishBabel: {
       src: [
-        root +
-        `/!(node_modules|${options.publish}|buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
-        publish + '/*.@(js|ts|jsx|tsx)'
+        `!${path.join(root, options.publish)}`,
+        root + `/!(node_modules|buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
+        root + '/*.@(js|ts|jsx|tsx)'
       ],
       dest: publish
     }
@@ -92,6 +93,8 @@ const removeBabelRuntimePlugin = (babelConfig) => {
 
 module.exports = function createGulpTask(options) {
   let config = Object.assign(createConfig(options))
+
+  console.log('gulp config:', config)
 
   let minifyCSS = () => {
     if (!config.css) {

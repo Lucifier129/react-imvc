@@ -5,6 +5,7 @@ node_modules
 
 # production
 publish
+project_publish
 .idea
 
 # misc

@@ -10,6 +10,7 @@ import helmet from 'helmet'
 import ReactViews from 'express-react-views'
 import shareRoot from '../middleware/shareRoot'
 import configBabel from '../config/babel'
+import { getAssets, getStaticAssets, readAssets } from '../build/assets-helper'
 
 export default async function createExpressApp(config) {
 	const app = express()
@@ -108,10 +109,18 @@ export default async function createExpressApp(config) {
 			express.static(path.join(config.root, config.src))
 		)
 
+		const staticAssets = await getStaticAssets(path.join(config.root, config.src))
+
 		// 开发模式用 webpack-dev-middleware 获取 assets
-		app.use((req, res, next) => {
+		app.use(async (req, res, next) => {
+			const assetsPath = path.join(config.root, config.publish, config.static, config.assetsPath)
+			const assetsJson = JSON.parse(res.locals.fs.readFileSync(assetsPath, 'utf-8'))
+
 			res.locals.assets = getAssets(
-				res.locals.webpackStats.toJson().assetsByChunkName
+				{
+					...staticAssets,
+					...assetsJson
+				}
 			)
 			next()
 		})
@@ -167,7 +176,8 @@ export default async function createExpressApp(config) {
 			publicPath,
 			restapi: config.restapi,
 			...config.context,
-			preload: {}
+			preload: {},
+			assets: res.locals.assets
 		}
 
 		res.locals.appSettings = {
@@ -181,37 +191,4 @@ export default async function createExpressApp(config) {
 	})
 
 	return app
-}
-
-function getAssets(stats) {
-	return Object.keys(stats).reduce((result, assetName) => {
-		let value = stats[assetName]
-		result[assetName] = Array.isArray(value) ? value[0] : value
-		return result
-	}, {})
-}
-
-function readAssets(config) {
-	let result
-	// 生产模式直接用编译好的资源表
-	let assetsPathList = [
-		// 在 publish 目录下启动
-		path.join(config.root, config.static, config.assetsPath),
-		// 在项目根目录下启动
-		path.join(config.root, config.publish, config.static, config.assetsPath)
-	]
-
-	while (assetsPathList.length) {
-		try {
-			result = require(assetsPathList.shift())
-		} catch (error) {
-			// ignore error
-		}
-	}
-
-	if (!result) {
-		throw new Error('找不到 webpack 资源表 assets.json')
-	}
-
-	return getAssets(result)
 }
