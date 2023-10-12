@@ -12,7 +12,8 @@ const config = {
 	publish: '../project_publish', // 打包输出目录
 	gulp: {
 		img: false
-	}
+	},
+	useContentHash: true
 }
 
 async function main() {

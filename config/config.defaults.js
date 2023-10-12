@@ -290,5 +290,12 @@ module.exports = {
    * 
    * 支持：(view: React.ReactElement) => Promise<string | Buffer | NodeJS.ReadableStream> | string | Buffer | NodeJS.ReadableStream
    */
-  serverRenderer: undefined
+  serverRenderer: undefined,
+
+  /**
+ * useContentHash
+ * 使用 contenthash 作为静态资源的 hash
+ * 默认为 false
+ */
+  useContentHash: false
 };

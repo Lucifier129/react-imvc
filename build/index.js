@@ -25,6 +25,10 @@ module.exports = function build(options) {
         startWebpackForServer(config)
       ])
 
+      if (!config.useContentHash) {
+        return
+      }
+
       const staticPath = path.join(config.root, config.publish, config.static)
       const assetsPath = path.join(staticPath, config.assetsPath)
       const assets = require(assetsPath)
