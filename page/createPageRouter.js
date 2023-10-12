@@ -174,7 +174,7 @@ export default async function createPageRouter(options) {
     })
   } else if (config.webpackDevMiddleware) {
     // 带服务端渲染模式的开发环境，需要动态编译 src/routes
-    let setupDevEnv = require('../build/setup-dev-env')
+    let setupDevEnv = require('../build/setupDevEnv')
     let handleRoutes = ($routes) => {
       if (!$routes) {
         return

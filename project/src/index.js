@@ -30,5 +30,9 @@ export default [
 	{
 		path: '/lazy',
 		controller: () => import('./lazy/controller')
+	},
+	{
+		path: '/preload',
+		controller: () => import('./preload/controller')
 	}
 ]

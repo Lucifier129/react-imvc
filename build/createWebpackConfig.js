@@ -9,7 +9,7 @@ const PnpWebpackPlugin = require('pnp-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const resolve = require('resolve')
 const { checkFilename } = require('./compileNodeModules')
-const { getStaticAssets } = require('./assets-helper')
+const { getStaticAssets } = require('./assetsHelper')
 
 module.exports = async function createWebpackConfig(options, isServer = false) {
 	let result = {}
@@ -37,6 +37,8 @@ module.exports = async function createWebpackConfig(options, isServer = false) {
 			path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')
 	}
 
+	const staticDir = path.join(config.root, config.publish, config.static)
+
 	if (isServer) {
 		result.target = 'node'
 		defaultOutput = {
@@ -49,7 +51,7 @@ module.exports = async function createWebpackConfig(options, isServer = false) {
 	} else {
 		defaultOutput = {
 			...defaultOutput,
-			path: path.join(config.root, config.publish, config.static),
+			path: staticDir,
 			filename: `js/[name].js`,
 			chunkFilename: `js/[name].js`,
 		}

@@ -12,20 +12,33 @@ const start = require('../start')
 const getConfig = require('../config')
 const createGulpTask = require('./createGulpTask')
 const createWebpackConfig = require('./createWebpackConfig')
+const { revStaticAssets } = require('./assetsHelper')
 
 module.exports = function build(options) {
   let config = getConfig(options)
   return Promise.resolve()
     .then(() => delPublish(path.join(config.root, config.publish)))
     .then(() => startGulp(config))
-    .then(() =>
-      Promise.all(
-        [
-          startWebpackForClient(config),
-          startWebpackForServer(config)
-        ]
-      )
-    )
+    .then(async () => {
+      await Promise.all([
+        startWebpackForClient(config),
+        startWebpackForServer(config)
+      ])
+
+      const staticPath = path.join(config.root, config.publish, config.static)
+      const assetsPath = path.join(staticPath, config.assetsPath)
+      const assets = require(assetsPath)
+
+      const manifest = await revStaticAssets(staticPath)
+
+      const mergedAssets = {
+        ...assets,
+        ...manifest,
+      }
+
+      fs.writeFileSync(assetsPath, JSON.stringify(mergedAssets, null, 2))
+
+    })
     .then(() => startStaticEntry(config))
     .then(() => {
       console.log('build successfully!')

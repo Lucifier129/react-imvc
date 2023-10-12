@@ -1,21 +1,30 @@
 #!/usr/bin/env node
 
-var querystring = require('query-string')
-var spawn = require('cross-spawn')
-var command = process.argv[2]
-var args = process.argv.slice(3)
-var [script, params=''] = command.split('?')
-var query = querystring.parse(params)
+let querystring = require('query-string')
+let spawn = require('cross-spawn')
+let command = process.argv[2]
+let args = process.argv.slice(3)
+let [script, params = ''] = command.split('?')
+let query = querystring.parse(params)
 params = Object.keys(query).map(key => query[key] ? `--${key}=${query[key]}` : `--${key}`)
-var result
+let result
+
+let nodeMajorVersion = Number(process.versions.node.split('.')[0])
 
 switch (script) {
   case 'build':
   case 'start':
   case 'test':
-    result = spawn.sync('node', params.concat(require.resolve('../scripts/' + script), args), {
-      stdio: 'inherit'
-    })
+    result = spawn.sync('node',
+      [
+        nodeMajorVersion >= 18 ? '--openssl-legacy-provider' : '',
+        ...params,
+        require.resolve('../scripts/' + script),
+        ...args,
+      ].filter(Boolean)
+      , {
+        stdio: 'inherit'
+      })
     break
   default:
     console.log('Unknown script "' + script + '".')

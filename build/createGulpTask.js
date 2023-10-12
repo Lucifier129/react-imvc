@@ -94,8 +94,6 @@ const removeBabelRuntimePlugin = (babelConfig) => {
 module.exports = function createGulpTask(options) {
   let config = Object.assign(createConfig(options))
 
-  console.log('gulp config:', config)
-
   let minifyCSS = () => {
     if (!config.css) {
       return

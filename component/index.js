@@ -1,13 +1,24 @@
-export Prefetch from './Prefetch'
+import Prefetch from './Prefetch'
 
-export Link from './Link'
+import Link from './Link'
 
-export NavLink from './NavLink'
+import NavLink from './NavLink'
 
-export Input from './Input'
+import Input from './Input'
 
-export Style from './Style'
+import Style from './Style'
 
-export OuterClickWrapper from './OuterClickWrapper'
+import OuterClickWrapper from './OuterClickWrapper'
 
-export EventWrapper from './EventWrapper'
+import EventWrapper from './EventWrapper'
+
+
+export {
+    Prefetch,
+    Link,
+    NavLink,
+    Input,
+    Style,
+    OuterClickWrapper,
+    EventWrapper,
+}

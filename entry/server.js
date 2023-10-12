@@ -10,7 +10,7 @@ import helmet from 'helmet'
 import ReactViews from 'express-react-views'
 import shareRoot from '../middleware/shareRoot'
 import configBabel from '../config/babel'
-import { getAssets, getStaticAssets, readAssets } from '../build/assets-helper'
+import { getAssets, getStaticAssets, readAssets } from '../build/assetsHelper'
 
 export default async function createExpressApp(config) {
 	const app = express()
@@ -87,7 +87,7 @@ export default async function createExpressApp(config) {
 
 	if (config.webpackDevMiddleware) {
 		// 开发模式用 webpack-dev-middleware 代理 js 文件
-		let setupDevEnv = require('../build/setup-dev-env')
+		let setupDevEnv = require('../build/setupDevEnv')
 		let { compiler, middleware } = await setupDevEnv.setupClient(config)
 		app.use(middleware)
 

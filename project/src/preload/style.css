@@ -1,0 +1,11 @@
+body {
+    background: #666;
+    color:aliceblue
+}
+
+
+.logo {
+    width: 267px;
+    height: 189px;
+    background-image: url(/static/img/react.png);
+}
