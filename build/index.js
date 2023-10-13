@@ -29,11 +29,12 @@ module.exports = function build(options) {
         return
       }
 
-      const staticPath = path.join(config.root, config.publish, config.static)
+      const publishPath = path.join(config.root, config.publish)
+      const staticPath = path.join(publishPath, config.static)
       const assetsPath = path.join(staticPath, config.assetsPath)
       const assets = require(assetsPath)
 
-      const manifest = await revStaticAssets(staticPath)
+      const manifest = await revStaticAssets(staticPath, publishPath)
 
       const mergedAssets = {
         ...assets,

@@ -359,9 +359,15 @@ export default class Controller {
              */
             content = content.replace(/\r+/g, '')
           }
+
+          const publicPathInCss = this.disablePublicPathForPreload ? localPublicPath : context.publicPath ?? localPublicPath
+
+          // 替换 css 中的 @public_path 未真实的 publicPath
+          content = content.replace(/@public_path\//g, publicPathInCss + '/')
+
           context.preload[name] = content
         }).catch(error => {
-          console.log(`preload resouce failed: ${name}`, error)
+          console.log(`preload resource failed: ${name}`, error)
         })
     })
     return Promise.all(list)

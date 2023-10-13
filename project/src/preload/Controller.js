@@ -24,5 +24,6 @@ function View({ state }) {
         <Style name="style" />
         <pre id="basic_state">{JSON.stringify(state, null, 2)}</pre>
         <div className='logo' />
+        <img src={state.publicPath + '/img/react.png'} />
     </>
 }

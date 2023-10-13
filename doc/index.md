@@ -166,6 +166,9 @@ store 里的 global state，默认数据有几个来源
 
 controller.preload 对象用来在页面显示前，预加载 css, json 等数据。
 
+`preload` 的根目录是 `src` 目录，在 css 文件中，可以使用 `@public_path/` 占位符，它会被替换成 context.publicPath 的值。
+
+
 ```javascript
 class extends Controller {
     preload = {

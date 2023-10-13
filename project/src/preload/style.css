@@ -7,5 +7,5 @@ body {
 .logo {
     width: 267px;
     height: 189px;
-    background-image: url(/static/img/react.png);
+    background-image: url(@public_path/img/react.png);
 }

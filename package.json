@@ -1,6 +1,6 @@
 {
   "name": "react-imvc",
-  "version": "2.10.10",
+  "version": "2.10.11",
   "description": "An Isomorphic MVC Framework",
   "main": "./index",
   "bin": {
@@ -15,7 +15,10 @@
     "prepublish-imvc": "npm run build",
     "posttest:coverage": "nyc report",
     "pretest:coverage": "rimraf coverage playwright-report .nyc_output",
-    "test:coverage": "playwright test"
+    "test:coverage": "playwright test",
+    "project:build": "node --openssl-legacy-provider ./project/build",
+    "project:start": "node --openssl-legacy-provider ./project/start",
+    "project:preview": "node --openssl-legacy-provider ./project_publish/preview"
   },
   "repository": {
     "type": "git",
