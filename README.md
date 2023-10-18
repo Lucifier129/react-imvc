@@ -40,7 +40,7 @@ react-imvc 是 isomorphic mvc 的 react 实现，它是一个 Web 框架。通�
 react-imvc 是一个整体解决方案，包括服务端和客户端，所以必须从 npm 或 yarn 里下载到 package.json 里。
 
 ```shell
-npm install --save react react-dom react-imvc
+npm install --save react@^17 react-dom@^17 react-imvc@^2 @babel/runtime@^7
 ```
 
 ## 使用 react-imvc 开发 Hello World
