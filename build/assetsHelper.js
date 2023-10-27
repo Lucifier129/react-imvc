@@ -3,15 +3,11 @@ import path from 'path'
 import crypto from 'crypto';
 import fs from 'fs-extra'
 
-export const getStaticFiles = async (dir) => {
-    const files = await fg([
-        // match all non-js/ts/jsx/tsx files
-        `**/!(*.@(js|ts|jsx|tsx))`,
-        // match all files in lib
-        `lib/**/*`,
-    ], {
+export const getAllFiles = async (dir) => {
+    const files = await fg([`**/*`], {
         cwd: dir
     })
+
     return files.map(file => file.replaceAll(path.sep, '/'))
 }
 
@@ -26,25 +22,8 @@ export const getHtmlCssJsFiles = async (dir) => {
     return files.map(file => file.replaceAll(path.sep, '/'))
 }
 
-/**
- * get static assets which are not js/ts/jsx/tsx files in cwd
- * will merge into webpack assets.json
- * @param dir 
- * @returns 
- */
-export const getStaticAssets = async (dir) => {
-    const files = await getStaticFiles(dir)
-    const assets = {}
-
-    for (const file of files) {
-        assets[file] = file
-    }
-
-    return assets
-}
-
-export const revStaticAssets = async (staticDir, replaceDir) => {
-    const files = await getStaticFiles(staticDir)
+export const revStaticAssets = async (staticDir) => {
+    const files = await getAllFiles(staticDir)
 
     const manifest = {}
 
@@ -62,6 +41,10 @@ export const revStaticAssets = async (staticDir, replaceDir) => {
         manifest[filePath] = revFilePath
     }))
 
+    return manifest
+}
+
+export const replaceManifestInDir = async (replaceDir, manifest) => {
     const htmlCssJsFiles = await getHtmlCssJsFiles(replaceDir)
 
     await Promise.all(htmlCssJsFiles.map(async filePath => {
@@ -73,8 +56,6 @@ export const revStaticAssets = async (staticDir, replaceDir) => {
             await fs.writeFile(fullFilePath, revFileContent)
         }
     }))
-
-    return manifest
 }
 
 

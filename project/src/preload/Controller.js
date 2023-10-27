@@ -1,6 +1,7 @@
 import Controller from '../../../controller'
 import { Style } from '../../../component'
 import React from 'react'
+import style from './style.css'
 
 export default class extends Controller {
     SSR = this.location.query.ssr !== '0'
@@ -14,7 +15,7 @@ export default class extends Controller {
         }
     }
     preload = {
-        style: '/preload/style.css',
+        style: style
     }
 }
 

@@ -12,7 +12,7 @@ const start = require('../start')
 const getConfig = require('../config')
 const createGulpTask = require('./createGulpTask')
 const createWebpackConfig = require('./createWebpackConfig')
-const { revStaticAssets } = require('./assetsHelper')
+const { revStaticAssets, replaceManifestInDir } = require('./assetsHelper')
 
 module.exports = function build(options) {
   let config = getConfig(options)
@@ -20,26 +20,32 @@ module.exports = function build(options) {
     .then(() => delPublish(path.join(config.root, config.publish)))
     .then(() => startGulp(config))
     .then(async () => {
+      const publishPath = path.join(config.root, config.publish)
+      const staticPath = path.join(publishPath, config.static)
+      let gulpAssets = null
+
+      if (config.useContentHash) {
+        gulpAssets = await revStaticAssets(staticPath)
+      }
+
       await Promise.all([
         startWebpackForClient(config),
         startWebpackForServer(config)
       ])
 
-      if (!config.useContentHash) {
+      if (!gulpAssets) {
         return
       }
 
-      const publishPath = path.join(config.root, config.publish)
-      const staticPath = path.join(publishPath, config.static)
       const assetsPath = path.join(staticPath, config.assetsPath)
-      const assets = require(assetsPath)
-
-      const manifest = await revStaticAssets(staticPath, publishPath)
+      const webpackAssets = require(assetsPath)
 
       const mergedAssets = {
-        ...assets,
-        ...manifest,
+        ...gulpAssets,
+        ...webpackAssets,
       }
+
+      await replaceManifestInDir(publishPath, gulpAssets)
 
       fs.writeFileSync(assetsPath, JSON.stringify(mergedAssets, null, 2))
 

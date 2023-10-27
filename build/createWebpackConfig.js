@@ -9,7 +9,6 @@ const PnpWebpackPlugin = require('pnp-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const resolve = require('resolve')
 const { checkFilename } = require('./compileNodeModules')
-const { getStaticAssets } = require('./assetsHelper')
 
 module.exports = async function createWebpackConfig(options, isServer = false) {
 	let result = {}
@@ -59,13 +58,11 @@ module.exports = async function createWebpackConfig(options, isServer = false) {
 
 	let output = Object.assign(defaultOutput, config.output)
 
-	let staticAssets = await getStaticAssets(root)
-
 	let plugins = [
 		!isServer && new ManifestPlugin({
 			fileName: config.assetsPath,
 			generate: (_seed, files, _entries) => {
-				const assets = { ...staticAssets }
+				const assets = {}
 
 				for (const file of files) {
 					if (!file.name) {
@@ -134,8 +131,8 @@ module.exports = async function createWebpackConfig(options, isServer = false) {
 			output = Object.assign(
 				defaultOutput,
 				{
-					filename: 'js/[name]-[contenthash:6].js',
-					chunkFilename: 'js/[name]-[contenthash:6].js',
+					filename: 'js/[name]-[contenthash:10].js',
+					chunkFilename: 'js/[name]-[contenthash:10].js',
 					devtoolModuleFilenameTemplate: info =>
 						path.relative(root, info.absoluteResourcePath).replace(/\\/g, '/')
 				},
@@ -256,7 +253,29 @@ module.exports = async function createWebpackConfig(options, isServer = false) {
 					},
 					loader: 'babel-loader',
 					options: babelOptions,
-				}
+				},
+				config.useFileLoader && {
+					test: /\.(png|jpe?g|gif|css)$/i,
+					loader: 'file-loader',
+					options: {
+						name: isProd ? '[name]-[contenthash:10].[ext]' : '[name].[ext]',
+						emitFile: !isServer,
+						outputPath: (url, resourcePath, context) => {
+							const outputFilename = path.basename(url)
+							const outputPath = resourcePath.replace(context + path.sep, '')
+							const outputDirname = path.dirname(outputPath)
+
+							return path.join(outputDirname, outputFilename).replaceAll(path.sep, '/')
+						},
+						publicPath: (url, resourcePath, context) => {
+							const outputFilename = path.basename(url)
+							const outputPath = resourcePath.replace(context, '')
+							const outputDirname = path.dirname(outputPath)
+
+							return path.join(outputDirname, outputFilename).replaceAll(path.sep, '/')
+						}
+					},
+				},
 			].filter(Boolean).concat(config.webpackLoaders, postLoaders)
 		},
 		plugins: plugins,

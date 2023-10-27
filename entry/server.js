@@ -10,7 +10,7 @@ import helmet from 'helmet'
 import ReactViews from 'express-react-views'
 import shareRoot from '../middleware/shareRoot'
 import configBabel from '../config/babel'
-import { getAssets, getStaticAssets, readAssets } from '../build/assetsHelper'
+import { readAssets } from '../build/assetsHelper'
 
 export default async function createExpressApp(config) {
 	const app = express()
@@ -109,19 +109,13 @@ export default async function createExpressApp(config) {
 			express.static(path.join(config.root, config.src))
 		)
 
-		const staticAssets = await getStaticAssets(path.join(config.root, config.src))
-
 		// 开发模式用 webpack-dev-middleware 获取 assets
 		app.use(async (req, res, next) => {
 			const assetsPath = path.join(config.root, config.publish, config.static, config.assetsPath)
 			const assetsJson = JSON.parse(res.locals.fs.readFileSync(assetsPath, 'utf-8'))
 
-			res.locals.assets = getAssets(
-				{
-					...staticAssets,
-					...assetsJson
-				}
-			)
+			res.locals.assets = assetsJson
+
 			next()
 		})
 	} else {

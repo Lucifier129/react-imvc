@@ -39,22 +39,25 @@ const createConfig = options => {
       dest: staticPath + '/lib/es5'
     },
     copy: {
-      src: [src + '/**/!(*.@(html|htm|css|js|ts|jsx|tsx))'],
+      src: [
+        src + '/**/!(*.@(html|htm|css|js|ts|jsx|tsx))',
+        `!${src}/**/__tests__/**`
+      ],
       dest: staticPath
     },
     publishCopy: {
       src: [
-        `!${path.join(root, options.publish)}`,
         root + `/!(node_modules|buildportal-script)/**/*`,
-        root + `/!(node_modules|buildportal-script)`
+        `!${root}/@(node_modules|buildportal-script)/**`,
+        `!${path.join(root, options.publish, '**')}`
       ],
       dest: publish
     },
     publishBabel: {
       src: [
-        `!${path.join(root, options.publish)}`,
         root + `/!(node_modules|buildportal-script)/**/*.@(js|ts|jsx|tsx)`,
-        root + '/*.@(js|ts|jsx|tsx)'
+        root + '/*.@(js|ts|jsx|tsx)',
+        `!${path.join(root, options.publish, '**')}`
       ],
       dest: publish
     }

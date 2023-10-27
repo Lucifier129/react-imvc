@@ -8,6 +8,8 @@ const config = {
 	basename: ['/a', '/b'],
 	routes: 'routes', // 服务端路由目录
 	layout: 'Layout', // 自定义 Layout
+	staticPath: '/my_static', // 静态资源目录
+	useFileLoader: true,
 	// bundleAnalyzer: true,
 	// useTypeCheck: true
 }
