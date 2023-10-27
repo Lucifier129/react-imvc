@@ -1367,6 +1367,25 @@ const TestWithFallback = withFallback(<span>发生错误，请重试</span>)(Tes
 类型：`boolean`，默认值：`false`，开启后支持 `import` 静态资源，如 `import logo from './logo.png'`，logo 的值为打包后的文件名。
 
 
+```typescript
+import style from './style.css'
+
+export default class extends Controller {
+    preload = {
+        style: style
+    }
+}
+```
+
+对于 `TypeScript 项目`，需在 `src/type.d.ts` 中添加以下声明：
+
+```typescript
+/// <reference types="react-imvc/imvc-types" />
+```
+
+引入 `react-imvc/imvc-types` 类型声明，以便获得类型提示。
+
+
 ## FAQ
 
 ### 为什么页面跳转后，preload 的样式没有加载？
