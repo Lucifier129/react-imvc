@@ -1358,6 +1358,15 @@ const Test = () => <div>test</div>;
 const TestWithFallback = withFallback(<span>发生错误，请重试</span>)(Test);
 ```
 
+### useContentHash
+
+类型：`boolean`，默认值：`false`，开启后会对 gulp 打包的文件名进行 hash 处理，用于缓存控制。配合 webpack 自己的 hash 一起使用，可以实现静态资源的长期缓存。
+
+### useFileLoader
+
+类型：`boolean`，默认值：`false`，开启后支持 `import` 静态资源，如 `import logo from './logo.png'`，logo 的值为打包后的文件名。
+
+
 ## FAQ
 
 ### 为什么页面跳转后，preload 的样式没有加载？
