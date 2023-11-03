@@ -47,6 +47,7 @@ const createConfig = options => {
     },
     publishCopy: {
       src: [
+        root + `/*`,
         root + `/!(node_modules|buildportal-script)/**/*`,
         `!${root}/@(node_modules|buildportal-script)/**`,
         `!${path.join(root, options.publish, '**')}`
