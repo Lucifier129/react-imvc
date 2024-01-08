@@ -305,6 +305,13 @@ export default class Controller {
   }
 
   /**
+ * 用于替换 css 中的 publicPath 的占位符
+ * 
+ * 默认为：@public_path 
+ */
+  publicPathPlaceholder = '@public_path'
+
+  /**
    * 是否在 preload 里禁用 publicPath
    * 默认为 false，只对 CRS 生效
    * 如果为 true，会直接使用 node.js 服务端的静态资源路径
@@ -362,8 +369,10 @@ export default class Controller {
 
           const publicPathInCss = this.disablePublicPathForPreload ? localPublicPath : context.publicPath ?? localPublicPath
 
-          // 替换 css 中的 @public_path 未真实的 publicPath
-          content = content.replace(/@public_path\//g, publicPathInCss + '/')
+          const regexp = new RegExp(this.publicPathPlaceholder + '/', 'g')
+
+          // 替换 css 中的 public_path 为真实的 publicPath
+          content = content.replace(regexp, publicPathInCss + '/')
 
           context.preload[name] = content
         }).catch(error => {

@@ -239,6 +239,13 @@ controller.handlers 是在初始化时，从 controller 的实例里收集的以
 
 是否在 preload 里禁用 publicPath，默认为 false，只对 CRS 生效。如果为 true，会直接使用 node.js 服务端的静态资源路径
 
+### controller.publicPathPlaceholder -> string
+
+如果 preload 里的 css 文件里的图片等资源需要使用 publicPath，但是又不想在 preload 里写死 publicPath，可以使用该字段，
+
+默认为 `@public_path`，在 preload 里写 `@public_path`，会在运行时被替换为 controller.context.publicPath
+
+
 ## Controller API
 
 ### controller.fetch(url=string, options=object)

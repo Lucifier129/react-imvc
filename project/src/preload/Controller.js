@@ -17,6 +17,7 @@ export default class extends Controller {
     preload = {
         style: style
     }
+    publicPathPlaceholder = '#public_path'
 }
 
 
