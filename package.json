@@ -1,6 +1,6 @@
 {
   "name": "react-imvc",
-  "version": "2.10.15",
+  "version": "2.10.17",
   "description": "An Isomorphic MVC Framework",
   "main": "./index",
   "bin": {
@@ -10,7 +10,7 @@
   "scripts": {
     "build": "gulp",
     "prebuild": "rimraf ./publish",
-    "test": "node mocha-runner",
+    "test": "node --openssl-legacy-provider mocha-runner",
     "publish-imvc": "npm publish ./publish --tag previous",
     "prepublish-imvc": "npm run build",
     "posttest:coverage": "nyc report",

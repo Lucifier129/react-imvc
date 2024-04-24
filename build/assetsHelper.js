@@ -109,7 +109,10 @@ function escapeStringRegexp(string) {
 
 export function replace(contents, manifest) {
     let newContents = contents;
-    for (const [originalPath, revisionPath] of Object.entries(manifest)) {
+    // from long to short to avoid shorter path replace longer path
+    const entries = Object.entries(manifest).sort((a, b) => b[0].length - a[0].length);
+
+    for (const [originalPath, revisionPath] of entries) {
         const regexp = new RegExp(`(?<![\\w-])${escapeStringRegexp(originalPath)}(?![\\w.])`, 'g');
 
         newContents = newContents.replace(regexp, revisionPath);
