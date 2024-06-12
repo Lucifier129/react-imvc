@@ -97,7 +97,7 @@ module.exports = async function start(options) {
 		// no stacktraces leaked to user
 		app.use(function (err, req, res, next) {
 			res.status(err.status || 500)
-			res.json(err.message)
+			res.send(err.message)
 		})
 	}
 
