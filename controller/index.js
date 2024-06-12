@@ -167,6 +167,75 @@ export default class Controller {
     }
   }
 
+
+  disableEarlyHints = false
+
+  earlyHintsLinks = []
+
+  addEarlyHintsLinks(earlyHints) {
+    this.earlyHintsLinks = this.earlyHintsLinks.concat(earlyHints)
+  }
+
+  flushHeaders(headers) {
+    if (this.disableEarlyHints || !this.context.res || this.context.res.headersSent) {
+      return
+    }
+
+    const presetEarlyHints = [
+      {
+        uri: `${this.context.publicPath}/${this.context.assets.vendor}`,
+        rel: 'preload',
+        as: 'script',
+      },
+      {
+        uri: `${this.context.publicPath}/${this.context.assets.index}`,
+        rel: 'preload',
+        as: 'script',
+      },
+    ]
+
+    const preloadEarlyHints = this.SSR !== false ? [] : Object.keys(this.preload).map((name) => {
+      return {
+        uri: this.getClientAssetFullPath(this.preload[name]),
+        rel: 'preload',
+        as: 'style',
+      }
+    })
+
+    const earlyHintsLinks = this.earlyHintsLinks.map(item => {
+      const { uri, ...rest } = item
+      const url = _.isAbsoluteUrl(uri) ? uri : this.getClientAssetFullPath(uri)
+
+      return {
+        uri: url,
+        ...rest,
+      }
+    })
+
+    const link = [...presetEarlyHints, ...preloadEarlyHints, ...earlyHintsLinks].map((item) => {
+      const { uri, ...rest } = item
+      const result = [`<${uri}>`]
+
+      for (const key in rest) {
+        result.push(`${key}=${rest[key]}`)
+      }
+
+      return result.join('; ')
+    })
+
+    this.context.res?.writeHead(200, 'OK', {
+      'Content-Type': 'text/html, charset=utf-8',
+      ...headers,
+      // 禁止 nginx 反向代理层缓存
+      'X-Accel-Buffering': 'no',
+      'Link': link
+    });
+
+    this.context.res?.flushHeaders()
+    // 写入空格，保证响应头被发送
+    this.context.res?.write(' ')
+  }
+
   /**
    * 封装 fetch, https://github.github.io/fetch
    * options.json === false 不自动转换为 json
@@ -434,6 +503,7 @@ export default class Controller {
         SSR = await this.SSR(location, context)
       }
       if (SSR === false) {
+        this.flushHeaders()
         let View = Loading || EmptyView
         return <View />
       }
@@ -565,6 +635,8 @@ export default class Controller {
     if (promiseList.length) {
       await Promise.all(promiseList)
     }
+
+    this.flushHeaders()
 
     this.bindStoreWithView()
     return this.render()

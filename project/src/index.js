@@ -33,6 +33,10 @@ export default [
 	},
 	{
 		path: '/preload',
-		controller: () => import('./preload/controller')
+		controller: () => import('./preload/Controller')
+	},
+	{
+		path: '/prefetch-header',
+		controller: () => import('./prefetch-header/Controller')
 	}
 ]

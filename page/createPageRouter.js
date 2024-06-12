@@ -164,7 +164,7 @@ export default async function createPageRouter(options) {
   let layoutView = config.layout
     ? process.env.NODE_ENV !== 'production'
       ? getRightPath(path.resolve(config.root, config.routes, config.layout))
-      : config.layout
+      : path.resolve(config.root, config.routes, config.layout)
     : path.join(__dirname, 'view')
 
   // 纯浏览器端渲染模式，用前置中间件拦截所有请求
@@ -242,7 +242,21 @@ export default async function createPageRouter(options) {
       }
 
       // 支持通过 res.locals.layoutView 动态确定 layoutView
-      res.render(res.locals.layoutView || layoutView, data)
+      const finalLayoutPath = res.locals.layoutView
+        ? getRightPath(path.resolve(config.root, config.routes, res.locals.layoutView))
+        : layoutView
+
+      const LayoutView = getModule(require(finalLayoutPath))
+
+      const html = ReactDOMServer.renderToStaticMarkup(
+        <LayoutView {...res.locals} {...data} />
+      )
+
+      if (!res.headersSent) {
+        res.setHeader('Content-Type', 'text/html')
+      }
+
+      res.end(`<!DOCTYPE html>${html}`)
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error(error)

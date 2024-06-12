@@ -92,14 +92,14 @@ module.exports = async function start(options) {
 			res.status(err.status || 500)
 			res.send(err.stack)
 		})
+	} else {
+		// production error handler
+		// no stacktraces leaked to user
+		app.use(function (err, req, res, next) {
+			res.status(err.status || 500)
+			res.json(err.message)
+		})
 	}
-
-	// production error handler
-	// no stacktraces leaked to user
-	app.use(function (err, req, res, next) {
-		res.status(err.status || 500)
-		res.json(err.message)
-	})
 
 	/**
 	 * Event listener for HTTP server "listening" event.
