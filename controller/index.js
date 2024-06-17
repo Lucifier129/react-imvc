@@ -194,7 +194,7 @@ export default class Controller {
       },
     ]
 
-    const preloadEarlyHints = this.SSR !== false ? [] : Object.keys(this.preload).map((name) => {
+    const preloadEarlyHints = this.SSR !== false ? [] : Object.keys(this.preload ?? {}).map((name) => {
       return {
         uri: this.getClientAssetFullPath(this.preload[name]),
         rel: 'preload',
