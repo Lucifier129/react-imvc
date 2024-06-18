@@ -7,7 +7,8 @@ export default {
   isThenable,
   setValueByPath,
   getValueByPath,
-  getFlatList
+  getFlatList,
+  debounce
 }
 
 interface Route {
@@ -121,4 +122,14 @@ const getValue: getValue = (ret, key) => ret[key]
 
 function getValueByPath(obj: objectOrArray, path: string | string[]) {
   return getPath(path).reduce(getValue, obj)
+}
+
+function debounce<T>(func: (data: T) => unknown, wait: number): typeof func {
+  let timeout: ReturnType<typeof setTimeout>
+  return function (data: T) {
+    clearTimeout(timeout)
+    timeout = setTimeout(() => {
+      func(data)
+    }, wait)
+  }
 }

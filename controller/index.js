@@ -170,7 +170,16 @@ export default class Controller {
 
   disableEarlyHints = false
 
-  earlyHintsLinks = []
+  earlyHintsLinks = [{
+    uri: `vendor.js`,
+    rel: 'preload',
+    as: 'script',
+  },
+  {
+    uri: `index.js`,
+    rel: 'preload',
+    as: 'script',
+  }]
 
   addEarlyHintsLinks(earlyHints) {
     this.earlyHintsLinks = this.earlyHintsLinks.concat(earlyHints)
@@ -180,19 +189,6 @@ export default class Controller {
     if (this.disableEarlyHints || !this.context.res || this.context.res.headersSent) {
       return
     }
-
-    const presetEarlyHints = [
-      {
-        uri: `${this.context.publicPath}/${this.context.assets.vendor}`,
-        rel: 'preload',
-        as: 'script',
-      },
-      {
-        uri: `${this.context.publicPath}/${this.context.assets.index}`,
-        rel: 'preload',
-        as: 'script',
-      },
-    ]
 
     const preloadEarlyHints = this.SSR !== false ? [] : Object.keys(this.preload ?? {}).map((name) => {
       return {
@@ -212,7 +208,7 @@ export default class Controller {
       }
     })
 
-    const link = [...presetEarlyHints, ...preloadEarlyHints, ...earlyHintsLinks].map((item) => {
+    const link = [...preloadEarlyHints, ...earlyHintsLinks].map((item) => {
       const { uri, ...rest } = item
       const result = [`<${uri}>`]
 
@@ -650,12 +646,18 @@ export default class Controller {
     }
 
     if (store) {
-      let unsubscribe = store.subscribe(data => {
-        this.refreshView()
+      let refresh = (data) => {
+        this.refreshView && this.refreshView()
         if (this.stateDidChange) {
           this.stateDidChange(data)
         }
-      })
+      }
+
+      if (!this.disableBatchRefresh) {
+        refresh = _.debounce(refresh, 5)
+      }
+
+      let unsubscribe = store.subscribe(refresh)
       meta.unsubscribeList.push(unsubscribe)
     }
 
