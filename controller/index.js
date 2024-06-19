@@ -647,6 +647,7 @@ export default class Controller {
 
     if (store) {
       let refresh = (data) => {
+        if (meta.isDestroyed) return
         this.refreshView && this.refreshView()
         if (this.stateDidChange) {
           this.stateDidChange(data)
