@@ -253,7 +253,7 @@ export default async function createPageRouter(options) {
       )
 
       if (!res.headersSent) {
-        res.setHeader('Content-Type', 'text/html')
+        res.setHeader('Content-Type', 'text/html;charset=utf-8')
       }
 
       res.end(`<!DOCTYPE html>${html}`)

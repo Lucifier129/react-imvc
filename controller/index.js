@@ -220,7 +220,7 @@ export default class Controller {
     })
 
     this.context.res?.writeHead(200, 'OK', {
-      'Content-Type': 'text/html, charset=utf-8',
+      'Content-Type': 'text/html;charset=utf-8',
       ...headers,
       // 禁止 nginx 反向代理层缓存
       'X-Accel-Buffering': 'no',
