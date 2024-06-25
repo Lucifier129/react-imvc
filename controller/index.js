@@ -637,6 +637,7 @@ export default class Controller {
     this.bindStoreWithView()
     return this.render()
   }
+  disableBatchRefresh = true
   bindStoreWithView() {
     let { context, store, history, meta } = this
 
