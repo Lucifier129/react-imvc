@@ -6,6 +6,10 @@
   "bin": {
     "react-imvc": "./bin/scripts.js"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "homepage": "https://github.com/Lucifier129/react-imvc",
   "scripts": {
     "build": "gulp",
