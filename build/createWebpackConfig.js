@@ -216,7 +216,8 @@ module.exports = async function createWebpackConfig(options, isServer = false) {
 		...config.babel(isServer, config),
 		// Save disk space when time isn't as important
 		cacheCompression: isProd,
-		compact: isProd
+		compact: isProd,
+		sourceType: 'unambiguous',
 	}
 
 	result = Object.assign(result, {

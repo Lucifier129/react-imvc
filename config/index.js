@@ -19,7 +19,17 @@ module.exports = function getConfig(options) {
 			customConfig = customConfig.default || customConfig
 			break
 	}
+
 	Object.assign(config, customConfig)
+
+	if (config.useBabelRuntime) {
+		try {
+			require.resolve('@babel/runtime/package.json')
+		} catch (error) {
+			console.error('please install @babel/runtime first, or set useBabelRuntime to false in imvc.config.js file')
+			process.exit(1)
+		}
+	}
 
 	return config
 }
