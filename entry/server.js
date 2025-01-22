@@ -71,7 +71,7 @@ export default async function createExpressApp(config) {
 
 	// handle cookieParser
 	if (config.cookieParser) {
-		let { secret = true, ...options } = config.cookieParser
+		let { secret, ...options } = config.cookieParser
 		app.use(cookieParser(secret, options))
 	}
 
