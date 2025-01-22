@@ -1,0 +1,14 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "noEmit": true,
+        "module": "CommonJS"
+    },
+    "references": [
+        {
+            "path": "./packages/final-redux/tsconfig.cjs.json"
+        }
+    ],
+    "include": ["./packages"],
+    "exclude": ["./packages/*/__tests__/*"]
+}

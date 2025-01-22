@@ -1,0 +1,11 @@
+.active {
+  color: 'red';
+  background-image: url("#public_path/img/react.png");
+  display: block;
+  width: 267px;
+  height: 189px;
+}
+
+.inactive {
+  background-image: url(#public_path/img/happy.svg);
+}

@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "outDir": "dist",
+        "declaration": true,
+        "sourceMap": false,
+        "target": "es5",
+        "module": "commonjs",
+        "skipLibCheck": true,
+        "allowSyntheticDefaultImports": true,
+        "moduleResolution": "node",
+        "allowJs": true,
+        "checkJs": false,
+        "noUnusedLocals": true,
+        "strict": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "preserveConstEnums": true,
+        "noImplicitThis": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "removeComments": false,
+        "jsx": "react",
+        "types": ["node"],
+        "rootDir": "../../"
+    }
+}

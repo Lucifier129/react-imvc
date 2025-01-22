@@ -1,0 +1,30 @@
+@use "sass:list";
+@use "sass:color";
+
+// styles.scss
+@use 'base';
+@use "nav";
+@use "test-pkg/dist/style.scss";
+
+.inverse {
+    background-color: base.$primary-color;
+    color: white;
+}
+
+$font-stack: Helvetica, Arial;
+$primary-color: #333;
+a {
+    color: $primary-color;
+
+    &:hover {
+        color: color.scale($primary-color, $lightness: 20%);
+    }
+}
+
+.c {
+    color: red;
+}
+
+.d {
+    color: blue;
+}

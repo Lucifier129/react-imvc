@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'OpenSans-Bold';
+    src: url(#public_path/content-hash/OpenSans-Bold.ttf) format('truetype');
+}
+
+html {
+    font-family: 'OpenSans-Bold';
+    font-size: 16px;
+}

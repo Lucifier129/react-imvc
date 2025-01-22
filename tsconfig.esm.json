@@ -1,0 +1,14 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "noEmit": true,
+        "module": "ESNext"
+    },
+    "references": [
+        {
+            "path": "./packages/final-redux/tsconfig.esm.json"
+        }
+    ],
+    "include": ["./packages"],
+    "exclude": ["./packages/*/__tests__/*"]
+}
