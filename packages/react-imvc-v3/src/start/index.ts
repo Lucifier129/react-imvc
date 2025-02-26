@@ -23,6 +23,13 @@ declare global {
   }
 }
 
+export type Route = (
+  app: express.Express,
+  server: http.Server
+) => void | Promise<void>
+
+export type Routes = Record<string, Route>
+
 export default async function start(options: Options): Promise<Result> {
   let config = getConfig(options)
   let [app, pageRouter] = await Promise.all([
@@ -64,18 +71,6 @@ export default async function start(options: Options): Promise<Result> {
 
   let routePath = path.join(config.root, config.routes)
 
-  if (hasModuleFile(routePath)) {
-    // get server routes
-    let routes = require(routePath)
-    routes = routes.default || routes
-    Object.keys(routes).forEach((key) => {
-      let route = routes[key]
-      if (typeof route === 'function') {
-        route(app, server)
-      }
-    })
-  }
-
   // 添加 renderPage 方法，让自定义的 routes 里可以手动调用，走 IMVC 的渲染流程
   let addRenderPage: RequestHandler = (req, res, next) => {
     res.renderPage = pageRouter
@@ -113,6 +108,19 @@ export default async function start(options: Options): Promise<Result> {
   }
 
   app.use(addRenderPage as express.RequestHandler)
+
+  // get server routes
+  let routes = getRoutes(routePath)
+
+  await Promise.all(
+    Object.keys(routes).map(async (key) => {
+      let route = routes[key]
+      if (typeof route === 'function') {
+        await route(app, server)
+      }
+    })
+  )
+
   app.use(pageRouter)
   app.use(catch404)
   // will print stacktrace
@@ -193,10 +201,10 @@ function normalizePort(val: string | number): string | number | undefined {
   return void 0
 }
 
-function hasModuleFile(filename: string): boolean {
+const getRoutes = (filename: string): Routes => {
   try {
-    return !!require.resolve(filename)
+    return require(filename)
   } catch (_) {
-    return false
+    return {}
   }
 }
