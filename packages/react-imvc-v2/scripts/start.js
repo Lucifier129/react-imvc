@@ -11,4 +11,7 @@ if (process.env.NODE_ENV === 'development') {
     })
 }
 
-require('../start/index')(options)
+require('../start/index')({
+    ...options,
+    fromScript: true,
+})

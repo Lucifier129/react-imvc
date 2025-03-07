@@ -251,6 +251,7 @@ export interface Alias {
 
 interface OptionsMore {
   config?: string | Config
+  fromScript?: boolean
 }
 
 export type Options = OptionsMore & Partial<typeof yargs.argv>
@@ -551,6 +552,12 @@ export interface EntireConfig {
     | string
     | Buffer
     | NodeJS.ReadableStream
+
+  /**
+   * 是否同步 {root}/package.json 到 {root}/{publish}/package.json
+   * 默认为 true
+   */
+  syncPackage?: boolean
 }
 
 export const defineConfig = (config: Config): Config => {

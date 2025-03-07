@@ -8,6 +8,7 @@ const config = {
     routes: 'routes', // 服务端路由目录
     layout: 'Layout', // 自定义 Layout
     staticPath: '/my_static', // 静态资源目录
+    // devtool: 'source-map',
     // bundleAnalyzer: true,
     // staticEntry: 'index.html',
     publish: '../project_publish', // 打包输出目录

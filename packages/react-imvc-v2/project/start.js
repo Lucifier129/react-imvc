@@ -10,6 +10,7 @@ const config = {
     layout: 'Layout', // 自定义 Layout
     staticPath: '/my_static', // 静态资源目录
     useFileLoader: true,
+    publish: '../project_publish', // 打包输出目录
     // bundleAnalyzer: true,
     // useTypeCheck: true
 }

@@ -13,4 +13,7 @@ if (process.env.NODE_ENV === 'development') {
   })
 }
 
-start(yargs.argv)
+start({
+  ...yargs.argv,
+  fromScript: true,
+})

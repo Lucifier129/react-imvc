@@ -207,7 +207,7 @@ export default async function createWebpackConfig(
             parallel: true,
             // Enable file caching
             cache: true,
-            sourceMap: false,
+            sourceMap: config.devtool ? true : false,
           }),
         ],
       })

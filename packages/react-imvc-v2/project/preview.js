@@ -8,6 +8,7 @@ const config = {
     basename: ['/a', '/b'],
     routes: 'routes', // 服务端路由目录
     staticPath: '/my_static', // 静态资源目录
+    publish: '../project_publish', // 打包输出目录
     layout: 'Layout', // 自定义 Layout
     // bundleAnalyzer: true,
     // useTypeCheck: true

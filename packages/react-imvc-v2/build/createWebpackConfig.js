@@ -179,7 +179,7 @@ module.exports = async function createWebpackConfig(options, isServer = false) {
                         parallel: true,
                         // Enable file caching
                         cache: true,
-                        sourceMap: false,
+                        sourceMap: config.devtool ? true : false,
                     }),
                 ],
             })

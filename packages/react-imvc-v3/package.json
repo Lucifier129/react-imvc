@@ -1,6 +1,6 @@
 {
   "name": "react-imvc",
-  "version": "3.5.0",
+  "version": "3.5.1",
   "description": "An Isomorphic MVC Framework",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -160,7 +160,7 @@
     "@types/loader-utils": "^1.1.9",
     "@types/memory-fs": "^0.3.2",
     "@types/morgan": "^1.9.0",
-    "@types/node": "^10.17.17",
+    "@types/node": "^22.13.9",
     "@types/node-fetch": "^2.5.5",
     "@types/node-notifier": "^6.0.0",
     "@types/puppeteer": "^2.0.1",

@@ -5,6 +5,7 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
+import * as fs from 'fs/promises'
 import path from 'path'
 import http from 'http'
 import debug from 'debug'
@@ -23,6 +24,87 @@ declare global {
   }
 }
 
+const isExist = async (path: string) => {
+  try {
+    await fs.access(path)
+    return true
+  } catch (e) {
+    return false
+  }
+}
+
+type PackageResult = {
+  filename: string
+  package: {
+    name: string
+  }
+}
+
+const findUpClosestTwoPackages = async (startDir: string) => {
+  let currentDir = startDir
+  let packages = [] as PackageResult[]
+
+  while (true) {
+    let packageFile = path.join(currentDir, 'package.json')
+    if (await isExist(packageFile)) {
+      packages.unshift({
+        filename: packageFile,
+        package: require(packageFile),
+      })
+
+      if (packages.length >= 2) {
+        break
+      }
+    }
+
+    let parentDir = path.dirname(currentDir)
+
+    if (parentDir === currentDir) {
+      break
+    }
+
+    currentDir = parentDir
+  }
+
+  return packages
+}
+
+const syncPackage = async () => {
+  const mainFilename = path.normalize(require.main?.filename ?? '')
+
+  if (!mainFilename) {
+    return
+  }
+
+  const packages = await findUpClosestTwoPackages(path.dirname(mainFilename))
+
+  if (packages.length < 2) {
+    return
+  }
+
+  const [rootPackage, publishPackage] = packages
+
+  const isPackageNameEqual =
+    rootPackage.package.name === publishPackage.package.name
+  const isPackageContentEqual =
+    JSON.stringify(rootPackage.package) ===
+    JSON.stringify(publishPackage.package)
+
+  if (!isPackageNameEqual || isPackageContentEqual) {
+    return
+  }
+
+  console.error(
+    `${publishPackage.filename}\nis not equal to\n${rootPackage.filename}\nSyncing...`
+  )
+  await fs.writeFile(
+    publishPackage.filename,
+    await fs.readFile(rootPackage.filename)
+  )
+  console.error('Syncing done. Please restart the server to apply changes')
+  process.exit(1)
+}
+
 export type Route = (
   app: express.Express,
   server: http.Server
@@ -32,6 +114,15 @@ export type Routes = Record<string, Route>
 
 export default async function start(options: Options): Promise<Result> {
   let config = getConfig(options)
+
+  /**
+   * sync package.json in root dir and publish dir
+   * if they are not equal when server starts not from script
+   */
+  if (config.syncPackage && options.fromScript !== true) {
+    await syncPackage()
+  }
+
   let [app, pageRouter] = await Promise.all([
     createExpressApp(config),
     createPageRouter(config),
@@ -137,7 +228,8 @@ export default async function start(options: Options): Promise<Result> {
 
     const onListening = () => {
       let addr = server.address()
-      let bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port
+      let bind =
+        typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr?.port
       debug('Listening on ' + bind)
       console.log('Listening on ' + bind)
     }

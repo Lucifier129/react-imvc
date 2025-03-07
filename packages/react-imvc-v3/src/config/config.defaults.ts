@@ -93,6 +93,7 @@ const defaultConfig: EntireConfig = {
   },
   useContentHash: false,
   useSass: false,
+  syncPackage: true,
 }
 
 export default defaultConfig

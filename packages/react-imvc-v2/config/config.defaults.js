@@ -298,4 +298,10 @@ module.exports = {
      * 默认为 false
      */
     useContentHash: false,
+
+    /**
+     * 是否同步 {root}/package.json 到 {root}/{publish}/package.json
+     * 默认为 true
+     */
+    syncPackage: true,
 }

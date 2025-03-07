@@ -12,6 +12,7 @@ const config: Config = {
   routes: 'routes', // 服务端路由目录
   layout: 'Layout', // 自定义 Layout
   publish: '../publish',
+  devtool: 'source-map',
   useContentHash: true,
   useFileLoader: true,
   useSass: true,
