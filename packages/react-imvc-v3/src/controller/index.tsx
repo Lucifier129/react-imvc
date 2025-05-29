@@ -907,11 +907,18 @@ export default class Controller<
 
   renderView(View = this.View) {
     if (this.context.isServer) return
+    if (View && !(View as any).viewId) {
+      ;(View as any).viewId = Date.now()
+    }
     let ctrl: this = Object.create(this)
     ctrl.View = View
     ctrl.componentDidFirstMount = void 0
     ctrl.componentDidMount = void 0
     ctrl.componentWillUnmount = void 0
+    ctrl.meta = {
+      ...this.meta,
+      id: (View as any)?.viewId || this.meta.viewId,
+    }
     if (this.proxyHandler) {
       this.proxyHandler.attach()
     }
