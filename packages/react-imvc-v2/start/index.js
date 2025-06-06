@@ -135,16 +135,33 @@ module.exports = async function start(options) {
 
     let routePath = path.join(config.root, config.routes)
 
+    const applyRoutes = async (routes) => {
+        if (Array.isArray(routes)) {
+            for (const route of routes) {
+                await route(app, server)
+            }
+
+            return
+        }
+
+        for (const key in routes) {
+            const route = routes[key]
+
+            if (typeof route === 'function') {
+                await route(app, server)
+            } else if (Array.isArray(route)) {
+                await applyRoutes(route)
+            } else {
+                throw new Error(`Route ${key} is not a valid middleware or array of middlewares`)
+            }
+        }
+    }
+
     if (hasModuleFile(routePath)) {
         // get server routes
         let routes = require(routePath)
-        routes = routes.default || routes
-        Object.keys(routes).forEach((key) => {
-            let route = routes[key]
-            if (typeof route === 'function') {
-                route(app, server)
-            }
-        })
+
+        await applyRoutes(routes)
     }
 
     app.use(pageRouter)

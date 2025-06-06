@@ -110,7 +110,7 @@ export type Route = (
   server: http.Server
 ) => void | Promise<void>
 
-export type Routes = Record<string, Route>
+export type Routes = Record<string, Route | Route[]> | Route[]
 
 export default async function start(options: Options): Promise<Result> {
   let config = getConfig(options)
@@ -200,17 +200,36 @@ export default async function start(options: Options): Promise<Result> {
 
   app.use(addRenderPage as express.RequestHandler)
 
-  // get server routes
-  let routes = getRoutes(routePath)
-
-  await Promise.all(
-    Object.keys(routes).map(async (key) => {
-      let route = routes[key]
-      if (typeof route === 'function') {
+  const applyRoutes = async (routes: Routes) => {
+    if (Array.isArray(routes)) {
+      for (const route of routes) {
         await route(app, server)
       }
-    })
-  )
+
+      return
+    }
+
+    for (const key in routes) {
+      const route = routes[key as keyof typeof routes]
+
+      if (typeof route === 'function') {
+        await route(app, server)
+      } else if (Array.isArray(route)) {
+        await applyRoutes(route)
+      } else {
+        throw new Error(
+          `Route ${key} is not a valid middleware or array of middlewares`
+        )
+      }
+    }
+  }
+
+  if (hasModuleFile(routePath)) {
+    // get server routes
+    let routes = require(routePath)
+
+    await applyRoutes(routes)
+  }
 
   app.use(pageRouter)
   app.use(catch404)
@@ -293,10 +312,10 @@ function normalizePort(val: string | number): string | number | undefined {
   return void 0
 }
 
-const getRoutes = (filename: string): Routes => {
+function hasModuleFile(filename: string) {
   try {
-    return require(filename)
+    return !!require.resolve(filename)
   } catch (_) {
-    return {}
+    return false
   }
 }

@@ -5,6 +5,22 @@
 ```ts
 // routes/index.js
 export test from './test'
+
+// 支持数组，按顺序执行
+export const middlewares = [
+    // 这里可以添加一些中间件
+    async (req, res, next) => {
+        console.log('middleware0', req.url)
+        // 可以在这里做一些异步操作，比如获取数据
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+        next()
+    },
+    // 可以添加一些 express 中间件
+    (req, res, next) => {
+        console.log('middleware1', req.url)
+        next()
+    },
+]
 ```
 
 React-IMVC 将会 `require(routes)` 并把它们 apply 到 express app 里。
