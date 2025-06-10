@@ -46,6 +46,7 @@ export default async function createWebpackConfig(
     devtoolModuleFilenameTemplate,
     // Link the env to dom
     globalObject: 'this',
+    crossOriginLoading: 'anonymous',
   }
 
   const staticDir = path.join(config.root, config.publish, config.static)

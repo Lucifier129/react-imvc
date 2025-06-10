@@ -30,6 +30,7 @@ module.exports = async function createWebpackConfig(options, isServer = false) {
         pathinfo: !isProd,
         // Point sourcemap entries to original disk location (format as URL on Windows)
         devtoolModuleFilenameTemplate: (info) => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
+        crossOriginLoading: 'anonymous',
     }
 
     const staticDir = path.join(config.root, config.publish, config.static)
